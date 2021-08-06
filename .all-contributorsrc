@@ -1,0 +1,61 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "CroquetMickael",
+      "name": "Haze",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/23740372?v=4",
+      "profile": "https://mickaelcroquet.fr",
+      "contributions": [
+        "code",
+        "design"
+      ]
+    },
+    {
+      "login": "fraxken",
+      "name": "fraxken",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/4438263?v=4",
+      "profile": "https://www.linkedin.com/in/thomas-gentilhomme/",
+      "contributions": [
+        "code",
+        "bug",
+        "blog",
+        "test",
+        "doc",
+        "design"
+      ]
+    },
+    {
+      "login": "Xstoudi",
+      "name": "Xavier Stouder",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/2575182?v=4",
+      "profile": "https://stouder.io",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
+    },
+    {
+      "login": "tony-go",
+      "name": "Tony Gorez",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/22824417?v=4",
+      "profile": "http://tonygo.dev",
+      "contributions": [
+        "code",
+        "doc",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "nsecure",
+  "projectOwner": "ES-Community",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
