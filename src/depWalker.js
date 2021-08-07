@@ -1,53 +1,36 @@
-// Require Node.js Dependencies
-const { join } = require("path");
-const { mkdtemp, access } = require("fs").promises;
-const os = require("os");
+// Import Node.js Dependencies
+import { join } from "path";
+import fs from "fs/promises";
+import timers from "timers/promises";
+import os from "os";
 
-// Require Third-party Dependencies
-const { red, white, yellow, cyan, gray, green } = require("kleur");
-const combineAsyncIterators = require("combine-async-iterators");
-const Arborist = require("@npmcli/arborist");
-const Spinner = require("@slimio/async-cli-spinner");
-const Registry = require("@slimio/npm-registry");
-const Lock = require("@slimio/lock");
-const iter = require("itertools");
-const pacote = require("pacote");
-const semver = require("semver");
-const ms = require("ms");
-const is = require("@slimio/is");
+// Import Third-party Dependencies
+import { red, white, yellow, cyan, gray, green } from "kleur";
+import combineAsyncIterators from "combine-async-iterators";
+import iter from "itertools";
+import pacote from "pacote";
+import semver from "semver";
+import ms from "ms";
+import Arborist from "@npmcli/arborist";
+import Spinner from "@slimio/async-cli-spinner";
+import Lock from "@slimio/lock";
+import is from "@slimio/is";
+import Registry from "@nodesecure/npm-registry-sdk";
+import i18n from "@nodesecure/i18n";
 
-// Require Internal Dependencies
-const { mergeDependencies, cleanRange, recursiveRmdir, constants } = require("./utils");
-const { getVulnerabilityStrategy } = require("./vulnerabilities/vulnerabilitySource");
-const { analyzeDirOrArchiveOnDisk } = require("./tarball");
-const Dependency = require("./dependency.class");
-const applyWarnings = require("./warnings").default;
-const i18n = require("./i18n");
+// Import Internal Dependencies
+import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
+import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.js";
+import { analyzeDirOrArchiveOnDisk } from "./tarball";
+import Dependency from "./dependency.class.js";
+import applyWarnings from "./warnings.js";
+
+// TODO: refactor this
 const { version: packageVersion } = require("../package.json");
 
-// VARS
+// TODO: refactor this
 const npmReg = new Registry(constants.DEFAULT_REGISTRY_ADDR);
 Spinner.DEFAULT_SPINNER = "dots";
-
-async function getExpectedSemVer(depName, range) {
-  try {
-    const { versions, "dist-tags": { latest } } = await pacote.packument(depName, {
-      ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR
-    });
-    const currVersion = semver.maxSatisfying(Object.keys(versions), range);
-
-    return [currVersion === null ? latest : currVersion, semver.eq(latest, currVersion)];
-  }
-  catch (err) {
-    return [cleanRange(range), true];
-  }
-}
-
-async function getCleanDependencyName([depName, range]) {
-  const [depVer, isLatest] = await getExpectedSemVer(depName, range);
-
-  return [`${depName}@${range}`, `${depName}@${depVer}`, isLatest];
-}
 
 async function* searchDeepDependencies(packageName, gitURL, options) {
   const isGit = typeof gitURL === "string";
@@ -200,7 +183,7 @@ async function* getRootDependencies(manifest, options) {
     const arb = new Arborist({ ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR });
     let tree;
     try {
-      await access(join(process.cwd(), "node_modules"));
+      await fs.access(join(process.cwd(), "node_modules"));
       tree = await arb.loadActual();
     }
     catch {
@@ -237,11 +220,11 @@ async function* getRootDependencies(manifest, options) {
   yield parent;
 }
 
-async function depWalker(manifest, options = Object.create(null)) {
+export async function depWalker(manifest, options = Object.create(null)) {
   const { verbose = true, forceRootAnalysis = false, usePackageLock = false, fullLockMode = false } = options;
 
   // Create TMP directory
-  const tmpLocation = await mkdtemp(join(os.tmpdir(), "/"));
+  const tmpLocation = await fs.mkdtemp(join(os.tmpdir(), "/"));
 
   const id = tmpLocation.slice(-6);
 
@@ -322,7 +305,7 @@ async function depWalker(manifest, options = Object.create(null)) {
 
     // Wait for all extraction to be done!
     await Promise.allSettled(promisesToWait);
-    await new Promise((resolve) => setImmediate(resolve));
+    await timers.setImmediate();
 
     const execTarball = cyan().bold(ms(Number(tarballSpinner.elapsedTime.toFixed(2))));
     tarballSpinner.succeed(white().bold(
@@ -366,8 +349,8 @@ async function depWalker(manifest, options = Object.create(null)) {
 
   // Cleanup tmpLocation dir
   try {
-    await new Promise((resolve) => setImmediate(resolve));
-    await recursiveRmdir(tmpLocation);
+    await timers.setImmediate();
+    await fs.rm(tmpLocation, { recursive: true, force: true });
   }
   catch (err) {
     /* istanbul ignore next */
@@ -381,5 +364,3 @@ async function depWalker(manifest, options = Object.create(null)) {
 
   return payload;
 }
-
-module.exports = { depWalker };

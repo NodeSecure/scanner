@@ -1,24 +1,19 @@
-// Require Node.js Dependencies
-const { join, extname, dirname } = require("path");
-const fs = require("fs").promises;
-const os = require("os");
-const { promisify } = require("util");
+// Import Node.js Dependencies
+import { join, extname, dirname } from "path";
+import fs from "fs/promises";
+import os from "os";
+import timers from "timers/promises";
 
-// Require Third-party Dependencies
-const difference = require("lodash.difference");
-const isMinified = require("is-minified-code");
-const pacote = require("pacote");
-const ntlp = require("@nodesecure/ntlp");
-const builtins = require("builtins");
-const { runASTAnalysis } = require("@nodesecure/js-x-ray");
+// Import Third-party Dependencies
+import { runASTAnalysis } from "@nodesecure/js-x-ray";
+import difference from "lodash.difference";
+import isMinified from "is-minified-code";
+import pacote from "pacote";
+import ntlp from "@nodesecure/ntlp";
+import builtins from "builtins";
 
-// Require Internal Dependencies
-const {
-  getTarballComposition, isSensitiveFile, getPackageName, constants
-} = require("./utils");
-
-// VARS
-const nextTick = promisify(setImmediate);
+// Import Internal Dependencies
+import { getTarballComposition, isSensitiveFile, getPackageName, constants } from "./utils/index.js";
 
 // CONSTANTS
 const DIRECT_PATH = new Set([".", "..", "./", "../"]);
@@ -90,7 +85,7 @@ async function executeJSXRayAnalysisOnFile(dest, file, options) {
   }
 }
 
-async function analyzeDirOrArchiveOnDisk(name, version, options) {
+export async function analyzeDirOrArchiveOnDisk(name, version, options) {
   const { ref, tmpLocation, tarballLocker } = options;
 
   const isNpmTarball = !(tmpLocation === null);
@@ -103,7 +98,7 @@ async function analyzeDirOrArchiveOnDisk(name, version, options) {
       await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
         ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR, cache: `${os.homedir()}/.npm`
       });
-      await nextTick();
+      await timers.setImmediate();
     }
 
     // Read the package.json at the root of the directory or archive.
@@ -189,7 +184,7 @@ async function analyzeDirOrArchiveOnDisk(name, version, options) {
     }
 
     // License
-    await nextTick();
+    await timers.setImmediate();
     const licenses = await ntlp(dest);
 
     const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
@@ -211,6 +206,72 @@ async function analyzeDirOrArchiveOnDisk(name, version, options) {
   }
 }
 
-module.exports = {
-  analyzeDirOrArchiveOnDisk
-};
+async function readJSFile(dest, file) {
+  const str = await fs.readFile(join(dest, file), "utf-8");
+
+  return [file, str];
+}
+
+export async function analyseGivenLocation(dest, packageName) {
+  // Read the package.json file inside the extracted directory.
+  let isProjectUsingESM = false;
+  let localPackageName = packageName;
+  {
+    const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
+    const { type = "script", name } = JSON.parse(packageStr);
+    isProjectUsingESM = type === "module";
+    if (localPackageName === null) {
+      localPackageName = name;
+    }
+  }
+
+  // Get the tarball composition
+  await timers.setImmediate();
+  const { ext, files, size } = await getTarballComposition(dest);
+
+  // Search for runtime dependencies
+  const dependencies = Object.create(null);
+  const minified = [];
+  const warnings = [];
+
+  const JSFiles = files.filter((name) => constants.EXT_JS.has(extname(name)));
+  const allFilesContent = (await Promise.allSettled(JSFiles.map((file) => readJSFile(dest, file))))
+    .filter((_p) => _p.status === "fulfilled").map((_p) => _p.value);
+
+  // TODO: 2) handle dependency by file to not loose data.
+  for (const [file, str] of allFilesContent) {
+    try {
+      const ASTAnalysis = runASTAnalysis(str, {
+        module: extname(file) === ".mjs" ? true : isProjectUsingESM
+      });
+      ASTAnalysis.dependencies.removeByName(localPackageName);
+      dependencies[file] = ASTAnalysis.dependencies.dependencies;
+      warnings.push(...ASTAnalysis.warnings.map((warn) => {
+        warn.file = file;
+
+        return warn;
+      }));
+
+      if (!ASTAnalysis.isOneLineRequire && !file.includes(".min") && isMinified(str)) {
+        minified.push(file);
+      }
+    }
+    catch (err) {
+      if (!Reflect.has(err, "code")) {
+        warnings.push({ file, kind: "parsing-error", value: err.message, location: [[0, 0], [0, 0]] });
+      }
+    }
+  }
+
+  await timers.setImmediate();
+  const { uniqueLicenseIds, licenses } = await ntlp(dest);
+  ext.delete("");
+
+  return {
+    files: { list: files, extensions: [...ext], minified },
+    directorySize: size,
+    uniqueLicenseIds,
+    licenses,
+    ast: { dependencies, warnings }
+  };
+}

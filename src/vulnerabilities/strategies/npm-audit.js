@@ -1,12 +1,11 @@
-// Require Third-party Dependencies
-const Arborist = require("@npmcli/arborist");
+// Import Third-party Dependencies
+import Arborist from "@npmcli/arborist";
 
 // CONSTANTS
-const { constants } = require("../../utils");
-const { VULN_MODE_NPM_AUDIT } = require("../strategies");
+import { constants, DEFAULT_REGISTRY_ADDR } from "../../utils/index.js";
+import { VULN_MODE_NPM_AUDIT } from "../strategies.js";
 
-
-function NPMAuditStrategy() {
+export function NPMAuditStrategy() {
   return {
     type: VULN_MODE_NPM_AUDIT,
     hydrateNodeSecurePayload
@@ -14,7 +13,7 @@ function NPMAuditStrategy() {
 }
 
 async function hydrateNodeSecurePayload(dependencies) {
-  const arborist = new Arborist({ ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR });
+  const arborist = new Arborist({ ...constants.NPM_TOKEN, registry: DEFAULT_REGISTRY_ADDR });
 
   try {
     const { vulnerabilities } = (await arborist.audit()).toJSON();
@@ -55,6 +54,3 @@ function extractPackageVulnsFromSource(packageVulnerabilities) {
 
   return vulnerabilitiesFromSource;
 }
-
-
-module.exports = { NPMAuditStrategy };

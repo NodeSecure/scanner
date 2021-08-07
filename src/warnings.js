@@ -1,6 +1,5 @@
-// Require Third-party Dependencies
-import { taggedString } from "./utils";
-import { getToken } from "./i18n";
+// Import Third-party Dependencies
+import { getToken, taggedString } from "@nodesecure/i18n";
 
 // CONSTANTS
 const kDetectedDep = taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
@@ -14,7 +13,7 @@ function getWarning(depName) {
   return `${kDetectedDep(depName)} ${kWarningsMessages[depName]}`;
 }
 
-function applyWarnings(dependencies) {
+export default function applyWarnings(dependencies) {
   const warnings = [];
   for (const depName of kPackages) {
     if (dependencies.has(depName)) {
@@ -25,4 +24,3 @@ function applyWarnings(dependencies) {
   return warnings;
 }
 
-export default applyWarnings;

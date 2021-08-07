@@ -5,7 +5,7 @@ const { join } = require("path");
 
 // Require Internal Dependencies
 const {
-  cleanRange, taggedString, writeNsecureCache, loadNsecureCache, getRegistryURL, isSensitiveFile
+  cleanRange, writeNsecureCache, loadNsecureCache, getRegistryURL, isSensitiveFile
 } = require("../src/utils");
 
 test("should return cleaned SemVer range", () => {
@@ -16,15 +16,6 @@ test("should return cleaned SemVer range", () => {
   expect(r1).toStrictEqual("0.1.0");
   expect(r2).toStrictEqual("1.0.0");
   expect(r3).toStrictEqual("2.0.0");
-});
-
-test("taggedString", () => {
-  const clojureHello = taggedString`Hello ${0}`;
-  expect(clojureHello()).toStrictEqual("Hello ");
-  expect(clojureHello("world")).toStrictEqual("Hello world");
-
-  const clojureFoo = taggedString`Hello ${"word"}`;
-  expect(clojureFoo({ word: "bar" })).toStrictEqual("Hello bar");
 });
 
 test("node-secure cache", () => {

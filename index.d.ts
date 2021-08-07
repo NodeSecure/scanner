@@ -1,8 +1,8 @@
-/// <reference types="js-x-ray"/>
-/// <reference types="ntlp"/>
+/// <reference types="@nodesecure/js-x-ray"/>
+/// <reference types="@nodesecure/ntlp"/>
 
-import { Warning, Dependencies } from "js-x-ray";
-import { license as License } from "ntlp";
+import { Warning, Dependencies } from "@nodesecure/js-x-ray";
+import { license as License } from "@nodesecure/ntlp";
 
 declare namespace NodeSecure {
     interface Publisher {

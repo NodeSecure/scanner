@@ -1,16 +1,15 @@
 // Require Node.js Dependencies
-const { join, extname } = require("path");
-const {
-  unlinkSync,
-  promises: { readdir, readFile, writeFile }
-} = require("fs");
+import { join, extname } from "path";
+import { unlinkSync } from "fs";
+import { readdir, readFile, writeFile, rm } from "fs/promises";
 
 // Require Third-party Dependencies
-const download = require("@slimio/github");
-const semver = require("semver");
+import download from "@slimio/github";
+import semver from "semver";
 
-// Require Internal Dependencies
-const { recursiveRmdir, loadNsecureCache, writeNsecureCache } = require("../../utils");
+// Import Internal Dependencies
+import { loadNsecureCache, writeNsecureCache } from "../../utils.js";
+import { VULN_MODE_DB_SECURITY_WG } from "../strategies.js";
 
 // CONSTANTS
 const LOCAL_CACHE = loadNsecureCache();
@@ -18,9 +17,8 @@ const ONE_DAY = 3600000 * 24;
 const REPO = "nodejs.security-wg";
 const VULN_DIR_PATH = join("vuln", "npm");
 const VULN_FILE_PATH = join(__dirname, "..", "..", "vuln.json");
-const { VULN_MODE_DB_SECURITY_WG } = require("../strategies");
 
-async function SecurityWGStrategy({ sideEffects = true }) {
+export async function SecurityWGStrategy({ sideEffects = true }) {
   if (sideEffects) {
     try {
       await checkHydrateDB();
@@ -37,7 +35,7 @@ async function SecurityWGStrategy({ sideEffects = true }) {
   };
 }
 
-async function checkHydrateDB() {
+export async function checkHydrateDB() {
   const ts = Math.abs(Date.now() - LOCAL_CACHE.lastUpdated);
 
   if (ts > ONE_DAY) {
@@ -46,7 +44,6 @@ async function checkHydrateDB() {
     writeNsecureCache();
   }
 }
-
 
 async function readVulnJSONFile(path) {
   try {
@@ -119,7 +116,7 @@ async function hydrateDB() {
     await writeFile(VULN_FILE_PATH, data);
   }
   finally {
-    await recursiveRmdir(location);
+    await rm(location, { recursive: true, force: true });
   }
 }
 
@@ -131,6 +128,3 @@ function deleteDB() {
     // ignore
   }
 }
-
-
-module.exports = { SecurityWGStrategy, checkHydrateDB };

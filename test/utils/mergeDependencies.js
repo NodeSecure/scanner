@@ -6,7 +6,7 @@ const { readFileSync } = require("fs");
 const is = require("@slimio/is");
 
 // Require Internal Dependencies
-const { mergeDependencies } = require("../src/utils");
+const { mergeDependencies } = require("../../src/utils");
 
 // CONSTANTS
 const FIXTURE_PATH = join(__dirname, "fixtures/mergeDependencies");

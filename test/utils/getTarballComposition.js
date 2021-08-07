@@ -6,7 +6,7 @@ const { promisify } = require("util");
 const getSize = require("get-folder-size");
 
 // Require Internal Dependencies
-const { getTarballComposition } = require("../src/utils");
+const { getTarballComposition } = require("../../src/utils");
 
 // CONSTANTS
 const FIXTURE_PATH = join(__dirname, "fixtures/getTarballComposition");
