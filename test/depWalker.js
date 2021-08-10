@@ -1,16 +1,16 @@
 // Require Node.js Dependencies
-const { join } = require("path");
+import { join } from "path";
 
 // Require Internal Dependencies
-const { depWalker } = require("../src/depWalker");
-const { from } = require("../");
+import { depWalker } from "../src/depWalker.js";
+import { from } from "../index.js";
 
 // CONSTANTS
-const FIXTURE_PATH = join(__dirname, "fixtures/depWalker");
+const FIXTURE_PATH = new URL("fixtures/depWalker", import.meta.url);
 
 // JSON PAYLOADS
-const is = require(join(FIXTURE_PATH, "slimio.is.json"));
-const config = require(join(FIXTURE_PATH, "slimio.config.json"));
+const is = import(join(FIXTURE_PATH, "slimio.is.json"));
+const config = import(join(FIXTURE_PATH, "slimio.config.json"));
 
 function cleanupPayload(payload) {
   for (const pkg of Object.values(payload)) {

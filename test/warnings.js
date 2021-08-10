@@ -1,8 +1,8 @@
 // Require Third-party Dependencies
-const is = require("@slimio/is");
+import is from "@slimio/is";
 
 // Require Internal Dependencies
-const applyWarnings = require("../src/warnings");
+import applyWarnings from "../src/warnings.js";
 
 test("applyWarnings for '@scarf/scarf'", () => {
   const deps = new Map([

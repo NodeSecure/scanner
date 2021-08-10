@@ -15,21 +15,21 @@ import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
 import is from "@slimio/is";
-import Registry from "@nodesecure/npm-registry-sdk";
+import { packument } from "@nodesecure/npm-registry-sdk";
 import i18n from "@nodesecure/i18n";
+console.warn(packument);
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
 import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.js";
-import { analyzeDirOrArchiveOnDisk } from "./tarball";
+import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 import applyWarnings from "./warnings.js";
 
 // TODO: refactor this
-const { version: packageVersion } = require("../package.json");
+const { version: packageVersion } = import("../package.json");
 
 // TODO: refactor this
-const npmReg = new Registry(constants.DEFAULT_REGISTRY_ADDR);
 Spinner.DEFAULT_SPINNER = "dots";
 
 async function* searchDeepDependencies(packageName, gitURL, options) {
@@ -122,14 +122,14 @@ async function fetchPackageMetadata(name, version, options) {
     const oneYearFromToday = new Date();
     oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() - 1);
 
-    const pkg = await npmReg.package(name);
+    const pkg = await packument(name);
     if (semver.neq(version, pkg.lastVersion)) {
       ref[version].flags.push("isOutdated");
     }
     ref.metadata.publishedCount = pkg.versions.length;
-    ref.metadata.lastUpdateAt = pkg.publishedAt(pkg.lastVersion);
+    ref.metadata.lastUpdateAt = new Date(pkg.time[pkg.version]);
     ref.metadata.hasReceivedUpdateInOneYear = !(oneYearFromToday > ref.metadata.lastUpdateAt);
-    ref.metadata.lastVersion = pkg.lastVersion;
+    ref.metadata.lastVersion = pkg.version;
     ref.metadata.homepage = pkg.homepage || null;
     ref.metadata.maintainers = pkg.maintainers;
     if (is.string(pkg.author)) {
@@ -140,7 +140,7 @@ async function fetchPackageMetadata(name, version, options) {
     }
 
     for (const version of pkg.versions) {
-      const { npmUser } = pkg.version(version);
+      const { npmUser } = pkg.npmUser;
       if (is.nullOrUndefined(npmUser) || !("name" in npmUser) || !is.string(npmUser.name)) {
         continue;
       }
@@ -154,7 +154,7 @@ async function fetchPackageMetadata(name, version, options) {
 
       if (!publishers.has(npmUser.name)) {
         publishers.add(npmUser.name);
-        ref.metadata.publishers.push({ name: npmUser.name, version, at: pkg.publishedAt(version) });
+        ref.metadata.publishers.push({ name: npmUser.name, version, at: ref.metadata.lastUpdateAt });
       }
     }
 

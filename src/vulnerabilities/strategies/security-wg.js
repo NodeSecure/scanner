@@ -8,7 +8,7 @@ import download from "@slimio/github";
 import semver from "semver";
 
 // Import Internal Dependencies
-import { loadNsecureCache, writeNsecureCache } from "../../utils.js";
+import { loadNsecureCache, writeNsecureCache } from "../../utils/index.js";
 import { VULN_MODE_DB_SECURITY_WG } from "../strategies.js";
 
 // CONSTANTS
@@ -16,9 +16,9 @@ const LOCAL_CACHE = loadNsecureCache();
 const ONE_DAY = 3600000 * 24;
 const REPO = "nodejs.security-wg";
 const VULN_DIR_PATH = join("vuln", "npm");
-const VULN_FILE_PATH = join(__dirname, "..", "..", "vuln.json");
+const VULN_FILE_PATH = new URL(join("src", "vuln.json"), import.meta.url);
 
-export async function SecurityWGStrategy({ sideEffects = true }) {
+async function SecurityWGStrategy({ sideEffects = true }) {
   if (sideEffects) {
     try {
       await checkHydrateDB();
@@ -35,7 +35,7 @@ export async function SecurityWGStrategy({ sideEffects = true }) {
   };
 }
 
-export async function checkHydrateDB() {
+async function checkHydrateDB() {
   const ts = Math.abs(Date.now() - LOCAL_CACHE.lastUpdated);
 
   if (ts > ONE_DAY) {
@@ -127,4 +127,11 @@ function deleteDB() {
   catch (err) {
     // ignore
   }
+}
+
+export default {
+  SecurityWGStrategy,
+  checkHydrateDB, readVulnJSONFile, 
+  hydrateNodeSecurePayload, hydrateDB,
+  deleteDB
 }
