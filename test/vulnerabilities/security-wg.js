@@ -4,6 +4,7 @@ import { jest } from "@jest/globals";
 import securityModule from "../../src/vulnerabilities/strategies/security-wg.js";
 
 describe("Security Working Group inner methods", () => {
+  // TODO: we should re write this test
   // it("should delete and hydrate vulnerabilities DB without side effects", async() => {
   //   const vulnStrategy = await SecurityWGStrategy({ sideEffects: false });
   //   vulnStrategy.deleteDB();
