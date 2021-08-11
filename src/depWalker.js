@@ -24,7 +24,6 @@ import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.
 import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 import applyWarnings from "./warnings.js";
-import { cpuUsage, versions } from "process";
 
 const { red, white, yellow, cyan, gray, green } = kleur;
 
