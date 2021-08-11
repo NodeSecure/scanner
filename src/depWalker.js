@@ -17,10 +17,10 @@ import Lock from "@slimio/lock";
 import is from "@slimio/is";
 import { packument } from "@nodesecure/npm-registry-sdk/dist/index.js";
 import { getToken } from "@nodesecure/i18n";
+import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
-import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.js";
 import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 import applyWarnings from "./warnings.js";
@@ -262,6 +262,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       const stats = gray().bold(`[${yellow().bold(processedRegistryCount)}/${allDependencyCount}]`);
       regSpinner.text = white().bold(`${getToken("depWalker.fetch_metadata")} ${stats}`);
     });
+
     tarballLocker.on("freeOne", () => {
       processedTarballCount++;
       const stats = gray().bold(`[${yellow().bold(processedTarballCount)}/${allDependencyCount}]`);
@@ -315,10 +316,9 @@ export async function depWalker(manifest, options = Object.create(null)) {
       getToken("depWalker.success_tarball", green().bold(allDependencyCount), execTarball)));
     regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
   }
-
   // Search for vulnerabilities relatively to the current initialized strategy
-  const vulnStrategy = await getVulnerabilityStrategy();
-  await vulnStrategy.hydrateNodeSecurePayload(payload.dependencies);
+  const vulnStrategy = await vuln.getStrategy();
+  await vulnStrategy.hydratePayloadDependencies(payload.dependencies);
 
   payload.vulnerabilityStrategy = vulnStrategy.type;
 
