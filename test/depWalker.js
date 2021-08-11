@@ -2,6 +2,9 @@
 import { join } from "path";
 import { readFileSync } from "fs";
 
+// Third party Dependencies
+import { setStrategy, strategies } from "@nodesecure/vuln";
+
 // Require Internal Dependencies
 import { depWalker } from "../src/depWalker.js";
 import { from } from "../index.js";
@@ -30,6 +33,8 @@ function cleanupPayload(payload) {
 }
 
 test("execute depWalker on @slimio/is", async() => {
+  await setStrategy(strategies.NPM_AUDIT);
+
   const result = await depWalker(is, { verbose: false });
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
   cleanupPayload(resultAsJSON);
@@ -38,6 +43,8 @@ test("execute depWalker on @slimio/is", async() => {
 });
 
 test("execute depWalker on @slimio/config", async() => {
+  await setStrategy(strategies.NPM_AUDIT);
+
   const result = await depWalker(config, { verbose: false });
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
@@ -61,6 +68,6 @@ test("execute depWalker on @slimio/config", async() => {
 });
 
 test("fetch payload of pacote on the npm registry", async() => {
-  const result = await from("pacote", { verbose: false, maxDepth: 10 });
+  const result = await from("pacote", { verbose: false, maxDepth: 10, vulnerabilityStrategy: strategies.NPM_AUDIT });
   expect(Object.keys(result)).toMatchSnapshot();
 });

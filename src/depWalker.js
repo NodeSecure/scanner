@@ -224,7 +224,12 @@ async function* getRootDependencies(manifest, options) {
 }
 
 export async function depWalker(manifest, options = Object.create(null)) {
-  const { verbose = true, forceRootAnalysis = false, usePackageLock = false, fullLockMode = false } = options;
+  const {
+    verbose = true,
+    forceRootAnalysis = false,
+    usePackageLock = false,
+    fullLockMode = false
+  } = options;
 
   // Create TMP directory
   const tmpLocation = await fs.mkdtemp(join(os.tmpdir(), "/"));
@@ -318,9 +323,9 @@ export async function depWalker(manifest, options = Object.create(null)) {
   }
   // Search for vulnerabilities relatively to the current initialized strategy
   const vulnStrategy = await vuln.getStrategy();
-  await vulnStrategy.hydratePayloadDependencies(payload.dependencies);
+  await vulnStrategy.hydratePayloadDependencies(payload.dependencies, { path: tmpLocation });
 
-  payload.vulnerabilityStrategy = vulnStrategy.type;
+  payload.vulnerabilityStrategy = vulnStrategy.strategy;
 
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
