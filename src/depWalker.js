@@ -138,7 +138,7 @@ async function fetchPackageMetadata(name, version, options) {
       ref.metadata.author = pkg.author;
     }
     else {
-      ref.metadata.author = "name" in pkg.author ? pkg.author.name : null;
+      ref.metadata.author = pkg?.author?.name ?? null;
     }
 
     for (const ver of Object.values(pkg.versions)) {
