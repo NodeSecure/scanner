@@ -12,7 +12,7 @@
     "prepublishOnly": "npm run build && pkg-ok",
     "build": "node ./esbuild.config.js",
     "test": "npm run test-only && npm run eslint",
-    "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test-only": "cross-env NODE_OPTIONS='--experimental-vm-modules --experimental-json-modules' jest"
   },
   "files": [
     "dist",
@@ -61,7 +61,11 @@
     ],
     "testPathIgnorePatterns": [
       "/test/fixtures/"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@nodesecure/sec-literal$": "@nodesecure/sec-literal/src/index.js",
+      "^estree-walker$": "estree-walker/src/index.js"
+    }
   },
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.1.0",

@@ -5,7 +5,7 @@ import timers from "timers/promises";
 import os from "os";
 
 // Import Third-party Dependencies
-import { red, white, yellow, cyan, gray, green } from "kleur";
+import kleur from "kleur";
 import combineAsyncIterators from "combine-async-iterators";
 import iter from "itertools";
 import pacote from "pacote";
@@ -15,9 +15,8 @@ import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
 import is from "@slimio/is";
-import { packument } from "@nodesecure/npm-registry-sdk";
-import i18n from "@nodesecure/i18n";
-console.warn(packument);
+import { packument } from "@nodesecure/npm-registry-sdk/dist/index.js";
+import { getToken } from "@nodesecure/i18n";
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
@@ -25,6 +24,9 @@ import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.
 import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 import applyWarnings from "./warnings.js";
+import { cpuUsage, versions } from "process";
+
+const { red, white, yellow, cyan, gray, green } = kleur;
 
 // TODO: refactor this
 const { version: packageVersion } = import("../package.json");
@@ -123,13 +125,14 @@ async function fetchPackageMetadata(name, version, options) {
     oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() - 1);
 
     const pkg = await packument(name);
-    if (semver.neq(version, pkg.lastVersion)) {
+
+    ref.metadata.lastVersion = pkg["dist-tags"].latest;
+    if (semver.neq(version, ref.metadata.lastVersion)) {
       ref[version].flags.push("isOutdated");
     }
-    ref.metadata.publishedCount = pkg.versions.length;
-    ref.metadata.lastUpdateAt = new Date(pkg.time[pkg.version]);
+    ref.metadata.publishedCount = Object.values(pkg.versions).length;
+    ref.metadata.lastUpdateAt = new Date(pkg.time[ref.metadata.lastVersion]);
     ref.metadata.hasReceivedUpdateInOneYear = !(oneYearFromToday > ref.metadata.lastUpdateAt);
-    ref.metadata.lastVersion = pkg.version;
     ref.metadata.homepage = pkg.homepage || null;
     ref.metadata.maintainers = pkg.maintainers;
     if (is.string(pkg.author)) {
@@ -139,8 +142,9 @@ async function fetchPackageMetadata(name, version, options) {
       ref.metadata.author = "name" in pkg.author ? pkg.author.name : null;
     }
 
-    for (const version of pkg.versions) {
-      const { npmUser } = pkg.npmUser;
+    for (const ver of Object.values(pkg.versions)) {
+      const { _npmUser: npmUser, version } = ver;
+
       if (is.nullOrUndefined(npmUser) || !("name" in npmUser) || !is.string(npmUser.name)) {
         continue;
       }
@@ -154,7 +158,7 @@ async function fetchPackageMetadata(name, version, options) {
 
       if (!publishers.has(npmUser.name)) {
         publishers.add(npmUser.name);
-        ref.metadata.publishers.push({ name: npmUser.name, version, at: ref.metadata.lastUpdateAt });
+        ref.metadata.publishers.push({ name: npmUser.name, version, at: new Date(pkg.time[version]) });
       }
     }
 
@@ -241,11 +245,11 @@ export async function depWalker(manifest, options = Object.create(null)) {
 
   {
     const treeSpinner = new Spinner({ verbose })
-      .start(white().bold(i18n.getToken("depWalker.fetch_and_walk_deps")));
+      .start(white().bold(getToken("depWalker.fetch_and_walk_deps")));
     const tarballSpinner = new Spinner({ verbose })
-      .start(white().bold(i18n.getToken("depWalker.waiting_tarball")));
+      .start(white().bold(getToken("depWalker.waiting_tarball")));
     const regSpinner = new Spinner({ verbose })
-      .start(white().bold(i18n.getToken("depWalker.fetch_on_registry")));
+      .start(white().bold(getToken("depWalker.fetch_on_registry")));
 
     let allDependencyCount = 0;
     let processedTarballCount = 0;
@@ -257,12 +261,12 @@ export async function depWalker(manifest, options = Object.create(null)) {
     metadataLocker.on("freeOne", () => {
       processedRegistryCount++;
       const stats = gray().bold(`[${yellow().bold(processedRegistryCount)}/${allDependencyCount}]`);
-      regSpinner.text = white().bold(`${i18n.getToken("depWalker.fetch_metadata")} ${stats}`);
+      regSpinner.text = white().bold(`${getToken("depWalker.fetch_metadata")} ${stats}`);
     });
     tarballLocker.on("freeOne", () => {
       processedTarballCount++;
       const stats = gray().bold(`[${yellow().bold(processedTarballCount)}/${allDependencyCount}]`);
-      tarballSpinner.text = white().bold(`${i18n.getToken("depWalker.analyzed_tarball")} ${stats}`);
+      tarballSpinner.text = white().bold(`${getToken("depWalker.analyzed_tarball")} ${stats}`);
     });
 
     const rootDepsOptions = { maxDepth: options.maxDepth, exclude, usePackageLock, fullLockMode };
@@ -301,7 +305,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
 
     const execTree = cyan().bold(ms(Number(treeSpinner.elapsedTime.toFixed(2))));
     treeSpinner.succeed(white().bold(
-      i18n.getToken("depWalker.success_fetch_deptree", yellow().bold(i18n.getToken("depWalker.dep_tree")), execTree)));
+      getToken("depWalker.success_fetch_deptree", yellow().bold(getToken("depWalker.dep_tree")), execTree)));
 
     // Wait for all extraction to be done!
     await Promise.allSettled(promisesToWait);
@@ -309,8 +313,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
 
     const execTarball = cyan().bold(ms(Number(tarballSpinner.elapsedTime.toFixed(2))));
     tarballSpinner.succeed(white().bold(
-      i18n.getToken("depWalker.success_tarball", green().bold(allDependencyCount), execTarball)));
-    regSpinner.succeed(white().bold(i18n.getToken("depWalker.success_registry_metadata")));
+      getToken("depWalker.success_tarball", green().bold(allDependencyCount), execTarball)));
+    regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
   }
 
   // Search for vulnerabilities relatively to the current initialized strategy
@@ -354,7 +358,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
   }
   catch (err) {
     /* istanbul ignore next */
-    console.log(red().bold(i18n.getToken("depWalker.failed_rmdir", yellow().bold(tmpLocation))));
+    console.log(red().bold(getToken("depWalker.failed_rmdir", yellow().bold(tmpLocation))));
   }
   if (verbose) {
     console.log("");

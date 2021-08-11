@@ -1,16 +1,22 @@
 // Require Node.js Dependencies
 import { join } from "path";
+import { readFileSync } from "fs";
 
 // Require Internal Dependencies
 import { depWalker } from "../src/depWalker.js";
 import { from } from "../index.js";
 
 // CONSTANTS
-const FIXTURE_PATH = new URL("fixtures/depWalker", import.meta.url);
+const FIXTURE_PATH = new URL("fixtures/depWalker", import.meta.url).toString();
 
 // JSON PAYLOADS
-const is = import(join(FIXTURE_PATH, "slimio.is.json"));
-const config = import(join(FIXTURE_PATH, "slimio.config.json"));
+const is = JSON.parse(readFileSync(
+  new URL(join("fixtures/depWalker", "slimio.is.json"), import.meta.url)
+));
+
+const config = JSON.parse(readFileSync(
+  new URL(join("fixtures/depWalker", "slimio.config.json"), import.meta.url)
+));
 
 function cleanupPayload(payload) {
   for (const pkg of Object.values(payload)) {
