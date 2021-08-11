@@ -1,12 +1,12 @@
 // Require Node.js Dependencies
-const { rmdirSync } = require("fs");
-const os = require("os");
-const { join } = require("path");
+import { rmSync } from "fs";
+import os from "os";
+import { join } from "path";
 
 // Require Internal Dependencies
-const {
+import {
   cleanRange, writeNsecureCache, loadNsecureCache, getRegistryURL, isSensitiveFile
-} = require("../src/utils");
+} from "../src/utils/index.js";
 
 test("should return cleaned SemVer range", () => {
   const r1 = cleanRange("0.1.0");
@@ -20,7 +20,7 @@ test("should return cleaned SemVer range", () => {
 
 test("node-secure cache", () => {
   const filePath = join(os.tmpdir(), "nsecure-cache.json");
-  rmdirSync(filePath, { recursive: true });
+  rmSync(filePath, { force: true });
 
   const result = loadNsecureCache();
   expect(Reflect.has(result, "lastUpdated")).toBe(true);

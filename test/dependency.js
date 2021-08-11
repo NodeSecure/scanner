@@ -1,8 +1,8 @@
 // Require Third-party Dependencies
-const is = require("@slimio/is");
+import is from "@slimio/is";
 
 // Require Internal Dependencies
-const Dependency = require("../src/dependency.class");
+import Dependency from "../src/dependency.class.js";
 
 test("Dependency class should act as expected by assertions", () => {
   expect(is.classObject(Dependency)).toStrictEqual(true);

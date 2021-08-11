@@ -1,15 +1,16 @@
 // Require Node.js Dependencies
-const { join } = require("path");
-const { readFileSync } = require("fs");
+import { join } from "path";
+import { readFileSync } from "fs";
 
 // Require Third-party Dependencies
-const is = require("@slimio/is");
+import is from "@slimio/is";
 
 // Require Internal Dependencies
-const { mergeDependencies } = require("../../src/utils");
+import { mergeDependencies, getDirNameFromUrl } from "../../src/utils/index.js";
 
 // CONSTANTS
-const FIXTURE_PATH = join(__dirname, "fixtures/mergeDependencies");
+const currentDirname = getDirNameFromUrl(import.meta.url);
+const FIXTURE_PATH = join(currentDirname, "..", "fixtures/mergeDependencies");
 
 // JSON PAYLOADS
 const one = JSON.parse(readFileSync(join(FIXTURE_PATH, "one.json"), "utf-8"));
