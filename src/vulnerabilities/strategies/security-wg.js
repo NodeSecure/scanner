@@ -129,9 +129,11 @@ function deleteDB() {
   }
 }
 
+// Note: this way export to export allow
+// spying function during tests.
 export default {
   SecurityWGStrategy,
-  checkHydrateDB, readVulnJSONFile, 
+  checkHydrateDB, readVulnJSONFile,
   hydrateNodeSecurePayload, hydrateDB,
   deleteDB
-}
+};
