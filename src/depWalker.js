@@ -321,12 +321,9 @@ export async function depWalker(manifest, options = Object.create(null)) {
       getToken("depWalker.success_tarball", green().bold(allDependencyCount), execTarball)));
     regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
   }
-  // Search for vulnerabilities relatively to the current initialized strategy
+
   const vulnStrategy = await vuln.getStrategy();
-  await vulnStrategy.hydratePayloadDependencies(payload.dependencies, { path: tmpLocation });
-
   payload.vulnerabilityStrategy = vulnStrategy.strategy;
-
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.
