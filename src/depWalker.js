@@ -15,7 +15,7 @@ import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
 import is from "@slimio/is";
-import { packument } from "@nodesecure/npm-registry-sdk/dist/index.js";
+import { packument } from "@nodesecure/npm-registry-sdk";
 import { getToken } from "@nodesecure/i18n";
 import * as vuln from "@nodesecure/vuln";
 
