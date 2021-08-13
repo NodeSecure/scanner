@@ -3,7 +3,7 @@ export * from "./isSensitiveFile.js";
 export * from "./getPackageName.js";
 export * from "./npmRegistry.js";
 export * from "./formatBytes.js";
-export * from "./mergeDependencies";
+export * from "./mergeDependencies.js";
 export * from "./semver.js";
 export * from "./cache.js";
 export * from "./packageLock.js";
