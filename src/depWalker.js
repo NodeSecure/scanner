@@ -228,8 +228,12 @@ export async function depWalker(manifest, options = Object.create(null)) {
     verbose = true,
     forceRootAnalysis = false,
     usePackageLock = false,
-    fullLockMode = false
+    fullLockMode = false,
+    vulnerabilityStrategy = vuln.strategies.NONE
   } = options;
+
+  // Set vulnerabilities strategy
+  vuln.setStrategy(vulnerabilityStrategy);
 
   // Create TMP directory
   const tmpLocation = await fs.mkdtemp(join(os.tmpdir(), "/"));
@@ -323,6 +327,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
   }
 
   const vulnStrategy = await vuln.getStrategy();
+  vulnStrategy.hydratePayloadDependencies(payload.dependencies);
+
   payload.vulnerabilityStrategy = vulnStrategy.strategy;
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.

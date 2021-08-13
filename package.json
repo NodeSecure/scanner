@@ -84,7 +84,7 @@
     "@nodesecure/js-x-ray": "^4.0.1",
     "@nodesecure/npm-registry-sdk": "^1.1.1",
     "@nodesecure/ntlp": "^1.2.1",
-    "@nodesecure/vuln": "^1.1.0",
+    "@nodesecure/vuln": "^1.2.0",
     "@npmcli/arborist": "^2.8.0",
     "@slimio/async-cli-spinner": "^0.5.2",
     "@slimio/github": "^0.5.0",

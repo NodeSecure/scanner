@@ -16,12 +16,14 @@ import { DEFAULT_REGISTRY_ADDR } from "./src/utils/index.js";
 export async function cwd(cwd = process.cwd(), options) {
   const packagePath = path.join(cwd, "package.json");
   const str = await fs.readFile(packagePath, "utf-8");
+
   options.forceRootAnalysis = true;
   if (!("usePackageLock" in options)) {
     options.usePackageLock = true;
   }
-
-  vuln.setStrategy("vulnerabilityStrategy" in options ? options.vulnerabilityStrategy : vuln.strategies.NPM_AUDIT);
+  if (!("vulnerabilityStrategy" in options)) {
+    options.vulnerabilityStrategy = vuln.strategies.NPM_AUDIT;
+  }
 
   return depWalker(JSON.parse(str), options);
 }
@@ -30,7 +32,9 @@ export async function from(packageName, options) {
   const token = typeof process.env.NODE_SECURE_TOKEN === "string" ? { token: process.env.NODE_SECURE_TOKEN } : {};
   const manifest = await pacote.manifest(packageName, token);
 
-  vuln.setStrategy("vulnerabilityStrategy" in options ? options.vulnerabilityStrategy : vuln.strategies.SECURITY_WG);
+  if (!("vulnerabilityStrategy" in options)) {
+    options.vulnerabilityStrategy = vuln.strategies.SECURITY_WG;
+  }
 
   return depWalker(manifest, options);
 }
