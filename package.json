@@ -9,8 +9,7 @@
   "scripts": {
     "eslint": "eslint src test",
     "eslint-fix": "npm run eslint -- --fix",
-    "prepublishOnly": "npm run build && pkg-ok",
-    "build": "node ./esbuild.config.js",
+    "prepublishOnly": "pkg-ok",
     "test": "npm run test-only && npm run eslint",
     "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
