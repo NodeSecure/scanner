@@ -7,7 +7,7 @@
     "node": ">=14"
   },
   "scripts": {
-    "eslint": "eslint bin src test",
+    "eslint": "eslint src test",
     "eslint-fix": "npm run eslint -- --fix",
     "prepublishOnly": "npm run build && pkg-ok",
     "build": "node ./esbuild.config.js",
