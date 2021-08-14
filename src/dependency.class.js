@@ -1,12 +1,11 @@
 export default class Dependency {
-  gitUrl = null;
-  dependencyCount = 0;
-  warnings = [];
-
   #flags = new Set();
   #parent = null;
 
   constructor(name, version, parent = null) {
+    this.gitUrl = null;
+    this.dependencyCount = 0;
+    this.warnings = [];
     this.name = name;
     this.version = version;
 

@@ -17,6 +17,7 @@
   "files": [
     "dist",
     "src",
+    "types",
     "index.js",
     "index.d.ts"
   ],
