@@ -28,7 +28,11 @@ import applyWarnings from "./warnings.js";
 const { red, white, yellow, cyan, gray, green } = kleur;
 
 // TODO: refactor this
-const { version: packageVersion } = import("../package.json");
+const { version: packageVersion } = JSON.parse(
+  await fs.readFile(
+    new URL(join("..", "package.json"), import.meta.url)
+  )
+);
 
 // TODO: refactor this
 Spinner.DEFAULT_SPINNER = "dots";
