@@ -4,7 +4,7 @@
   "description": "Node.js security package scanner",
   "exports": "./index.js",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
     "eslint": "eslint src test",

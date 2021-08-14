@@ -1,6 +1,6 @@
 // Import Node.js Dependencies
 import path from "path";
-import fs from "fs/promises";
+import { readFileSync, promises as fs } from "fs";
 import timers from "timers/promises";
 import os from "os";
 
@@ -14,7 +14,7 @@ import ms from "ms";
 import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
-import { packument } from "@nodesecure/npm-registry-sdk";
+import { packument, getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import { getToken } from "@nodesecure/i18n";
 import * as vuln from "@nodesecure/vuln";
 
@@ -24,14 +24,12 @@ import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 
 const { red, white, yellow, cyan, gray, green } = kleur;
-
 const { version: packageVersion } = JSON.parse(
-  await fs.readFile(
+  readFileSync(
     new URL(path.join("..", "package.json"), import.meta.url)
   )
 );
 
-// TODO: refactor this
 Spinner.DEFAULT_SPINNER = "dots";
 
 async function* searchDeepDependencies(packageName, gitURL, options) {
@@ -40,7 +38,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
 
   const { name, version, deprecated, ...pkg } = await pacote.manifest(isGit ? gitURL : packageName, {
     ...constants.NPM_TOKEN,
-    registry: constants.DEFAULT_REGISTRY_ADDR,
+    registry: getLocalRegistryURL(),
     cache: `${os.homedir()}/.npm`
   });
   const { dependencies, customResolvers } = mergeDependencies(pkg);
@@ -88,7 +86,9 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
 
   if (fullLockMode) {
     const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
-      ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR, cache: `${os.homedir()}/.npm`
+      ...constants.NPM_TOKEN,
+      registry: getLocalRegistryURL(),
+      cache: `${os.homedir()}/.npm`
     });
     const { customResolvers } = mergeDependencies(pkg);
 
@@ -185,7 +185,10 @@ async function* getRootDependencies(manifest, options) {
 
   let iterators;
   if (usePackageLock) {
-    const arb = new Arborist({ ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR });
+    const arb = new Arborist({
+      ...constants.NPM_TOKEN,
+      registry: getLocalRegistryURL()
+    });
     let tree;
     try {
       await fs.access(path.join(process.cwd(), "node_modules"));
@@ -227,7 +230,7 @@ async function* getRootDependencies(manifest, options) {
 
 export async function depWalker(manifest, options = Object.create(null)) {
   const {
-    verbose = true,
+    verbose = false,
     forceRootAnalysis = false,
     usePackageLock = false,
     fullLockMode = false,

@@ -14,6 +14,7 @@ import builtins from "builtins";
 
 // Import Internal Dependencies
 import { getTarballComposition, isSensitiveFile, getPackageName, constants } from "./utils/index.js";
+import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
 const DIRECT_PATH = new Set([".", "..", "./", "../"]);
@@ -96,7 +97,9 @@ export async function analyzeDirOrArchiveOnDisk(name, version, options) {
     // If this is an NPM tarball then we extract it on the disk with pacote.
     if (isNpmTarball) {
       await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
-        ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR, cache: `${os.homedir()}/.npm`
+        ...constants.NPM_TOKEN,
+        registry: getLocalRegistryURL(),
+        cache: `${os.homedir()}/.npm`
       });
       await timers.setImmediate();
     }
