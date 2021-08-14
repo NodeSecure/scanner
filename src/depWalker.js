@@ -15,12 +15,12 @@ import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
 import is from "@slimio/is";
-import { packument } from "@nodesecure/npm-registry-sdk/dist/index.js";
+import { packument } from "@nodesecure/npm-registry-sdk";
 import { getToken } from "@nodesecure/i18n";
+import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
-import { getVulnerabilityStrategy } from "./vulnerabilities/vulnerabilitySource.js";
 import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 import applyWarnings from "./warnings.js";
@@ -28,7 +28,11 @@ import applyWarnings from "./warnings.js";
 const { red, white, yellow, cyan, gray, green } = kleur;
 
 // TODO: refactor this
-const { version: packageVersion } = import("../package.json");
+const { version: packageVersion } = JSON.parse(
+  await fs.readFile(
+    new URL(join("..", "package.json"), import.meta.url)
+  )
+);
 
 // TODO: refactor this
 Spinner.DEFAULT_SPINNER = "dots";
@@ -224,7 +228,16 @@ async function* getRootDependencies(manifest, options) {
 }
 
 export async function depWalker(manifest, options = Object.create(null)) {
-  const { verbose = true, forceRootAnalysis = false, usePackageLock = false, fullLockMode = false } = options;
+  const {
+    verbose = true,
+    forceRootAnalysis = false,
+    usePackageLock = false,
+    fullLockMode = false,
+    vulnerabilityStrategy = vuln.strategies.NONE
+  } = options;
+
+  // Set vulnerabilities strategy
+  vuln.setStrategy(vulnerabilityStrategy);
 
   // Create TMP directory
   const tmpLocation = await fs.mkdtemp(join(os.tmpdir(), "/"));
@@ -262,6 +275,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       const stats = gray().bold(`[${yellow().bold(processedRegistryCount)}/${allDependencyCount}]`);
       regSpinner.text = white().bold(`${getToken("depWalker.fetch_metadata")} ${stats}`);
     });
+
     tarballLocker.on("freeOne", () => {
       processedTarballCount++;
       const stats = gray().bold(`[${yellow().bold(processedTarballCount)}/${allDependencyCount}]`);
@@ -316,12 +330,10 @@ export async function depWalker(manifest, options = Object.create(null)) {
     regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
   }
 
-  // Search for vulnerabilities relatively to the current initialized strategy
-  const vulnStrategy = await getVulnerabilityStrategy();
-  await vulnStrategy.hydrateNodeSecurePayload(payload.dependencies);
+  const vulnStrategy = await vuln.getStrategy();
+  vulnStrategy.hydratePayloadDependencies(payload.dependencies);
 
-  payload.vulnerabilityStrategy = vulnStrategy.type;
-
+  payload.vulnerabilityStrategy = vulnStrategy.strategy;
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.

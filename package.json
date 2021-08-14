@@ -7,12 +7,12 @@
     "node": ">=14"
   },
   "scripts": {
-    "eslint": "eslint bin src test",
+    "eslint": "eslint src test",
     "eslint-fix": "npm run eslint -- --fix",
     "prepublishOnly": "npm run build && pkg-ok",
     "build": "node ./esbuild.config.js",
     "test": "npm run test-only && npm run eslint",
-    "test-only": "cross-env NODE_OPTIONS='--experimental-vm-modules --experimental-json-modules' jest"
+    "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "files": [
     "dist",
@@ -63,6 +63,7 @@
       "/test/fixtures/"
     ],
     "moduleNameMapper": {
+      "^@nodesecure/npm-registry-sdk$": "@nodesecure/npm-registry-sdk/dist/index.js",
       "^@nodesecure/sec-literal$": "@nodesecure/sec-literal/src/index.js",
       "^estree-walker$": "estree-walker/src/index.js"
     }
@@ -81,8 +82,9 @@
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^1.1.1",
     "@nodesecure/js-x-ray": "^4.0.1",
-    "@nodesecure/npm-registry-sdk": "^1.1.1",
+    "@nodesecure/npm-registry-sdk": "^1.1.2",
     "@nodesecure/ntlp": "^1.2.1",
+    "@nodesecure/vuln": "^1.2.0",
     "@npmcli/arborist": "^2.8.0",
     "@slimio/async-cli-spinner": "^0.5.2",
     "@slimio/github": "^0.5.0",
