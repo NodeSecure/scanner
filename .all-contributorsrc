@@ -29,6 +29,15 @@
         "review",
         "bug"
       ]
+    },
+    {
+      "login": "CroquetMickael",
+      "name": "Haze",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23740372?v=4",
+      "profile": "https://mickaelcroquet.fr",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
