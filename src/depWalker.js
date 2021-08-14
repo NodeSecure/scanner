@@ -1,5 +1,5 @@
 // Import Node.js Dependencies
-import { join } from "path";
+import path from "path";
 import fs from "fs/promises";
 import timers from "timers/promises";
 import os from "os";
@@ -14,23 +14,20 @@ import ms from "ms";
 import Arborist from "@npmcli/arborist";
 import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
-import is from "@slimio/is";
 import { packument } from "@nodesecure/npm-registry-sdk";
 import { getToken } from "@nodesecure/i18n";
 import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
-import { mergeDependencies, constants, getCleanDependencyName } from "./utils/index.js";
+import { mergeDependencies, constants, getCleanDependencyName, getDependenciesWarnings } from "./utils/index.js";
 import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
 import Dependency from "./dependency.class.js";
-import applyWarnings from "./warnings.js";
 
 const { red, white, yellow, cyan, gray, green } = kleur;
 
-// TODO: refactor this
 const { version: packageVersion } = JSON.parse(
   await fs.readFile(
-    new URL(join("..", "package.json"), import.meta.url)
+    new URL(path.join("..", "package.json"), import.meta.url)
   )
 );
 
@@ -123,11 +120,11 @@ async function fetchPackageMetadata(name, version, options) {
   const free = await metadataLocker.acquireOne();
 
   try {
+    const pkg = await packument(name);
+
     const publishers = new Set();
     const oneYearFromToday = new Date();
     oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() - 1);
-
-    const pkg = await packument(name);
 
     ref.metadata.lastVersion = pkg["dist-tags"].latest;
     if (semver.neq(version, ref.metadata.lastVersion)) {
@@ -138,7 +135,7 @@ async function fetchPackageMetadata(name, version, options) {
     ref.metadata.hasReceivedUpdateInOneYear = !(oneYearFromToday > ref.metadata.lastUpdateAt);
     ref.metadata.homepage = pkg.homepage || null;
     ref.metadata.maintainers = pkg.maintainers;
-    if (is.string(pkg.author)) {
+    if (typeof pkg.author === "string") {
       ref.metadata.author = pkg.author;
     }
     else {
@@ -148,7 +145,8 @@ async function fetchPackageMetadata(name, version, options) {
     for (const ver of Object.values(pkg.versions)) {
       const { _npmUser: npmUser, version } = ver;
 
-      if (is.nullOrUndefined(npmUser) || !("name" in npmUser) || !is.string(npmUser.name)) {
+      const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
+      if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
         continue;
       }
 
@@ -190,7 +188,7 @@ async function* getRootDependencies(manifest, options) {
     const arb = new Arborist({ ...constants.NPM_TOKEN, registry: constants.DEFAULT_REGISTRY_ADDR });
     let tree;
     try {
-      await fs.access(join(process.cwd(), "node_modules"));
+      await fs.access(path.join(process.cwd(), "node_modules"));
       tree = await arb.loadActual();
     }
     catch {
@@ -236,12 +234,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
     vulnerabilityStrategy = vuln.strategies.NONE
   } = options;
 
-  // Set vulnerabilities strategy
-  vuln.setStrategy(vulnerabilityStrategy);
-
   // Create TMP directory
-  const tmpLocation = await fs.mkdtemp(join(os.tmpdir(), "/"));
-
+  const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
   const id = tmpLocation.slice(-6);
 
   const payload = {
@@ -330,7 +324,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
     regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
   }
 
-  const vulnStrategy = await vuln.getStrategy();
+  const vulnStrategy = await vuln.setStrategy(vulnerabilityStrategy);
   vulnStrategy.hydratePayloadDependencies(payload.dependencies);
 
   payload.vulnerabilityStrategy = vulnStrategy.strategy;
@@ -354,7 +348,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
   }
 
   // Apply warnings!
-  payload.warnings = applyWarnings(payload.dependencies);
+  payload.warnings = getDependenciesWarnings(payload.dependencies);
   if (payload.warnings.length > 0 && verbose) {
     console.log(`\n ${yellow().underline().bold("Global Warning:")}\n`);
     for (const warning of payload.warnings) {

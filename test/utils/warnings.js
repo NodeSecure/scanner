@@ -2,14 +2,14 @@
 import is from "@slimio/is";
 
 // Require Internal Dependencies
-import applyWarnings from "../src/warnings.js";
+import { getDependenciesWarnings } from "../../src/utils/index.js";
 
-test("applyWarnings for '@scarf/scarf'", () => {
+test("getDependenciesWarnings for '@scarf/scarf'", () => {
   const deps = new Map([
     ["@scarf/scarf", true]
   ]);
 
-  const warnsArray = applyWarnings(deps);
+  const warnsArray = getDependenciesWarnings(deps);
   expect(is.array(warnsArray)).toBe(true);
   expect(warnsArray.length).toStrictEqual(1);
   // eslint-disable-next-line max-len

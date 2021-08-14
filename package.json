@@ -69,7 +69,8 @@
     }
   },
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.1.0",
+    "@nodesecure/eslint-config": "^1.2.0",
+    "@slimio/is": "^1.5.1",
     "@types/node": "^16.4.13",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
@@ -79,16 +80,16 @@
     "pkg-ok": "^2.3.1"
   },
   "dependencies": {
+    "@nodesecure/flags": "^1.0.0",
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^1.1.1",
     "@nodesecure/js-x-ray": "^4.0.1",
     "@nodesecure/npm-registry-sdk": "^1.1.2",
     "@nodesecure/ntlp": "^1.2.1",
     "@nodesecure/vuln": "^1.2.0",
+    "@npm/types": "^1.0.1",
     "@npmcli/arborist": "^2.8.0",
     "@slimio/async-cli-spinner": "^0.5.2",
-    "@slimio/github": "^0.5.0",
-    "@slimio/is": "^1.5.1",
     "@slimio/lock": "^0.5.0",
     "builtins": "^4.0.0",
     "combine-async-iterators": "^2.0.0",

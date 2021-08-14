@@ -6,12 +6,12 @@ import os from "os";
 
 // Import Third-party Dependencies
 import pacote from "pacote";
-import * as vuln from "@nodesecure/vuln";
+import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
-import { analyseGivenLocation } from "./src/tarball.js";
-import { DEFAULT_REGISTRY_ADDR } from "./src/utils/index.js";
+import { constants } from "./src/utils/index.js";
+import * as tarball from "./src/tarball.js";
 
 export async function cwd(cwd = process.cwd(), options) {
   const packagePath = path.join(cwd, "package.json");
@@ -21,42 +21,30 @@ export async function cwd(cwd = process.cwd(), options) {
   if (!("usePackageLock" in options)) {
     options.usePackageLock = true;
   }
-  if (!("vulnerabilityStrategy" in options)) {
-    options.vulnerabilityStrategy = vuln.strategies.NPM_AUDIT;
-  }
 
   return depWalker(JSON.parse(str), options);
 }
 
 export async function from(packageName, options) {
-  const token = typeof process.env.NODE_SECURE_TOKEN === "string" ? { token: process.env.NODE_SECURE_TOKEN } : {};
-  const manifest = await pacote.manifest(packageName, token);
-
-  if (!("vulnerabilityStrategy" in options)) {
-    options.vulnerabilityStrategy = vuln.strategies.SECURITY_WG;
-  }
+  const manifest = await pacote.manifest(packageName, constants.NPM_TOKEN);
 
   return depWalker(manifest, options);
 }
 
 export async function verify(packageName = null) {
   if (typeof packageName === "undefined" || packageName === null) {
-    const analysisPayload = await analyseGivenLocation(process.cwd());
-
-    return analysisPayload;
+    return await tarball.analyseGivenLocation(process.cwd());
   }
 
-  const token = typeof process.env.NODE_SECURE_TOKEN === "string" ? { token: process.env.NODE_SECURE_TOKEN } : {};
   const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
   const dest = path.join(tmpLocation, packageName);
 
   try {
     await pacote.extract(packageName, dest, {
-      ...token, registry: DEFAULT_REGISTRY_ADDR, cache: `${os.homedir()}/.npm`
+      ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
     });
-    const analysisPayload = await analyseGivenLocation(dest, packageName);
 
-    return analysisPayload;
+    return await tarball.analyseGivenLocation(dest, packageName);
   }
   finally {
     await timers.setImmediate();

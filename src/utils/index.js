@@ -1,13 +1,10 @@
 export * from "./getTarballComposition.js";
 export * from "./isSensitiveFile.js";
 export * from "./getPackageName.js";
-export * from "./npmRegistry.js";
-export * from "./formatBytes.js";
 export * from "./mergeDependencies.js";
 export * from "./semver.js";
-export * from "./cache.js";
-export * from "./packageLock.js";
 export * from "./dirname.js";
+export * from "./warnings.js";
 
 export const constants = {
   NPM_TOKEN: typeof process.env.NODE_SECURE_TOKEN === "string" ? { token: process.env.NODE_SECURE_TOKEN } : {},

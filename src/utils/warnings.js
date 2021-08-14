@@ -13,7 +13,7 @@ function getWarning(depName) {
   return `${kDetectedDep(depName)} ${kWarningsMessages[depName]}`;
 }
 
-export default function applyWarnings(dependencies) {
+export function getDependenciesWarnings(dependencies) {
   const warnings = [];
   for (const depName of kPackages) {
     if (dependencies.has(depName)) {

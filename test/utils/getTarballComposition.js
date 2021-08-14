@@ -1,6 +1,5 @@
 // Require Node.js Dependencies
-import { promisify } from "util";
-import { join } from "path";
+import path from "path";
 
 // Require Third-party Dependencies
 import getSize from "get-folder-size";
@@ -9,9 +8,8 @@ import getSize from "get-folder-size";
 import { getTarballComposition, getDirNameFromUrl } from "../../src/utils/index.js";
 
 // CONSTANTS
-const dirname = getDirNameFromUrl(import.meta.url);
-const FIXTURE_PATH = join(dirname, "..", "fixtures", "getTarballComposition");
-
+const __dirname = getDirNameFromUrl(import.meta.url);
+const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "getTarballComposition");
 
 test("should return the composition of a directory", async() => {
   const composition = await getTarballComposition(FIXTURE_PATH);
