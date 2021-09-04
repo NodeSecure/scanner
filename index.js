@@ -51,3 +51,5 @@ export async function verify(packageName = null) {
     await fs.rm(tmpLocation, { recursive: true, force: true });
   }
 }
+
+export { depWalker, tarball };

@@ -22,32 +22,28 @@ const NATIVE_CODE_EXTENSIONS = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".
 const NATIVE_NPM_PACKAGES = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
 const NODE_CORE_LIBS = new Set(builtins());
 
-async function readTarballManifest(dest, ref) {
-  try {
-    const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
-    const {
-      description = "", author = {}, scripts = {}, dependencies = {}, devDependencies = {}, gypfile = false
-    } = JSON.parse(packageStr);
+export async function readTarballManifest(dest, ref) {
+  const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
+  const packageJSON = JSON.parse(packageStr);
+  const {
+    description = "", author = {}, scripts = {}, dependencies = {}, devDependencies = {}, gypfile = false
+  } = packageJSON;
 
-    ref.description = description;
-    ref.author = author;
-    ref.flags.hasScript = [...Object.keys(scripts)]
-      .some((value) => constants.NPM_SCRIPTS.has(value.toLowerCase()));
+  ref.description = description;
+  ref.author = author;
 
-    return {
-      packageDeps: [...Object.keys(dependencies)],
-      packageDevDeps: Object.keys(devDependencies),
-      packageGyp: gypfile
-    };
-  }
-  catch {
-    ref.flags.hasManifest = false;
+  // TODO: handle this to @nodesecure/flags
+  ref.flags.hasScript = [...Object.keys(scripts)]
+    .some((value) => constants.NPM_SCRIPTS.has(value.toLowerCase()));
 
-    return { packageDeps: null, packageDevDeps: [], packageGyp: false };
-  }
+  return {
+    packageDeps: [...Object.keys(dependencies)],
+    packageDevDeps: Object.keys(devDependencies),
+    packageGyp: gypfile
+  };
 }
 
-async function executeJSXRayAnalysisOnFile(dest, file, options) {
+export async function executeJSXRayAnalysisOnFile(dest, file, options) {
   const { name, ref } = options;
 
   try {
