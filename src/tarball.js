@@ -22,7 +22,7 @@ const NATIVE_CODE_EXTENSIONS = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".
 const NATIVE_NPM_PACKAGES = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
 const NODE_CORE_LIBS = new Set(builtins());
 
-export async function readTarballManifest(dest, ref) {
+export async function readManifest(dest, ref) {
   const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
   const packageJSON = JSON.parse(packageStr);
   const {
@@ -43,7 +43,7 @@ export async function readTarballManifest(dest, ref) {
   };
 }
 
-export async function executeJSXRayAnalysisOnFile(dest, file, options) {
+export async function scanFile(dest, file, options) {
   const { name, ref } = options;
 
   try {
@@ -82,7 +82,7 @@ export async function executeJSXRayAnalysisOnFile(dest, file, options) {
   }
 }
 
-export async function analyzeDirOrArchiveOnDisk(name, version, options) {
+export async function scanDirOrArchive(name, version, options) {
   const { ref, tmpLocation, tarballLocker } = options;
 
   const isNpmTarball = !(tmpLocation === null);
@@ -101,7 +101,7 @@ export async function analyzeDirOrArchiveOnDisk(name, version, options) {
     }
 
     // Read the package.json at the root of the directory or archive.
-    const { packageDeps, packageDevDeps, packageGyp } = await readTarballManifest(dest, ref);
+    const { packageDeps, packageDevDeps, packageGyp } = await readManifest(dest, ref);
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);
@@ -118,7 +118,7 @@ export async function analyzeDirOrArchiveOnDisk(name, version, options) {
     const fileAnalysisResults = await Promise.all(
       files
         .filter((name) => constants.EXT_JS.has(extname(name)))
-        .map((file) => executeJSXRayAnalysisOnFile(dest, file, { name, ref }))
+        .map((file) => scanFile(dest, file, { name, ref }))
     );
 
     for (const result of fileAnalysisResults.filter((row) => row !== null)) {
@@ -211,7 +211,7 @@ async function readJSFile(dest, file) {
   return [file, str];
 }
 
-export async function analyseGivenLocation(dest, packageName) {
+export async function scanPackage(dest, packageName) {
   // Read the package.json file inside the extracted directory.
   let isProjectUsingESM = false;
   let localPackageName = packageName;

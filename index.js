@@ -35,7 +35,7 @@ export async function from(packageName, options) {
 
 export async function verify(packageName = null) {
   if (typeof packageName === "undefined" || packageName === null) {
-    return await tarball.analyseGivenLocation(process.cwd());
+    return await tarball.scanPackage(process.cwd());
   }
 
   const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
@@ -46,7 +46,7 @@ export async function verify(packageName = null) {
       ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
     });
 
-    return await tarball.analyseGivenLocation(dest, packageName);
+    return await tarball.scanPackage(dest, packageName);
   }
   finally {
     await timers.setImmediate();

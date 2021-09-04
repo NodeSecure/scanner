@@ -20,7 +20,7 @@ import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName, getDependenciesWarnings } from "./utils/index.js";
-import { analyzeDirOrArchiveOnDisk } from "./tarball.js";
+import { scanDirOrArchive } from "./tarball.js";
 import Dependency from "./dependency.class.js";
 
 const { red, white, yellow, cyan, gray, green } = kleur;
@@ -306,7 +306,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       if (processDep) {
         allDependencyCount++;
         promisesToWait.push(fetchPackageMetadata(name, version, { ref: current, metadataLocker }));
-        promisesToWait.push(analyzeDirOrArchiveOnDisk(name, version, {
+        promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current[version],
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
           tarballLocker
