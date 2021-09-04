@@ -62,6 +62,8 @@ interface Options {
   readonly maxDepth?: number;
   readonly usePackageLock?: boolean;
   readonly vulnerabilityStrategy: Strategy.Kind;
+  readonly forceRootAnalysis?: boolean;
+  readonly fullLockMode?: boolean;
 }
 ```
 
