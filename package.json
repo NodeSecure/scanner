@@ -90,7 +90,7 @@
     "@npm/types": "^1.0.1",
     "@npmcli/arborist": "^2.8.0",
     "@slimio/async-cli-spinner": "^0.5.2",
-    "@slimio/lock": "^0.5.0",
+    "@slimio/lock": "^1.0.0",
     "builtins": "^4.0.0",
     "combine-async-iterators": "^2.0.0",
     "filenamify": "^5.0.0",
