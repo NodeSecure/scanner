@@ -10,9 +10,7 @@ import combineAsyncIterators from "combine-async-iterators";
 import iter from "itertools";
 import pacote from "pacote";
 import semver from "semver";
-import ms from "ms";
 import Arborist from "@npmcli/arborist";
-import Spinner from "@slimio/async-cli-spinner";
 import Lock from "@slimio/lock";
 import { packument, getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import { getToken } from "@nodesecure/i18n";
@@ -22,15 +20,14 @@ import * as vuln from "@nodesecure/vuln";
 import { mergeDependencies, constants, getCleanDependencyName, getDependenciesWarnings } from "./utils/index.js";
 import { scanDirOrArchive } from "./tarball.js";
 import Dependency from "./dependency.class.js";
+import Logger from "./logger.class.js";
 
-const { red, white, yellow, cyan, gray, green } = kleur;
 const { version: packageVersion } = JSON.parse(
   readFileSync(
     new URL(path.join("..", "package.json"), import.meta.url)
   )
 );
 
-Spinner.DEFAULT_SPINNER = "dots";
 
 async function* searchDeepDependencies(packageName, gitURL, options) {
   const isGit = typeof gitURL === "string";
@@ -228,9 +225,13 @@ async function* getRootDependencies(manifest, options) {
   yield parent;
 }
 
-export async function depWalker(manifest, options = Object.create(null)) {
+/**
+ * @param {*} manifest
+ * @param {*} options
+ * @param {Logger} logger
+ */
+export async function depWalker(manifest, options = {}, logger) {
   const {
-    verbose = false,
     forceRootAnalysis = false,
     usePackageLock = false,
     fullLockMode = false,
@@ -254,31 +255,13 @@ export async function depWalker(manifest, options = Object.create(null)) {
   const exclude = new Map();
 
   {
-    const treeSpinner = new Spinner({ verbose })
-      .start(white().bold(getToken("depWalker.fetch_and_walk_deps")));
-    const tarballSpinner = new Spinner({ verbose })
-      .start(white().bold(getToken("depWalker.waiting_tarball")));
-    const regSpinner = new Spinner({ verbose })
-      .start(white().bold(getToken("depWalker.fetch_on_registry")));
-
-    let allDependencyCount = 0;
-    let processedTarballCount = 0;
-    let processedRegistryCount = 0;
+    logger.start("walkTree").start("tarball").start("registry");
     const promisesToWait = [];
 
     const tarballLocker = new Lock({ maxConcurrent: 5 });
     const metadataLocker = new Lock({ maxConcurrent: 10 });
-    metadataLocker.on("freeOne", () => {
-      processedRegistryCount++;
-      const stats = gray().bold(`[${yellow().bold(processedRegistryCount)}/${allDependencyCount}]`);
-      regSpinner.text = white().bold(`${getToken("depWalker.fetch_metadata")} ${stats}`);
-    });
-
-    tarballLocker.on("freeOne", () => {
-      processedTarballCount++;
-      const stats = gray().bold(`[${yellow().bold(processedTarballCount)}/${allDependencyCount}]`);
-      tarballSpinner.text = white().bold(`${getToken("depWalker.analyzed_tarball")} ${stats}`);
-    });
+    metadataLocker.on("freeOne", () => logger.tick("registry"));
+    tarballLocker.on("freeOne", () => logger.tick("tarball"));
 
     const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
@@ -304,7 +287,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       }
 
       if (processDep) {
-        allDependencyCount++;
+        logger.tick("walkTree");
         promisesToWait.push(fetchPackageMetadata(name, version, { ref: current, metadataLocker }));
         promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current[version],
@@ -314,18 +297,13 @@ export async function depWalker(manifest, options = Object.create(null)) {
       }
     }
 
-    const execTree = cyan().bold(ms(Number(treeSpinner.elapsedTime.toFixed(2))));
-    treeSpinner.succeed(white().bold(
-      getToken("depWalker.success_fetch_deptree", yellow().bold(getToken("depWalker.dep_tree")), execTree)));
+    logger.end("walkTree");
 
     // Wait for all extraction to be done!
     await Promise.allSettled(promisesToWait);
     await timers.setImmediate();
 
-    const execTarball = cyan().bold(ms(Number(tarballSpinner.elapsedTime.toFixed(2))));
-    tarballSpinner.succeed(white().bold(
-      getToken("depWalker.success_tarball", green().bold(allDependencyCount), execTarball)));
-    regSpinner.succeed(white().bold(getToken("depWalker.success_registry_metadata")));
+    logger.end("tarball").end("registry");
   }
 
   const vulnStrategy = await vuln.setStrategy(vulnerabilityStrategy);
@@ -353,12 +331,14 @@ export async function depWalker(manifest, options = Object.create(null)) {
 
   // Apply warnings!
   payload.warnings = getDependenciesWarnings(payload.dependencies);
-  if (payload.warnings.length > 0 && verbose) {
-    console.log(`\n ${yellow().underline().bold("Global Warning:")}\n`);
-    for (const warning of payload.warnings) {
-      console.log(red().bold(warning));
-    }
-  }
+
+  // TODO: move this to the CLI
+  // if (payload.warnings.length > 0 && verbose) {
+  //   console.log(`\n ${kleur.yellow().underline().bold("Global Warning:")}\n`);
+  //   for (const warning of payload.warnings) {
+  //     console.log(kleur.red().bold(warning));
+  //   }
+  // }
 
   // Cleanup tmpLocation dir
   try {
@@ -366,11 +346,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
     await fs.rm(tmpLocation, { recursive: true, force: true });
   }
   catch (err) {
-    /* istanbul ignore next */
-    console.log(red().bold(getToken("depWalker.failed_rmdir", yellow().bold(tmpLocation))));
-  }
-  if (verbose) {
-    console.log("");
+    // TODO: remove this ?
+    console.log(kleur.red().bold(getToken("depWalker.failed_rmdir", kleur.yellow().bold(tmpLocation))));
   }
 
   payload.dependencies = Object.fromEntries(payload.dependencies);

@@ -11,26 +11,31 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { constants } from "./src/utils/index.js";
+import Logger from "./src/logger.class.js";
 import * as tarball from "./src/tarball.js";
 
-export async function cwd(cwd = process.cwd(), options) {
+// CONSTANTS
+const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true };
+
+export async function cwd(cwd = process.cwd(), options = {}, logger = new Logger()) {
+  const finalizedOptions = Object.assign({}, kDefaultCwdOptions, options);
+
+  logger.start("readManifest");
   const packagePath = path.join(cwd, "package.json");
   const str = await fs.readFile(packagePath, "utf-8");
+  logger.end("readManifest");
 
-  options.forceRootAnalysis = true;
-  if (!("usePackageLock" in options)) {
-    options.usePackageLock = true;
-  }
-
-  return depWalker(JSON.parse(str), options);
+  return depWalker(JSON.parse(str), finalizedOptions, logger);
 }
 
-export async function from(packageName, options) {
+export async function from(packageName, options, logger = new Logger()) {
+  logger.start("fetchManifest");
   const manifest = await pacote.manifest(packageName, {
     ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
   });
+  logger.end("fetchManifest");
 
-  return depWalker(manifest, options);
+  return depWalker(manifest, options, logger);
 }
 
 export async function verify(packageName = null) {
@@ -54,4 +59,4 @@ export async function verify(packageName = null) {
   }
 }
 
-export { depWalker, tarball };
+export { depWalker, tarball, Logger };

@@ -77,7 +77,6 @@ declare namespace Scanner {
   }
 
   export interface Options {
-    readonly verbose?: boolean;
     readonly maxDepth?: number;
     readonly usePackageLock?: boolean;
     readonly vulnerabilityStrategy: Strategy.Kind;
