@@ -26,7 +26,9 @@ export async function cwd(cwd = process.cwd(), options) {
 }
 
 export async function from(packageName, options) {
-  const manifest = await pacote.manifest(packageName, constants.NPM_TOKEN);
+  const manifest = await pacote.manifest(packageName, {
+    ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
+  });
 
   return depWalker(manifest, options);
 }

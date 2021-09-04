@@ -234,6 +234,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
     forceRootAnalysis = false,
     usePackageLock = false,
     fullLockMode = false,
+    maxDepth,
     vulnerabilityStrategy = vuln.strategies.NONE
   } = options;
 
@@ -279,7 +280,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       tarballSpinner.text = white().bold(`${getToken("depWalker.analyzed_tarball")} ${stats}`);
     });
 
-    const rootDepsOptions = { maxDepth: options.maxDepth, exclude, usePackageLock, fullLockMode };
+    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
