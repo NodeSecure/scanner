@@ -10,7 +10,7 @@
     "eslint": "eslint src test",
     "eslint-fix": "npm run eslint -- --fix",
     "prepublishOnly": "pkg-ok",
-    "test": "npm run test-only && npm run eslint",
+    "test": "npm run eslint && npm run test-only",
     "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "files": [
@@ -51,6 +51,7 @@
     "setupFilesAfterEnv": [
       "./jest.setup.js"
     ],
+    "collectCoverage": true,
     "collectCoverageFrom": [
       "**/src/**/*.js"
     ],
@@ -70,6 +71,7 @@
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.2.0",
     "@slimio/is": "^1.5.1",
+    "@types/jest": "^27.0.1",
     "@types/node": "^16.7.10",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",

@@ -230,7 +230,7 @@ async function* getRootDependencies(manifest, options) {
  * @param {*} options
  * @param {Logger} logger
  */
-export async function depWalker(manifest, options = {}, logger) {
+export async function depWalker(manifest, options = {}, logger = new Logger()) {
   const {
     forceRootAnalysis = false,
     usePackageLock = false,

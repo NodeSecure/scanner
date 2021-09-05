@@ -10,7 +10,7 @@ export default class Logger extends EventEmitter {
   }
 
   start(eventName) {
-    if (runningEvents.has(eventName)) {
+    if (this.runningEvents.has(eventName)) {
       return this;
     }
 
