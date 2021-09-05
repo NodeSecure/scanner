@@ -113,8 +113,8 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
 }
 
 async function fetchPackageMetadata(name, version, options) {
-  const { ref, metadataLocker } = options;
-  const free = await metadataLocker.acquireOne();
+  const { ref, locker } = options;
+  const free = await locker.acquireOne();
 
   try {
     const pkg = await packument(name);
@@ -241,10 +241,9 @@ export async function depWalker(manifest, options = {}, logger) {
 
   // Create TMP directory
   const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
-  const id = tmpLocation.slice(-6);
 
   const payload = {
-    id,
+    id: tmpLocation.slice(-6),
     rootDepencyName: manifest.name,
     warnings: [],
     dependencies: new Map(),
@@ -257,25 +256,27 @@ export async function depWalker(manifest, options = {}, logger) {
   {
     logger.start("walkTree").start("tarball").start("registry");
     const promisesToWait = [];
+    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
 
     const tarballLocker = new Lock({ maxConcurrent: 5 });
     const metadataLocker = new Lock({ maxConcurrent: 10 });
     metadataLocker.on("freeOne", () => logger.tick("registry"));
     tarballLocker.on("freeOne", () => logger.tick("tarball"));
 
-    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
-      let processDep = true;
+      let proceedDependencyAnalysis = true;
 
       if (payload.dependencies.has(name)) {
         // TODO: how to handle different metadata ?
         const dep = payload.dependencies.get(name);
 
         const currVersion = current.versions[0];
-        if (Reflect.has(dep, currVersion)) {
-          processDep = false;
+        if (currVersion in dep) {
+          // The dependency has already entered the analysis
+          // This happens if the package is used by multiple packages in the tree
+          proceedDependencyAnalysis = false;
         }
         else {
           dep[currVersion] = current[currVersion];
@@ -286,13 +287,19 @@ export async function depWalker(manifest, options = {}, logger) {
         payload.dependencies.set(name, current);
       }
 
-      if (processDep) {
+      if (proceedDependencyAnalysis) {
         logger.tick("walkTree");
-        promisesToWait.push(fetchPackageMetadata(name, version, { ref: current, metadataLocker }));
+
+        promisesToWait.push(fetchPackageMetadata(name, version, {
+          ref: current,
+          locker: metadataLocker,
+          logger
+        }));
         promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current[version],
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
-          tarballLocker
+          locker: tarballLocker,
+          logger
         }));
       }
     }
@@ -306,10 +313,10 @@ export async function depWalker(manifest, options = {}, logger) {
     logger.end("tarball").end("registry");
   }
 
-  const vulnStrategy = await vuln.setStrategy(vulnerabilityStrategy);
-  vulnStrategy.hydratePayloadDependencies(payload.dependencies);
+  const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
+  await hydratePayloadDependencies(payload.dependencies);
 
-  payload.vulnerabilityStrategy = vulnStrategy.strategy;
+  payload.vulnerabilityStrategy = strategy;
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.

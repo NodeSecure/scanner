@@ -1,7 +1,7 @@
 {
   "name": "@nodesecure/scanner",
   "version": "1.1.0",
-  "description": "Node.js security package scanner",
+  "description": "A package API to run a static analysis of your module's dependencies.",
   "exports": "./index.js",
   "engines": {
     "node": ">=16"
@@ -14,7 +14,6 @@
     "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "files": [
-    "dist",
     "src",
     "types",
     "index.js",
@@ -97,7 +96,6 @@
     "itertools": "^1.7.0",
     "kleur": "^4.1.4",
     "lodash.difference": "^4.5.0",
-    "lodash.get": "^4.4.2",
     "pacote": "^11.3.5",
     "semver": "^7.3.4"
   },

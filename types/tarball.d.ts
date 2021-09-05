@@ -1,4 +1,6 @@
 import ntlp from "@nodesecure/ntlp";
+import Locker from "@slimio/lock";
+import Logger from "../src/logger.class";
 
 export = tarball;
 
@@ -42,8 +44,20 @@ declare namespace tarball {
     };
   }
 
+  export interface ScanDirOrArchiveOptions {
+    ref: any;
+    locker: Locker;
+    tmpLocation: string;
+    logger: Logger;
+  }
+
+  export interface ScanFileOptions {
+    name: string;
+    ref: any;
+  }
+
   export function readManifest(dest: string, ref: any): Promise<ManifestData>;
-  export function scanFile(dest: string, file: string, options: any): Promise<ScannedFileResult | null>;
+  export function scanFile(dest: string, file: string, options: ScanFileOptions): Promise<ScannedFileResult | null>;
   export function scanPackage(dest: string, packageName: string): Promise<ScannedPackageResult>;
-  export function scanDirOrArchive(name: string, version: string, options: any): Promise<void>;
+  export function scanDirOrArchive(name: string, version: string, options: ScanDirOrArchiveOptions): Promise<void>;
 }

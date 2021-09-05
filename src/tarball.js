@@ -20,7 +20,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 const DIRECT_PATH = new Set([".", "..", "./", "../"]);
 const NATIVE_CODE_EXTENSIONS = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const NATIVE_NPM_PACKAGES = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
-const NODE_CORE_LIBS = new Set(builtins());
+const NODE_CORE_LIBS = new Set(builtins({ experimental: true }));
 
 export async function readManifest(dest, ref) {
   const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
@@ -83,11 +83,11 @@ export async function scanFile(dest, file, options) {
 }
 
 export async function scanDirOrArchive(name, version, options) {
-  const { ref, tmpLocation, tarballLocker } = options;
+  const { ref, tmpLocation, locker } = options;
 
   const isNpmTarball = !(tmpLocation === null);
   const dest = isNpmTarball ? join(tmpLocation, `${name}@${version}`) : process.cwd();
-  const free = await tarballLocker.acquireOne();
+  const free = await locker.acquireOne();
 
   try {
     // If this is an NPM tarball then we extract it on the disk with pacote.
