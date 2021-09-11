@@ -11,7 +11,7 @@ interface LoggerEventData {
 }
 
 declare class Logger extends EventEmitter {
-  public runningEvents: Map<string, LoggerEventData>;
+  public events: Map<string, LoggerEventData>;
 
   constructor();
 

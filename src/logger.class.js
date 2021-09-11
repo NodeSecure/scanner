@@ -6,15 +6,15 @@ export default class Logger extends EventEmitter {
   constructor() {
     super();
 
-    this.runningEvents = new Map();
+    this.events = new Map();
   }
 
   start(eventName) {
-    if (this.runningEvents.has(eventName)) {
+    if (this.events.has(eventName)) {
       return this;
     }
 
-    this.runningEvents.set(eventName, {
+    this.events.set(eventName, {
       startedAt: performance.now(),
       count: 0
     });
@@ -24,30 +24,30 @@ export default class Logger extends EventEmitter {
   }
 
   tick(eventName) {
-    if (!this.runningEvents.has(eventName)) {
+    if (!this.events.has(eventName)) {
       return this;
     }
 
-    this.runningEvents.get(eventName).count++;
+    this.events.get(eventName).count++;
     this.emit("tick", eventName);
 
     return this;
   }
 
   count(eventName) {
-    return this.runningEvents.get(eventName)?.count ?? 0;
+    return this.events.get(eventName)?.count ?? 0;
   }
 
   end(eventName) {
-    if (!this.runningEvents.has(eventName)) {
+    if (!this.events.has(eventName)) {
       return this;
     }
 
-    const data = this.runningEvents.get(eventName);
+    const data = this.events.get(eventName);
     this.emit("end", eventName, {
+      ...data,
       executionTime: performance.now() - data.startedAt
     });
-    this.runningEvents.delete(eventName);
 
     return this;
   }
