@@ -314,7 +314,9 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
-  await hydratePayloadDependencies(payload.dependencies);
+  await hydratePayloadDependencies(payload.dependencies, {
+    useStandardFormat: true
+  });
 
   payload.vulnerabilityStrategy = strategy;
 
