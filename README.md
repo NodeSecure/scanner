@@ -58,7 +58,6 @@ function verify(packageName: string): Promise<Scanner.VerifyPayload>;
 
 ```ts
 interface Options {
-  readonly verbose?: boolean;
   readonly maxDepth?: number;
   readonly usePackageLock?: boolean;
   readonly vulnerabilityStrategy: Strategy.Kind;
