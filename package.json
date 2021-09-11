@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/scanner",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "A package API to run a static analysis of your module's dependencies.",
   "exports": "./index.js",
   "engines": {
