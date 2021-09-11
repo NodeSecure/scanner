@@ -1,4 +1,5 @@
 import Scanner from "./scanner";
+import { Logger } from "./logger";
 
 export {
   cwd,
@@ -6,6 +7,6 @@ export {
   verify
 }
 
-declare function cwd(path: string, options?: Scanner.Options): Promise<Scanner.Payload>;
-declare function from(packageName: string, options?: Scanner.Options): Promise<Scanner.Payload>;
+declare function cwd(path: string, options?: Scanner.Options, logger?: Logger): Promise<Scanner.Payload>;
+declare function from(packageName: string, options?: Scanner.Options, logger?: Logger): Promise<Scanner.Payload>;
 declare function verify(packageName: string): Promise<Scanner.VerifyPayload>;
