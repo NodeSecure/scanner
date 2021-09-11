@@ -45,7 +45,7 @@ export default class Logger extends EventEmitter {
 
     const data = this.runningEvents.get(eventName);
     this.emit("end", eventName, {
-      executionTime: Date.now() - data.startedAt
+      executionTime: performance.now() - data.startedAt
     });
     this.runningEvents.delete(eventName);
 
