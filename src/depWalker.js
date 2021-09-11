@@ -339,14 +339,6 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   // Apply warnings!
   payload.warnings = getDependenciesWarnings(payload.dependencies);
 
-  // TODO: move this to the CLI
-  // if (payload.warnings.length > 0 && verbose) {
-  //   console.log(`\n ${kleur.yellow().underline().bold("Global Warning:")}\n`);
-  //   for (const warning of payload.warnings) {
-  //     console.log(kleur.red().bold(warning));
-  //   }
-  // }
-
   // Cleanup tmpLocation dir
   try {
     await timers.setImmediate();
