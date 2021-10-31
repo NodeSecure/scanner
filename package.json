@@ -89,7 +89,7 @@
     "@nodesecure/ntlp": "^2.0.0",
     "@nodesecure/vuln": "^1.4.0",
     "@npm/types": "^1.0.1",
-    "@npmcli/arborist": "^2.8.3",
+    "@npmcli/arborist": "^4.0.3",
     "@slimio/lock": "^1.0.0",
     "builtins": "^4.0.0",
     "combine-async-iterators": "^2.0.0",
