@@ -5,7 +5,6 @@ import timers from "timers/promises";
 import os from "os";
 
 // Import Third-party Dependencies
-import kleur from "kleur";
 import combineAsyncIterators from "combine-async-iterators";
 import iter from "itertools";
 import pacote from "pacote";
@@ -13,7 +12,6 @@ import semver from "semver";
 import Arborist from "@npmcli/arborist";
 import Lock from "@slimio/lock";
 import { packument, getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
-import { getToken } from "@nodesecure/i18n";
 import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
@@ -338,20 +336,14 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     }
   }
 
-  // Apply warnings!
-  payload.warnings = getDependenciesWarnings(payload.dependencies);
-
-  // Cleanup tmpLocation dir
   try {
+    payload.warnings = getDependenciesWarnings(payload.dependencies);
+    payload.dependencies = Object.fromEntries(payload.dependencies);
+
+    return payload;
+  }
+  finally {
     await timers.setImmediate();
     await fs.rm(tmpLocation, { recursive: true, force: true });
   }
-  catch (err) {
-    // TODO: remove this ?
-    console.log(kleur.red().bold(getToken("depWalker.failed_rmdir", kleur.yellow().bold(tmpLocation))));
-  }
-
-  payload.dependencies = Object.fromEntries(payload.dependencies);
-
-  return payload;
 }

@@ -92,10 +92,8 @@
     "@slimio/lock": "^1.0.0",
     "builtins": "^4.0.0",
     "combine-async-iterators": "^2.0.0",
-    "filenamify": "^5.0.2",
     "is-minified-code": "^2.0.0",
     "itertools": "^1.7.1",
-    "kleur": "^4.1.4",
     "lodash.difference": "^4.5.0",
     "pacote": "^12.0.2",
     "semver": "^7.3.4"
