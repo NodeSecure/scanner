@@ -69,15 +69,15 @@
     }
   },
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.2.0",
+    "@nodesecure/eslint-config": "^1.3.0",
     "@slimio/is": "^1.5.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.10",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.6",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
-    "eslint": "^7.20.0",
+    "eslint": "^8.1.0",
     "get-folder-size": "^3.1.0",
-    "jest": "^27.1.0",
+    "jest": "^27.3.1",
     "pkg-ok": "^2.3.1"
   },
   "dependencies": {
