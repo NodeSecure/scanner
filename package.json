@@ -7,10 +7,9 @@
     "node": ">=16"
   },
   "scripts": {
-    "eslint": "eslint src test",
-    "eslint-fix": "npm run eslint -- --fix",
+    "lint": "eslint src test",
     "prepublishOnly": "pkg-ok",
-    "test": "npm run eslint && npm run test-only",
+    "test": "npm run lint && npm run test-only",
     "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
   },
   "files": [
