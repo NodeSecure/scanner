@@ -6,6 +6,7 @@ import timers from "timers/promises";
 
 // Import Third-party Dependencies
 import { runASTAnalysis } from "@nodesecure/js-x-ray";
+import { parseManifestAuthor } from "@nodesecure/utils";
 import difference from "lodash.difference";
 import isMinified from "is-minified-code";
 import pacote from "pacote";
@@ -30,7 +31,7 @@ export async function readManifest(dest, ref) {
   } = packageJSON;
 
   ref.description = description;
-  ref.author = author;
+  ref.author = typeof author === "string" ? parseManifestAuthor(author) : author;
 
   // TODO: handle this to @nodesecure/flags
   ref.flags.hasScript = [...Object.keys(scripts)]

@@ -4,7 +4,9 @@ exports[`execute depWalker on @slimio/is 1`] = `
 Object {
   "@slimio/is": Object {
     "1.5.1": Object {
-      "author": "SlimIO",
+      "author": Object {
+        "name": "SlimIO",
+      },
       "composition": Object {
         "extensions": Array [
           "",
