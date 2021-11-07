@@ -62,7 +62,7 @@ export default class Dependency {
         flags: this.flags,
         description: "",
         size: 0,
-        author: "N/A",
+        author: {},
         warnings: this.warnings,
         composition: {
           extensions: [],
@@ -87,7 +87,7 @@ export default class Dependency {
         hasManyPublishers: false,
         hasReceivedUpdateInOneYear: true,
         homepage: null,
-        author: null,
+        author: {},
         publishers: [],
         maintainers: []
       }

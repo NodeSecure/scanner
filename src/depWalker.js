@@ -13,6 +13,7 @@ import Arborist from "@npmcli/arborist";
 import Lock from "@slimio/lock";
 import { packument, getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as vuln from "@nodesecure/vuln";
+import { parseManifestAuthor } from "@nodesecure/utils";
 
 // Import Internal Dependencies
 import { mergeDependencies, constants, getCleanDependencyName, getDependenciesWarnings } from "./utils/index.js";
@@ -131,11 +132,12 @@ async function fetchPackageMetadata(name, version, options) {
     ref.metadata.homepage = pkg.homepage || null;
     ref.metadata.maintainers = pkg.maintainers;
     if (typeof pkg.author === "string") {
-      ref.metadata.author = pkg.author;
+      ref.metadata.author = parseManifestAuthor(pkg.author);
     }
     else {
-      ref.metadata.author = pkg?.author?.name ?? null;
+      ref.metadata.author = pkg.author;
     }
+    const authorName = ref.metadata.author?.name ?? null;
 
     for (const ver of Object.values(pkg.versions)) {
       const { _npmUser: npmUser, version } = ver;
@@ -145,10 +147,10 @@ async function fetchPackageMetadata(name, version, options) {
         continue;
       }
 
-      if (ref.metadata.author === null) {
-        ref.metadata.author = npmUser.name;
+      if (authorName === null) {
+        ref.metadata.author.name = npmUser.name;
       }
-      else if (npmUser.name !== ref.metadata.author) {
+      else if (npmUser.name !== ref.metadata.author.name) {
         ref.metadata.hasManyPublishers = true;
       }
 
@@ -156,10 +158,6 @@ async function fetchPackageMetadata(name, version, options) {
         publishers.add(npmUser.name);
         ref.metadata.publishers.push({ name: npmUser.name, version, at: new Date(pkg.time[version]) });
       }
-    }
-
-    if (ref.metadata.author === null) {
-      ref.metadata.author = "N/A";
     }
   }
   catch (err) {

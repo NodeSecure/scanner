@@ -22,7 +22,7 @@ declare namespace Scanner {
       hasChangedAuthor: boolean;
       hasManyPublishers: boolean;
       hasReceivedUpdateInOneYear: boolean;
-      author: string | null;
+      author: Maintainer;
       homepage: string | null;
       maintainers: Maintainer[];
       publishers: Publisher[];
@@ -34,7 +34,7 @@ declare namespace Scanner {
       usedBy: Record<string, string>;
       size: number;
       description: string;
-      author: string | Maintainer;
+      author: Maintainer;
       warnings: Warning<BaseWarning>[];
       composition: {
         extensions: string[];
