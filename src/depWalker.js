@@ -221,6 +221,26 @@ async function* getRootDependencies(manifest, options) {
   yield parent;
 }
 
+function* addMissingVersionFlags(flags, descriptor) {
+  const { metadata, vulnerabilities = [], versions } = descriptor;
+
+  if (!metadata.hasReceivedUpdateInOneYear && flags.has("hasOutdatedDependency") && !flags.has("isDead")) {
+    yield "isDead";
+  }
+  if (metadata.hasManyPublishers && !flags.has("hasManyPublishers")) {
+    yield "hasManyPublishers";
+  }
+  if (metadata.hasChangedAuthor && !flags.has("hasChangedAuthor")) {
+    yield "hasChangedAuthor";
+  }
+  if (vulnerabilities.length > 0 && !flags.has("hasVulnerabilities")) {
+    yield "hasVulnerabilities";
+  }
+  if (versions.length > 1 && !flags.has("hasDuplicate")) {
+    yield "hasDuplicate";
+  }
+}
+
 /**
  * @param {*} manifest
  * @param {*} options
@@ -320,6 +340,9 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   // Because we are dealing with package only one time it may happen sometimes.
   for (const [packageName, descriptor] of payload.dependencies) {
     for (const verStr of descriptor.versions) {
+      const verDescriptor = descriptor[verStr];
+      verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), descriptor));
+
       const fullName = `${packageName}@${verStr}`;
       const usedDeps = exclude.get(fullName) || new Set();
       if (usedDeps.size === 0) {
@@ -330,7 +353,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       for (const [name, version] of [...usedDeps].map((name) => name.split(" "))) {
         usedBy[name] = version;
       }
-      Object.assign(descriptor[verStr].usedBy, usedBy);
+      Object.assign(verDescriptor.usedBy, usedBy);
     }
   }
 
