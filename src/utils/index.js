@@ -5,6 +5,7 @@ export * from "./mergeDependencies.js";
 export * from "./semver.js";
 export * from "./dirname.js";
 export * from "./warnings.js";
+export * from "./filterDependencyKind.js";
 
 export const constants = {
   NPM_TOKEN: typeof process.env.NODE_SECURE_TOKEN === "string" ? { token: process.env.NODE_SECURE_TOKEN } : {},

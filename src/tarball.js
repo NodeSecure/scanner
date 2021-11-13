@@ -14,7 +14,10 @@ import ntlp from "@nodesecure/ntlp";
 import builtins from "builtins";
 
 // Import Internal Dependencies
-import { getTarballComposition, isSensitiveFile, getPackageName, constants } from "./utils/index.js";
+import {
+  getTarballComposition, isSensitiveFile, getPackageName, filterDependencyKind,
+  constants
+} from "./utils/index.js";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
@@ -54,17 +57,7 @@ export async function scanFile(dest, file, options) {
     const ASTAnalysis = runASTAnalysis(str, { isMinified: isMin });
     ASTAnalysis.dependencies.removeByName(name);
 
-    const dependencies = [];
-    const filesDependencies = [];
-    for (const depName of ASTAnalysis.dependencies) {
-      if (depName.startsWith(".")) {
-        const indexName = kDirectPath.has(depName) ? join(depName, "index.js") : join(dirname(file), depName);
-        filesDependencies.push(indexName);
-      }
-      else {
-        dependencies.push(depName);
-      }
-    }
+    const { packages, files } = filterDependencyKind(ASTAnalysis.dependencies);
     const inTryDeps = [...ASTAnalysis.dependencies.getDependenciesInTryStatement()];
 
     if (!ASTAnalysis.isOneLineRequire && isMin) {
@@ -72,7 +65,7 @@ export async function scanFile(dest, file, options) {
     }
     ref.warnings.push(...ASTAnalysis.warnings.map((curr) => Object.assign({}, curr, { file })));
 
-    return { inTryDeps, dependencies, filesDependencies };
+    return { inTryDeps, dependencies: packages, filesDependencies: files };
   }
   catch (error) {
     if (!("code" in error)) {
