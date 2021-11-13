@@ -13,6 +13,9 @@ test("Dependency class should act as expected by assertions", (tape) => {
   tape.strictEqual(dep.name, "semver");
   tape.strictEqual(dep.version, "1.0.0");
   tape.strictEqual(dep.fullName, "semver 1.0.0");
+  tape.strictEqual(dep.dependencyCount, 0);
+  tape.deepEqual(dep.warnings, []);
+  tape.strictEqual(dep.gitUrl, null);
   tape.strictEqual(Reflect.ownKeys(dep).length, 5);
 
   const flagOne = dep.flags;
@@ -27,6 +30,7 @@ test("Dependency children should write his parent as usedBy when exported", (tap
   const semverDep = new Dependency("semver", "1.0.0");
   const testDep = new Dependency("test", "1.0.0", semverDep);
 
+  tape.strictEqual(semverDep.dependencyCount, 1);
   tape.deepEqual(testDep.parent, {
     [semverDep.name]: semverDep.version
   });
@@ -35,6 +39,19 @@ test("Dependency children should write his parent as usedBy when exported", (tap
   tape.deepEqual(flatDep["1.0.0"].usedBy, {
     [semverDep.name]: semverDep.version
   });
+
+  tape.end();
+});
+
+test("Create a dependency with one warning", (tape) => {
+  const semverDep = new Dependency("semver", "1.0.0");
+  const fakeWarning = { foo: "bar" };
+  semverDep.warnings.push(fakeWarning);
+
+  const flatDep = semverDep.exportAsPlainObject(void 0);
+  const version = flatDep["1.0.0"];
+  tape.deepEqual(version.flags, ["hasWarnings"]);
+  tape.strictEqual(version.warnings[0], fakeWarning);
 
   tape.end();
 });
@@ -53,4 +70,17 @@ test("Create a GIT Dependency (flags.isGit must be set to true)", (tape) => {
   tape.true(flatMocha["1.0.0"].flags.includes("isGit"));
 
   tape.end();
+});
+
+test("Dependency.addFlag should throw a TypeError if flagName is not string", (tape) => {
+  tape.plan(2);
+
+  const semverDep = new Dependency("semver", "1.0.0");
+  try {
+    semverDep.addFlag(10);
+  }
+  catch (error) {
+    tape.strictEqual(error.name, "TypeError");
+    tape.strictEqual(error.message, "flagName argument must be typeof string");
+  }
 });
