@@ -35,7 +35,7 @@ export async function getExpectedSemVer(depName, range) {
     });
     const currVersion = semver.maxSatisfying(Object.keys(versions), range);
 
-    return [currVersion === null ? latest : currVersion, semver.eq(latest, currVersion)];
+    return currVersion === null ? [latest, true] : [currVersion, semver.eq(latest, currVersion)];
   }
   catch (err) {
     return [cleanRange(range), true];

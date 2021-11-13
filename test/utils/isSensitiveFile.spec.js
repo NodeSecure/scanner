@@ -1,19 +1,26 @@
+// Import Third-party Dependencies
+import test from "tape";
+
 // Import Internal Dependencies
 import { isSensitiveFile } from "../../src/utils/index.js";
 
-describe("isSensitiveFile", () => {
-  it("should return true for sensitive files", () => {
-    expect(isSensitiveFile(".npmrc")).toBe(true);
-    expect(isSensitiveFile(".env")).toBe(true);
-  });
+test("isSensitiveFile should return true for sensitive files", (tape) => {
+  tape.true(isSensitiveFile(".npmrc"));
+  tape.true(isSensitiveFile(".env"));
 
-  it("should return true for sensitive extensions", () => {
-    expect(isSensitiveFile("lol.key")).toBe(true);
-    expect(isSensitiveFile("bar.pem")).toBe(true);
-  });
+  tape.end();
+});
 
-  it("should return false for classical extension or file name", () => {
-    expect(isSensitiveFile("test.js")).toBe(false);
-    expect(isSensitiveFile(".eslintrc")).toBe(false);
-  });
+test("isSensitiveFile should return true for sensitive extensions", (tape) => {
+  tape.true(isSensitiveFile("lol.key"), ".key extension is sensible");
+  tape.true(isSensitiveFile("bar.pem"), ".pem extension is sensible");
+
+  tape.end();
+});
+
+test("isSensitiveFile should return false for classical extension or file name", (tape) => {
+  tape.false(isSensitiveFile("test.js"));
+  tape.false(isSensitiveFile(".eslintrc"));
+
+  tape.end();
 });

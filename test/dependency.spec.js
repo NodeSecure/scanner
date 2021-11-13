@@ -1,48 +1,56 @@
 // Require Third-party Dependencies
 import is from "@slimio/is";
+import test from "tape";
 
 // Require Internal Dependencies
 import Dependency from "../src/dependency.class.js";
 
-test("Dependency class should act as expected by assertions", () => {
-  expect(is.classObject(Dependency)).toStrictEqual(true);
+test("Dependency class should act as expected by assertions", (tape) => {
+  tape.true(is.classObject(Dependency));
 
   const dep = new Dependency("semver", "1.0.0");
-  expect(dep.parent).toMatchObject({});
-  expect(dep.name).toStrictEqual("semver");
-  expect(dep.version).toStrictEqual("1.0.0");
-  expect(dep.fullName).toStrictEqual("semver 1.0.0");
-  expect(Reflect.ownKeys(dep)).toHaveLength(5);
+  tape.deepEqual(dep.parent, {});
+  tape.strictEqual(dep.name, "semver");
+  tape.strictEqual(dep.version, "1.0.0");
+  tape.strictEqual(dep.fullName, "semver 1.0.0");
+  tape.strictEqual(Reflect.ownKeys(dep).length, 5);
 
   const flagOne = dep.flags;
   const flagTwo = dep.flags;
-  expect(flagOne).toMatchObject(flagTwo);
-  expect(flagOne === flagTwo).toStrictEqual(false);
+  tape.deepEqual(flagOne, flagTwo);
+  tape.false(flagOne === flagTwo);
+
+  tape.end();
 });
 
-test("Dependency children should write his parent as usedBy when exported", () => {
+test("Dependency children should write his parent as usedBy when exported", (tape) => {
   const semverDep = new Dependency("semver", "1.0.0");
-
   const testDep = new Dependency("test", "1.0.0", semverDep);
 
-  expect(testDep.parent).toMatchObject({
+  tape.deepEqual(testDep.parent, {
     [semverDep.name]: semverDep.version
   });
 
   const flatDep = testDep.exportAsPlainObject(void 0);
-  expect(flatDep["1.0.0"].usedBy).toMatchObject({
+  tape.deepEqual(flatDep["1.0.0"].usedBy, {
     [semverDep.name]: semverDep.version
   });
+
+  tape.end();
 });
 
-test("Create a GIT Dependency (flags.isGit must be set to true)", () => {
+test("Create a GIT Dependency (flags.isGit must be set to true)", (tape) => {
   const semverDep = new Dependency("semver", "1.0.0").isGit();
-  expect(semverDep.gitUrl).toStrictEqual(null);
+  tape.is(semverDep.gitUrl, null);
+
   const flatSemver = semverDep.exportAsPlainObject(void 0);
-  expect(flatSemver["1.0.0"].flags.includes("isGit")).toStrictEqual(true);
+  tape.true(flatSemver["1.0.0"].flags.includes("isGit"));
 
   const mochaDep = new Dependency("mocha", "1.0.0").isGit("https://github.com/mochajs/mocha");
-  expect(mochaDep.gitUrl).toStrictEqual("https://github.com/mochajs/mocha");
+  tape.strictEqual(mochaDep.gitUrl, "https://github.com/mochajs/mocha");
+
   const flatMocha = mochaDep.exportAsPlainObject(void 0);
-  expect(flatMocha["1.0.0"].flags.includes("isGit")).toStrictEqual(true);
+  tape.true(flatMocha["1.0.0"].flags.includes("isGit"));
+
+  tape.end();
 });

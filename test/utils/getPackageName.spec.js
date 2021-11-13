@@ -1,16 +1,23 @@
+// Import Third-party Dependencies
+import test from "tape";
+
 // Import Internal Dependencies
 import { getPackageName } from "../../src/utils/index.js";
 
-describe("getPackageName", () => {
-  it("should return the package name (if there is not slash char at all)", () => {
-    expect(getPackageName("is")).toStrictEqual("is");
-  });
+test("getPackageName should return the package name (if there is not slash char at all)", (tape) => {
+  tape.is(getPackageName("mocha"), "mocha");
 
-  it("should return the package name (first part before '/' character)", () => {
-    expect(getPackageName("is/test")).toStrictEqual("is");
-  });
+  tape.end();
+});
 
-  it("should return the package name with organization namespace", () => {
-    expect(getPackageName("@slimio/is/test")).toStrictEqual("@slimio/is");
-  });
+test("getPackageName should return the package name (first part before '/' character)", (tape) => {
+  tape.is(getPackageName("foo/bar"), "foo");
+
+  tape.end();
+});
+
+test("getPackageName should return the package name with organization namespace", (tape) => {
+  tape.is(getPackageName("@slimio/is/test"), "@slimio/is");
+
+  tape.end();
 });

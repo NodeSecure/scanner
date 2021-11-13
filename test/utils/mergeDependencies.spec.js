@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 
 // Require Third-party Dependencies
 import is from "@slimio/is";
+import test from "tape";
 
 // Require Internal Dependencies
 import { mergeDependencies, getDirNameFromUrl } from "../../src/utils/index.js";
@@ -17,47 +18,59 @@ const one = JSON.parse(readFileSync(join(FIXTURE_PATH, "one.json"), "utf-8"));
 const two = JSON.parse(readFileSync(join(FIXTURE_PATH, "two.json"), "utf-8"));
 const three = JSON.parse(readFileSync(join(FIXTURE_PATH, "three.json"), "utf-8"));
 
-test("should return the one.json field 'dependencies' merged", () => {
+test("should return the one.json field 'dependencies' merged", (tape) => {
   const result = mergeDependencies(one);
+  tape.true(is.plainObject(result), "result value of mergeDependencies must be a plainObject.");
 
-  expect(is.plainObject(result)).toStrictEqual(true);
-  expect(result.dependencies).toMatchObject(new Map([
+  const expected = new Map([
     ["semver", "^0.1.0"],
     ["test", "~0.5.0"]
-  ]));
-  expect(result.customResolvers).toMatchObject(new Map());
+  ]);
+  tape.deepEqual(result.dependencies, expected);
+  tape.deepEqual(result.customResolvers, new Map());
+
+  tape.end();
 });
 
-test("should return the one.json field 'dependencies' & 'devDependencies' merged", () => {
+test("should return the one.json field 'dependencies' & 'devDependencies' merged", (tape) => {
   const result = mergeDependencies(one, ["dependencies", "devDependencies"]);
+  tape.true(is.plainObject(result), "result value of mergeDependencies must be a plainObject.");
 
-  expect(is.plainObject(result)).toStrictEqual(true);
-  expect(result.dependencies).toMatchObject(new Map([
+  const expected = new Map([
     ["semver", "^0.1.0"],
     ["test", "~0.5.0"],
     ["ava", "^1.0.0"]
-  ]));
-  expect(result.customResolvers).toMatchObject(new Map());
+  ]);
+  tape.deepEqual(result.dependencies, expected);
+  tape.deepEqual(result.customResolvers, new Map());
+
+  tape.end();
 });
 
-test("should return two.json 'dependencies' & 'devDependencies' merged (with a custom Resolvers)", () => {
+test("should return two.json 'dependencies' & 'devDependencies' merged (with a custom Resolvers)", (tape) => {
   const result = mergeDependencies(two, ["dependencies", "devDependencies"]);
+  tape.true(is.plainObject(result), "result value of mergeDependencies must be a plainObject.");
+
+  const expected = new Map([
+    ["@slimio/is", "^1.4.0"],
+    ["japa", "~0.1.0"]
+  ]);
+  tape.deepEqual(result.dependencies, expected);
+
   const resolvers = new Map([
     ["custom", "file:\\file.js"]
   ]);
+  tape.deepEqual(result.customResolvers, resolvers);
 
-  expect(is.plainObject(result)).toStrictEqual(true);
-  expect(result.dependencies).toMatchObject(new Map([
-    ["@slimio/is", "^1.4.0"],
-    ["japa", "~0.1.0"]
-  ]));
-  expect(result.customResolvers).toMatchObject(resolvers);
+  tape.end();
 });
 
-test("should return no dependencies/customResolvers for three.json", () => {
+test("should return no dependencies/customResolvers for three.json", (tape) => {
   const result = mergeDependencies(three, ["dependencies", "devDependencies"]);
+  tape.true(is.plainObject(result), "result value of mergeDependencies must be a plainObject.");
 
-  expect(is.plainObject(result)).toStrictEqual(true);
-  expect(result.dependencies.size).toStrictEqual(0);
-  expect(result.customResolvers.size).toStrictEqual(0);
+  tape.strictEqual(result.dependencies.size, 0);
+  tape.strictEqual(result.customResolvers.size, 0);
+
+  tape.end();
 });

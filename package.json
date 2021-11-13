@@ -10,7 +10,8 @@
     "lint": "eslint src test",
     "prepublishOnly": "pkg-ok",
     "test": "npm run lint && npm run test-only",
-    "test-only": "cross-env NODE_OPTIONS=--experimental-vm-modules jest"
+    "test-only": "cross-env esm-tape-runner 'test/**/*.spec.js' | tap-monkey",
+    "coverage": "c8 -r html npm run test-only"
   },
   "files": [
     "src",
@@ -46,38 +47,21 @@
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
   "homepage": "https://github.com/NodeSecure/scanner#readme",
-  "jest": {
-    "setupFilesAfterEnv": [
-      "./jest.setup.js"
-    ],
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "**/src/**/*.js"
-    ],
-    "testEnvironment": "node",
-    "testMatch": [
-      "**/test/**/*.spec.js"
-    ],
-    "testPathIgnorePatterns": [
-      "/test/fixtures/"
-    ],
-    "moduleNameMapper": {
-      "^@nodesecure/npm-registry-sdk$": "@nodesecure/npm-registry-sdk/dist/index.js",
-      "^@nodesecure/sec-literal$": "@nodesecure/sec-literal/src/index.js",
-      "^estree-walker$": "estree-walker/src/index.js"
-    }
-  },
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.3.0",
     "@slimio/is": "^1.5.1",
-    "@types/jest": "^27.0.2",
+    "@small-tech/esm-tape-runner": "^1.0.3",
+    "@small-tech/tap-monkey": "^1.3.0",
     "@types/node": "^16.11.7",
+    "c8": "^7.10.0",
     "cross-env": "^7.0.3",
     "dotenv": "^10.0.0",
     "eslint": "^8.2.0",
     "get-folder-size": "^3.1.0",
-    "jest": "^27.3.1",
-    "pkg-ok": "^2.3.1"
+    "pkg-ok": "^2.3.1",
+    "sinon": "^12.0.1",
+    "snap-shot-core": "^10.2.4",
+    "tape": "^5.3.1"
   },
   "dependencies": {
     "@nodesecure/flags": "^2.2.0",
