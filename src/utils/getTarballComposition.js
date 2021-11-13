@@ -21,16 +21,14 @@ export async function getTarballComposition(tarballDir) {
     }
   }
 
-  try {
-    const sizeAll = await Promise.all([
-      ...files.map((file) => fs.stat(file)),
-      ...dirs.map((file) => fs.stat(file))
-    ]);
-    size += sizeAll.reduce((prev, curr) => prev + curr.size, 0);
-  }
-  catch (err) {
-    // ignore
-  }
+  const sizeUnfilteredResult = await Promise.allSettled([
+    ...files.map((file) => fs.stat(file)),
+    ...dirs.map((file) => fs.stat(file))
+  ]);
+  const sizeAll = sizeUnfilteredResult
+    .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
+    .map((promiseSettledResult) => promiseSettledResult.value);
+  size += sizeAll.reduce((prev, curr) => prev + curr.size, 0);
 
   return {
     ext,
