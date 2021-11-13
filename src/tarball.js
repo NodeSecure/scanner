@@ -18,10 +18,10 @@ import { getTarballComposition, isSensitiveFile, getPackageName, constants } fro
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
-const DIRECT_PATH = new Set([".", "..", "./", "../"]);
-const NATIVE_CODE_EXTENSIONS = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const NATIVE_NPM_PACKAGES = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
-const NODE_CORE_LIBS = new Set(builtins({ experimental: true }));
+const kDirectPath = new Set([".", "..", "./", "../"]);
+const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
+const kNativeNpmPackages = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
+const kNodeModules = new Set(builtins({ experimental: true }));
 
 export async function readManifest(dest, ref) {
   const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
@@ -58,7 +58,7 @@ export async function scanFile(dest, file, options) {
     const filesDependencies = [];
     for (const depName of ASTAnalysis.dependencies) {
       if (depName.startsWith(".")) {
-        const indexName = DIRECT_PATH.has(depName) ? join(depName, "index.js") : join(dirname(file), depName);
+        const indexName = kDirectPath.has(depName) ? join(depName, "index.js") : join(dirname(file), depName);
         filesDependencies.push(indexName);
       }
       else {
@@ -130,10 +130,10 @@ export async function scanDirOrArchive(name, version, options) {
 
     // Search for native code
     {
-      const hasNativeFile = files.some((file) => NATIVE_CODE_EXTENSIONS.has(extname(file)));
+      const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(extname(file)));
       const hasNativePackage = hasNativeFile ? null : [
         ...new Set([...packageDevDeps, ...(packageDeps || [])])
-      ].some((pkg) => NATIVE_NPM_PACKAGES.has(pkg));
+      ].some((pkg) => kNativeNpmPackages.has(pkg));
 
       if (hasNativeFile || hasNativePackage || packageGyp) {
         ref.flags.push("hasNativeCode");
@@ -149,7 +149,7 @@ export async function scanDirOrArchive(name, version, options) {
       const thirdPartyDependencies = required
         .map((name) => (packageDeps.includes(name) ? name : getPackageName(name)))
         .filter((name) => !name.startsWith("."))
-        .filter((name) => !NODE_CORE_LIBS.has(name))
+        .filter((name) => !kNodeModules.has(name))
         .filter((name) => !packageDevDeps.includes(name))
         .filter((name) => !inTryDeps.has(name));
       ref.composition.required_thirdparty = thirdPartyDependencies;
@@ -171,7 +171,7 @@ export async function scanDirOrArchive(name, version, options) {
     //     return files.includes(depName) ? depName : join(depName, "index.js");
     // })
       .map((depName) => (extname(depName) === "" ? `${depName}.js` : depName));
-    ref.composition.required_nodejs = required.filter((name) => NODE_CORE_LIBS.has(name));
+    ref.composition.required_nodejs = required.filter((name) => kNodeModules.has(name));
 
     if (ref.composition.minified.length > 0) {
       ref.flags.push("hasMinifiedCode");

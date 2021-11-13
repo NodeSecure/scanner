@@ -27,7 +27,6 @@ const { version: packageVersion } = JSON.parse(
   )
 );
 
-
 async function* searchDeepDependencies(packageName, gitURL, options) {
   const isGit = typeof gitURL === "string";
   const { exclude, currDepth = 0, parent, maxDepth } = options;
