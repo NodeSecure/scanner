@@ -28,7 +28,7 @@ test("filterDependencyKind should be able to match all relative import path", (t
   tape.end();
 });
 
-test("filterDependencyKind should be able to match all relative import path", (tape) => {
+test("filterDependencyKind should be able to match a file and join with the relative path", (tape) => {
   const result = filterDependencyKind(["./foobar.js"], process.cwd());
   tape.deepEqual(result.files, [
     path.join(process.cwd(), "foobar.js")
