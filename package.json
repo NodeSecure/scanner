@@ -56,7 +56,7 @@
     ],
     "testEnvironment": "node",
     "testMatch": [
-      "**/test/**/*.js"
+      "**/test/**/*.spec.js"
     ],
     "testPathIgnorePatterns": [
       "/test/fixtures/"
