@@ -1,7 +1,10 @@
+// Import Node.js Dependencies
+import path from "path";
+
 // CONSTANTS
 const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 
-export function filterDependencyKind(dependencies) {
+export function filterDependencyKind(dependencies, relativeFileLocation) {
   const packages = [];
   const files = [];
 
@@ -13,8 +16,8 @@ export function filterDependencyKind(dependencies) {
     if (pattern.charAt(0) === ".") {
       // Note: condition only possible for CJS
       const relativePathToFile = kRelativeImportPath.has(pattern) ?
-        join(pattern, "index.js") :
-        join(dirname(file), pattern);
+        path.join(pattern, "index.js") :
+        path.join(relativeFileLocation, pattern);
 
       files.push(relativePathToFile);
     }

@@ -57,7 +57,7 @@ export async function scanFile(dest, file, options) {
     const ASTAnalysis = runASTAnalysis(str, { isMinified: isMin });
     ASTAnalysis.dependencies.removeByName(name);
 
-    const { packages, files } = filterDependencyKind(ASTAnalysis.dependencies);
+    const { packages, files } = filterDependencyKind(ASTAnalysis.dependencies, dirname(file));
     const inTryDeps = [...ASTAnalysis.dependencies.getDependenciesInTryStatement()];
 
     if (!ASTAnalysis.isOneLineRequire && isMin) {
