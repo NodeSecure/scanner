@@ -2,7 +2,7 @@ name: Node.js CI
 
 on:
   push:
-    branches: main
+    branches: master
   pull_request:
 
 jobs:
@@ -21,4 +21,4 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run tests
-        run: npm run test
+        run: npm run test-only
