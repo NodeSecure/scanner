@@ -4,7 +4,7 @@ import semver from "semver";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
-import { constants } from "./index.js";
+import { NPM_TOKEN } from "./index.js";
 
 /**
  * @param {!string} version semver range
@@ -31,7 +31,7 @@ export function cleanRange(version) {
 export async function getExpectedSemVer(depName, range) {
   try {
     const { versions, "dist-tags": { latest } } = await pacote.packument(depName, {
-      ...constants.NPM_TOKEN, registry: getLocalRegistryURL()
+      ...NPM_TOKEN, registry: getLocalRegistryURL()
     });
     const currVersion = semver.maxSatisfying(Object.keys(versions), range);
 

@@ -3,7 +3,7 @@ import is from "@slimio/is";
 import test from "tape";
 
 // Require Internal Dependencies
-import Dependency from "../src/dependency.class.js";
+import Dependency from "../../src/class/dependency.class.js";
 
 test("Dependency class should act as expected by assertions", (tape) => {
   tape.true(is.classObject(Dependency));

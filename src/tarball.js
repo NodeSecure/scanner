@@ -6,7 +6,6 @@ import timers from "timers/promises";
 
 // Import Third-party Dependencies
 import { runASTAnalysis } from "@nodesecure/js-x-ray";
-import { parseManifestAuthor } from "@nodesecure/utils";
 import difference from "lodash.difference";
 import isMinified from "is-minified-code";
 import pacote from "pacote";
@@ -16,44 +15,26 @@ import builtins from "builtins";
 // Import Internal Dependencies
 import {
   getTarballComposition, isSensitiveFile, getPackageName, filterDependencyKind,
-  constants
+  NPM_TOKEN
 } from "./utils/index.js";
+import * as manifest from "./manifest.js";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kNativeNpmPackages = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
+const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
+const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 const kNodeModules = new Set(builtins({ experimental: true }));
 
-export async function readManifest(dest) {
-  const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
-  const {
-    description = "", author = {}, scripts = {}, dependencies = {}, devDependencies = {}, gypfile = false
-  } = JSON.parse(packageStr);
-
-  const packageAuthor = typeof author === "string" ? parseManifestAuthor(author) : author;
-  const hasScript = [...Object.keys(scripts)]
-    .some((value) => constants.NPM_SCRIPTS.has(value.toLowerCase()));
-
-  return {
-    author: packageAuthor,
-    description,
-    hasScript,
-    packageDeps: [...Object.keys(dependencies)],
-    packageDevDeps: Object.keys(devDependencies),
-    packageGyp: gypfile
-  };
-}
-
 export async function scanFile(dest, file, options) {
-  const { name, ref } = options;
-
   try {
+    const { packageName, ref } = options;
+
     const str = await fs.readFile(join(dest, file), "utf-8");
     const isMin = file.includes(".min") || isMinified(str);
 
     const ASTAnalysis = runASTAnalysis(str, { isMinified: isMin });
-    ASTAnalysis.dependencies.removeByName(name);
+    ASTAnalysis.dependencies.removeByName(packageName);
 
     const { packages, files } = filterDependencyKind(ASTAnalysis.dependencies, dirname(file));
     const inTryDeps = [...ASTAnalysis.dependencies.getDependenciesInTryStatement()];
@@ -66,6 +47,7 @@ export async function scanFile(dest, file, options) {
     return { inTryDeps, dependencies: packages, filesDependencies: files };
   }
   catch (error) {
+    console.log(error);
     if (!("code" in error)) {
       ref.warnings.push({ file, kind: "parsing-error", value: error.message, location: [[0, 0], [0, 0]] });
     }
@@ -85,7 +67,7 @@ export async function scanDirOrArchive(name, version, options) {
     // If this is an NPM tarball then we extract it on the disk with pacote.
     if (isNpmTarball) {
       await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
-        ...constants.NPM_TOKEN,
+        ...NPM_TOKEN,
         registry: getLocalRegistryURL(),
         cache: `${os.homedir()}/.npm`
       });
@@ -93,7 +75,7 @@ export async function scanDirOrArchive(name, version, options) {
     }
 
     // Read the package.json at the root of the directory or archive.
-    const { packageDeps, packageDevDeps, packageGyp, author, description, hasScript } = await readManifest(dest, ref);
+    const { packageDeps, packageDevDeps, author, description, hasScript, hasNativeElements } = await manifest.readAnalyze(dest);
     ref.author = author;
     ref.description = description;
     ref.flags.hasScript = hasScript;
@@ -112,8 +94,8 @@ export async function scanDirOrArchive(name, version, options) {
     const [dependencies, filesDependencies, inTryDeps] = [new Set(), new Set(), new Set()];
     const fileAnalysisResults = await Promise.all(
       files
-        .filter((name) => constants.EXT_JS.has(extname(name)))
-        .map((file) => scanFile(dest, file, { name, ref }))
+        .filter((name) => kJsExtname.has(extname(name)))
+        .map((file) => scanFile(dest, file, { packageName: name, ref }))
     );
 
     for (const result of fileAnalysisResults.filter((row) => row !== null)) {
@@ -123,17 +105,9 @@ export async function scanDirOrArchive(name, version, options) {
     }
 
     // Search for native code
-    {
-      const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(extname(file)));
-
-      // TODO: move this to readManifest
-      const hasNativePackage = hasNativeFile ? false : [
-        ...new Set([...packageDevDeps, ...packageDeps])
-      ].some((pkg) => kNativeNpmPackages.has(pkg));
-
-      if (hasNativeFile || hasNativePackage || packageGyp) {
-        ref.flags.push("hasNativeCode");
-      }
+    const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(extname(file)));
+    if (hasNativeFile || hasNativeElements) {
+      ref.flags.push("hasNativeCode");
     }
 
     if (ref.warnings.length > 0 && !ref.flags.includes("hasWarnings")) {
@@ -164,9 +138,6 @@ export async function scanDirOrArchive(name, version, options) {
 
     ref.composition.required_files = [...filesDependencies]
       .filter((depName) => depName.trim() !== "")
-    // .map((depName) => {
-    //     return files.includes(depName) ? depName : join(depName, "index.js");
-    // })
       .map((depName) => (extname(depName) === "" ? `${depName}.js` : depName));
     ref.composition.required_nodejs = required.filter((name) => kNodeModules.has(name));
 
@@ -175,7 +146,7 @@ export async function scanDirOrArchive(name, version, options) {
     }
 
     const hasExternalCapacity = ref.composition.required_nodejs
-      .some((depName) => constants.EXT_DEPS.has(depName));
+      .some((depName) => kExternalModules.has(depName));
     if (hasExternalCapacity) {
       ref.flags.push("hasExternalCapacity");
     }
@@ -210,19 +181,8 @@ async function readJSFile(dest, file) {
 }
 
 export async function scanPackage(dest, packageName) {
-  // Read the package.json file inside the extracted directory.
-  let isProjectUsingESM = false;
-  let localPackageName = packageName;
-  {
-    const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
-    const { type = "script", name } = JSON.parse(packageStr);
-    isProjectUsingESM = type === "module";
-    if (localPackageName === null) {
-      localPackageName = name;
-    }
-  }
+  const { type = "script", name } = await manifest.read(dest);
 
-  // Get the tarball composition
   await timers.setImmediate();
   const { ext, files, size } = await getTarballComposition(dest);
 
@@ -231,7 +191,7 @@ export async function scanPackage(dest, packageName) {
   const minified = [];
   const warnings = [];
 
-  const JSFiles = files.filter((name) => constants.EXT_JS.has(extname(name)));
+  const JSFiles = files.filter((name) => kJsExtname.has(extname(name)));
   const allFilesContent = (await Promise.allSettled(JSFiles.map((file) => readJSFile(dest, file))))
     .filter((_p) => _p.status === "fulfilled").map((_p) => _p.value);
 
@@ -239,9 +199,9 @@ export async function scanPackage(dest, packageName) {
   for (const [file, str] of allFilesContent) {
     try {
       const ASTAnalysis = runASTAnalysis(str, {
-        module: extname(file) === ".mjs" ? true : isProjectUsingESM
+        module: extname(file) === ".mjs" ? true : type === "module"
       });
-      ASTAnalysis.dependencies.removeByName(localPackageName);
+      ASTAnalysis.dependencies.removeByName(packageName ?? name);
       dependencies[file] = ASTAnalysis.dependencies.dependencies;
       warnings.push(...ASTAnalysis.warnings.map((warn) => {
         warn.file = file;

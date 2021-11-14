@@ -10,8 +10,8 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
-import { constants } from "./src/utils/index.js";
-import Logger from "./src/logger.class.js";
+import { NPM_TOKEN } from "./src/utils/index.js";
+import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
 
 // CONSTANTS
@@ -31,7 +31,7 @@ export async function cwd(cwd = process.cwd(), options = {}, logger = new Logger
 export async function from(packageName, options, logger = new Logger()) {
   logger.start("fetchManifest");
   const manifest = await pacote.manifest(packageName, {
-    ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
+    ...NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
   });
   logger.end("fetchManifest");
 
@@ -48,7 +48,7 @@ export async function verify(packageName = null) {
 
   try {
     await pacote.extract(packageName, dest, {
-      ...constants.NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
+      ...NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
     });
 
     return await tarball.scanPackage(dest, packageName);

@@ -15,7 +15,7 @@ export function filterDependencyKind(dependencies, relativeFileLocation) {
   const files = [];
 
   for (const moduleNameOrPath of dependencies) {
-    const firstChar = pattern.charAt(0);
+    const firstChar = moduleNameOrPath.charAt(0);
 
     /**
      * @example

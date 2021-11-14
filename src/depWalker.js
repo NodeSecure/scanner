@@ -16,10 +16,10 @@ import * as vuln from "@nodesecure/vuln";
 import { parseManifestAuthor } from "@nodesecure/utils";
 
 // Import Internal Dependencies
-import { mergeDependencies, constants, getCleanDependencyName, getDependenciesWarnings } from "./utils/index.js";
+import { mergeDependencies, getCleanDependencyName, getDependenciesWarnings, NPM_TOKEN } from "./utils/index.js";
 import { scanDirOrArchive } from "./tarball.js";
-import Dependency from "./dependency.class.js";
-import Logger from "./logger.class.js";
+import Dependency from "./class/dependency.class.js";
+import Logger from "./class/logger.class.js";
 
 const { version: packageVersion } = JSON.parse(
   readFileSync(
@@ -32,7 +32,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
   const { exclude, currDepth = 0, parent, maxDepth } = options;
 
   const { name, version, deprecated, ...pkg } = await pacote.manifest(isGit ? gitURL : packageName, {
-    ...constants.NPM_TOKEN,
+    ...NPM_TOKEN,
     registry: getLocalRegistryURL(),
     cache: `${os.homedir()}/.npm`
   });
@@ -81,7 +81,7 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
 
   if (fullLockMode) {
     const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
-      ...constants.NPM_TOKEN,
+      ...NPM_TOKEN,
       registry: getLocalRegistryURL(),
       cache: `${os.homedir()}/.npm`
     });
@@ -178,7 +178,7 @@ async function* getRootDependencies(manifest, options) {
   let iterators;
   if (usePackageLock) {
     const arb = new Arborist({
-      ...constants.NPM_TOKEN,
+      ...NPM_TOKEN,
       registry: getLocalRegistryURL()
     });
     let tree;
