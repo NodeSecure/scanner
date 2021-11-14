@@ -44,13 +44,11 @@ test("execute depWalker on @slimio/is", async(tape) => {
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
   cleanupPayload(resultAsJSON);
 
-  const what = JSON.stringify(resultAsJSON);
-  const out = snapshot.core({
-    what,
+  snapshot.core({
+    what: resultAsJSON,
     file: fileURLToPath(import.meta.url),
     specName: "walk @slimio/is"
   });
-  tape.deepEqual(out.value, what, "must match snapshot value for 'walk @slimio/is'");
 
   tape.end();
 });
@@ -86,14 +84,11 @@ test("fetch payload of pacote on the npm registry", async(tape) => {
   tape.teardown(snapshot.restore);
 
   const result = await from("pacote", { verbose: false, maxDepth: 10, vulnerabilityStrategy: strategies.NPM_AUDIT });
-  const what = JSON.stringify(Object.keys(result));
-
-  const out = snapshot.core({
-    what,
+  snapshot.core({
+    what: Object.keys(result),
     file: fileURLToPath(import.meta.url),
     specName: "from pacote"
   });
-  tape.deepEqual(out.value, what, "must match snapshot value for 'from pacote'");
 
   tape.end();
 });

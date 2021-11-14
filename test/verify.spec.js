@@ -12,13 +12,11 @@ test.onFinish(snapshot.restore);
 
 test("verify 'express' package", async(tape) => {
   const data = await verify("express@4.17.0");
-  const what = JSON.stringify(data);
-  const out = snapshot.core({
-    what,
+  snapshot.core({
+    what: data,
     file: fileURLToPath(import.meta.url),
     specName: "verify express@4.17.0"
   });
-  tape.deepEqual(out.value, what, "must match snapshot value for 'verify express@4.17.0'");
 
   tape.end();
 });

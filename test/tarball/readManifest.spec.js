@@ -13,19 +13,14 @@ test("readManifest with a fake empty package.json (so all default values must be
   const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({}));
   tape.teardown(() => readFile.restore());
 
-  const ref = { flags: {} };
-  const manifestResult = await readManifest(process.cwd(), ref);
+  const manifestResult = await readManifest(process.cwd());
 
   tape.deepEqual(manifestResult.packageDeps, []);
   tape.deepEqual(manifestResult.packageDevDeps, []);
   tape.false(manifestResult.packageGyp);
-  tape.deepEqual(ref, {
-    description: "",
-    author: {},
-    flags: {
-      hasScript: false
-    }
-  });
+  tape.false(manifestResult.hasScript);
+  tape.deepEqual(manifestResult.author, {});
+  tape.strictEqual(manifestResult.description, "");
   tape.true(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
   tape.true(readFile.calledOnce);
 
@@ -49,22 +44,19 @@ test("readManifest with expected data", async(tape) => {
   }));
   tape.teardown(() => readFile.restore());
 
-  const ref = { flags: {} };
-  const manifestResult = await readManifest(process.cwd(), ref);
+  const manifestResult = await readManifest(process.cwd());
 
   tape.deepEqual(manifestResult.packageDeps, ["@slimio/is"]);
   tape.deepEqual(manifestResult.packageDevDeps, ["mocha"]);
   tape.true(manifestResult.packageGyp);
-  tape.deepEqual(ref, {
-    description: "foobar",
-    author: {
-      name: "GENTILHOMME Thomas",
-      email: "gentilhomme.thomas@gmail.com"
-    },
-    flags: {
-      hasScript: true
-    }
+
+  tape.true(manifestResult.hasScript);
+  tape.deepEqual(manifestResult.author, {
+    name: "GENTILHOMME Thomas",
+    email: "gentilhomme.thomas@gmail.com"
   });
+  tape.strictEqual(manifestResult.description, "foobar");
+
   tape.true(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
   tape.true(readFile.calledOnce);
 

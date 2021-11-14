@@ -21,26 +21,24 @@ import {
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
-const kDirectPath = new Set([".", "..", "./", "../"]);
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kNativeNpmPackages = new Set(["node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"]);
 const kNodeModules = new Set(builtins({ experimental: true }));
 
-export async function readManifest(dest, ref) {
+export async function readManifest(dest) {
   const packageStr = await fs.readFile(join(dest, "package.json"), "utf-8");
-  const packageJSON = JSON.parse(packageStr);
   const {
     description = "", author = {}, scripts = {}, dependencies = {}, devDependencies = {}, gypfile = false
-  } = packageJSON;
+  } = JSON.parse(packageStr);
 
-  ref.description = description;
-  ref.author = typeof author === "string" ? parseManifestAuthor(author) : author;
-
-  // TODO: handle this to @nodesecure/flags
-  ref.flags.hasScript = [...Object.keys(scripts)]
+  const packageAuthor = typeof author === "string" ? parseManifestAuthor(author) : author;
+  const hasScript = [...Object.keys(scripts)]
     .some((value) => constants.NPM_SCRIPTS.has(value.toLowerCase()));
 
   return {
+    author: packageAuthor,
+    description,
+    hasScript,
     packageDeps: [...Object.keys(dependencies)],
     packageDevDeps: Object.keys(devDependencies),
     packageGyp: gypfile
@@ -95,7 +93,10 @@ export async function scanDirOrArchive(name, version, options) {
     }
 
     // Read the package.json at the root of the directory or archive.
-    const { packageDeps, packageDevDeps, packageGyp } = await readManifest(dest, ref);
+    const { packageDeps, packageDevDeps, packageGyp, author, description, hasScript } = await readManifest(dest, ref);
+    ref.author = author;
+    ref.description = description;
+    ref.flags.hasScript = hasScript;
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);
@@ -124,8 +125,10 @@ export async function scanDirOrArchive(name, version, options) {
     // Search for native code
     {
       const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(extname(file)));
-      const hasNativePackage = hasNativeFile ? null : [
-        ...new Set([...packageDevDeps, ...(packageDeps || [])])
+
+      // TODO: move this to readManifest
+      const hasNativePackage = hasNativeFile ? false : [
+        ...new Set([...packageDevDeps, ...packageDeps])
       ].some((pkg) => kNativeNpmPackages.has(pkg));
 
       if (hasNativeFile || hasNativePackage || packageGyp) {
@@ -138,6 +141,7 @@ export async function scanDirOrArchive(name, version, options) {
     }
     const required = [...dependencies];
 
+    // TODO: need to improve this
     if (packageDeps !== null) {
       const thirdPartyDependencies = required
         .map((name) => (packageDeps.includes(name) ? name : getPackageName(name)))
