@@ -4,25 +4,34 @@ import path from "path";
 // CONSTANTS
 const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 
+/**
+ * @see https://nodejs.org/docs/latest/api/modules.html#file-modules
+ *
+ * @param {IterableIterator<string>} dependencies
+ * @param {!string} relativeFileLocation
+ */
 export function filterDependencyKind(dependencies, relativeFileLocation) {
   const packages = [];
   const files = [];
 
-  for (const pattern of dependencies) {
+  for (const moduleNameOrPath of dependencies) {
+    const firstChar = pattern.charAt(0);
+
     /**
      * @example
-     * const dep = require("..");
+     * require("..");
+     * require("/home/marco/foo.js");
      */
-    if (pattern.charAt(0) === ".") {
+    if (firstChar === "." || firstChar === "/") {
       // Note: condition only possible for CJS
-      const relativePathToFile = kRelativeImportPath.has(pattern) ?
-        path.join(pattern, "index.js") :
-        path.join(relativeFileLocation, pattern);
+      const relativePathToFile = kRelativeImportPath.has(moduleNameOrPath) ?
+        path.join(moduleNameOrPath, "index.js") :
+        path.join(relativeFileLocation, moduleNameOrPath);
 
       files.push(relativePathToFile);
     }
     else {
-      packages.push(pattern);
+      packages.push(moduleNameOrPath);
     }
   }
 

@@ -9,7 +9,10 @@ export function mergeDependencies(manifest, types = ["dependencies"]) {
     const dep = manifest[fieldName];
 
     for (const [name, version] of Object.entries(dep)) {
-      // Version can be file:, github:, git+, ./...
+      /**
+       * Version can be file:, github:, git+, ./...
+       * @see https://docs.npmjs.com/cli/v7/configuring-npm/package-json#dependencies
+       */
       if (/^([a-zA-Z]+:|git\+|\.\\)/.test(version)) {
         customResolvers.set(name, version);
         continue;
