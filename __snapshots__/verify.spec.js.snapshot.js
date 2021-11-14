@@ -25,7 +25,6 @@ exports['verify express@4.17.0 1'] = {
     ],
     "minified": []
   },
-  "directorySize": 208134,
   "uniqueLicenseIds": [
     "MIT"
   ],

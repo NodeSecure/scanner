@@ -12,6 +12,8 @@ test.onFinish(snapshot.restore);
 
 test("verify 'express' package", async(tape) => {
   const data = await verify("express@4.17.0");
+  delete data.directorySize;
+
   snapshot.core({
     what: data,
     file: fileURLToPath(import.meta.url),
