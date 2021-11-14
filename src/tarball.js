@@ -1,13 +1,11 @@
 // Import Node.js Dependencies
-import { join, extname, dirname } from "path";
-import fs from "fs/promises";
+import path from "path";
 import os from "os";
 import timers from "timers/promises";
 
 // Import Third-party Dependencies
-import { runASTAnalysis } from "@nodesecure/js-x-ray";
+import { runASTAnalysisOnFile } from "@nodesecure/js-x-ray";
 import difference from "lodash.difference";
-import isMinified from "is-minified-code";
 import pacote from "pacote";
 import ntlp from "@nodesecure/ntlp";
 import builtins from "builtins";
@@ -26,41 +24,29 @@ const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "chi
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 const kNodeModules = new Set(builtins({ experimental: true }));
 
-export async function scanFile(dest, file, options) {
-  try {
-    const { packageName, ref } = options;
+export async function scanFile(dest, file, packageName) {
+  const result = await runASTAnalysisOnFile(path.join(dest, file), { packageName });
 
-    const str = await fs.readFile(join(dest, file), "utf-8");
-    const isMin = file.includes(".min") || isMinified(str);
-
-    const ASTAnalysis = runASTAnalysis(str, { isMinified: isMin });
-    ASTAnalysis.dependencies.removeByName(packageName);
-
-    const { packages, files } = filterDependencyKind(ASTAnalysis.dependencies, dirname(file));
-    const inTryDeps = [...ASTAnalysis.dependencies.getDependenciesInTryStatement()];
-
-    if (!ASTAnalysis.isOneLineRequire && isMin) {
-      ref.composition.minified.push(file);
-    }
-    ref.warnings.push(...ASTAnalysis.warnings.map((curr) => Object.assign({}, curr, { file })));
-
-    return { inTryDeps, dependencies: packages, filesDependencies: files };
+  const warnings = result.warnings.map((curr) => Object.assign({}, curr, { file }));
+  if (!result.ok) {
+    return { warnings, tryDependencies: [], dependencies: [], filesDependencies: [] };
   }
-  catch (error) {
-    console.log(error);
-    if (!("code" in error)) {
-      ref.warnings.push({ file, kind: "parsing-error", value: error.message, location: [[0, 0], [0, 0]] });
-    }
+  const { packages, files } = filterDependencyKind(result.dependencies, path.dirname(file));
 
-    return null;
-  }
+  return {
+    warnings,
+    isMinified: result.isMinified,
+    tryDependencies: [...result.dependencies.getDependenciesInTryStatement()],
+    dependencies: packages,
+    filesDependencies: files
+  };
 }
 
 export async function scanDirOrArchive(name, version, options) {
   const { ref, tmpLocation, locker } = options;
 
   const isNpmTarball = !(tmpLocation === null);
-  const dest = isNpmTarball ? join(tmpLocation, `${name}@${version}`) : process.cwd();
+  const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : process.cwd();
   const free = await locker.acquireOne();
 
   try {
@@ -91,21 +77,23 @@ export async function scanDirOrArchive(name, version, options) {
 
     // Search for minified and runtime dependencies
     // Run a JS-X-Ray analysis on each JavaScript files of the project!
-    const [dependencies, filesDependencies, inTryDeps] = [new Set(), new Set(), new Set()];
-    const fileAnalysisResults = await Promise.all(
+    const fileAnalysisRaw = await Promise.allSettled(
       files
-        .filter((name) => kJsExtname.has(extname(name)))
-        .map((file) => scanFile(dest, file, { packageName: name, ref }))
+        .filter((name) => kJsExtname.has(path.extname(name)))
+        .map((file) => scanFile(dest, file, name))
     );
 
-    for (const result of fileAnalysisResults.filter((row) => row !== null)) {
-      result.inTryDeps.forEach((dep) => inTryDeps.add(dep));
-      result.dependencies.forEach((dep) => dependencies.add(dep));
-      result.filesDependencies.forEach((dep) => filesDependencies.add(dep));
-    }
+    const fileAnalysisResults = fileAnalysisRaw
+      .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
+      .map((promiseSettledResult) => promiseSettledResult.value);
+
+    ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
+    const dependencies = new Set(fileAnalysisResults.flatMap((row) => row.dependencies));
+    const filesDependencies = new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies));
+    const inTryDeps = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
 
     // Search for native code
-    const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(extname(file)));
+    const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
     if (hasNativeFile || hasNativeElements) {
       ref.flags.push("hasNativeCode");
     }
@@ -138,7 +126,7 @@ export async function scanDirOrArchive(name, version, options) {
 
     ref.composition.required_files = [...filesDependencies]
       .filter((depName) => depName.trim() !== "")
-      .map((depName) => (extname(depName) === "" ? `${depName}.js` : depName));
+      .map((depName) => (path.extname(depName) === "" ? `${depName}.js` : depName));
     ref.composition.required_nodejs = required.filter((name) => kNodeModules.has(name));
 
     if (ref.composition.minified.length > 0) {
@@ -166,7 +154,7 @@ export async function scanDirOrArchive(name, version, options) {
     ref.license = licenses;
     ref.license.uniqueLicenseIds = uniqueLicenseIds;
   }
-  catch (err) {
+  catch {
     // Ignore
   }
   finally {
@@ -174,55 +162,35 @@ export async function scanDirOrArchive(name, version, options) {
   }
 }
 
-async function readJSFile(dest, file) {
-  const str = await fs.readFile(join(dest, file), "utf-8");
-
-  return [file, str];
-}
-
 export async function scanPackage(dest, packageName) {
   const { type = "script", name } = await manifest.read(dest);
 
   await timers.setImmediate();
   const { ext, files, size } = await getTarballComposition(dest);
+  ext.delete("");
 
   // Search for runtime dependencies
   const dependencies = Object.create(null);
-  const minified = [];
-  const warnings = [];
+  const [minified, warnings] = [[], []];
 
-  const JSFiles = files.filter((name) => kJsExtname.has(extname(name)));
-  const allFilesContent = (await Promise.allSettled(JSFiles.map((file) => readJSFile(dest, file))))
-    .filter((_p) => _p.status === "fulfilled").map((_p) => _p.value);
+  const JSFiles = files.filter((name) => kJsExtname.has(path.extname(name)));
+  for (const file of JSFiles) {
+    const result = await runASTAnalysisOnFile(path.join(dest, file), {
+      packageName: packageName ?? name,
+      module: type === "module"
+    });
 
-  // TODO: 2) handle dependency by file to not loose data.
-  for (const [file, str] of allFilesContent) {
-    try {
-      const ASTAnalysis = runASTAnalysis(str, {
-        module: extname(file) === ".mjs" ? true : type === "module"
-      });
-      ASTAnalysis.dependencies.removeByName(packageName ?? name);
-      dependencies[file] = ASTAnalysis.dependencies.dependencies;
-      warnings.push(...ASTAnalysis.warnings.map((warn) => {
-        warn.file = file;
-
-        return warn;
-      }));
-
-      if (!ASTAnalysis.isOneLineRequire && !file.includes(".min") && isMinified(str)) {
-        minified.push(file);
-      }
+    warnings.push(...result.warnings.map((curr) => Object.assign({}, curr, { file })));
+    if (!result.ok) {
+      continue;
     }
-    catch (err) {
-      if (!Reflect.has(err, "code")) {
-        warnings.push({ file, kind: "parsing-error", value: err.message, location: [[0, 0], [0, 0]] });
-      }
-    }
+
+    dependencies[file] = result.dependencies.dependencies;
+    result.isMinified && minified.push(file);
   }
 
   await timers.setImmediate();
   const { uniqueLicenseIds, licenses } = await ntlp(dest);
-  ext.delete("");
 
   return {
     files: { list: files, extensions: [...ext], minified },
