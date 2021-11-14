@@ -39,19 +39,6 @@ export async function scanJavascriptFile(dest, file, packageName) {
   };
 }
 
-export function* analyzeFilesList(files, hasNativeElements = false) {
-  const hasBannedFile = files.some((path) => isSensitiveFile(path));
-  if (hasBannedFile) {
-    yield "hasBannedFile";
-  }
-
-  // Search for native code
-  const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
-  if (hasNativeFile || hasNativeElements) {
-    yield "hasNativeCode";
-  }
-}
-
 export async function scanDirOrArchive(name, version, options) {
   const { ref, tmpLocation, locker } = options;
 
@@ -80,7 +67,8 @@ export async function scanDirOrArchive(name, version, options) {
     ref.size = size;
     ref.composition.extensions.push(...ext);
     ref.composition.files.push(...files);
-    ref.flags.push(...analyzeFilesList(files, hasNativeElements));
+    const hasBannedFile = files.some((path) => isSensitiveFile(path));
+    const hasNativeCode = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
 
     // Search for minified and runtime dependencies
     // Run a JS-X-Ray analysis on each JavaScript files of the project!
@@ -125,6 +113,8 @@ export async function scanDirOrArchive(name, version, options) {
       hasMultipleLicenses: licenses.hasMultipleLicenses,
       hasMinifiedCode: minifiedFiles.length > 0,
       hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
+      hasBannedFile,
+      hasNativeCode,
       hasScript
     }));
   }

@@ -23,7 +23,7 @@ export function analyzeDependencies(dependencies, deps = {}) {
     packageDeps.filter((name) => !name.startsWith("@types")),
     thirdPartyDependencies
   );
-  const missingDependencies = new Set(difference(thirdPartyDependencies, packageDeps));
+  const missingDependencies = [...new Set(difference(thirdPartyDependencies, packageDeps))];
   const nodeDependencies = dependencies.filter((name) => kNodeModules.has(name));
 
   return {
