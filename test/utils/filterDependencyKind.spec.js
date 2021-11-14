@@ -37,3 +37,13 @@ test("filterDependencyKind should be able to match a file and join with the rela
 
   tape.end();
 });
+
+test("filterDependencyKind should be able to automatically append the '.js' extension", (tape) => {
+  const result = filterDependencyKind(["./foobar"], process.cwd());
+  tape.deepEqual(result.files, [
+    path.join(process.cwd(), "foobar.js")
+  ]);
+  tape.deepEqual(result.packages, []);
+
+  tape.end();
+});

@@ -24,11 +24,16 @@ export function filterDependencyKind(dependencies, relativeFileLocation) {
      */
     if (firstChar === "." || firstChar === "/") {
       // Note: condition only possible for CJS
-      const relativePathToFile = kRelativeImportPath.has(moduleNameOrPath) ?
-        path.join(moduleNameOrPath, "index.js") :
-        path.join(relativeFileLocation, moduleNameOrPath);
+      if (kRelativeImportPath.has(moduleNameOrPath)) {
+        files.push(path.join(moduleNameOrPath, "index.js"));
+      }
+      else {
+        // Note: we are speculating that the extension is .js (but it could be .json or .node)
+        const fixedFileName = path.extname(moduleNameOrPath) === "" ?
+          `${moduleNameOrPath}.js` : moduleNameOrPath;
 
-      files.push(relativePathToFile);
+        files.push(path.join(relativeFileLocation, fixedFileName));
+      }
     }
     else {
       packages.push(moduleNameOrPath);

@@ -5,14 +5,12 @@ import timers from "timers/promises";
 
 // Import Third-party Dependencies
 import { runASTAnalysisOnFile } from "@nodesecure/js-x-ray";
-import difference from "lodash.difference";
 import pacote from "pacote";
 import ntlp from "@nodesecure/ntlp";
-import builtins from "builtins";
 
 // Import Internal Dependencies
 import {
-  getTarballComposition, isSensitiveFile, getPackageName, filterDependencyKind,
+  getTarballComposition, isSensitiveFile, filterDependencyKind, analyzeDependencies, booleanToFlags,
   NPM_TOKEN
 } from "./utils/index.js";
 import * as manifest from "./manifest.js";
@@ -20,26 +18,38 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
-const kNodeModules = new Set(builtins({ experimental: true }));
 
-export async function scanFile(dest, file, packageName) {
+export async function scanJavascriptFile(dest, file, packageName) {
   const result = await runASTAnalysisOnFile(path.join(dest, file), { packageName });
 
   const warnings = result.warnings.map((curr) => Object.assign({}, curr, { file }));
   if (!result.ok) {
-    return { warnings, tryDependencies: [], dependencies: [], filesDependencies: [] };
+    return { file, warnings, tryDependencies: [], dependencies: [], filesDependencies: [] };
   }
   const { packages, files } = filterDependencyKind(result.dependencies, path.dirname(file));
 
   return {
+    file,
     warnings,
     isMinified: result.isMinified,
     tryDependencies: [...result.dependencies.getDependenciesInTryStatement()],
     dependencies: packages,
     filesDependencies: files
   };
+}
+
+export function* analyzeFilesList(files, hasNativeElements = false) {
+  const hasBannedFile = files.some((path) => isSensitiveFile(path));
+  if (hasBannedFile) {
+    yield "hasBannedFile";
+  }
+
+  // Search for native code
+  const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
+  if (hasNativeFile || hasNativeElements) {
+    yield "hasNativeCode";
+  }
 }
 
 export async function scanDirOrArchive(name, version, options) {
@@ -64,23 +74,20 @@ export async function scanDirOrArchive(name, version, options) {
     const { packageDeps, packageDevDeps, author, description, hasScript, hasNativeElements } = await manifest.readAnalyze(dest);
     ref.author = author;
     ref.description = description;
-    ref.flags.hasScript = hasScript;
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);
     ref.size = size;
     ref.composition.extensions.push(...ext);
     ref.composition.files.push(...files);
-    if (files.some((path) => isSensitiveFile(path))) {
-      ref.flags.push("hasBannedFile");
-    }
+    ref.flags.push(...analyzeFilesList(files, hasNativeElements));
 
     // Search for minified and runtime dependencies
     // Run a JS-X-Ray analysis on each JavaScript files of the project!
     const fileAnalysisRaw = await Promise.allSettled(
       files
         .filter((name) => kJsExtname.has(path.extname(name)))
-        .map((file) => scanFile(dest, file, name))
+        .map((file) => scanJavascriptFile(dest, file, name))
     );
 
     const fileAnalysisResults = fileAnalysisRaw
@@ -88,71 +95,38 @@ export async function scanDirOrArchive(name, version, options) {
       .map((promiseSettledResult) => promiseSettledResult.value);
 
     ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
-    const dependencies = new Set(fileAnalysisResults.flatMap((row) => row.dependencies));
-    const filesDependencies = new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies));
-    const inTryDeps = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
 
-    // Search for native code
-    const hasNativeFile = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
-    if (hasNativeFile || hasNativeElements) {
-      ref.flags.push("hasNativeCode");
-    }
+    const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
+    const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
+    const tryDependencies = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
+    const minifiedFiles = fileAnalysisResults.filter((row) => row.isMinified).flatMap((row) => row.file);
 
-    if (ref.warnings.length > 0 && !ref.flags.includes("hasWarnings")) {
-      ref.flags.push("hasWarnings");
-    }
-    const required = [...dependencies];
+    const {
+      nodeDependencies, thirdPartyDependencies, missingDependencies, unusedDependencies, flags
+    } = analyzeDependencies(dependencies, { packageDeps, packageDevDeps, tryDependencies });
 
-    // TODO: need to improve this
-    if (packageDeps !== null) {
-      const thirdPartyDependencies = required
-        .map((name) => (packageDeps.includes(name) ? name : getPackageName(name)))
-        .filter((name) => !name.startsWith("."))
-        .filter((name) => !kNodeModules.has(name))
-        .filter((name) => !packageDevDeps.includes(name))
-        .filter((name) => !inTryDeps.has(name));
-      ref.composition.required_thirdparty = thirdPartyDependencies;
-
-      const unusedDeps = difference(
-        packageDeps.filter((name) => !name.startsWith("@types")), thirdPartyDependencies);
-      const missingDeps = new Set(difference(thirdPartyDependencies, packageDeps));
-
-      if (unusedDeps.length > 0 || missingDeps.length > 0) {
-        ref.flags.push("hasMissingOrUnusedDependency");
-      }
-      ref.composition.unused.push(...unusedDeps);
-      ref.composition.missing.push(...missingDeps);
-    }
-
-    ref.composition.required_files = [...filesDependencies]
-      .filter((depName) => depName.trim() !== "")
-      .map((depName) => (path.extname(depName) === "" ? `${depName}.js` : depName));
-    ref.composition.required_nodejs = required.filter((name) => kNodeModules.has(name));
-
-    if (ref.composition.minified.length > 0) {
-      ref.flags.push("hasMinifiedCode");
-    }
-
-    const hasExternalCapacity = ref.composition.required_nodejs
-      .some((depName) => kExternalModules.has(depName));
-    if (hasExternalCapacity) {
-      ref.flags.push("hasExternalCapacity");
-    }
+    ref.composition.required_thirdparty = thirdPartyDependencies;
+    ref.composition.unused.push(...unusedDependencies);
+    ref.composition.missing.push(...missingDependencies);
+    ref.composition.required_files = filesDependencies;
+    ref.composition.required_nodejs = nodeDependencies;
+    ref.composition.minified = minifiedFiles;
 
     // License
     await timers.setImmediate();
     const licenses = await ntlp(dest);
-
     const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
-    if (uniqueLicenseIds.length === 0) {
-      ref.flags.push("hasNoLicense");
-    }
-    if (licenses.hasMultipleLicenses) {
-      ref.flags.push("hasMultipleLicenses");
-    }
-
     ref.license = licenses;
     ref.license.uniqueLicenseIds = uniqueLicenseIds;
+
+    ref.flags.push(...booleanToFlags({
+      ...flags,
+      hasNoLicense: uniqueLicenseIds.length === 0,
+      hasMultipleLicenses: licenses.hasMultipleLicenses,
+      hasMinifiedCode: minifiedFiles.length > 0,
+      hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
+      hasScript
+    }));
   }
   catch {
     // Ignore
