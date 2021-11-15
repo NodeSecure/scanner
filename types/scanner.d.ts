@@ -1,64 +1,130 @@
-import { Warning, Dependency, BaseWarning } from "@nodesecure/js-x-ray";
+// Import NodeSecure Dependencies
+import * as JSXRay from "@nodesecure/js-x-ray";
 import { license as License } from "@nodesecure/ntlp";
-import { Strategy, NpmStrategy, NodeStrategy } from "@nodesecure/vuln";
+import * as Vuln from "@nodesecure/vuln";
 import { Flags } from "@nodesecure/flags";
+
+// Import Third-party Dependencies
 import { Maintainer } from "@npm/types";
 
 export = Scanner;
 
 declare namespace Scanner {
   export interface Publisher {
+    /**
+     * Publisher npm user name.
+     */
     name: string;
+    /**
+     * First version published.
+     */
     version: string;
+    /**
+     * Date of the first publication
+     * @example 2021-08-10T20:45:08.342Z
+     */
     at: string;
   }
 
-  export interface VersionDescriptor {
+  export interface DependencyVersion {
+    /** Id of the package (useful for usedBy relation) */
+    id: number;
+    /** By whom (id) is used the package */
+    usedBy: Record<string, string>;
+    /** Size on disk of the extracted tarball (in bytes) */
+    size: number;
+    /** Package description */
+    description: string;
+    /** Author of the package. This information is not trustable and can be empty. */
+    author: Maintainer;
+    /**
+     * JS-X-Ray warnings
+     *
+     * @see https://github.com/NodeSecure/js-x-ray/blob/master/WARNINGS.md
+     */
+    warnings: JSXRay.Warning<JSXRay.BaseWarning>[];
+    /** Tarball composition (files and dependencies) */
+    composition: {
+      /** Files extensions (.js, .md, .exe etc..) */
+      extensions: string[];
+      files: string[];
+      /** Minified files (foo.min.js etc..) */
+      minified: string[];
+      required_files: string[];
+      required_thirdparty: string[];
+      required_nodejs: string[];
+      unused: string[];
+      missing: string[];
+    };
+    /**
+     * Package licenses with SPDX expression.
+     *
+     * @see https://github.com/NodeSecure/licenses-conformance
+     * @see https://github.com/NodeSecure/npm-tarball-license-parser
+     */
+    license: License[];
+    /**
+     * Flags (Array of string)
+     *
+     * @see https://github.com/NodeSecure/flags/blob/main/FLAGS.md
+     */
+    flags: Flags[];
+    /**
+     * If the dependency is a GIT repository
+     */
+    gitUrl: null | string;
+  }
+
+  export interface Dependency {
+    /** NPM Registry metadata */
     metadata: {
+      /** Count of dependencies */
       dependencyCount: number;
+      /** Number of releases published on npm */
       publishedCount: number;
       lastUpdateAt: number;
+      /** Last version SemVer */
       lastVersion: number;
       hasChangedAuthor: boolean;
       hasManyPublishers: boolean;
       hasReceivedUpdateInOneYear: boolean;
+      /** Author of the package. This information is not trustable and can be empty. */
       author: Maintainer;
+      /** Package home page */
       homepage: string | null;
-      maintainers: Maintainer[];
+      /**
+       * List of maintainers (list of people in the organization related to the package)
+       */
+      maintainers: Pick<Maintainer, "name" | "email">[];
+      /**
+       * List of people who published this package
+       */
       publishers: Publisher[];
     }
+    /** List of versions of this package available in the dependency tree (In the payload) */
     versions: string[];
-    vulnerabilities: (NpmStrategy.Vulnerability | NodeStrategy.Vulnerability)[];
-    [version: string]: {
-      id: number;
-      usedBy: Record<string, string>;
-      size: number;
-      description: string;
-      author: Maintainer;
-      warnings: Warning<BaseWarning>[];
-      composition: {
-        extensions: string[];
-        files: string[];
-        minified: string[];
-        required_files: string[];
-        required_thirdparty: string[];
-        required_nodejs: string[];
-        unused: string[];
-        missing: string[];
-      };
-      license: string | License[];
-      flags: Flags;
-      gitUrl: null | string;
-    };
+    /**
+     * Vulnerabilities fetched dependending on the selected vulnerabilityStrategy
+     *
+     * @see https://github.com/NodeSecure/vuln
+     */
+    vulnerabilities: Vuln.Strategy.StandardVulnerability[];
+    [version: string]: DependencyVersion;
   }
 
   export interface Payload {
+    /** Payload unique id */
     id: string;
+    /** Name of the analyzed package */
     rootDependencyName: string;
+    /** Global warnings list */
     warnings: [];
-    dependencies: Record<string, VersionDescriptor>;
+    /** All the dependencies of the package (flattened) */
+    dependencies: Record<string, Dependency>;
+    /** Version of the scanner used to generate the result */
     version: string;
-    vulnerabilityStrategy: Strategy.Kind;
+    /** Vulnerability strategy name (npm, snyk, node) */
+    vulnerabilityStrategy: Vuln.Strategy.Kind;
   }
 
   export interface VerifyPayload {
@@ -71,16 +137,43 @@ declare namespace Scanner {
     uniqueLicenseIds: string[];
     licenses: License[];
     ast: {
-      dependencies: Record<string, Dependency>;
-      warnings: Warning<BaseWarning>[];
+      dependencies: Record<string, JSXRay.Dependency>;
+      warnings: JSXRay.Warning<JSXRay.BaseWarning>[];
     };
   }
 
   export interface Options {
+    /**
+     * Maximum tree depth
+     *
+     * @default 4
+     */
     readonly maxDepth?: number;
+    /**
+     * Use root package-lock.json. This will have the effect of triggering the Arborist package.
+     *
+     * @default false for from() API
+     * @default true  for cwd()  API
+     */
     readonly usePackageLock?: boolean;
-    readonly vulnerabilityStrategy: Strategy.Kind;
+    /**
+     * Vulnerability strategy name (npm, snyk, node)
+     *
+     * @default NONE
+     */
+    readonly vulnerabilityStrategy: Vuln.Strategy.Kind;
+    /**
+     * Analyze root package.
+     *
+     * @default false for from() API
+     * @default true  for cwd()  API
+     */
     readonly forceRootAnalysis?: boolean;
+    /**
+     * Deeper dependencies analysis with cwd() API.
+     *
+     * @default false
+     */
     readonly fullLockMode?: boolean;
   }
 }

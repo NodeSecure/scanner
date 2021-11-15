@@ -6,7 +6,9 @@ export {
 }
 
 interface LoggerEventData {
+  /** UNIX Timestamp */
   startedAt: number;
+  /** Count of triggered event */
   count: number;
 }
 
