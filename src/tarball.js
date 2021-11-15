@@ -68,7 +68,7 @@ export async function scanDirOrArchive(name, version, options) {
     ref.composition.extensions.push(...ext);
     ref.composition.files.push(...files);
     const hasBannedFile = files.some((path) => isSensitiveFile(path));
-    const hasNativeCode = files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
+    const hasNativeCode = hasNativeElements || files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
 
     // Search for minified and runtime dependencies
     // Run a JS-X-Ray analysis on each JavaScript files of the project!
