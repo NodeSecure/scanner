@@ -25,7 +25,14 @@ export async function scanJavascriptFile(dest, file, packageName) {
 
   const warnings = result.warnings.map((curr) => Object.assign({}, curr, { file }));
   if (!result.ok) {
-    return { file, warnings, tryDependencies: [], dependencies: [], filesDependencies: [] };
+    return {
+      file,
+      warnings,
+      isMinified: false,
+      tryDependencies: [],
+      dependencies: [],
+      filesDependencies: []
+    };
   }
   const { packages, files } = filterDependencyKind(result.dependencies, path.dirname(file));
 
