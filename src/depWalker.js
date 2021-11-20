@@ -8,16 +8,18 @@ import os from "os";
 import combineAsyncIterators from "combine-async-iterators";
 import iter from "itertools";
 import pacote from "pacote";
-import semver from "semver";
 import Arborist from "@npmcli/arborist";
 import Lock from "@slimio/lock";
-import { packument, getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
+import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as vuln from "@nodesecure/vuln";
-import { parseManifestAuthor } from "@nodesecure/utils";
 
 // Import Internal Dependencies
-import { mergeDependencies, getCleanDependencyName, getDependenciesWarnings, NPM_TOKEN } from "./utils/index.js";
+import {
+  mergeDependencies, getCleanDependencyName, getDependenciesWarnings, addMissingVersionFlags,
+  NPM_TOKEN
+} from "./utils/index.js";
 import { scanDirOrArchive } from "./tarball.js";
+import { packageMetadata } from "./npmRegistry.js";
 import Dependency from "./class/dependency.class.js";
 import Logger from "./class/logger.class.js";
 
@@ -27,11 +29,10 @@ const { version: packageVersion } = JSON.parse(
   )
 );
 
-async function* searchDeepDependencies(packageName, gitURL, options) {
-  const isGit = typeof gitURL === "string";
+export async function* searchDeepDependencies(packageName, gitURL, options) {
   const { exclude, currDepth = 0, parent, maxDepth } = options;
 
-  const { name, version, deprecated, ...pkg } = await pacote.manifest(isGit ? gitURL : packageName, {
+  const { name, version, deprecated, ...pkg } = await pacote.manifest(gitURL ?? packageName, {
     ...NPM_TOKEN,
     registry: getLocalRegistryURL(),
     cache: `${os.homedir()}/.npm`
@@ -39,7 +40,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
   const { dependencies, customResolvers } = mergeDependencies(pkg);
 
   const current = new Dependency(name, version, parent);
-  isGit && current.isGit(gitURL);
+  gitURL !== null && current.isGit(gitURL);
   current.addFlag("isDeprecated", deprecated === true);
   current.addFlag("hasCustomResolver", customResolvers.size > 0);
   current.addFlag("hasDependencies", dependencies.size > 0);
@@ -65,7 +66,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
       }
       else {
         exclude.set(cleanName, new Set([current.fullName]));
-        yield* searchDeepDependencies(fullName, void 0, config);
+        yield* searchDeepDependencies(fullName, null, config);
       }
     }
   }
@@ -73,7 +74,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
   yield current;
 }
 
-async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLockMode }) {
+export async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLockMode }) {
   const { version, integrity = to.integrity } = to.package;
 
   const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
@@ -110,64 +111,7 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
   yield current;
 }
 
-async function fetchPackageMetadata(name, version, options) {
-  const { ref, locker } = options;
-  const free = await locker.acquireOne();
-
-  try {
-    const pkg = await packument(name);
-
-    const publishers = new Set();
-    const oneYearFromToday = new Date();
-    oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() - 1);
-
-    ref.metadata.lastVersion = pkg["dist-tags"].latest;
-    if (semver.neq(version, ref.metadata.lastVersion)) {
-      ref[version].flags.push("isOutdated");
-    }
-    ref.metadata.publishedCount = Object.values(pkg.versions).length;
-    ref.metadata.lastUpdateAt = new Date(pkg.time[ref.metadata.lastVersion]);
-    ref.metadata.hasReceivedUpdateInOneYear = !(oneYearFromToday > ref.metadata.lastUpdateAt);
-    ref.metadata.homepage = pkg.homepage || null;
-    ref.metadata.maintainers = pkg.maintainers;
-    if (typeof pkg.author === "string") {
-      ref.metadata.author = parseManifestAuthor(pkg.author);
-    }
-    else {
-      ref.metadata.author = pkg.author;
-    }
-    const authorName = ref.metadata.author?.name ?? null;
-
-    for (const ver of Object.values(pkg.versions)) {
-      const { _npmUser: npmUser, version } = ver;
-
-      const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
-      if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
-        continue;
-      }
-
-      if (authorName === null) {
-        ref.metadata.author.name = npmUser.name;
-      }
-      else if (npmUser.name !== ref.metadata.author.name) {
-        ref.metadata.hasManyPublishers = true;
-      }
-
-      if (!publishers.has(npmUser.name)) {
-        publishers.add(npmUser.name);
-        ref.metadata.publishers.push({ name: npmUser.name, version, at: new Date(pkg.time[version]) });
-      }
-    }
-  }
-  catch (err) {
-    // Ignore
-  }
-  finally {
-    free();
-  }
-}
-
-async function* getRootDependencies(manifest, options) {
+export async function* getRootDependencies(manifest, options) {
   const { maxDepth = 4, exclude, usePackageLock, fullLockMode } = options;
 
   const { dependencies, customResolvers } = mergeDependencies(manifest, void 0);
@@ -198,7 +142,7 @@ async function* getRootDependencies(manifest, options) {
     iterators = [
       ...iter.filter(customResolvers.entries(), ([, valueStr]) => valueStr.startsWith("git+"))
         .map(([depName, valueStr]) => searchDeepDependencies(depName, valueStr.slice(4), configRef)),
-      ...iter.map(dependencies.entries(), ([name, ver]) => searchDeepDependencies(`${name}@${ver}`, void 0, configRef))
+      ...iter.map(dependencies.entries(), ([name, ver]) => searchDeepDependencies(`${name}@${ver}`, null, configRef))
     ];
   }
   for await (const dep of combineAsyncIterators({}, ...iterators)) {
@@ -218,26 +162,6 @@ async function* getRootDependencies(manifest, options) {
   }
 
   yield parent;
-}
-
-function* addMissingVersionFlags(flags, descriptor) {
-  const { metadata, vulnerabilities = [], versions } = descriptor;
-
-  if (!metadata.hasReceivedUpdateInOneYear && flags.has("hasOutdatedDependency") && !flags.has("isDead")) {
-    yield "isDead";
-  }
-  if (metadata.hasManyPublishers && !flags.has("hasManyPublishers")) {
-    yield "hasManyPublishers";
-  }
-  if (metadata.hasChangedAuthor && !flags.has("hasChangedAuthor")) {
-    yield "hasChangedAuthor";
-  }
-  if (vulnerabilities.length > 0 && !flags.has("hasVulnerabilities")) {
-    yield "hasVulnerabilities";
-  }
-  if (versions.length > 1 && !flags.has("hasDuplicate")) {
-    yield "hasDuplicate";
-  }
 }
 
 /**
@@ -270,14 +194,13 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
   {
     logger.start("walkTree").start("tarball").start("registry");
+    const fetchedMetadataPackages = new Set();
     const promisesToWait = [];
-    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
 
     const tarballLocker = new Lock({ maxConcurrent: 5 });
-    const metadataLocker = new Lock({ maxConcurrent: 10 });
-    metadataLocker.on("freeOne", () => logger.tick("registry"));
     tarballLocker.on("freeOne", () => logger.tick("tarball"));
 
+    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
@@ -305,11 +228,18 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       if (proceedDependencyAnalysis) {
         logger.tick("walkTree");
 
-        promisesToWait.push(fetchPackageMetadata(name, version, {
-          ref: current,
-          locker: metadataLocker,
-          logger
-        }));
+        // There is no need to fetch 'N' times the npm metadata for the same package.
+        if (fetchedMetadataPackages.has(name)) {
+          logger.tick("registry");
+        }
+        else {
+          fetchedMetadataPackages.add(name);
+          promisesToWait.push(packageMetadata(name, version, {
+            ref: current,
+            logger
+          }));
+        }
+
         promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current[version],
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
