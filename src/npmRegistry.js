@@ -35,9 +35,8 @@ export async function packageMetadata(name, version, options) {
     }
 
     const publishers = new Set();
-    for (const ver of Object.values(pkg.versions)) {
+    for (const ver of Object.values(pkg.versions).reverse()) {
       const { _npmUser: npmUser, version } = ver;
-
       const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
       if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
         continue;
@@ -45,15 +44,16 @@ export async function packageMetadata(name, version, options) {
 
       const authorName = metadata.author?.name ?? null;
       if (authorName === null) {
-        metadata.author.name = npmUser.name;
+        metadata.author = npmUser;
       }
       else if (npmUser.name !== metadata.author.name) {
         metadata.hasManyPublishers = true;
       }
 
+      // TODO: add npmUser.email
       if (!publishers.has(npmUser.name)) {
         publishers.add(npmUser.name);
-        metadata.publishers.push({ name: npmUser.name, version, at: new Date(pkg.time[version]) });
+        metadata.publishers.push({ ...npmUser, version, at: new Date(pkg.time[version]) });
       }
     }
 

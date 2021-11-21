@@ -16,6 +16,10 @@ declare namespace Scanner {
      */
     name: string;
     /**
+     * Publisher npm user email.
+     */
+    email: string;
+    /**
      * First version published.
      */
     version: string;

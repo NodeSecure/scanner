@@ -84,8 +84,9 @@ exports['walk @slimio/is 1'] = {
       "publishers": [
         {
           "name": "fraxken",
-          "version": "1.0.0",
-          "at": "2018-09-22T20:36:27.523Z"
+          "email": "gentilhomme.thomas@gmail.com",
+          "version": "1.5.1",
+          "at": "2019-06-11T06:41:41.590Z"
         }
       ],
       "maintainers": [
