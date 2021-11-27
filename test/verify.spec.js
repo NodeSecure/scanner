@@ -1,5 +1,6 @@
 // Import Node.js Dependencies
 import { fileURLToPath } from "url";
+import path from "path";
 
 // Import Third-party Dependencies
 import test from "tape";
@@ -9,6 +10,16 @@ import snapshot from "snap-shot-core";
 import { verify } from "../index.js";
 
 test.onFinish(snapshot.restore);
+
+function cleanupAstDependencies(dependencies) {
+  const cleaned = {};
+
+  for (const [file, value] of Object.entries(dependencies)) {
+    cleaned[path.posix.normalize(file)] = value;
+  }
+
+  return JSON.stringify(cleaned, null, 2);
+}
 
 test("verify 'express' package", async(tape) => {
   const data = await verify("express@4.17.0");
@@ -31,7 +42,7 @@ test("verify 'express' package", async(tape) => {
       "lib\\utils.js",
       "lib\\view.js",
       "package.json"
-    ],
+    ].map((location) => path.normalize(location)),
     extensions: [".md", ".js", ".json"],
     minified: []
   });
@@ -69,7 +80,7 @@ test("verify 'express' package", async(tape) => {
   tape.deepEqual(warningName, ["parsing-error", "unsafe-import"]);
 
   snapshot.core({
-    what: JSON.stringify(data.ast.dependencies, null, 2),
+    what: cleanupAstDependencies(data.ast.dependencies),
     file: fileURLToPath(import.meta.url),
     specName: "verify express@4.17.0"
   });
