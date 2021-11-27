@@ -31,7 +31,7 @@ export async function packageMetadata(name, version, options) {
 
     const isOutdated = semver.neq(version, lastVersion);
     if (isOutdated) {
-      ref[version].flags.push("isOutdated");
+      ref.versions[version].flags.push("isOutdated");
     }
 
     const publishers = new Set();

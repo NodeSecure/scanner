@@ -32,8 +32,10 @@ test("registry.packageMetadata should not throw error", async(tape) => {
 test("registry.packageMetadata", async(tape) => {
   const ref = {
     metadata: {},
-    "1.5.0": {
-      flags: []
+    versions: {
+      "1.5.0": {
+        flags: []
+      }
     }
   };
   const logger = new Logger().start("registry");
@@ -43,7 +45,7 @@ test("registry.packageMetadata", async(tape) => {
     logger
   });
 
-  tape.deepEqual(ref["1.5.0"].flags, ["isOutdated"]);
+  tape.deepEqual(ref.versions["1.5.0"].flags, ["isOutdated"]);
   tape.strictEqual(logger.count("registry"), 1);
 
   tape.deepEqual(ref.metadata.author, { name: "SlimIO" });

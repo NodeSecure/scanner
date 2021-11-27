@@ -4,6 +4,7 @@
  */
 export function* addMissingVersionFlags(flags, descriptor) {
   const { metadata, vulnerabilities = [], versions } = descriptor;
+  const semverVersions = Object.keys(versions);
 
   if (!metadata.hasReceivedUpdateInOneYear && flags.has("hasOutdatedDependency") && !flags.has("isDead")) {
     yield "isDead";
@@ -17,7 +18,7 @@ export function* addMissingVersionFlags(flags, descriptor) {
   if (vulnerabilities.length > 0 && !flags.has("hasVulnerabilities")) {
     yield "hasVulnerabilities";
   }
-  if (versions.length > 1 && !flags.has("hasDuplicate")) {
+  if (semverVersions.length > 1 && !flags.has("hasDuplicate")) {
     yield "hasDuplicate";
   }
 }

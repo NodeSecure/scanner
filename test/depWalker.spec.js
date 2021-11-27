@@ -27,11 +27,11 @@ const config = JSON.parse(readFileSync(
 
 function cleanupPayload(payload) {
   for (const pkg of Object.values(payload)) {
-    for (const versionName of pkg.versions) {
-      pkg[versionName].composition.extensions.sort();
-      delete pkg[versionName].size;
-      delete pkg[versionName].composition.files;
-      delete pkg[versionName].composition.required_files;
+    for (const verDescriptor of Object.values(pkg.versions)) {
+      verDescriptor.composition.extensions.sort();
+      delete verDescriptor.size;
+      delete verDescriptor.composition.files;
+      delete verDescriptor.composition.required_files;
     }
   }
 }

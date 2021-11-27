@@ -56,28 +56,29 @@ export default class Dependency {
     }
 
     return {
-      [this.version]: {
-        id: typeof customId === "number" ? customId : Dependency.currentId++,
-        usedBy: this.parent,
-        flags: this.flags,
-        description: "",
-        size: 0,
-        author: {},
-        warnings: this.warnings,
-        composition: {
-          extensions: [],
-          files: [],
-          minified: [],
-          unused: [],
-          missing: [],
-          required_files: [],
-          required_nodejs: [],
-          required_thirdparty: []
-        },
-        license: "unkown license",
-        gitUrl: this.gitUrl
+      versions: {
+        [this.version]: {
+          id: typeof customId === "number" ? customId : Dependency.currentId++,
+          usedBy: this.parent,
+          flags: this.flags,
+          description: "",
+          size: 0,
+          author: {},
+          warnings: this.warnings,
+          composition: {
+            extensions: [],
+            files: [],
+            minified: [],
+            unused: [],
+            missing: [],
+            required_files: [],
+            required_nodejs: [],
+            required_thirdparty: []
+          },
+          license: "unkown license",
+          gitUrl: this.gitUrl
+        }
       },
-      versions: [this.version],
       vulnerabilities: [],
       metadata: {
         dependencyCount: this.dependencyCount,

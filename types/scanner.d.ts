@@ -106,14 +106,13 @@ declare namespace Scanner {
       publishers: Publisher[];
     }
     /** List of versions of this package available in the dependency tree (In the payload) */
-    versions: string[];
+    versions: Record<string, DependencyVersion>;
     /**
      * Vulnerabilities fetched dependending on the selected vulnerabilityStrategy
      *
      * @see https://github.com/NodeSecure/vuln
      */
     vulnerabilities: Vuln.Strategy.StandardVulnerability[];
-    [version: string]: DependencyVersion;
   }
 
   export interface Payload {

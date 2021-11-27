@@ -1,74 +1,82 @@
+exports['from pacote 1'] = [
+  "id",
+  "rootDepencyName",
+  "version",
+  "vulnerabilityStrategy",
+  "warnings",
+  "dependencies"
+]
+
 exports['walk @slimio/is 1'] = {
   "@slimio/is": {
-    "1.5.1": {
-      "id": 0,
-      "usedBy": {},
-      "flags": [
-        "hasManyPublishers"
-      ],
-      "description": "SlimIO is (JavaScript Primitives &amp; Objects type checker)",
-      "author": {
-        "name": "SlimIO"
-      },
-      "warnings": [],
-      "composition": {
-        "extensions": [
-          "",
-          ".js",
-          ".json",
-          ".md",
-          ".toml",
-          ".ts"
+    "versions": {
+      "1.5.1": {
+        "id": 0,
+        "usedBy": {},
+        "flags": [
+          "hasManyPublishers"
         ],
-        "minified": [],
-        "unused": [],
-        "missing": [],
-        "required_nodejs": [],
-        "required_thirdparty": []
-      },
-      "license": {
-        "uniqueLicenseIds": [
-          "MIT"
-        ],
-        "hasMultipleLicenses": false,
-        "licenses": [
-          {
-            "uniqueLicenseIds": [
-              "MIT"
-            ],
-            "spdxLicenseLinks": [
-              "https://spdx.org/licenses/MIT.html#licenseText"
-            ],
-            "spdx": {
-              "osi": true,
-              "fsf": true,
-              "fsfAndOsi": true,
-              "includesDeprecated": false
+        "description": "SlimIO is (JavaScript Primitives &amp; Objects type checker)",
+        "author": {
+          "name": "SlimIO"
+        },
+        "warnings": [],
+        "composition": {
+          "extensions": [
+            "",
+            ".js",
+            ".json",
+            ".md",
+            ".toml",
+            ".ts"
+          ],
+          "minified": [],
+          "unused": [],
+          "missing": [],
+          "required_nodejs": [],
+          "required_thirdparty": []
+        },
+        "license": {
+          "uniqueLicenseIds": [
+            "MIT"
+          ],
+          "hasMultipleLicenses": false,
+          "licenses": [
+            {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "spdxLicenseLinks": [
+                "https://spdx.org/licenses/MIT.html#licenseText"
+              ],
+              "spdx": {
+                "osi": true,
+                "fsf": true,
+                "fsfAndOsi": true,
+                "includesDeprecated": false
+              },
+              "from": "package.json"
             },
-            "from": "package.json"
-          },
-          {
-            "uniqueLicenseIds": [
-              "MIT"
-            ],
-            "spdxLicenseLinks": [
-              "https://spdx.org/licenses/MIT.html#licenseText"
-            ],
-            "spdx": {
-              "osi": true,
-              "fsf": true,
-              "fsfAndOsi": true,
-              "includesDeprecated": false
-            },
-            "from": "LICENSE"
-          }
-        ]
-      },
-      "gitUrl": null
+            {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "spdxLicenseLinks": [
+                "https://spdx.org/licenses/MIT.html#licenseText"
+              ],
+              "spdx": {
+                "osi": true,
+                "fsf": true,
+                "fsfAndOsi": true,
+                "includesDeprecated": false
+              },
+              "from": "LICENSE"
+            }
+          ]
+        },
+        "gitUrl": null
+      }
     },
-    "versions": [
-      "1.5.1"
-    ],
     "vulnerabilities": [],
     "metadata": {
       "dependencyCount": 0,
@@ -110,12 +118,3 @@ exports['walk @slimio/is 1'] = {
     }
   }
 }
-
-exports['from pacote 1'] = [
-  "id",
-  "rootDepencyName",
-  "warnings",
-  "dependencies",
-  "version",
-  "vulnerabilityStrategy"
-]

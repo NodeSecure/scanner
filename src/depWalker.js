@@ -184,13 +184,14 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   const payload = {
     id: tmpLocation.slice(-6),
     rootDepencyName: manifest.name,
-    warnings: [],
-    dependencies: new Map(),
-    version: packageVersion
+    version: packageVersion,
+    vulnerabilityStrategy,
+    warnings: []
   };
 
   // We are dealing with an exclude Map to avoid checking a package more than one time in searchDeepDependencies
   const exclude = new Map();
+  const dependencies = new Map();
 
   {
     logger.start("walkTree").start("tarball").start("registry");
@@ -206,23 +207,22 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
       let proceedDependencyAnalysis = true;
 
-      if (payload.dependencies.has(name)) {
+      if (dependencies.has(name)) {
         // TODO: how to handle different metadata ?
-        const dep = payload.dependencies.get(name);
+        const dep = dependencies.get(name);
 
-        const currVersion = current.versions[0];
-        if (currVersion in dep) {
+        const currVersion = Object.keys(current.versions)[0];
+        if (currVersion in dep.versions) {
           // The dependency has already entered the analysis
           // This happens if the package is used by multiple packages in the tree
           proceedDependencyAnalysis = false;
         }
         else {
-          dep[currVersion] = current[currVersion];
-          dep.versions.push(currVersion);
+          dep.versions[currVersion] = current.versions[currVersion];
         }
       }
       else {
-        payload.dependencies.set(name, current);
+        dependencies.set(name, current);
       }
 
       if (proceedDependencyAnalysis) {
@@ -241,7 +241,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
         }
 
         promisesToWait.push(scanDirOrArchive(name, version, {
-          ref: current[version],
+          ref: current.versions[version],
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
           locker: tarballLocker,
           logger
@@ -259,7 +259,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
-  await hydratePayloadDependencies(payload.dependencies, {
+  await hydratePayloadDependencies(dependencies, {
     useStandardFormat: true
   });
 
@@ -267,10 +267,9 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.
-  for (const [packageName, descriptor] of payload.dependencies) {
-    for (const verStr of descriptor.versions) {
-      const verDescriptor = descriptor[verStr];
-      verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), descriptor));
+  for (const [packageName, dependency] of dependencies) {
+    for (const [verStr, verDescriptor] of Object.entries(dependency.versions)) {
+      verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), dependency));
 
       const fullName = `${packageName}@${verStr}`;
       const usedDeps = exclude.get(fullName) || new Set();
@@ -287,8 +286,8 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   }
 
   try {
-    payload.warnings = getDependenciesWarnings(payload.dependencies);
-    payload.dependencies = Object.fromEntries(payload.dependencies);
+    payload.warnings = getDependenciesWarnings(dependencies);
+    payload.dependencies = Object.fromEntries(dependencies);
 
     return payload;
   }

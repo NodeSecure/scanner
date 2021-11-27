@@ -36,7 +36,7 @@ test("Dependency children should write his parent as usedBy when exported", (tap
   });
 
   const flatDep = testDep.exportAsPlainObject(void 0);
-  tape.deepEqual(flatDep["1.0.0"].usedBy, {
+  tape.deepEqual(flatDep.versions["1.0.0"].usedBy, {
     [semverDep.name]: semverDep.version
   });
 
@@ -49,7 +49,7 @@ test("Create a dependency with one warning", (tape) => {
   semverDep.warnings.push(fakeWarning);
 
   const flatDep = semverDep.exportAsPlainObject(void 0);
-  const version = flatDep["1.0.0"];
+  const version = flatDep.versions["1.0.0"];
   tape.deepEqual(version.flags, ["hasWarnings"]);
   tape.strictEqual(version.warnings[0], fakeWarning);
 
@@ -61,13 +61,13 @@ test("Create a GIT Dependency (flags.isGit must be set to true)", (tape) => {
   tape.is(semverDep.gitUrl, null);
 
   const flatSemver = semverDep.exportAsPlainObject(void 0);
-  tape.true(flatSemver["1.0.0"].flags.includes("isGit"));
+  tape.true(flatSemver.versions["1.0.0"].flags.includes("isGit"));
 
   const mochaDep = new Dependency("mocha", "1.0.0").isGit("https://github.com/mochajs/mocha");
   tape.strictEqual(mochaDep.gitUrl, "https://github.com/mochajs/mocha");
 
   const flatMocha = mochaDep.exportAsPlainObject(void 0);
-  tape.true(flatMocha["1.0.0"].flags.includes("isGit"));
+  tape.true(flatMocha.versions["1.0.0"].flags.includes("isGit"));
 
   tape.end();
 });
