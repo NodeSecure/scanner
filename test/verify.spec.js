@@ -5,20 +5,21 @@ import path from "path";
 // Import Third-party Dependencies
 import test from "tape";
 import snapshot from "snap-shot-core";
+import Result from "folktale/result/index.js";
 
 // Import Internal Dependencies
 import { verify } from "../index.js";
 
 test.onFinish(snapshot.restore);
 
-function cleanupAstDependencies(dependencies) {
+function cleanupAstDependenciesSnapshot(dependencies) {
   const cleaned = {};
 
   for (const [file, value] of Object.entries(dependencies)) {
-    cleaned[path.posix.normalize(file)] = value;
+    cleaned[file.replaceAll("\\", path.sep)] = value;
   }
 
-  return JSON.stringify(cleaned, null, 2);
+  return cleaned;
 }
 
 test("verify 'express' package", async(tape) => {
@@ -81,9 +82,20 @@ test("verify 'express' package", async(tape) => {
   tape.deepEqual(warningName, ["parsing-error", "unsafe-import"]);
 
   snapshot.core({
-    what: cleanupAstDependencies(data.ast.dependencies),
+    what: data.ast.dependencies,
     file: fileURLToPath(import.meta.url),
-    specName: "verify express@4.17.0"
+    specName: "verify express@4.17.0",
+    compare: (options) => {
+      const cleanSnapshot = cleanupAstDependenciesSnapshot(JSON.parse(options.expected));
+      const expected = JSON.stringify(cleanSnapshot);
+      const value = JSON.stringify(options.value);
+
+      if (expected === value) {
+        return Result.Ok();
+      }
+
+      return Result.Error(`${expected} !== ${value}`);
+    }
   });
 
   tape.end();
