@@ -25,9 +25,9 @@ test("scanPackage (caseone)", async(tape) => {
       "src\\other.min.js"
     ].map((location) => location.replaceAll("\\", path.sep)),
     extensions: [
+      ".txt",
       ".js",
-      ".json",
-      ".txt"
+      ".json"
     ],
     minified: [
       "src\\other.min.js"
