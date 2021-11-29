@@ -15,7 +15,7 @@ import * as vuln from "@nodesecure/vuln";
 
 // Import Internal Dependencies
 import {
-  mergeDependencies, getCleanDependencyName, getDependenciesWarnings, addMissingVersionFlags,
+  mergeDependencies, getCleanDependencyName, getDependenciesWarnings, addMissingVersionFlags, isGitDependency,
   NPM_TOKEN
 } from "./utils/index.js";
 import { scanDirOrArchive } from "./tarball.js";
@@ -50,7 +50,7 @@ export async function* searchDeepDependencies(packageName, gitURL, options) {
       exclude, currDepth: currDepth + 1, parent: current, maxDepth
     };
 
-    const gitDependencies = iter.filter(customResolvers.entries(), ([, valueStr]) => valueStr.startsWith("git+"));
+    const gitDependencies = iter.filter(customResolvers.entries(), ([, valueStr]) => isGitDependency(valueStr));
     for (const [depName, valueStr] of gitDependencies) {
       yield* searchDeepDependencies(depName, valueStr.slice(4), config);
     }
@@ -140,7 +140,7 @@ export async function* getRootDependencies(manifest, options) {
   else {
     const configRef = { exclude, maxDepth, parent };
     iterators = [
-      ...iter.filter(customResolvers.entries(), ([, valueStr]) => valueStr.startsWith("git+"))
+      ...iter.filter(customResolvers.entries(), ([, valueStr]) => isGitDependency(valueStr))
         .map(([depName, valueStr]) => searchDeepDependencies(depName, valueStr.slice(4), configRef)),
       ...iter.map(dependencies.entries(), ([name, ver]) => searchDeepDependencies(`${name}@${ver}`, null, configRef))
     ];
