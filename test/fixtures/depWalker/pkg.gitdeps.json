@@ -1,0 +1,21 @@
+{
+  "name": "pkg.gitdeps",
+  "version": "0.1.0",
+  "description": "Mock package with git related dependencies versions",
+  "main": "index.js",
+  "homepage": "https://github.com/username/pkg.gitdeps#readme",
+  "devDependencies": {
+    "ava": "^2.1.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.13.0",
+    "husky": "^2.4.0",
+    "jsdoc": "^3.6.2"
+  },
+  "dependencies": {
+    "zen-observable": "^0.8.15",
+    "nanoid": "github:ai/nanoid",
+    "js-x-ray": "git://github.com/NodeSecure/js-x-ray.git",
+    "nanodelay": "git+ssh://git@github.com:ai/nanodelay.git",
+    "nanoevents": "git+https://github.com/ai/nanoevents.git"
+  }
+}
