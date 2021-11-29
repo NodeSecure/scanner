@@ -21,8 +21,7 @@ function cleanupAstDependencies(dependencies) {
   return JSON.stringify(cleaned, null, 2);
 }
 
-// TODO: unskip test before PR
-test.skip("verify 'express' package", async(tape) => {
+test("verify 'express' package", async(tape) => {
   const data = await verify("express@4.17.0");
 
   tape.deepEqual(data.files, {
