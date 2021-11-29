@@ -22,7 +22,7 @@ test("filterDependencyKind should be able to match all relative import path", (t
     "index.js",
     "..\\index.js",
     "..\\index.js"
-  ]);
+  ].map((location) => location.replaceAll("\\", path.sep)));
   tape.deepEqual(result.packages, []);
 
   tape.end();

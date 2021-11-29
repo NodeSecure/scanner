@@ -1,5 +1,6 @@
 export * from "./getTarballComposition.js";
 export * from "./isSensitiveFile.js";
+export * from "./isGitDependency.js";
 export * from "./getPackageName.js";
 export * from "./mergeDependencies.js";
 export * from "./semver.js";

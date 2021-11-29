@@ -25,6 +25,10 @@ const config = JSON.parse(readFileSync(
   new URL(join(FIXTURE_PATH, "slimio.config.json"), import.meta.url)
 ));
 
+const pkgGitdeps = JSON.parse(readFileSync(
+  new URL(join(FIXTURE_PATH, "pkg.gitdeps.json"), import.meta.url)
+));
+
 function cleanupPayload(payload) {
   for (const pkg of Object.values(payload)) {
     for (const verDescriptor of Object.values(pkg.versions)) {
@@ -76,6 +80,41 @@ test("execute depWalker on @slimio/config", async(tape) => {
     "@slimio/is",
     "@iarna/toml",
     "@slimio/config"
+  ].sort());
+
+  tape.end();
+});
+
+test("execute depWalker on pkg.gitdeps", async(tape) => {
+  await setStrategy(strategies.NPM_AUDIT);
+
+  const result = await depWalker(pkgGitdeps, { verbose: false });
+  const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
+
+  const packages = Object.keys(resultAsJSON).sort();
+  tape.deepEqual(packages, [
+    "@nodesecure/js-x-ray",
+    "@nodesecure/sec-literal",
+    "ansi-regex",
+    "emoji-regex",
+    "estree-walker",
+    "fast-xml-parser",
+    "frequency-set",
+    "is-base64",
+    "is-fullwidth-code-point",
+    "is-minified-code",
+    "is-svg",
+    "meriyah",
+    "nanodelay",
+    "nanoevents",
+    "nanoid",
+    "pkg.gitdeps",
+    "regexp-tree",
+    "safe-regex",
+    "string-width",
+    "strip-ansi",
+    "strnum",
+    "zen-observable"
   ].sort());
 
   tape.end();

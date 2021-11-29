@@ -10,7 +10,7 @@ export function mergeDependencies(manifest, types = ["dependencies"]) {
 
     for (const [name, version] of Object.entries(dep)) {
       /**
-       * Version can be file:, github:, git+, ./...
+       * Version can be file:, github:, git:, git+, ./...
        * @see https://docs.npmjs.com/cli/v7/configuring-npm/package-json#dependencies
        */
       if (/^([a-zA-Z]+:|git\+|\.\\)/.test(version)) {

@@ -42,7 +42,7 @@ test("verify 'express' package", async(tape) => {
       "lib\\utils.js",
       "lib\\view.js",
       "package.json"
-    ].map((location) => path.normalize(location)),
+    ].map((location) => location.replaceAll("\\", path.sep)),
     extensions: [".md", ".js", ".json"],
     minified: []
   });

@@ -20,6 +20,7 @@ test("should return the composition of a directory", async(tape) => {
     ext: new Set(["", ".js", ".json", ".txt"]),
     size,
     files: ["one\\README", "two\\empty.txt", "two\\package.json", "two\\two-deep\\test.js"]
+      .map((location) => location.replaceAll("\\", path.sep))
   });
   tape.strictEqual(composition.files.length, 4);
   tape.match(composition.files[0], /one(\/|\\)README/);

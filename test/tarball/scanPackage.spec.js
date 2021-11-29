@@ -23,7 +23,7 @@ test("scanPackage (caseone)", async(tape) => {
       "package.json",
       "src\\deps.js",
       "src\\other.min.js"
-    ],
+    ].map((location) => location.replaceAll("\\", path.sep)),
     extensions: [
       ".txt",
       ".js",
@@ -31,7 +31,7 @@ test("scanPackage (caseone)", async(tape) => {
     ],
     minified: [
       "src\\other.min.js"
-    ]
+    ].map((location) => location.replaceAll("\\", path.sep))
   });
 
   tape.true(typeof result.directorySize === "number", "directorySize should be a number");
@@ -61,7 +61,7 @@ test("scanPackage (caseone)", async(tape) => {
     "index.js",
     "src\\deps.js",
     "src\\other.min.js"
-  ]);
+  ].map((location) => location.replaceAll("\\", path.sep)));
   tape.deepEqual(Object.keys(result.ast.dependencies["index.js"]), [
     "./src/deps.js",
     "fs",

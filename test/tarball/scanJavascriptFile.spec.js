@@ -20,7 +20,7 @@ test("scanJavascriptFile (fixture one.js)", async(tape) => {
     isMinified: false,
     tryDependencies: [],
     dependencies: ["http", "mocha"],
-    filesDependencies: ["src\\foo.js", "home\\marco.js"]
+    filesDependencies: ["src\\foo.js", "home\\marco.js"].map((location) => location.replaceAll("\\", path.sep))
   });
 
   tape.end();
