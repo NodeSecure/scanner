@@ -23,6 +23,7 @@ function cleanupAstDependencies(dependencies) {
 
 test("verify 'express' package", async(tape) => {
   const data = await verify("express@4.17.0");
+  data.files.extensions.sort();
 
   tape.deepEqual(data.files, {
     list: [
@@ -43,7 +44,7 @@ test("verify 'express' package", async(tape) => {
       "lib\\view.js",
       "package.json"
     ].map((location) => location.replaceAll("\\", path.sep)),
-    extensions: [".md", ".js", ".json"],
+    extensions: [".md", ".js", ".json"].sort(),
     minified: []
   });
   tape.true(data.directorySize > 0);

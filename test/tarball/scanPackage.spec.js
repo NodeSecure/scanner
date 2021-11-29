@@ -14,6 +14,7 @@ const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "scanPackage");
 
 test("scanPackage (caseone)", async(tape) => {
   const result = await scanPackage(path.join(FIXTURE_PATH, "caseone"));
+  result.files.extensions.sort();
 
   tape.deepEqual(result.files, {
     list: [
@@ -28,7 +29,7 @@ test("scanPackage (caseone)", async(tape) => {
       ".txt",
       ".js",
       ".json"
-    ],
+    ].sort(),
     minified: [
       "src\\other.min.js"
     ].map((location) => location.replaceAll("\\", path.sep))
