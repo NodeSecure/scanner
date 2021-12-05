@@ -99,7 +99,7 @@ declare namespace Scanner {
       /**
        * List of maintainers (list of people in the organization related to the package)
        */
-      maintainers: Pick<Maintainer, "name" | "email">[];
+      maintainers: { name: string, email: string }[];
       /**
        * List of people who published this package
        */
