@@ -134,7 +134,7 @@ export async function* getRootDependencies(manifest, options) {
       tree = await arb.loadVirtual();
     }
 
-    iterators = iter.filter(tree.edgesOut.entries(), ([, { to }]) => !to.dev)
+    iterators = iter.filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && !to.dev)
       .map(([packageName, { to }]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude }));
   }
   else {
