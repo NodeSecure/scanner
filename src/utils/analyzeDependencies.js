@@ -28,7 +28,7 @@ export function analyzeDependencies(dependencies, deps = {}) {
 
   return {
     nodeDependencies,
-    thirdPartyDependencies,
+    thirdPartyDependencies: [...new Set(thirdPartyDependencies)],
     unusedDependencies,
     missingDependencies,
 
