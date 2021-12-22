@@ -294,5 +294,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   finally {
     await timers.setImmediate();
     await fs.rm(tmpLocation, { recursive: true, force: true });
+
+    logger.emit("depWalkerFinished");
   }
 }
