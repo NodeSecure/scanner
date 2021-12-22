@@ -2,7 +2,21 @@ import { EventEmitter } from "events";
 
 export {
   Logger,
-  LoggerEventData
+  LoggerEventData,
+  LoggerEvents
+}
+
+interface LoggerEvents {
+  readonly done: "depWalkerFinished";
+  readonly analysis: {
+      readonly tree: "walkTree";
+      readonly tarball: "tarball";
+      readonly registry: "registry";
+  };
+  readonly manifest: {
+      readonly read: "readManifest";
+      readonly fetch: "fetchManifest";
+  };
 }
 
 interface LoggerEventData {

@@ -11,6 +11,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
+import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
 
@@ -20,20 +21,20 @@ const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true };
 export async function cwd(cwd = process.cwd(), options = {}, logger = new Logger()) {
   const finalizedOptions = Object.assign({}, kDefaultCwdOptions, options);
 
-  logger.start("readManifest");
+  logger.start(ScannerLoggerEvents.manifest.read);
   const packagePath = path.join(cwd, "package.json");
   const str = await fs.readFile(packagePath, "utf-8");
-  logger.end("readManifest");
+  logger.end(ScannerLoggerEvents.manifest.read);
 
   return depWalker(JSON.parse(str), finalizedOptions, logger);
 }
 
 export async function from(packageName, options, logger = new Logger()) {
-  logger.start("fetchManifest");
+  logger.start(ScannerLoggerEvents.manifest.fetch);
   const manifest = await pacote.manifest(packageName, {
     ...NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
   });
-  logger.end("fetchManifest");
+  logger.end(ScannerLoggerEvents.manifest.fetch);
 
   return depWalker(manifest, options, logger);
 }
@@ -59,4 +60,4 @@ export async function verify(packageName = null) {
   }
 }
 
-export { depWalker, tarball, Logger };
+export { depWalker, tarball, Logger, ScannerLoggerEvents };

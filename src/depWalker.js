@@ -10,8 +10,9 @@ import iter from "itertools";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
 import Lock from "@slimio/lock";
-import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as vuln from "@nodesecure/vuln";
+import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
+import { ScannerLoggerEvents } from "./constants.js";
 
 // Import Internal Dependencies
 import {
@@ -194,12 +195,15 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   const dependencies = new Map();
 
   {
-    logger.start("walkTree").start("tarball").start("registry");
+    logger
+      .start(ScannerLoggerEvents.analysis.tree)
+      .start(ScannerLoggerEvents.analysis.tarball)
+      .start(ScannerLoggerEvents.analysis.registry);
     const fetchedMetadataPackages = new Set();
     const promisesToWait = [];
 
     const tarballLocker = new Lock({ maxConcurrent: 5 });
-    tarballLocker.on("freeOne", () => logger.tick("tarball"));
+    tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
 
     const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
@@ -226,11 +230,11 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       }
 
       if (proceedDependencyAnalysis) {
-        logger.tick("walkTree");
+        logger.tick(ScannerLoggerEvents.analysis.tree);
 
         // There is no need to fetch 'N' times the npm metadata for the same package.
         if (fetchedMetadataPackages.has(name)) {
-          logger.tick("registry");
+          logger.tick(ScannerLoggerEvents.analysis.registry);
         }
         else {
           fetchedMetadataPackages.add(name);
@@ -249,13 +253,13 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       }
     }
 
-    logger.end("walkTree");
+    logger.end(ScannerLoggerEvents.analysis.tree);
 
     // Wait for all extraction to be done!
     await Promise.allSettled(promisesToWait);
     await timers.setImmediate();
 
-    logger.end("tarball").end("registry");
+    logger.end(ScannerLoggerEvents.analysis.tarball).end(ScannerLoggerEvents.analysis.registry);
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
@@ -295,6 +299,6 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     await timers.setImmediate();
     await fs.rm(tmpLocation, { recursive: true, force: true });
 
-    logger.emit("depWalkerFinished");
+    logger.emit(ScannerLoggerEvents.done);
   }
 }
