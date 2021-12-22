@@ -115,15 +115,18 @@ declare namespace Scanner {
     vulnerabilities: Vuln.Strategy.StandardVulnerability[];
   }
 
+  export type GlobalWarning = string[];
+  export type Dependencies = Record<string, Dependency>;
+
   export interface Payload {
     /** Payload unique id */
     id: string;
     /** Name of the analyzed package */
     rootDependencyName: string;
     /** Global warnings list */
-    warnings: [];
+    warnings: GlobalWarning[];
     /** All the dependencies of the package (flattened) */
-    dependencies: Record<string, Dependency>;
+    dependencies: Dependencies;
     /** Version of the scanner used to generate the result */
     version: string;
     /** Vulnerability strategy name (npm, snyk, node) */
