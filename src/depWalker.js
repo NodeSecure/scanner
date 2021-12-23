@@ -184,8 +184,8 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
   const payload = {
     id: tmpLocation.slice(-6),
-    rootDepencyName: manifest.name,
-    version: packageVersion,
+    rootDependencyName: manifest.name,
+    scannerVersion: packageVersion,
     vulnerabilityStrategy,
     warnings: []
   };
