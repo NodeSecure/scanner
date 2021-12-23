@@ -1,7 +1,7 @@
 exports['from pacote 1'] = [
   "id",
-  "rootDepencyName",
-  "version",
+  "rootDependencyName",
+  "scannerVersion",
   "vulnerabilityStrategy",
   "warnings",
   "dependencies"

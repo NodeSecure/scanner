@@ -128,7 +128,7 @@ declare namespace Scanner {
     /** All the dependencies of the package (flattened) */
     dependencies: Dependencies;
     /** Version of the scanner used to generate the result */
-    version: string;
+    scannerVersion: string;
     /** Vulnerability strategy name (npm, snyk, node) */
     vulnerabilityStrategy: Vuln.Strategy.Kind;
   }
