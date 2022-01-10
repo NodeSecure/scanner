@@ -5,9 +5,17 @@ import test from "tape";
 // Require Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";
 
+function createDependency(maintainers = []) {
+  return {
+    metadata: {
+      maintainers
+    }
+  };
+}
+
 test("getDependenciesWarnings for '@scarf/scarf'", (tape) => {
   const deps = new Map([
-    ["@scarf/scarf", true]
+    ["@scarf/scarf", createDependency()]
   ]);
 
   const warnsArray = getDependenciesWarnings(deps);
