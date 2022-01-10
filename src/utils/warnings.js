@@ -8,6 +8,7 @@ const kWarningsMessages = Object.freeze({
   iohook: getToken("warnings.keylogging")
 });
 const kPackages = new Set(Object.keys(kWarningsMessages));
+const kAuthors = new Set(["Marak Squires"]);
 
 function getWarning(depName) {
   return `${kDetectedDep(depName)} ${kWarningsMessages[depName]}`;
@@ -18,6 +19,14 @@ export function getDependenciesWarnings(dependencies) {
   for (const depName of kPackages) {
     if (dependencies.has(depName)) {
       warnings.push(getWarning(depName));
+    }
+  }
+
+  // TODO: optimize with @nodesecure/author later
+  for (const [packageName, dependency] of dependencies) {
+    const author = dependency.metadata.author?.name ?? null;
+    if (kAuthors.has(author)) {
+      warnings.push(`'${author}' package '${packageName}' has been detected in the dependency tree`);
     }
   }
 
