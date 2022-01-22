@@ -18,11 +18,11 @@ import * as tarball from "./src/tarball.js";
 // CONSTANTS
 const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true };
 
-export async function cwd(cwd = process.cwd(), options = {}, logger = new Logger()) {
-  const finalizedOptions = Object.assign({}, kDefaultCwdOptions, options);
+export async function cwd(location = process.cwd(), options = {}, logger = new Logger()) {
+  const finalizedOptions = Object.assign({ location }, kDefaultCwdOptions, options);
 
   logger.start(ScannerLoggerEvents.manifest.read);
-  const packagePath = path.join(cwd, "package.json");
+  const packagePath = path.join(location, "package.json");
   const str = await fs.readFile(packagePath, "utf-8");
   logger.end(ScannerLoggerEvents.manifest.read);
 
