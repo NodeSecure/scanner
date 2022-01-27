@@ -113,7 +113,7 @@ export async function* deepReadEdges(currentPackageName, { to, parent, exclude, 
 }
 
 export async function* getRootDependencies(manifest, options) {
-  const { maxDepth = 4, exclude, usePackageLock, fullLockMode } = options;
+  const { maxDepth = 4, exclude, usePackageLock, fullLockMode, location } = options;
 
   const { dependencies, customResolvers } = mergeDependencies(manifest, void 0);
   const parent = new Dependency(manifest.name, manifest.version);
@@ -124,19 +124,23 @@ export async function* getRootDependencies(manifest, options) {
   if (usePackageLock) {
     const arb = new Arborist({
       ...NPM_TOKEN,
+      path: location,
       registry: getLocalRegistryURL()
     });
     let tree;
     try {
-      await fs.access(path.join(process.cwd(), "node_modules"));
+      await fs.access(path.join(location, "node_modules"));
       tree = await arb.loadActual();
     }
     catch {
       tree = await arb.loadVirtual();
     }
 
-    iterators = iter.filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && !to.dev)
-      .map(([packageName, { to }]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude }));
+    iterators = [
+      ...iter.filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && (!to.dev || to.isWorkspace))
+        .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to])
+        .map(([packageName, to]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude }))
+    ];
   }
   else {
     const configRef = { exclude, maxDepth, parent };
@@ -176,6 +180,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     usePackageLock = false,
     fullLockMode = false,
     maxDepth,
+    location,
     vulnerabilityStrategy = vuln.strategies.NONE
   } = options;
 
@@ -205,7 +210,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     const tarballLocker = new Lock({ maxConcurrent: 5 });
     tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
 
-    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode };
+    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode, location };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
@@ -246,6 +251,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
         promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current.versions[version],
+          location,
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
           locker: tarballLocker,
           logger

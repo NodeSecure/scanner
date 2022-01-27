@@ -47,10 +47,10 @@ export async function scanJavascriptFile(dest, file, packageName) {
 }
 
 export async function scanDirOrArchive(name, version, options) {
-  const { ref, tmpLocation, locker } = options;
+  const { ref, location = process.cwd(), tmpLocation, locker } = options;
 
   const isNpmTarball = !(tmpLocation === null);
-  const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : process.cwd();
+  const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : location;
   const free = await locker.acquireOne();
 
   try {

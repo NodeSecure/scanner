@@ -49,9 +49,9 @@ await Promise.allSettled(promises);
 See `types/api.d.ts` for a complete TypeScript definition.
 
 ```ts
-function cwd(path: string, options?: Scanner.Options): Promise<Scanner.Payload>;
+function cwd(location: string, options?: Scanner.Options): Promise<Scanner.Payload>;
 function from(packageName: string, options?: Scanner.Options): Promise<Scanner.Payload>;
-function verify(packageName: string): Promise<Scanner.VerifyPayload>;
+function verify(packageName?: string | null): Promise<Scanner.VerifyPayload>;
 ```
 
 `Options` is described with the following TypeScript interface:
