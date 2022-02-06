@@ -163,6 +163,12 @@ declare namespace Scanner {
      */
     readonly usePackageLock?: boolean;
     /**
+     * Include project devDependencies (only available for cwd command)
+     *
+     * @default false
+     */
+    readonly includeDevDeps?: boolean;
+    /**
      * Vulnerability strategy name (npm, snyk, node)
      *
      * @default NONE

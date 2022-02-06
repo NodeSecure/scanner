@@ -75,13 +75,14 @@ export async function* searchDeepDependencies(packageName, gitURL, options) {
   yield current;
 }
 
-export async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLockMode }) {
+export async function* deepReadEdges(currentPackageName, options) {
+  const { to, parent, exclude, fullLockMode, includeDevDeps } = options;
   const { version, integrity = to.integrity } = to.package;
 
   const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
   const current = new Dependency(currentPackageName, updatedVersion, parent);
 
-  if (fullLockMode) {
+  if (fullLockMode && !includeDevDeps) {
     const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
       ...NPM_TOKEN,
       registry: getLocalRegistryURL(),
@@ -96,7 +97,7 @@ export async function* deepReadEdges(currentPackageName, { to, parent, exclude, 
   current.addFlag("hasDependencies", to.edgesOut.size > 0);
 
   for (const [packageName, { to: toNode }] of to.edgesOut) {
-    if (toNode === null || toNode.dev) {
+    if (toNode === null || (!includeDevDeps && toNode.dev)) {
       continue;
     }
     const cleanName = `${packageName}@${toNode.package.version}`;
@@ -113,7 +114,11 @@ export async function* deepReadEdges(currentPackageName, { to, parent, exclude, 
 }
 
 export async function* getRootDependencies(manifest, options) {
-  const { maxDepth = 4, exclude, usePackageLock, fullLockMode, location } = options;
+  const {
+    maxDepth = 4, exclude,
+    usePackageLock, fullLockMode, includeDevDeps,
+    location
+  } = options;
 
   const { dependencies, customResolvers } = mergeDependencies(manifest, void 0);
   const parent = new Dependency(manifest.name, manifest.version);
@@ -137,9 +142,10 @@ export async function* getRootDependencies(manifest, options) {
     }
 
     iterators = [
-      ...iter.filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && (!to.dev || to.isWorkspace))
+      ...iter
+        .filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
         .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to])
-        .map(([packageName, to]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude }))
+        .map(([packageName, to]) => deepReadEdges(packageName, { to, parent, fullLockMode, includeDevDeps, exclude }))
     ];
   }
   else {
@@ -178,6 +184,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
   const {
     forceRootAnalysis = false,
     usePackageLock = false,
+    includeDevDeps = false,
     fullLockMode = false,
     maxDepth,
     location,
@@ -210,7 +217,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     const tarballLocker = new Lock({ maxConcurrent: 5 });
     tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
 
-    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode, location };
+    const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode, includeDevDeps, location };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
