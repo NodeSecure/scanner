@@ -1,5 +1,4 @@
-exports['verify express@4.17.0 1'] = `
-{
+exports['verify express@4.17.0 1'] = {
   "index.js": {
     "./lib/express": {
       "unsafe": false,
@@ -16,7 +15,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\application.js": {
+  "lib\\application.js": {
     "finalhandler": {
       "unsafe": false,
       "inTry": false,
@@ -214,7 +213,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\express.js": {
+  "lib\\express.js": {
     "body-parser": {
       "unsafe": false,
       "inTry": false,
@@ -356,7 +355,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\middleware\\\\init.js": {
+  "lib\\middleware\\init.js": {
     "setprototypeof": {
       "unsafe": false,
       "inTry": false,
@@ -372,7 +371,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\middleware\\\\query.js": {
+  "lib\\middleware\\query.js": {
     "utils-merge": {
       "unsafe": false,
       "inTry": false,
@@ -416,7 +415,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\request.js": {
+  "lib\\request.js": {
     "accepts": {
       "unsafe": false,
       "inTry": false,
@@ -544,7 +543,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\router\\\\index.js": {
+  "lib\\router\\index.js": {
     "./route": {
       "unsafe": false,
       "inTry": false,
@@ -672,7 +671,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\router\\\\layer.js": {
+  "lib\\router\\layer.js": {
     "path-to-regexp": {
       "unsafe": false,
       "inTry": false,
@@ -702,7 +701,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\router\\\\route.js": {
+  "lib\\router\\route.js": {
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -760,7 +759,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\utils.js": {
+  "lib\\utils.js": {
     "safe-buffer": {
       "unsafe": false,
       "inTry": false,
@@ -902,7 +901,7 @@ exports['verify express@4.17.0 1'] = `
       }
     }
   },
-  "lib\\\\view.js": {
+  "lib\\view.js": {
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -947,4 +946,3 @@ exports['verify express@4.17.0 1'] = `
     }
   }
 }
-`

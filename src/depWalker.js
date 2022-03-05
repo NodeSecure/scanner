@@ -81,6 +81,7 @@ export async function* deepReadEdges(currentPackageName, options) {
 
   const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
   const current = new Dependency(currentPackageName, updatedVersion, parent);
+  current.dev = to.dev;
 
   if (fullLockMode && !includeDevDeps) {
     const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
@@ -219,7 +220,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
     const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode, includeDevDeps, location };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
-      const { name, version } = currentDep;
+      const { name, version, dev } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
       let proceedDependencyAnalysis = true;
 
@@ -239,6 +240,11 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
       }
       else {
         dependencies.set(name, current);
+      }
+
+      // If the dependency is a DevDependencies we ignore it.
+      if (dev) {
+        continue;
       }
 
       if (proceedDependencyAnalysis) {
