@@ -33,6 +33,7 @@ declare namespace Scanner {
   export interface DependencyVersion {
     /** Id of the package (useful for usedBy relation) */
     id: number;
+    isDevDependency: boolean;
     /** By whom (id) is used the package */
     usedBy: Record<string, string>;
     /** Size on disk of the extracted tarball (in bytes) */
@@ -162,6 +163,12 @@ declare namespace Scanner {
      * @default true  for cwd()  API
      */
     readonly usePackageLock?: boolean;
+    /**
+     * Include project devDependencies (only available for cwd command)
+     *
+     * @default false
+     */
+    readonly includeDevDeps?: boolean;
     /**
      * Vulnerability strategy name (npm, snyk, node)
      *

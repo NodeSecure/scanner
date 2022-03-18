@@ -16,7 +16,7 @@ import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
 
 // CONSTANTS
-const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true };
+const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true, includeDevDeps: false };
 
 export async function cwd(location = process.cwd(), options = {}, logger = new Logger()) {
   const finalizedOptions = Object.assign({ location }, kDefaultCwdOptions, options);

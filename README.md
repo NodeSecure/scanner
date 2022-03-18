@@ -50,7 +50,7 @@ See `types/api.d.ts` for a complete TypeScript definition.
 
 ```ts
 function cwd(location: string, options?: Scanner.Options): Promise<Scanner.Payload>;
-function from(packageName: string, options?: Scanner.Options): Promise<Scanner.Payload>;
+function from(packageName: string, options?: Omit<Scanner.Options, "includeDevDeps">): Promise<Scanner.Payload>;
 function verify(packageName?: string | null): Promise<Scanner.VerifyPayload>;
 ```
 
@@ -60,6 +60,7 @@ function verify(packageName?: string | null): Promise<Scanner.VerifyPayload>;
 interface Options {
   readonly maxDepth?: number;
   readonly usePackageLock?: boolean;
+  readonly includeDevDeps?: boolean;
   readonly vulnerabilityStrategy: Strategy.Kind;
   readonly forceRootAnalysis?: boolean;
   readonly fullLockMode?: boolean;

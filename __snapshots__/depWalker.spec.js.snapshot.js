@@ -1,18 +1,10 @@
-exports['from pacote 1'] = [
-  "id",
-  "rootDependencyName",
-  "scannerVersion",
-  "vulnerabilityStrategy",
-  "warnings",
-  "dependencies"
-]
-
 exports['walk @slimio/is 1'] = {
   "@slimio/is": {
     "versions": {
       "1.5.1": {
         "id": 0,
         "usedBy": {},
+        "isDevDependency": false,
         "flags": [
           "hasManyPublishers"
         ],
@@ -118,3 +110,12 @@ exports['walk @slimio/is 1'] = {
     }
   }
 }
+
+exports['from pacote 1'] = [
+  "id",
+  "rootDependencyName",
+  "scannerVersion",
+  "vulnerabilityStrategy",
+  "warnings",
+  "dependencies"
+]

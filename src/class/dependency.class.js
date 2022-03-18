@@ -8,6 +8,7 @@ export default class Dependency {
     this.warnings = [];
     this.name = name;
     this.version = version;
+    this.dev = false;
 
     if (parent !== null) {
       parent.dependencyCount++;
@@ -60,6 +61,7 @@ export default class Dependency {
         [this.version]: {
           id: typeof customId === "number" ? customId : Dependency.currentId++,
           usedBy: this.parent,
+          isDevDependency: this.dev,
           flags: this.flags,
           description: "",
           size: 0,
