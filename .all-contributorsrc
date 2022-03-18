@@ -47,6 +47,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "antoine-coulon",
+      "name": "Antoine Coulon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43391199?v=4",
+      "profile": "https://dev.to/antoinecoulon",
+      "contributions": [
+        "code",
+        "security"
+      ]
     }
   ],
   "contributorsPerLine": 7,
