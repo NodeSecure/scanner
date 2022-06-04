@@ -24,6 +24,27 @@ test("analyzeDependencies should detect Node.js dependencies and also flag hasEx
   tape.end();
 });
 
+test("analyzeDependencies should detect prefixed (namespaced 'node:') core dependencies", (tape) => {
+  const packageDeps = ["node:foobar"];
+  const packageDevDeps = [];
+
+  const result = analyzeDependencies([
+    "node:fs",
+    "node:test",
+    "node:foobar"
+  ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
+
+  tape.deepEqual(result, {
+    nodeDependencies: ["node:fs", "node:test"],
+    thirdPartyDependencies: ["node:foobar"],
+    unusedDependencies: [],
+    missingDependencies: [],
+    flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
+  });
+
+  tape.end();
+});
+
 test("analyzeDependencies should be capable of detecting unused dependency 'koa'", (tape) => {
   const packageDeps = ["koa", "kleur"];
   const packageDevDeps = ["mocha"];

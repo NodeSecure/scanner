@@ -15,7 +15,7 @@ export function analyzeDependencies(dependencies, deps = {}) {
   const thirdPartyDependencies = dependencies
     .map((name) => (packageDeps.includes(name) ? name : getPackageName(name)))
     .filter((name) => !name.startsWith("."))
-    .filter((name) => !kNodeModules.has(name))
+    .filter((name) => !isNodeCoreModule(name))
     .filter((name) => !packageDevDeps.includes(name))
     .filter((name) => !tryDependencies.has(name));
 
@@ -24,7 +24,7 @@ export function analyzeDependencies(dependencies, deps = {}) {
     thirdPartyDependencies
   );
   const missingDependencies = [...new Set(difference(thirdPartyDependencies, packageDeps))];
-  const nodeDependencies = dependencies.filter((name) => kNodeModules.has(name));
+  const nodeDependencies = dependencies.filter((name) => isNodeCoreModule(name));
 
   return {
     nodeDependencies,
@@ -37,4 +37,15 @@ export function analyzeDependencies(dependencies, deps = {}) {
       hasMissingOrUnusedDependency: unusedDependencies.length > 0 || missingDependencies.length > 0
     }
   };
+}
+
+/**
+ * @param {!string} moduleName
+ * @returns {boolean}
+ */
+function isNodeCoreModule(moduleName) {
+  const cleanModuleName = moduleName.startsWith("node:") ? moduleName.slice(5) : moduleName;
+
+  // Note: We need to also check moduleName because builtins package only return true for 'node:test'.
+  return kNodeModules.has(cleanModuleName) || kNodeModules.has(moduleName);
 }
