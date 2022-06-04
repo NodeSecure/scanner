@@ -25,7 +25,7 @@ export async function packageMetadata(name, version, options) {
       lastVersion,
       lastUpdateAt,
       hasReceivedUpdateInOneYear: !(oneYearFromToday > lastUpdateAt),
-      maintainers: pkg.maintainers,
+      maintainers: pkg.maintainers ?? [],
       publishers: []
     };
 
@@ -35,8 +35,9 @@ export async function packageMetadata(name, version, options) {
     }
 
     const publishers = new Set();
+    let searchForMaintainersInVersions = metadata.maintainers.length === 0;
     for (const ver of Object.values(pkg.versions).reverse()) {
-      const { _npmUser: npmUser, version } = ver;
+      const { _npmUser: npmUser, version, maintainers = [] } = ver;
       const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
       if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
         continue;
@@ -54,6 +55,11 @@ export async function packageMetadata(name, version, options) {
       if (!publishers.has(npmUser.name)) {
         publishers.add(npmUser.name);
         metadata.publishers.push({ ...npmUser, version, at: new Date(pkg.time[version]) });
+      }
+
+      if (searchForMaintainersInVersions) {
+        metadata.maintainers.push(...maintainers);
+        searchForMaintainersInVersions = false;
       }
     }
 
