@@ -58,6 +58,7 @@ declare namespace Scanner {
       required_files: string[];
       required_thirdparty: string[];
       required_nodejs: string[];
+      required_subpath: string[];
       unused: string[];
       missing: string[];
     };

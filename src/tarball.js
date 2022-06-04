@@ -65,7 +65,9 @@ export async function scanDirOrArchive(name, version, options) {
     }
 
     // Read the package.json at the root of the directory or archive.
-    const { packageDeps, packageDevDeps, author, description, hasScript, hasNativeElements } = await manifest.readAnalyze(dest);
+    const {
+      packageDeps, packageDevDeps, author, description, hasScript, hasNativeElements, nodejs
+    } = await manifest.readAnalyze(dest);
     ref.author = author;
     ref.description = description;
 
@@ -97,10 +99,11 @@ export async function scanDirOrArchive(name, version, options) {
     const minifiedFiles = fileAnalysisResults.filter((row) => row.isMinified).flatMap((row) => row.file);
 
     const {
-      nodeDependencies, thirdPartyDependencies, missingDependencies, unusedDependencies, flags
-    } = analyzeDependencies(dependencies, { packageDeps, packageDevDeps, tryDependencies });
+      nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
+    } = analyzeDependencies(dependencies, { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports });
 
     ref.composition.required_thirdparty = thirdPartyDependencies;
+    ref.composition.required_subpath = Object.fromEntries(subpathImportsDependencies);
     ref.composition.unused.push(...unusedDependencies);
     ref.composition.missing.push(...missingDependencies);
     ref.composition.required_files = filesDependencies;

@@ -33,11 +33,11 @@ export async function read(location) {
   return JSON.parse(packageStr);
 }
 
-// TODO: PR @npm/types to fix dependencies typo
 export async function readAnalyze(location) {
   const {
     description = "", author = {}, scripts = {},
-    dependencies = {}, devDependencies = {}, gypfile = false
+    dependencies = {}, devDependencies = {}, gypfile = false,
+    imports = {}
   } = await read(location);
 
   const packageDeps = Object.keys(dependencies);
@@ -52,6 +52,7 @@ export async function readAnalyze(location) {
       .some((value) => kUnsafeNpmScripts.has(value.toLowerCase())),
     packageDeps,
     packageDevDeps,
+    nodejs: { imports },
     hasNativeElements: hasNativePackage || gypfile
   };
 }

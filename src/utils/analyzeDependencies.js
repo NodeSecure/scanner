@@ -10,7 +10,15 @@ const kNodeModules = new Set(builtins({ experimental: true }));
 const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
 
 export function analyzeDependencies(dependencies, deps = {}) {
-  const { packageDeps, packageDevDeps, tryDependencies } = deps;
+  const { packageDeps, packageDevDeps, tryDependencies, nodeImports = {} } = deps;
+
+  // See: https://nodejs.org/api/packages.html#subpath-imports
+  const subpathImportsDependencies = dependencies
+    .filter((name) => isAliasDependency(name) && name in nodeImports)
+    .map((name) => buildSubpathDependency(name, nodeImports));
+  const thirdPartyDependenciesAliased = new Set(
+    subpathImportsDependencies.flat().filter((name) => !isAliasDependency(name))
+  );
 
   const thirdPartyDependencies = dependencies
     .map((name) => (packageDeps.includes(name) ? name : getPackageName(name)))
@@ -21,14 +29,16 @@ export function analyzeDependencies(dependencies, deps = {}) {
 
   const unusedDependencies = difference(
     packageDeps.filter((name) => !name.startsWith("@types")),
-    thirdPartyDependencies
+    [...thirdPartyDependencies, ...thirdPartyDependenciesAliased]
   );
-  const missingDependencies = [...new Set(difference(thirdPartyDependencies, packageDeps))];
+  const missingDependencies = [...new Set(difference(thirdPartyDependencies, packageDeps))]
+    .filter((name) => !(name in nodeImports));
   const nodeDependencies = dependencies.filter((name) => isNodeCoreModule(name));
 
   return {
     nodeDependencies,
     thirdPartyDependencies: [...new Set(thirdPartyDependencies)],
+    subpathImportsDependencies,
     unusedDependencies,
     missingDependencies,
 
@@ -48,4 +58,14 @@ function isNodeCoreModule(moduleName) {
 
   // Note: We need to also check moduleName because builtins package only return true for 'node:test'.
   return kNodeModules.has(cleanModuleName) || kNodeModules.has(moduleName);
+}
+
+function isAliasDependency(moduleName) {
+  return moduleName.charAt(0) === "#";
+}
+
+function buildSubpathDependency(alias, nodeImports) {
+  const importedDependency = nodeImports[alias].node ?? nodeImports[alias].default;
+
+  return [alias, importedDependency];
 }
