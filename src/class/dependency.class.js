@@ -75,7 +75,8 @@ export default class Dependency {
             missing: [],
             required_files: [],
             required_nodejs: [],
-            required_thirdparty: []
+            required_thirdparty: [],
+            required_subpath: []
           },
           license: "unkown license",
           gitUrl: this.gitUrl

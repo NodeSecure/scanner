@@ -543,6 +543,218 @@ exports['verify express@4.17.0 1'] = {
       }
     }
   },
+  "lib\\response.js": {
+    "safe-buffer": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 15,
+          "column": 13
+        },
+        "end": {
+          "line": 15,
+          "column": 35
+        }
+      }
+    },
+    "content-disposition": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 16,
+          "column": 25
+        },
+        "end": {
+          "line": 16,
+          "column": 55
+        }
+      }
+    },
+    "depd": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 17,
+          "column": 16
+        },
+        "end": {
+          "line": 17,
+          "column": 31
+        }
+      }
+    },
+    "encodeurl": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 18,
+          "column": 16
+        },
+        "end": {
+          "line": 18,
+          "column": 36
+        }
+      }
+    },
+    "escape-html": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 19,
+          "column": 17
+        },
+        "end": {
+          "line": 19,
+          "column": 39
+        }
+      }
+    },
+    "http": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 20,
+          "column": 11
+        },
+        "end": {
+          "line": 20,
+          "column": 26
+        }
+      }
+    },
+    "./utils": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 29,
+          "column": 17
+        },
+        "end": {
+          "line": 29,
+          "column": 35
+        }
+      }
+    },
+    "on-finished": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 22,
+          "column": 17
+        },
+        "end": {
+          "line": 22,
+          "column": 39
+        }
+      }
+    },
+    "path": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 23,
+          "column": 11
+        },
+        "end": {
+          "line": 23,
+          "column": 26
+        }
+      }
+    },
+    "statuses": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 24,
+          "column": 15
+        },
+        "end": {
+          "line": 24,
+          "column": 34
+        }
+      }
+    },
+    "utils-merge": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 25,
+          "column": 12
+        },
+        "end": {
+          "line": 25,
+          "column": 34
+        }
+      }
+    },
+    "cookie-signature": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 26,
+          "column": 11
+        },
+        "end": {
+          "line": 26,
+          "column": 38
+        }
+      }
+    },
+    "cookie": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 30,
+          "column": 13
+        },
+        "end": {
+          "line": 30,
+          "column": 30
+        }
+      }
+    },
+    "send": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 31,
+          "column": 11
+        },
+        "end": {
+          "line": 31,
+          "column": 26
+        }
+      }
+    },
+    "vary": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 35,
+          "column": 11
+        },
+        "end": {
+          "line": 35,
+          "column": 26
+        }
+      }
+    }
+  },
   "lib\\router\\index.js": {
     "./route": {
       "unsafe": false,

@@ -21,6 +21,7 @@ test("manifest.readAnalyze with a fake empty package.json (so all default values
   tape.false(manifestResult.hasScript);
   tape.deepEqual(manifestResult.author, {});
   tape.strictEqual(manifestResult.description, "");
+  tape.deepEqual(manifestResult.nodejs, { imports: {} });
   tape.true(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
   tape.true(readFile.calledOnce);
 
@@ -40,6 +41,11 @@ test("manifest.readAnalyze with a fake but consistent data", async(tape) => {
     devDependencies: {
       mocha: ">=2.5.0"
     },
+    imports: {
+      "#dep": {
+        node: "kleur"
+      }
+    },
     gypfile: true
   }));
   tape.teardown(() => readFile.restore());
@@ -48,6 +54,11 @@ test("manifest.readAnalyze with a fake but consistent data", async(tape) => {
 
   tape.deepEqual(manifestResult.packageDeps, ["@slimio/is"]);
   tape.deepEqual(manifestResult.packageDevDeps, ["mocha"]);
+  tape.deepEqual(manifestResult.nodejs.imports, {
+    "#dep": {
+      node: "kleur"
+    }
+  });
   tape.true(manifestResult.hasNativeElements);
   tape.true(manifestResult.hasScript);
   tape.deepEqual(manifestResult.author, {
