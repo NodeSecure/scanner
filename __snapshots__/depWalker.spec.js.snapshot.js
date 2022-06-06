@@ -26,7 +26,8 @@ exports['walk @slimio/is 1'] = {
           "unused": [],
           "missing": [],
           "required_nodejs": [],
-          "required_thirdparty": []
+          "required_thirdparty": [],
+          "required_subpath": {}
         },
         "license": {
           "uniqueLicenseIds": [

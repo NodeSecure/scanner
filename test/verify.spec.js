@@ -79,7 +79,7 @@ test("verify 'express' package", async(tape) => {
 
   tape.true(data.ast.warnings.length === 2);
   const warningName = data.ast.warnings.map((row) => row.kind);
-  tape.deepEqual(warningName, ["parsing-error", "unsafe-import"]);
+  tape.deepEqual(warningName, ["unsafe-import"]);
 
   snapshot.core({
     what: data.ast.dependencies,
