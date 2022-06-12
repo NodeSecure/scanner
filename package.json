@@ -64,7 +64,7 @@
     "tape": "^5.5.3"
   },
   "dependencies": {
-    "@nodesecure/flags": "^2.2.0",
+    "@nodesecure/flags": "^2.3.0",
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^1.3.0",
     "@nodesecure/js-x-ray": "^4.4.0",
