@@ -66,6 +66,9 @@ export default class Dependency {
           description: "",
           size: 0,
           author: {},
+          engines: {},
+          repository: {},
+          scripts: {},
           warnings: this.warnings,
           composition: {
             extensions: [],

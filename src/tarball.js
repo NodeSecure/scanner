@@ -66,10 +66,12 @@ export async function scanDirOrArchive(name, version, options) {
 
     // Read the package.json at the root of the directory or archive.
     const {
-      packageDeps, packageDevDeps, author, description, hasScript, hasNativeElements, nodejs
+      packageDeps,
+      packageDevDeps,
+      author, description, hasScript, hasNativeElements, nodejs,
+      engines, repository, scripts
     } = await manifest.readAnalyze(dest);
-    ref.author = author;
-    ref.description = description;
+    Object.assign(ref, { author, description, engines, repository, scripts });
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);

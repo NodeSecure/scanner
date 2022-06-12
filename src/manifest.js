@@ -37,6 +37,8 @@ export async function readAnalyze(location) {
   const {
     description = "", author = {}, scripts = {},
     dependencies = {}, devDependencies = {}, gypfile = false,
+    engines = {},
+    repository = {},
     imports = {}
   } = await read(location);
 
@@ -48,6 +50,9 @@ export async function readAnalyze(location) {
   return {
     author: typeof author === "string" ? parseManifestAuthor(author) : author,
     description,
+    engines,
+    repository,
+    scripts,
     hasScript: Object.keys(scripts)
       .some((value) => kUnsafeNpmScripts.has(value.toLowerCase())),
     packageDeps,
