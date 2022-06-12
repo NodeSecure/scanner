@@ -12,6 +12,20 @@ exports['walk @slimio/is 1'] = {
         "author": {
           "name": "SlimIO"
         },
+        "engines": {
+          "node": ">=10"
+        },
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/SlimIO/is.git"
+        },
+        "scripts": {
+          "prepublishOnly": "pkg-ok",
+          "test": "cross-env psp && ava --verbose",
+          "doc": "jsdoc -c ./jsdoc.json -r -R ./README.md -P ./package.json --verbose",
+          "coverage": "nyc npm test",
+          "report": "nyc report --reporter=html"
+        },
         "warnings": [],
         "composition": {
           "extensions": [

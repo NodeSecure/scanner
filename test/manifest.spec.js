@@ -59,6 +59,11 @@ test("manifest.readAnalyze with a fake but consistent data", async(tape) => {
       node: "kleur"
     }
   });
+  tape.deepEqual(manifestResult.scripts, {
+    preinstall: "npx foobar"
+  });
+  tape.deepEqual(manifestResult.engines, {});
+  tape.deepEqual(manifestResult.repository, {});
   tape.true(manifestResult.hasNativeElements);
   tape.true(manifestResult.hasScript);
   tape.deepEqual(manifestResult.author, {

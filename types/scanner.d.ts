@@ -42,6 +42,15 @@ declare namespace Scanner {
     description: string;
     /** Author of the package. This information is not trustable and can be empty. */
     author: Maintainer;
+    engines: {
+      node?: string;
+      npm?: string;
+    };
+    repository: {
+      type: string;
+      url: string;
+    };
+    scripts: Record<string, string>;
     /**
      * JS-X-Ray warnings
      *
