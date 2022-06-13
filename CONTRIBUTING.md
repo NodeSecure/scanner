@@ -1,8 +1,7 @@
 # Contributing to NodeSecure
 
-Contributions to NodeSecure include code, documentation, answering user questions,
-running the project's infrastructure, and advocating for all types of NodeSecure
-users.
+Contributions to NodeSecure include code, documentation, answering user questions and
+running the project's infrastructure
 
 The NodeSecure project welcomes all contributions from anyone willing to work in
 good faith with other contributors and the community. No contribution is too
@@ -10,10 +9,10 @@ small and all contributions are valued.
 
 This guide explains the process for contributing to the NodeSecure project's.
 
-## [Code of Conduct](https://github.com/NodeSecure/Governance/blob/main/CONTRIBUTING.md)
+## [Code of Conduct](https://github.com/NodeSecure/Governance/blob/main/CODE_OF_CONDUCT.md)
 
 The NodeSecure project has a
-[Code of Conduct](https://github.com/NodeSecure/Governance/blob/main/CONTRIBUTING.md)
+[Code of Conduct](https://github.com/NodeSecure/Governance/blob/main/CODE_OF_CONDUCT.md)
 that *all* contributors are expected to follow. This code describes the
 *minimum* behavior expectations for all contributors.
 
