@@ -14,7 +14,6 @@ import builtins from "builtins";
 
 // Import Internal Dependencies
 import { getTarballComposition, isSensitiveFile, getPackageName, constants } from "./utils/index.js";
-import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
 const DIRECT_PATH = new Set([".", "..", "./", "../"]);
@@ -87,7 +86,7 @@ async function executeJSXRayAnalysisOnFile(dest, file, options) {
 }
 
 export async function analyzeDirOrArchiveOnDisk(name, version, options) {
-  const { ref, tmpLocation, tarballLocker } = options;
+  const { ref, tmpLocation, tarballLocker, localRegistryURL } = options;
 
   const isNpmTarball = !(tmpLocation === null);
   const dest = isNpmTarball ? join(tmpLocation, `${name}@${version}`) : process.cwd();
@@ -98,7 +97,7 @@ export async function analyzeDirOrArchiveOnDisk(name, version, options) {
     if (isNpmTarball) {
       await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
         ...constants.NPM_TOKEN,
-        registry: getLocalRegistryURL(),
+        registry: localRegistryURL,
         cache: `${os.homedir()}/.npm`
       });
       await timers.setImmediate();

@@ -34,11 +34,11 @@ Spinner.DEFAULT_SPINNER = "dots";
 
 async function* searchDeepDependencies(packageName, gitURL, options) {
   const isGit = typeof gitURL === "string";
-  const { exclude, currDepth = 0, parent, maxDepth } = options;
+  const { exclude, currDepth = 0, parent, maxDepth, localRegistryURL } = options;
 
   const { name, version, deprecated, ...pkg } = await pacote.manifest(isGit ? gitURL : packageName, {
     ...constants.NPM_TOKEN,
-    registry: getLocalRegistryURL(),
+    registry: localRegistryURL,
     cache: `${os.homedir()}/.npm`
   });
   const { dependencies, customResolvers } = mergeDependencies(pkg);
@@ -51,7 +51,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
 
   if (currDepth !== maxDepth) {
     const config = {
-      exclude, currDepth: currDepth + 1, parent: current, maxDepth
+      exclude, currDepth: currDepth + 1, parent: current, maxDepth, localRegistryURL
     };
 
     const gitDependencies = iter.filter(customResolvers.entries(), ([, valueStr]) => valueStr.startsWith("git+"));
@@ -78,7 +78,7 @@ async function* searchDeepDependencies(packageName, gitURL, options) {
   yield current;
 }
 
-async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLockMode }) {
+async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLockMode, localRegistryURL }) {
   const { version, integrity = to.integrity } = to.package;
 
   const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
@@ -87,7 +87,7 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
   if (fullLockMode) {
     const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
       ...constants.NPM_TOKEN,
-      registry: getLocalRegistryURL(),
+      registry: localRegistryURL,
       cache: `${os.homedir()}/.npm`
     });
     const { customResolvers } = mergeDependencies(pkg);
@@ -109,7 +109,7 @@ async function* deepReadEdges(currentPackageName, { to, parent, exclude, fullLoc
     }
     else {
       exclude.set(cleanName, new Set([current.fullName]));
-      yield* deepReadEdges(packageName, { parent: current, to: toNode, exclude });
+      yield* deepReadEdges(packageName, { parent: current, to: toNode, exclude, localRegistryURL });
     }
   }
   yield current;
@@ -176,7 +176,7 @@ async function fetchPackageMetadata(name, version, options) {
 }
 
 async function* getRootDependencies(manifest, options) {
-  const { maxDepth = 4, exclude, usePackageLock, fullLockMode } = options;
+  const { maxDepth = 4, exclude, usePackageLock, fullLockMode, localRegistryURL } = options;
 
   const { dependencies, customResolvers } = mergeDependencies(manifest, void 0);
   const parent = new Dependency(manifest.name, manifest.version);
@@ -187,7 +187,7 @@ async function* getRootDependencies(manifest, options) {
   if (usePackageLock) {
     const arb = new Arborist({
       ...constants.NPM_TOKEN,
-      registry: getLocalRegistryURL()
+      registry: localRegistryURL
     });
     let tree;
     try {
@@ -199,10 +199,10 @@ async function* getRootDependencies(manifest, options) {
     }
 
     iterators = iter.filter(tree.edgesOut.entries(), ([, { to }]) => !to.dev)
-      .map(([packageName, { to }]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude }));
+      .map(([packageName, { to }]) => deepReadEdges(packageName, { to, parent, fullLockMode, exclude, localRegistryURL }));
   }
   else {
-    const configRef = { exclude, maxDepth, parent };
+    const configRef = { exclude, maxDepth, parent, localRegistryURL };
     iterators = [
       ...iter.filter(customResolvers.entries(), ([, valueStr]) => valueStr.startsWith("git+"))
         .map(([depName, valueStr]) => searchDeepDependencies(depName, valueStr.slice(4), configRef)),
@@ -236,6 +236,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
     fullLockMode = false,
     vulnerabilityStrategy = vuln.strategies.NONE
   } = options;
+
+  const localRegistryURL = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
 
   // Create TMP directory
   const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
@@ -279,7 +281,7 @@ export async function depWalker(manifest, options = Object.create(null)) {
       tarballSpinner.text = white().bold(`${getToken("depWalker.analyzed_tarball")} ${stats}`);
     });
 
-    const rootDepsOptions = { maxDepth: options.maxDepth, exclude, usePackageLock, fullLockMode };
+    const rootDepsOptions = { maxDepth: options.maxDepth, exclude, usePackageLock, fullLockMode, localRegistryURL };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version } = currentDep;
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
@@ -308,7 +310,8 @@ export async function depWalker(manifest, options = Object.create(null)) {
         promisesToWait.push(analyzeDirOrArchiveOnDisk(name, version, {
           ref: current[version],
           tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
-          tarballLocker
+          tarballLocker,
+          localRegistryURL
         }));
       }
     }
