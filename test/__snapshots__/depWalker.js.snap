@@ -108,6 +108,17 @@ Object {
 }
 `;
 
+exports[`fetch payload of pacote on the gitlat registry 1`] = `
+Array [
+  "id",
+  "rootDepencyName",
+  "warnings",
+  "dependencies",
+  "version",
+  "vulnerabilityStrategy",
+]
+`;
+
 exports[`fetch payload of pacote on the npm registry 1`] = `
 Array [
   "id",

@@ -68,6 +68,38 @@ test("execute depWalker on @slimio/config", async() => {
 });
 
 test("fetch payload of pacote on the npm registry", async() => {
-  const result = await from("pacote", { verbose: false, maxDepth: 10, vulnerabilityStrategy: strategies.NPM_AUDIT });
+  const result = await from("pacote", {
+    verbose: false,
+    maxDepth: 10,
+    vulnerabilityStrategy: strategies.NPM_AUDIT
+  });
+
   expect(Object.keys(result)).toMatchSnapshot();
+});
+
+test("fetch payload of pacote on the gitlat registry", async() => {
+  const result = await from("pacote", {
+    registry: "https://gitlab.com/api/v4/packages/npm/",
+    verbose: false,
+    maxDepth: 10,
+    vulnerabilityStrategy: strategies.NPM_AUDIT
+  });
+
+  expect(Object.keys(result)).toMatchSnapshot();
+});
+
+test("Given an invalid URL, it should throw", async() => {
+  expect.assertions(1);
+
+  try {
+    await from("pacote", {
+      registry: "fake-url",
+      verbose: false,
+      maxDepth: 10,
+      vulnerabilityStrategy: strategies.NPM_AUDIT
+    });
+  }
+  catch (error) {
+    expect(error.message).toBe("Invalid URL");
+  }
 });
