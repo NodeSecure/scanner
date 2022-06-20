@@ -137,8 +137,38 @@ test("fetch payload of pacote on the npm registry", async(tape) => {
   tape.end();
 });
 
+test("fetch payload of pacote on the gitlab registry", async(tape) => {
+  tape.teardown(snapshot.restore);
+
+  const result = await from("pacote", {
+    registry: "https://gitlab.com/api/v4/packages/npm/",
+    verbose: false,
+    maxDepth: 10,
+    vulnerabilityStrategy: strategies.NPM_AUDIT
+  });
+
+  snapshot.core({
+    what: Object.keys(result),
+    file: fileURLToPath(import.meta.url),
+    specName: "from pacote"
+  });
+
+  tape.end();
+});
+
 test("execute cwd on scanner project", async(tape) => {
   await cwd(join(__dirname, ".."), {
+    verbose: false,
+    maxDepth: 2,
+    vulnerabilityStrategy: strategies.NPM_AUDIT
+  });
+
+  tape.end();
+});
+
+test("execute cwd on scanner project with a different registry", async(tape) => {
+  await cwd(join(__dirname, ".."), {
+    registry: "https://gitlab.com/api/v4/packages/npm/",
     verbose: false,
     maxDepth: 2,
     vulnerabilityStrategy: strategies.NPM_AUDIT

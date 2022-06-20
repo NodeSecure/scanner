@@ -36,12 +36,12 @@ test("analyzeDependencies should detect prefixed (namespaced 'node:') core depen
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
   tape.deepEqual(result, {
-    nodeDependencies: ["node:fs", "node:test"],
-    thirdPartyDependencies: ["node:foobar"],
+    nodeDependencies: ["node:fs"],
+    thirdPartyDependencies: ["node:test", "node:foobar"],
     subpathImportsDependencies: [],
     unusedDependencies: [],
-    missingDependencies: [],
-    flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
+    missingDependencies: ["node:test"],
+    flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: true }
   });
 
   tape.end();
