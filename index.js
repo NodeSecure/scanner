@@ -19,14 +19,14 @@ import * as tarball from "./src/tarball.js";
 const kDefaultCwdOptions = { forceRootAnalysis: true, usePackageLock: true, includeDevDeps: false };
 
 export async function cwd(location = process.cwd(), options = {}, logger = new Logger()) {
-  const localRegistryURL = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
+  const registry = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
 
   const finalizedOptions = Object.assign(
     { location },
     kDefaultCwdOptions,
     {
       ...options,
-      registry: localRegistryURL
+      registry
     }
   );
 
@@ -39,15 +39,15 @@ export async function cwd(location = process.cwd(), options = {}, logger = new L
 }
 
 export async function from(packageName, options, logger = new Logger()) {
-  const localRegistryURL = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
+  const registry = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
 
   logger.start(ScannerLoggerEvents.manifest.fetch);
   const manifest = await pacote.manifest(packageName, {
-    ...NPM_TOKEN, registry: localRegistryURL, cache: `${os.homedir()}/.npm`
+    ...NPM_TOKEN, registry, cache: `${os.homedir()}/.npm`
   });
   logger.end(ScannerLoggerEvents.manifest.fetch);
 
-  return depWalker(manifest, Object.assign(options, { registry: localRegistryURL }), logger);
+  return depWalker(manifest, Object.assign(options, { registry }), logger);
 }
 
 export async function verify(packageName = null) {
