@@ -166,6 +166,7 @@ declare namespace Scanner {
      * @default 4
      */
     readonly maxDepth?: number;
+    readonly registry?: string | URL;
     /**
      * Use root package-lock.json. This will have the effect of triggering the Arborist package.
      *

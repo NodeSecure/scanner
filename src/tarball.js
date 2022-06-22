@@ -14,7 +14,6 @@ import {
   NPM_TOKEN
 } from "./utils/index.js";
 import * as manifest from "./manifest.js";
-import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
@@ -47,7 +46,7 @@ export async function scanJavascriptFile(dest, file, packageName) {
 }
 
 export async function scanDirOrArchive(name, version, options) {
-  const { ref, location = process.cwd(), tmpLocation, locker } = options;
+  const { ref, location = process.cwd(), tmpLocation, locker, registry } = options;
 
   const isNpmTarball = !(tmpLocation === null);
   const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : location;
@@ -58,7 +57,7 @@ export async function scanDirOrArchive(name, version, options) {
     if (isNpmTarball) {
       await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
         ...NPM_TOKEN,
-        registry: getLocalRegistryURL(),
+        registry,
         cache: `${os.homedir()}/.npm`
       });
       await timers.setImmediate();

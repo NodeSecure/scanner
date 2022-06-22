@@ -77,7 +77,7 @@ test("verify 'express' package", async(tape) => {
     }
   ]);
 
-  tape.true(data.ast.warnings.length === 2);
+  tape.true(data.ast.warnings.length === 1);
   const warningName = data.ast.warnings.map((row) => row.kind);
   tape.deepEqual(warningName, ["unsafe-import"]);
 
@@ -86,7 +86,7 @@ test("verify 'express' package", async(tape) => {
     file: fileURLToPath(import.meta.url),
     specName: "verify express@4.17.0",
     compare: (options) => {
-      const cleanSnapshot = cleanupAstDependenciesSnapshot(JSON.parse(options.expected));
+      const cleanSnapshot = cleanupAstDependenciesSnapshot(options.expected);
       const expected = JSON.stringify(cleanSnapshot);
       const value = JSON.stringify(options.value);
 

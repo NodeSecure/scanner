@@ -59,6 +59,7 @@ function verify(packageName?: string | null): Promise<Scanner.VerifyPayload>;
 ```ts
 interface Options {
   readonly maxDepth?: number;
+  readonly registry?: string | URL;
   readonly usePackageLock?: boolean;
   readonly includeDevDeps?: boolean;
   readonly vulnerabilityStrategy: Strategy.Kind;
