@@ -93,6 +93,10 @@ export async function* deepReadEdges(currentPackageName, options) {
     current.addFlag("hasValidIntegrity", _integrity === integrity);
     current.addFlag("isDeprecated");
     current.addFlag("hasCustomResolver", customResolvers.size > 0);
+
+    if (isGitDependency(to.resolved)) {
+      current.isGit(to.resolved);
+    }
   }
   current.addFlag("hasDependencies", to.edgesOut.size > 0);
 
