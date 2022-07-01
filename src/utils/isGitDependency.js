@@ -1,5 +1,3 @@
-const kGitVersionVariants = ["git:", "git+", "github:"];
-
 /**
  * @example isGitDependency("github:NodeSecure/scanner") // => true
  * @example isGitDependency("git+ssh://git@github.com:npm/cli#semver:^5.0") // => true
@@ -9,12 +7,5 @@ const kGitVersionVariants = ["git:", "git+", "github:"];
  * @returns {boolean}
  */
 export function isGitDependency(version) {
-  for (const variant of kGitVersionVariants) {
-    if (version.startsWith(variant)) {
-      return true;
-    }
-  }
-
-  return false;
+  return /^git(\:|\+|hub:)/.test(version);
 }
-
