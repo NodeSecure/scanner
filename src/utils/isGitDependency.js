@@ -7,5 +7,5 @@
  * @returns {boolean}
  */
 export function isGitDependency(version) {
-  return /^git(\:|\+|hub:)/.test(version);
+  return /^git(:|\+|hub:)/.test(version);
 }
