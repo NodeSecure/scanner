@@ -19,8 +19,7 @@ test("getDependenciesWarnings for '@scarf/scarf'", async(tape) => {
   ]);
 
   const warnsArray = await getDependenciesWarnings(deps);
-  tape.true(is.array(warnsArray));
-  tape.strictEqual(warnsArray.length, 1);
+  tape.strictEqual(warnsArray.warnings.length, 1);
 
   tape.strictEqual(
     warnsArray.warnings[0],
