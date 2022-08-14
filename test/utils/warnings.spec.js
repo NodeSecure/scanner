@@ -13,17 +13,17 @@ function createDependency(maintainers = []) {
   };
 }
 
-test("getDependenciesWarnings for '@scarf/scarf'", (tape) => {
+test("getDependenciesWarnings for '@scarf/scarf'", async(tape) => {
   const deps = new Map([
     ["@scarf/scarf", createDependency()]
   ]);
 
-  const warnsArray = getDependenciesWarnings(deps);
+  const warnsArray = await getDependenciesWarnings(deps);
   tape.true(is.array(warnsArray));
   tape.strictEqual(warnsArray.length, 1);
 
   tape.strictEqual(
-    warnsArray[0],
+    warnsArray.warnings[0],
     // eslint-disable-next-line max-len
     "The dependency '@scarf/scarf' has been detected in the dependency Tree. This dependency could collect data against your will so think to disable it with the env var: SCARF_ANALYTICS"
   );
