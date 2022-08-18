@@ -56,7 +56,7 @@ declare namespace Scanner {
      *
      * @see https://github.com/NodeSecure/js-x-ray/blob/master/WARNINGS.md
      */
-    warnings: JSXRay.Warning<JSXRay.BaseWarning>[];
+    warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
     /** Tarball composition (files and dependencies) */
     composition: {
       /** Files extensions (.js, .md, .exe etc..) */
@@ -155,7 +155,7 @@ declare namespace Scanner {
     licenses: License[];
     ast: {
       dependencies: Record<string, JSXRay.Dependency>;
-      warnings: JSXRay.Warning<JSXRay.BaseWarning>[];
+      warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
     };
   }
 
