@@ -9,7 +9,7 @@ const kWarningsMessages = Object.freeze({
   iohook: getToken("warnings.keylogging")
 });
 const kPackages = new Set(Object.keys(kWarningsMessages));
-const KFlags = [{
+const kFlaggedAuthors = [{
   username: "marak",
   email: "marak.squires@gmail.com"
 }];
@@ -18,19 +18,24 @@ function getWarning(depName) {
   return `${kDetectedDep(depName)} ${kWarningsMessages[depName]}`;
 }
 
-export async function getDependenciesWarnings(dependencies) {
-  const warnings = [];
+export async function getDependenciesWarnings(dependenciesMap) {
+  const globalsWarning = [];
   for (const depName of kPackages) {
-    if (dependencies.has(depName)) {
-      warnings.push(getWarning(depName));
+    if (dependenciesMap.has(depName)) {
+      globalsWarning.push(getWarning(depName));
     }
   }
   // TODO: add support for RC configuration
-  const authors = await extractAllAuthorsFromLibrary(dependencies, { flags: KFlags, domainInformations: true });
+  const authors = await extractAllAuthorsFromLibrary(
+    { dependencies: Object.fromEntries(dependenciesMap) },
+    { flags: kFlaggedAuthors, domainInformations: true }
+  );
 
   return {
-    warnings,
+    warnings: {
+      globals: globalsWarning,
+      flaggedAuthors: authors.filter((el) => el.flagged === true)
+    },
     authors
   };
 }
-
