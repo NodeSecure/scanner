@@ -19,10 +19,10 @@ function getWarning(depName) {
 }
 
 export async function getDependenciesWarnings(dependenciesMap) {
-  const globalsWarning = [];
+  const warnings = [];
   for (const depName of kPackages) {
     if (dependenciesMap.has(depName)) {
-      globalsWarning.push(getWarning(depName));
+      warnings.push(getWarning(depName));
     }
   }
   // TODO: add support for RC configuration
@@ -32,10 +32,7 @@ export async function getDependenciesWarnings(dependenciesMap) {
   );
 
   return {
-    warnings: {
-      globals: globalsWarning,
-      flaggedAuthors: authors.filter((el) => el.flagged === true)
-    },
+    warnings,
     authors
   };
 }
