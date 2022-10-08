@@ -127,6 +127,13 @@ export async function* getRootDependencies(manifest, options) {
 
   const { dependencies, customResolvers } = mergeDependencies(manifest, void 0);
   const parent = new Dependency(manifest.name, manifest.version);
+  try {
+    await pacote.manifest(`${manifest.name}@${manifest.version}`);
+    parent.hasNpmPackage = true;
+  }
+  catch {
+    parent.hasNpmPackage = false;
+  }
   parent.addFlag("hasCustomResolver", customResolvers.size > 0);
   parent.addFlag("hasDependencies", dependencies.size > 0);
 
