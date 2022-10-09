@@ -17,8 +17,9 @@ test("Dependency class should act as expected by assertions", (tape) => {
   tape.strictEqual(dep.dependencyCount, 0);
   tape.strictEqual(dep.existOnRemoteRegistry, true);
   tape.deepEqual(dep.warnings, []);
+  tape.deepEqual(dep.alias, {});
   tape.strictEqual(dep.gitUrl, null);
-  tape.strictEqual(Reflect.ownKeys(dep).length, 7);
+  tape.strictEqual(Reflect.ownKeys(dep).length, 8);
 
   const flagOne = dep.flags;
   const flagTwo = dep.flags;

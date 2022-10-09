@@ -74,3 +74,19 @@ test("should return no dependencies/customResolvers for three.json", (tape) => {
 
   tape.end();
 });
+
+test("should detect NPM alias using custom resolvers npm: (but still count it as normal dependency)", (tape) => {
+  const result = mergeDependencies({
+    dependencies: {
+      test: "npm:fastify@^4.7.0"
+    }
+  }, ["dependencies", "devDependencies"]);
+  tape.true(is.plainObject(result), "result value of mergeDependencies must be a plainObject.");
+
+  tape.strictEqual(result.dependencies.size, 1);
+  tape.strictEqual(result.customResolvers.size, 1);
+  tape.true(result.alias.has("test"));
+  tape.strictEqual(result.alias.get("test"), "fastify@^4.7.0");
+
+  tape.end();
+});
