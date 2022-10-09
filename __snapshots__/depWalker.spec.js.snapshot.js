@@ -105,23 +105,15 @@ exports['walk @slimio/is 1'] = {
         }
       ],
       "maintainers": [
-        {
-          "email": "mickael.croquet@laposte.net",
-          "name": "mcroquet"
-        },
-        {
-          "email": "sebastien48criquet@gmail.com",
-          "name": "ahkrin"
-        },
-        {
-          "email": "gentilhomme.thomas@gmail.com",
-          "name": "fraxken"
-        },
-        {
-          "email": "alexandre.malaj@gmail.com",
-          "name": "alexandre.malaj"
-        }
-      ]
+				{
+					"email": "gentilhomme.thomas@gmail.com",
+					"name": "fraxken"
+				},
+				{
+					"email": "alexandre.malaj@gmail.com",
+					"name": "alexandre.malaj"
+				}
+			]
     }
   }
 }
