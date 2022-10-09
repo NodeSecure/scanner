@@ -34,6 +34,11 @@ declare namespace Scanner {
     /** Id of the package (useful for usedBy relation) */
     id: number;
     isDevDependency: boolean;
+    /**
+     * Tell if the given package exist on the configured remote registry (npm by default)
+     * @default true
+     */
+    existOnRemoteRegistry: boolean;
     /** By whom (id) is used the package */
     usedBy: Record<string, string>;
     /** Size on disk of the extracted tarball (in bytes) */

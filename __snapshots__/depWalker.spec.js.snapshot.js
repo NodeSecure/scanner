@@ -5,6 +5,7 @@ exports['walk @slimio/is 1'] = {
         "id": 0,
         "usedBy": {},
         "isDevDependency": false,
+        "existOnRemoteRegistry": true,
         "flags": [
           "hasManyPublishers"
         ],

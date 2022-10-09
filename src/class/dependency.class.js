@@ -9,6 +9,7 @@ export default class Dependency {
     this.name = name;
     this.version = version;
     this.dev = false;
+    this.existOnRemoteRegistry = true;
 
     if (parent !== null) {
       parent.dependencyCount++;
@@ -62,6 +63,7 @@ export default class Dependency {
           id: typeof customId === "number" ? customId : Dependency.currentId++,
           usedBy: this.parent,
           isDevDependency: this.dev,
+          existOnRemoteRegistry: this.existOnRemoteRegistry,
           flags: this.flags,
           description: "",
           size: 0,

@@ -15,9 +15,10 @@ test("Dependency class should act as expected by assertions", (tape) => {
   tape.strictEqual(dep.fullName, "semver 1.0.0");
   tape.strictEqual(dep.dev, false);
   tape.strictEqual(dep.dependencyCount, 0);
+  tape.strictEqual(dep.existOnRemoteRegistry, true);
   tape.deepEqual(dep.warnings, []);
   tape.strictEqual(dep.gitUrl, null);
-  tape.strictEqual(Reflect.ownKeys(dep).length, 6);
+  tape.strictEqual(Reflect.ownKeys(dep).length, 7);
 
   const flagOne = dep.flags;
   const flagTwo = dep.flags;
