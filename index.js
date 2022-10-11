@@ -11,6 +11,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
+import { hasSomethingChanged } from "./src/utils/hasSomethingChanged.js";
 import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
@@ -69,6 +70,21 @@ export async function verify(packageName = null) {
     await timers.setImmediate();
     await fs.rm(tmpLocation, { recursive: true, force: true });
   }
+}
+
+export function compare(payload1, payload2) {
+  const payload1Keys = Object.keys(JSON.parse(payload1)).sort();
+  const payload2Keys = Object.keys(JSON.parse(payload2)).sort();
+  const payloadKeys = payload1Keys.concat(payload2Keys);
+  const changes = [];
+
+  for (const key of payloadKeys) {
+    if (hasSomethingChanged(payload1, payload2, key) && changes.indexOf(key) === -1) {
+      changes.push(key);
+    }
+  }
+
+  return changes;
 }
 
 export { depWalker, tarball, Logger, ScannerLoggerEvents };
