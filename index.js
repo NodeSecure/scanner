@@ -73,13 +73,16 @@ export async function verify(packageName = null) {
 }
 
 export function compare(payload1, payload2) {
-  const payload1Keys = Object.keys(JSON.parse(payload1)).sort();
-  const payload2Keys = Object.keys(JSON.parse(payload2)).sort();
-  const payloadKeys = payload1Keys.concat(payload2Keys);
+  const [obj1, obj2] = [JSON.parse(payload1), JSON.parse(payload2)];
+
+  const obj1Keys = Object.keys(obj1).sort();
+  const obj2Keys = Object.keys(obj2).sort();
+
+  const objKeys = obj1Keys.concat(obj2Keys);
   const changes = [];
 
-  for (const key of payloadKeys) {
-    if (hasSomethingChanged(payload1, payload2, key) && changes.indexOf(key) === -1) {
+  for (const key of objKeys) {
+    if (hasSomethingChanged(obj1, obj2, key) && changes.indexOf(key) === -1) {
       changes.push(key);
     }
   }
