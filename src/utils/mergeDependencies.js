@@ -1,6 +1,7 @@
 export function mergeDependencies(manifest, types = ["dependencies"]) {
   const dependencies = new Map();
   const customResolvers = new Map();
+  const alias = new Map();
 
   for (const fieldName of types) {
     if (!Reflect.has(manifest, fieldName)) {
@@ -15,12 +16,15 @@ export function mergeDependencies(manifest, types = ["dependencies"]) {
        */
       if (/^([a-zA-Z]+:|git\+|\.\\)/.test(version)) {
         customResolvers.set(name, version);
-        continue;
+        if (!version.startsWith("npm:")) {
+          continue;
+        }
+        alias.set(name, version.slice(4));
       }
 
       dependencies.set(name, version);
     }
   }
 
-  return { dependencies, customResolvers };
+  return { dependencies, customResolvers, alias };
 }

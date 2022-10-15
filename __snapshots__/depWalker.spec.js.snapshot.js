@@ -40,6 +40,7 @@ exports['walk @slimio/is 1'] = {
           "minified": [],
           "unused": [],
           "missing": [],
+          "alias": {},
           "required_nodejs": [],
           "required_thirdparty": [],
           "required_subpath": {}

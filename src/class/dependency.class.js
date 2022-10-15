@@ -10,6 +10,7 @@ export default class Dependency {
     this.version = version;
     this.dev = false;
     this.existOnRemoteRegistry = true;
+    this.alias = {};
 
     if (parent !== null) {
       parent.dependencyCount++;
@@ -78,6 +79,7 @@ export default class Dependency {
             minified: [],
             unused: [],
             missing: [],
+            alias: this.alias,
             required_files: [],
             required_nodejs: [],
             required_thirdparty: [],

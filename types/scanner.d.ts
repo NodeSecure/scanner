@@ -69,6 +69,7 @@ declare namespace Scanner {
       files: string[];
       /** Minified files (foo.min.js etc..) */
       minified: string[];
+      alias: Record<string, string>;
       required_files: string[];
       required_thirdparty: string[];
       required_nodejs: string[];
