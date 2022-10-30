@@ -58,6 +58,6 @@ declare namespace tarball {
 
   export function readManifest(dest: string, ref: any): Promise<ManifestData>;
   export function scanFile(dest: string, file: string, options: ScanFileOptions): Promise<ScannedFileResult | null>;
-  export function scanPackage(dest: string, packageName: string): Promise<ScannedPackageResult>;
+  export function scanPackage(dest: string, packageName?: string): Promise<ScannedPackageResult>;
   export function scanDirOrArchive(name: string, version: string, options: ScanDirOrArchiveOptions): Promise<void>;
 }
