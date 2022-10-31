@@ -1,42 +1,85 @@
 // Import Node.js Dependencies
 import util from "util";
 
-export function compareDepVersions(str1, str2) {
-  const [digitsOnly1, digitsOnly2] = [str1.slice(1), str1.slice(1)];
-  const [digitsArr1, digitsArr2] = [digitsOnly1.split("."), digitsOnly2.split(".")];
+function getComparisonBetweenVersions(newStringVersion, oldStringVersion) {
+  // We remove the '^' charater for deps versions
+  let [newDigitVersion, oldDigitVersion] = [newStringVersion, oldStringVersion];
+  if (newStringVersion.charAt(0) === "^" && oldStringVersion.charAt(0) === "^") {
+    [newDigitVersion, oldDigitVersion] = [newStringVersion.slice(1), oldStringVersion.slice(1)];
+  }
+
+  // Cases with new package on the new version that didn't exist on the old one
+  // Or package in the old version that has been removed on the new version
+  if (!oldStringVersion) {
+    return {
+      from: undefined,
+      to: newStringVersion,
+      status: "package added!"
+    };
+  }
+  else if (!newStringVersion) {
+    return {
+      from: oldStringVersion,
+      to: undefined,
+      status: "package removed!"
+    };
+  }
+
+  // Dealing with modified package version
+  const [newOrderVersion, oldOrderVersion] = [newDigitVersion.split("."), oldDigitVersion.split(".")];
   for (let i = 0; i < 3; i++) {
-    const [digits1, digits2] = [parseInt(digitsArr1[i], 10), parseInt(digitsArr2[i], 10)];
-    if (digit1 > digit2) {
+    const [newDigit, oldDigit] = [parseInt(newOrderVersion[i], 10), parseInt(oldOrderVersion[i], 10)];
+    if (newDigit > oldDigit) {
       return {
-        from: str1,
-        to: str2,
-        status: "up to date"
+        from: oldStringVersion,
+        to: newStringVersion,
+        status: "package version increased!"
       };
     }
-    else if (digit1 < digit2) {
+    else if (newDigit < oldDigit) {
       return {
-        from: str1,
-        to: str2,
-        status: "outdated"
+        from: oldStringVersion,
+        to: newStringVersion,
+        status: "package version decreased!"
       };
+    }
+  }
+
+  return null;
+}
+
+function compareDependencies(newDeps, oldDeps) {
+  const changes = new Map();
+  const depsKeys = getUniqueMergedKeys(newDeps, oldDeps);
+
+  let change;
+  for (const key of depsKeys) {
+    change = getComparisonBetweenVersions(newDeps[key], oldDeps[key]);
+    if (change) {
+      changes.set(key, change);
     }
   }
 }
 
-export function hasSomethingChanged(obj1, obj2, key) {
-  if (util.isDeepStrictEqual(obj1[key], obj2[key])) {
+export function getUniqueMergedKeys(newObj, oldObj) {
+  const [newObjKeys, oldObjKeys] = [Object.keys(newObj), Object.keys(oldObj)];
+  const objKeys = newObjKeys.concat(oldObjKeys);
+
+  for (let i = 0; i < objKeys.length; i++) {
+    for (let j = i + 1; j < objKeys.length; j++) {
+      if (objKeys[i] === objKeys[j]) {
+        objKeys.splice(j--, 1);
+      }
+    }
+  }
+
+  return objKeys;
+}
+
+export function hasSomethingChanged(newObj, oldObj, key) {
+  if (util.isDeepStrictEqual(newObj[key], oldObj[key])) {
     return false;
   }
 
   return true;
-}
-
-export function upgradedDepsFromPackage1ToPackage2(obj1Deps, obj2Deps) {
-  const upgrade = new Map();
-
-  for (const key in obj1Deps) {
-    if (Object.hasOwnProperty.call(obj2Deps, key)) {
-      const element = obj2Deps[key];
-    }
-  }
 }

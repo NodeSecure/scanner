@@ -11,7 +11,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
-import { hasSomethingChanged } from "./src/utils/hasSomethingChanged.js";
+import { hasSomethingChanged, getUniqueMergedKeys } from "./src/utils/hasSomethingChanged.js";
 import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
@@ -72,25 +72,24 @@ export async function verify(packageName = null) {
   }
 }
 
-export function compare(payload1, payload2) {
-  const [obj1, obj2] = [JSON.parse(payload1), JSON.parse(payload2)];
-  const [obj1Keys, obj2Keys] = [Object.keys(obj1).sort(), Object.keys(obj2).sort()];
-  const objKeys = obj1Keys.concat(obj2Keys);
+export function compare(newPayload, oldPayload) {
+  const [newObj, oldObj] = [JSON.parse(newPayload), JSON.parse(oldPayload)];
+  const objKeys = getUniqueMergedKeys(newObj, oldObj);
 
   const comparison = new Map();
 
   // changes
   const changes = [];
   for (const key of objKeys) {
-    if (hasSomethingChanged(obj1, obj2, key) && changes.indexOf(key) === -1) {
+    if (hasSomethingChanged(newObj, oldObj, key)) {
       changes.push(key);
     }
   }
 
   // same package ?
-  const [obj1name, obj2name, samePackage] = obj1.name === obj2.name
-    ? [obj1.version, obj2.version, true]
-    : [obj1.name, obj2.name, false];
+  const [newObjName, oldObjName, samePackage] = newObj.name === oldObj.name
+    ? [newObj.version, oldObj.version, true]
+    : [newObj.name, oldObj.name, false];
 
   comparison.set("changes", changes);
 
