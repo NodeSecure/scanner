@@ -8,6 +8,7 @@
   },
   "scripts": {
     "lint": "eslint src test",
+    "prettier-only": "prettier src test",
     "prepublishOnly": "pkg-ok",
     "test": "npm run lint && npm run test-only",
     "test-only": "cross-env esm-tape-runner 'test/**/*.spec.js' | tap-monkey",

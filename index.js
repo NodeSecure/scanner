@@ -76,22 +76,19 @@ export function compare(newPayload, oldPayload) {
   const [newObj, oldObj] = [JSON.parse(newPayload), JSON.parse(oldPayload)];
   const objKeys = getUniqueMergedKeys(newObj, oldObj);
 
-  const comparison = new Map();
-
   // changes
-  const changes = [];
+  const comparison = new Map();
+  const globalChanges = new Map();
+  let localChange;
+
   for (const key of objKeys) {
-    if (hasSomethingChanged(newObj, oldObj, key)) {
-      changes.push(key);
+    localChange = hasSomethingChanged(newObj, oldObj, key);
+    if (localChange) {
+      globalChanges.set(key, localChange);
     }
   }
 
-  // same package ?
-  const [newObjName, oldObjName, samePackage] = newObj.name === oldObj.name
-    ? [newObj.version, oldObj.version, true]
-    : [newObj.name, oldObj.name, false];
-
-  comparison.set("changes", changes);
+  comparison.set("changes", globalChanges);
 
   return comparison;
 }

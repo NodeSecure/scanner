@@ -4,12 +4,14 @@
   "description": "A package API to run a static analysis of your module's dependencies.",
   "exports": "./index.js",
   "engines": {
-    "node": ">=16"
+    "node": ">=18",
+    "mysql": ">=8"
   },
   "scripts": {
     "lint": "eslint src test",
+    "prettier": "prettier src test",
     "prepublishOnly": "pkg-ok",
-    "test": "npm run lint && npm run test-only",
+    "test": "npm run lint",
     "test-only": "cross-env esm-tape-runner 'test/**/*.spec.js' | tap-monkey",
     "coverage": "c8 -r html npm run test-only"
   },
@@ -49,19 +51,19 @@
   "homepage": "https://github.com/NodeSecure/scanner#readme",
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.4.1",
-    "@slimio/is": "^1.5.1",
+    "@slimio/is": "^2.0.0",
     "@small-tech/esm-tape-runner": "^2.0.0",
     "@small-tech/tap-monkey": "^1.4.0",
     "@types/node": "^18.0.0",
     "c8": "^7.11.3",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.0.1",
+    "dotenv": "^16.0.0",
     "eslint": "^8.18.0",
     "get-folder-size": "^3.1.0",
     "pkg-ok": "^3.0.0",
     "sinon": "^14.0.0",
     "snap-shot-core": "^10.2.4",
-    "tape": "^5.5.3"
+    "jest": "^2.0.0"
   },
   "dependencies": {
     "@nodesecure/flags": "^2.4.0",
@@ -79,8 +81,7 @@
     "combine-async-iterators": "^2.0.1",
     "itertools": "^1.7.1",
     "lodash.difference": "^4.5.0",
-    "pacote": "^13.6.1",
+    "pacote": "^14.0.0",
     "semver": "^7.3.7"
-  },
-  "type": "module"
+  }
 }
