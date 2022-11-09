@@ -93,9 +93,9 @@ test("execute depWalker on pkg.gitdeps", async(tape) => {
 
   const packages = Object.keys(resultAsJSON).sort();
   tape.deepEqual(packages, [
+    "@nodesecure/estree-ast-utils",
     "@nodesecure/js-x-ray",
     "@nodesecure/sec-literal",
-    "ansi-regex",
     "eastasianwidth",
     "emoji-regex",
     "estree-walker",
@@ -113,7 +113,6 @@ test("execute depWalker on pkg.gitdeps", async(tape) => {
     "safe-regex",
     "string-width",
     "strip-ansi",
-    "strnum",
     "zen-observable"
   ].sort());
 
