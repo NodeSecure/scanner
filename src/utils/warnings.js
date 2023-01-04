@@ -28,7 +28,7 @@ export async function getDependenciesWarnings(dependenciesMap) {
   // TODO: add support for RC configuration
   const authors = await extractAllAuthorsFromLibrary(
     { dependencies: Object.fromEntries(dependenciesMap) },
-    { flags: kFlaggedAuthors, domainInformations: true }
+    { flags: kFlaggedAuthors, domainInformations: false }
   );
 
   return {
