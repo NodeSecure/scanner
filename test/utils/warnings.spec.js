@@ -5,10 +5,15 @@ import test from "tape";
 // Require Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";
 
-function createDependency(maintainers = []) {
+function createDependency(maintainers = [], publishers = []) {
   return {
     metadata: {
-      maintainers
+      authors: {
+        name: "John Doe",
+        email: "john.doe@gmail.com"
+      },
+      maintainers,
+      publishers
     }
   };
 }

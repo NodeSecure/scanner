@@ -10,7 +10,7 @@ const kWarningsMessages = Object.freeze({
 });
 const kPackages = new Set(Object.keys(kWarningsMessages));
 const kFlaggedAuthors = [{
-  username: "marak",
+  name: "marak",
   email: "marak.squires@gmail.com"
 }];
 
