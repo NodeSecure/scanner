@@ -1,6 +1,6 @@
 import ntlp from "@nodesecure/ntlp";
 import Locker from "@slimio/lock";
-import Logger from "../src/logger.class";
+import { Logger } from "./logger.js";
 
 export = tarball;
 
