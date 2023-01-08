@@ -2,7 +2,6 @@
 import * as JSXRay from "@nodesecure/js-x-ray";
 import { license as License } from "@nodesecure/ntlp";
 import * as Vuln from "@nodesecure/vuln";
-import { Flags } from "@nodesecure/flags";
 
 // Import Third-party Dependencies
 import { Maintainer } from "@npm/types";
@@ -89,7 +88,7 @@ declare namespace Scanner {
      *
      * @see https://github.com/NodeSecure/flags/blob/main/FLAGS.md
      */
-    flags: Flags[];
+    flags: string[];
     /**
      * If the dependency is a GIT repository
      */

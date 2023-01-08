@@ -1,5 +1,5 @@
 import { Manifest } from "@npm/types";
-import Scanner from "./scanner";
+import Scanner from "./scanner.js";
 
 export {
   depWalker

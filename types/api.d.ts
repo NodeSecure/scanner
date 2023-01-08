@@ -1,5 +1,5 @@
-import Scanner from "./scanner";
-import { Logger, LoggerEvents } from "./logger";
+import Scanner from "./scanner.js";
+import { Logger, LoggerEvents } from "./logger.js";
 
 export {
   cwd,
