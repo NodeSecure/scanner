@@ -69,7 +69,7 @@
     "@nodesecure/i18n": "^2.1.1",
     "@nodesecure/js-x-ray": "^5.1.0",
     "@nodesecure/npm-registry-sdk": "^1.4.1",
-    "@nodesecure/ntlp": "^2.1.0",
+    "@nodesecure/ntlp": "^2.2.0",
     "@nodesecure/utils": "^1.0.0",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
