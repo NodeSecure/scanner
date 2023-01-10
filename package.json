@@ -64,7 +64,7 @@
     "tape": "^5.6.1"
   },
   "dependencies": {
-    "@nodesecure/authors": "^1.0.0",
+    "@nodesecure/authors": "^1.0.1",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^2.1.1",
