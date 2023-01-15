@@ -86,6 +86,20 @@ exports['verify express@4.17.0 1'] = {
         }
       }
     },
+    "express:application": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 21,
+          "column": 12
+        },
+        "end": {
+          "line": 21,
+          "column": 51
+        }
+      }
+    },
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -139,6 +153,20 @@ exports['verify express@4.17.0 1'] = {
         "end": {
           "line": 26,
           "column": 37
+        }
+      }
+    },
+    "express": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 27,
+          "column": 16
+        },
+        "end": {
+          "line": 27,
+          "column": 42
         }
       }
     },
@@ -430,6 +458,20 @@ exports['verify express@4.17.0 1'] = {
         }
       }
     },
+    "express": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 17,
+          "column": 16
+        },
+        "end": {
+          "line": 17,
+          "column": 42
+        }
+      }
+    },
     "depd": {
       "unsafe": false,
       "inTry": false,
@@ -569,6 +611,20 @@ exports['verify express@4.17.0 1'] = {
         "end": {
           "line": 16,
           "column": 55
+        }
+      }
+    },
+    "express": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 17,
+          "column": 16
+        },
+        "end": {
+          "line": 17,
+          "column": 42
         }
       }
     },
@@ -812,6 +868,20 @@ exports['verify express@4.17.0 1'] = {
         }
       }
     },
+    "express:router": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 20,
+          "column": 12
+        },
+        "end": {
+          "line": 20,
+          "column": 46
+        }
+      }
+    },
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -823,6 +893,20 @@ exports['verify express@4.17.0 1'] = {
         "end": {
           "line": 20,
           "column": 28
+        }
+      }
+    },
+    "express": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 21,
+          "column": 16
+        },
+        "end": {
+          "line": 21,
+          "column": 42
         }
       }
     },
@@ -898,6 +982,20 @@ exports['verify express@4.17.0 1'] = {
         }
       }
     },
+    "express:router:layer": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 17,
+          "column": 12
+        },
+        "end": {
+          "line": 17,
+          "column": 52
+        }
+      }
+    },
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -914,6 +1012,20 @@ exports['verify express@4.17.0 1'] = {
     }
   },
   "lib\\router\\route.js": {
+    "express:router:route": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 16,
+          "column": 12
+        },
+        "end": {
+          "line": 16,
+          "column": 52
+        }
+      }
+    },
     "debug": {
       "unsafe": false,
       "inTry": false,
@@ -1011,6 +1123,20 @@ exports['verify express@4.17.0 1'] = {
         "end": {
           "line": 17,
           "column": 41
+        }
+      }
+    },
+    "express": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 18,
+          "column": 16
+        },
+        "end": {
+          "line": 18,
+          "column": 42
         }
       }
     },
@@ -1114,6 +1240,20 @@ exports['verify express@4.17.0 1'] = {
     }
   },
   "lib\\view.js": {
+    "express:view": {
+      "unsafe": false,
+      "inTry": false,
+      "location": {
+        "start": {
+          "line": 16,
+          "column": 12
+        },
+        "end": {
+          "line": 16,
+          "column": 44
+        }
+      }
+    },
     "debug": {
       "unsafe": false,
       "inTry": false,
