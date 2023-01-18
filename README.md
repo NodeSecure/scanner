@@ -1,10 +1,11 @@
 # NodeSecure Scanner
-![version](https://img.shields.io/badge/dynamic/json.svg?url=https://raw.githubusercontent.com/NodeSecure/scanner/master/package.json&query=$.version&label=Version)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/NodeSecure/scanner/commit-activity)
+
+![version](https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/master/package.json&query=$.version&label=Version)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/commit-activity)
 [![OpenSSF
-Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge)](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner)
-[![mit](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/NodeSecure/scanner/blob/master/LICENSE)
-![build](https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml)
+Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge?style=for-the-badge)](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner)
+[![mit](https://img.shields.io/github/license/Naereen/StrapDown.js.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/blob/master/LICENSE)
+![build](https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml?style=for-the-badge)
 
 ⚡️ Run a static analysis of your module's dependencies.
 
@@ -49,8 +50,14 @@ await Promise.allSettled(promises);
 See `types/api.d.ts` for a complete TypeScript definition.
 
 ```ts
-function cwd(location: string, options?: Scanner.Options): Promise<Scanner.Payload>;
-function from(packageName: string, options?: Omit<Scanner.Options, "includeDevDeps">): Promise<Scanner.Payload>;
+function cwd(
+  location: string,
+  options?: Scanner.Options
+): Promise<Scanner.Payload>;
+function from(
+  packageName: string,
+  options?: Omit<Scanner.Options, "includeDevDeps">
+): Promise<Scanner.Payload>;
 function verify(packageName?: string | null): Promise<Scanner.VerifyPayload>;
 ```
 
@@ -71,7 +78,9 @@ interface Options {
 ## Contributors ✨
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -103,4 +112,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 ## License
+
 MIT
