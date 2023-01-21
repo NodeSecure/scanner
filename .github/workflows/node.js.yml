@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: Install dependencies
-        run: npm ci
+        run: npm install
       - name: Run tests
         run: npm run test-only
   nsci:
@@ -31,5 +31,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: NodeSecure/ci-action@v1
-        with: 
+        with:
           warnings: warning
