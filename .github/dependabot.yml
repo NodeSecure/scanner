@@ -8,3 +8,14 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+
+
+  - package-ecosystem: npm
+    directory: /test/fixtures/getTarballComposition/two
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /test/fixtures/scanPackage/caseone
+    schedule:
+      interval: daily
