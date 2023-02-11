@@ -132,6 +132,8 @@ declare namespace Scanner {
   }
 
   export type GlobalWarning = string[];
+  export type FlaggedAuthors = extractedAuthor[];
+  export type Authors = author[];
   export type Dependencies = Record<string, Dependency>;
 
   export interface Payload {
@@ -141,6 +143,10 @@ declare namespace Scanner {
     rootDependencyName: string;
     /** Global warnings list */
     warnings: GlobalWarning[];
+    /** List of flagged authors */
+    flaggedAuthors: FlaggedAuthors[];
+    /** List of authors */
+    authors: Authors[];
     /** All the dependencies of the package (flattened) */
     dependencies: Dependencies;
     /** Version of the scanner used to generate the result */

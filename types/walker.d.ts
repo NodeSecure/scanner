@@ -5,4 +5,4 @@ export {
   depWalker
 }
 
-declare function depWalker(manifest: Manifest, options?: Scanner.Options);
+declare function depWalker(manifest: Manifest, options?: Scanner.Options): Promise<Scanner.Payload>;
