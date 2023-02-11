@@ -31,11 +31,8 @@ export async function getDependenciesWarnings(dependenciesMap) {
     { flags: kFlaggedAuthors, domainInformations: false }
   );
 
-  const { flaggedAuthors, authors } = res;
-
   return {
     warnings,
-    authors,
-    flaggedAuthors
+    flaggedAuthors: res.flaggedAuthors
   };
 }
