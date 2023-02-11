@@ -128,5 +128,7 @@ exports['from pacote 1'] = [
   "scannerVersion",
   "vulnerabilityStrategy",
   "warnings",
+  "flaggedAuthors",
+  "authors",
   "dependencies"
 ]
