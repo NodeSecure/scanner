@@ -1,6 +1,6 @@
 // Import Third-party Dependencies
 import { getToken, taggedString } from "@nodesecure/i18n";
-import { extractAllAuthorsFromLibrary } from "@nodesecure/authors";
+import { extractAllAuthors } from "@nodesecure/authors";
 
 // CONSTANTS
 const kDetectedDep = taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
@@ -26,13 +26,16 @@ export async function getDependenciesWarnings(dependenciesMap) {
     }
   }
   // TODO: add support for RC configuration
-  const authors = await extractAllAuthorsFromLibrary(
+  const res = await extractAllAuthors(
     { dependencies: Object.fromEntries(dependenciesMap) },
     { flags: kFlaggedAuthors, domainInformations: false }
   );
 
+  const { flaggedAuthors, authors } = res;
+
   return {
     warnings,
-    authors
+    authors,
+    flaggedAuthors
   };
 }
