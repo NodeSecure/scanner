@@ -353,7 +353,6 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     const { warnings, flaggedAuthors, authors } = await getDependenciesWarnings(dependencies);
     payload.warnings = warnings;
     payload.flaggedAuthors = flaggedAuthors;
-    payload.authors = authors;
     payload.dependencies = Object.fromEntries(dependencies);
 
     return payload;

@@ -130,6 +130,5 @@ exports['from pacote 1'] = [
   "vulnerabilityStrategy",
   "warnings",
   "flaggedAuthors",
-  "authors",
   "dependencies"
 ]
