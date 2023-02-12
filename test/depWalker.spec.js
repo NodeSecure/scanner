@@ -96,6 +96,7 @@ test("execute depWalker on pkg.gitdeps", async(tape) => {
     "@nodesecure/estree-ast-utils",
     "@nodesecure/js-x-ray",
     "@nodesecure/sec-literal",
+    "@types/estree",
     "eastasianwidth",
     "emoji-regex",
     "estree-walker",

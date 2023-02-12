@@ -1,4 +1,4 @@
-exports['walk @slimio/is 1'] = {
+exports['walk @slimio/is 1'] ={
   "@slimio/is": {
     "versions": {
       "1.5.1": {
@@ -7,6 +7,7 @@ exports['walk @slimio/is 1'] = {
         "isDevDependency": false,
         "existOnRemoteRegistry": true,
         "flags": [
+          "isOutdated",
           "hasManyPublishers"
         ],
         "description": "SlimIO is (JavaScript Primitives &amp; Objects type checker)",
@@ -89,11 +90,11 @@ exports['walk @slimio/is 1'] = {
     "vulnerabilities": [],
     "metadata": {
       "dependencyCount": 0,
-      "publishedCount": 7,
-      "lastUpdateAt": "2019-06-11T06:41:41.590Z",
-      "lastVersion": "1.5.1",
+      "publishedCount": 8,
+      "lastUpdateAt": "2023-01-23T02:15:37.203Z",
+      "lastVersion": "2.0.0",
       "hasManyPublishers": true,
-      "hasReceivedUpdateInOneYear": false,
+      "hasReceivedUpdateInOneYear": true,
       "homepage": "https://github.com/SlimIO/is#readme",
       "author": {
         "name": "SlimIO"
@@ -102,20 +103,22 @@ exports['walk @slimio/is 1'] = {
         {
           "name": "fraxken",
           "email": "gentilhomme.thomas@gmail.com",
-          "version": "1.5.1",
-          "at": "2019-06-11T06:41:41.590Z"
+          "version": "2.0.0",
+          "at": "2023-01-23T02:15:37.203Z"
         }
       ],
       "maintainers": [
-				{
-					"email": "gentilhomme.thomas@gmail.com",
-					"name": "fraxken"
-				},
-				{
-					"email": "alexandre.malaj@gmail.com",
-					"name": "alexandre.malaj"
-				}
-			]
+        {
+          "name": "fraxken",
+          "email": "gentilhomme.thomas@gmail.com",
+          "at": "2023-01-23T02:15:37.203Z",
+          "version": "2.0.0"
+        },
+        {
+          "name": "alexandre.malaj",
+          "email": "alexandre.malaj@gmail.com"
+        }
+      ]
     }
   }
 }
@@ -126,5 +129,6 @@ exports['from pacote 1'] = [
   "scannerVersion",
   "vulnerabilityStrategy",
   "warnings",
+  "flaggedAuthors",
   "dependencies"
 ]
