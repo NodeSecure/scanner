@@ -4,27 +4,23 @@ import { extractAllAuthors } from "@nodesecure/authors";
 
 // CONSTANTS
 const kDetectedDep = taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
-const kWarningsMessages = Object.freeze({
-  "@scarf/scarf": getToken("warnings.disable_scarf"),
-  iohook: getToken("warnings.keylogging")
-});
-const kPackages = new Set(Object.keys(kWarningsMessages));
 const kFlaggedAuthors = [{
   name: "marak",
   email: "marak.squires@gmail.com"
 }];
+const kDependencyWarnMessage = Object.freeze({
+  "@scarf/scarf": await getToken("warnings.disable_scarf"),
+  iohook: await getToken("warnings.keylogging")
+});
 
-function getWarning(depName) {
-  return `${kDetectedDep(depName)} ${kWarningsMessages[depName]}`;
-}
-
+/**
+ * @param {Map<string, any>} dependenciesMap
+ */
 export async function getDependenciesWarnings(dependenciesMap) {
-  const warnings = [];
-  for (const depName of kPackages) {
-    if (dependenciesMap.has(depName)) {
-      warnings.push(getWarning(depName));
-    }
-  }
+  const warnings = [...Object.keys(kDependencyWarnMessage)]
+    .filter((depName) => dependenciesMap.has(depName))
+    .map((depName) => `${kDetectedDep(depName)} ${kDependencyWarnMessage[depName]}`);
+
   // TODO: add support for RC configuration
   const res = await extractAllAuthors(
     { dependencies: Object.fromEntries(dependenciesMap) },
