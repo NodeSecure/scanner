@@ -1,5 +1,4 @@
 // Require Third-party Dependencies
-import is from "@slimio/is";
 import test from "tape";
 
 // Require Internal Dependencies
