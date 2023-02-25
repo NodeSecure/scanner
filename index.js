@@ -11,7 +11,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
-import { hasSomethingChanged, getUniqueMergedKeys } from "./src/utils/hasSomethingChanged.js";
+import { hasSomethingChanged, getUniqueMergedKeys } from "./src/utils/hasSomethingChanged_.js";
 import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
@@ -74,21 +74,31 @@ export async function verify(packageName = null) {
 
 export function compare(newPayload, oldPayload) {
   const [newObj, oldObj] = [JSON.parse(newPayload), JSON.parse(oldPayload)];
-  const objKeys = getUniqueMergedKeys(newObj, oldObj);
+  // const objKeys = getUniqueMergedKeys(newObj, oldObj);
 
   // changes
   const comparison = new Map();
   const globalChanges = new Map();
   let localChange;
 
-  for (const key of objKeys) {
-    localChange = hasSomethingChanged(newObj, oldObj, key);
-    if (localChange) {
-      globalChanges.set(key, localChange);
-    }
-  }
+  /**
+   * Todo:
+   * We now go recusively deep in @nsecure_payload
+   * This to find and report changes
+   */
 
-  comparison.set("changes", globalChanges);
+
+
+
+
+  // for (const key of objKeys) {
+  //   localChange = hasSomethingChanged(newObj, oldObj, key);
+  //   if (localChange) {
+  //     globalChanges.set(key, localChange);
+  //   }
+  // }
+
+  // comparison.set("changes", globalChanges);
 
   return comparison;
 }

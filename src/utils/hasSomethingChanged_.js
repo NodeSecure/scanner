@@ -1,6 +1,14 @@
 // Import Node.js Dependencies
 import util from "util";
 
+
+/**
+ * We a going to consider the @payload as a tree
+ * and then @walk through it in an @infixed manner
+ * to appy these processes in different types of nodes
+ */
+
+// Processes
 function getComparisonBetweenVersions(newStringVersion, oldStringVersion) {
   // We remove the '^' charater for deps versions
   let newDigitVersion;
@@ -233,6 +241,7 @@ function compareTypes(newType, oldType) {
   return change;
 }
 
+// Helper
 export function getUniqueMergedKeys(newObj, oldObj) {
   let newObjKeys;
   let oldObjKeys;
@@ -261,6 +270,7 @@ export function getUniqueMergedKeys(newObj, oldObj) {
   return objKeys;
 }
 
+// Deep-walk
 export function hasSomethingChanged(newObj, oldObj, key) {
   let change;
 
@@ -289,4 +299,7 @@ export function hasSomethingChanged(newObj, oldObj, key) {
   }
 
   return change;
+}
+
+export function infixedDeepWalk(newObj, oldObj) {
 }
