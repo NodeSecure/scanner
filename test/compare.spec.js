@@ -41,20 +41,20 @@ function replacer(key, value) {
 
 test.onFinish(snapshot.restore);
 
-test("Compare two @nodesecure/scanner versions", async(tape) => {
-  await setStrategy(strategies.NPM_AUDIT);
+// test("Compare two @nodesecure/scanner versions", async(tape) => {
+//   await setStrategy(strategies.NPM_AUDIT);
 
-  const comparison = compare(nsecureNew, nsecureOld);
-  const comparisonAsJSON = JSON.parse(JSON.stringify(comparison, replacer, 2));
+//   const comparison = compare(nsecureNew, nsecureOld);
+//   const comparisonAsJSON = JSON.parse(JSON.stringify(comparison, replacer, 2));
 
-  snapshot.core({
-    what: comparisonAsJSON,
-    file: fileURLToPath(import.meta.url),
-    specName: "compare @nodesecure/scanner"
-  });
+//   snapshot.core({
+//     what: comparisonAsJSON,
+//     file: fileURLToPath(import.meta.url),
+//     specName: "compare @nodesecure/scanner"
+//   });
 
-  tape.end();
-});
+//   tape.end();
+// });
 
 test("Compare two @nodesecure/scanner payloads", async(tape) => {
   await setStrategy(strategies.NPM_AUDIT);

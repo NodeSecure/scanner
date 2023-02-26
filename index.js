@@ -11,7 +11,7 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
-import { hasSomethingChanged, getUniqueMergedKeys } from "./src/utils/hasSomethingChanged_.js";
+import { hasSomethingChanged, getUniqueMergedKeys, infixedDeepWalk } from "./src/utils/hasSomethingChanged_.js";
 import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
 import * as tarball from "./src/tarball.js";
@@ -86,10 +86,10 @@ export function compare(newPayload, oldPayload) {
    * We now go recusively deep in @nsecure_payload
    * This to find and report changes
    */
+  infixedDeepWalk(newObj, oldObj, globalChanges)
 
 
-
-
+  console.log(globalChanges);
 
   // for (const key of objKeys) {
   //   localChange = hasSomethingChanged(newObj, oldObj, key);
@@ -98,8 +98,7 @@ export function compare(newPayload, oldPayload) {
   //   }
   // }
 
-  // comparison.set("changes", globalChanges);
-
+  comparison.set("changes", globalChanges);
   return comparison;
 }
 

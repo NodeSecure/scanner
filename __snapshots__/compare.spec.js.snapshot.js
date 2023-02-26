@@ -143,3 +143,5 @@ exports['compare @nodesecure/scanner 2'] = {
     }
   }
 }
+
+exports['compare @nodesecure/scanner-payloads 1'] = {}

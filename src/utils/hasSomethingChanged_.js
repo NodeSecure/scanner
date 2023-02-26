@@ -9,239 +9,47 @@ import util from "util";
  */
 
 // Processes
-function getComparisonBetweenVersions(newStringVersion, oldStringVersion) {
-  // We remove the '^' charater for deps versions
-  let newDigitVersion;
-  let oldDigitVersion;
-  if (newStringVersion && oldStringVersion) {
-    [newDigitVersion, oldDigitVersion] = [newStringVersion, oldStringVersion];
-    if (newStringVersion.charAt(0) === "^" && oldStringVersion.charAt(0) === "^") {
-      [newDigitVersion, oldDigitVersion] = [newStringVersion.slice(1), oldStringVersion.slice(1)];
-    }
+function getCurrentNode(node) {
+  if (['number', 'string', 'boolean', 'undefined'].includes(typeof(node)) || node === null) {
+    // case current node is primitive type
+    return [{}, 'leaf'];
   }
-
-  // Cases with new package on the new version that didn't exist on the old one
-  // Or package in the old version that has been removed on the new version
-  if (!oldStringVersion) {
-    return {
-      from: null,
-      to: newStringVersion,
-      status: "package added!"
-    };
-  }
-  else if (!newStringVersion) {
-    return {
-      from: oldStringVersion,
-      to: null,
-      status: "package removed!"
-    };
-  }
-
-  // Dealing with modified package version
-  const [newOrderVersion, oldOrderVersion] = [newDigitVersion.split("."), oldDigitVersion.split(".")];
-  for (let i = 0; i < 3; i++) {
-    const [newDigit, oldDigit] = [parseInt(newOrderVersion[i], 10), parseInt(oldOrderVersion[i], 10)];
-    if (newDigit > oldDigit) {
-      return {
-        from: oldStringVersion,
-        to: newStringVersion,
-        status: "package version increased!"
-      };
+  else if (node instanceof Array) {
+    // case current node is an Array
+    if (node.length === 0) {
+      // with no element
+      return [
+        { length: 0 },
+        'leaf'
+      ];
     }
-    else if (newDigit < oldDigit) {
-      return {
-        from: oldStringVersion,
-        to: newStringVersion,
-        status: "package version decreased!"
-      };
-    }
-  }
 
-  return null;
-}
-function compareDependencies(newDeps, oldDeps) {
-  const changes = new Map();
-  const depsKeys = getUniqueMergedKeys(newDeps, oldDeps);
-
-  let change;
-
-  for (const key of depsKeys) {
-    if (!oldDeps) {
-      change = getComparisonBetweenVersions(newDeps[key], null);
-      changes.set(key, change);
+    let firstItem = node[0];
+    if (['number', 'string', 'boolean', 'undefined'].includes(typeof(firstItem)) || firstItem === null) {
+      // of primitives
+      return [
+        { length: node.length },
+        'leaf'
+      ];
     }
-    else if (!newDeps) {
-      change = getComparisonBetweenVersions(null, oldDeps[key]);
-      changes.set(key, change);
-    }
-    else if (newDeps && oldDeps) {
-      change = getComparisonBetweenVersions(newDeps[key], oldDeps[key]);
-      if (change) {
-        changes.set(key, change);
+    else {
+      // of Objects
+      let obj = {};
+      let objItem = 0;
+      for (const item of node) {
+        obj['array-item-' + objItem++] = item;
       }
+
+      return [obj, 'node'];
     }
   }
-
-  return changes.size > 0 ? changes : undefined;
-}
-function compareScripts(newScript, oldScript) {
-  const changes = new Map();
-  const scriptsKeys = getUniqueMergedKeys(newScript, oldScript);
-
-  let change;
-
-  for (const key of scriptsKeys) {
-    // Cases without "scripts" fields
-    if (!oldScript) {
-      change = {
-        from: null,
-        to: newScript[key],
-        status: "script added!"
-      };
-      changes.set(key, change);
-      continue;
-    }
-    else if (!newScript) {
-      change = {
-        from: oldScript[key],
-        to: null,
-        status: "script removed!"
-      };
-      changes.set(key, change);
-      continue;
-    }
-
-    // Cases with defined "scripts" field
-    if (!oldScript[key]) {
-      change = {
-        from: null,
-        to: newScript[key],
-        status: "script added!"
-      };
-      changes.set(key, change);
-    }
-    else if (!newScript[key]) {
-      change = {
-        from: oldScript[key],
-        to: null,
-        status: "script removed!"
-      };
-      changes.set(key, change);
-    }
-    else if (newScript[key] && oldScript[key]) {
-      if (!util.isDeepStrictEqual(newScript[key], oldScript[key])) {
-        change = {
-          from: oldScript[key],
-          to: newScript[key],
-          status: "script updated!"
-        };
-
-        changes.set(key, change);
-      }
-    }
+  else { // if (node instanceof Object)
+    // case current node is an Object
+    return [node, 'node']
   }
-
-  return changes.size > 0 ? changes : undefined;
-}
-function compareEngines(newEngine, oldEngine) {
-  const changes = new Map();
-  const enginesKeys = getUniqueMergedKeys(newEngine, oldEngine);
-
-  let change;
-
-  for (const key of enginesKeys) {
-    // Cases without "engines" fields
-    if (!oldEngine) {
-      change = {
-        from: null,
-        to: newEngine[key],
-        status: "engine added!"
-      };
-      changes.set(key, change);
-      continue;
-    }
-    else if (!newEngine) {
-      change = {
-        from: oldEngine[key],
-        to: null,
-        status: "engine removed!"
-      };
-      changes.set(key, change);
-      continue;
-    }
-
-    // Cases with defined "engines" field
-    if (!oldEngine[key]) {
-      change = {
-        from: null,
-        to: newEngine[key],
-        status: "engine added!"
-      };
-      changes.set(key, change);
-    }
-    else if (!newEngine[key]) {
-      change = {
-        from: oldEngine[key],
-        to: null,
-        status: "engine removed!"
-      };
-      changes.set(key, change);
-    }
-    else if (newEngine[key] && oldEngine[key]) {
-      if (!util.isDeepStrictEqual(newEngine[key], oldEngine[key])) {
-        change = {
-          from: oldEngine[key],
-          to: newEngine[key],
-          status: "engine updated!"
-        };
-
-        changes.set(key, change);
-      }
-    }
-  }
-
-  return changes.size > 0 ? changes : undefined;
-}
-function compareTypes(newType, oldType) {
-  let change;
-
-  // Cases without "types" fields
-  switch (oldType) {
-    case undefined:
-      if (newType === "module") {
-        change = {
-          from: "commonjs",
-          to: newType,
-          status: "type switched!"
-        };
-      }
-      break;
-    case "commonjs":
-      if (newType === "module") {
-        change = {
-          from: "commonjs",
-          to: newType,
-          status: "type switched!"
-        };
-      }
-      break;
-    case "module":
-      if (!newType || newType === "commonjs") {
-        change = {
-          from: "module",
-          to: "commonjs",
-          status: "type switched!"
-        };
-      }
-      break;
-    default:
-      break;
-  }
-
-  return change;
 }
 
-// Helper
+// Helpers
 export function getUniqueMergedKeys(newObj, oldObj) {
   let newObjKeys;
   let oldObjKeys;
@@ -267,7 +75,7 @@ export function getUniqueMergedKeys(newObj, oldObj) {
     }
   }
 
-  return objKeys;
+  return objKeys.sort();
 }
 
 // Deep-walk
@@ -301,5 +109,32 @@ export function hasSomethingChanged(newObj, oldObj, key) {
   return change;
 }
 
-export function infixedDeepWalk(newObj, oldObj) {
+export function infixedDeepWalk(newObj, oldObj, globalChanges) {
+  let nodes = getUniqueMergedKeys(newObj, oldObj);
+
+  for (const key of nodes) {
+    const [newCurrentObj, newStatusNode] = getCurrentNode(newObj[key]);
+    const [oldCurrentObj, oldStatusNode] = getCurrentNode(oldObj[key]);
+
+    console.log(newStatusNode + ' ' + key);
+
+    if (!util.isDeepStrictEqual(newCurrentObj, oldCurrentObj)) {
+      if(!globalChanges.get(key) && newStatusNode === 'node') {
+        globalChanges.set(key, new Map());
+      }
+      if(newStatusNode === 'node') {
+          globalChanges.set(key, new Map());
+        }
+        else if(newStatusNode === 'leaf') {
+          /**
+           * Todo:
+           * - Type checking
+           * - Value setting
+           */
+          let message = 'changed';
+          globalChanges.set(key, message);
+        }
+      infixedDeepWalk(newCurrentObj, oldCurrentObj, globalChanges.get(key));
+    }
+  }
 }
