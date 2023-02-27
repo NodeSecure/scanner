@@ -109,21 +109,20 @@ export function hasSomethingChanged(newObj, oldObj, key) {
   return change;
 }
 
-export function infixedDeepWalk(newObj, oldObj, globalChanges) {
+export function posfixedDeepWalk(newObj, oldObj, globalChanges) {
   let nodes = getUniqueMergedKeys(newObj, oldObj);
 
   for (const key of nodes) {
     const [newCurrentObj, newStatusNode] = getCurrentNode(newObj[key]);
     const [oldCurrentObj, oldStatusNode] = getCurrentNode(oldObj[key]);
 
-    console.log(newStatusNode + ' ' + key);
+    // console.log(key + ' === ' + newStatusNode  + '<--->' + oldStatusNode);
 
     if (!util.isDeepStrictEqual(newCurrentObj, oldCurrentObj)) {
-      if(!globalChanges.get(key) && newStatusNode === 'node') {
-        globalChanges.set(key, new Map());
-      }
-      if(newStatusNode === 'node') {
+      if(!globalChanges.has(key)) {
+        if(newStatusNode === 'node') {
           globalChanges.set(key, new Map());
+          posfixedDeepWalk(newCurrentObj, oldCurrentObj, globalChanges.get(key));
         }
         else if(newStatusNode === 'leaf') {
           /**
@@ -131,10 +130,40 @@ export function infixedDeepWalk(newObj, oldObj, globalChanges) {
            * - Type checking
            * - Value setting
            */
-          let message = 'changed';
+          let message;
+          message = 'changed';
+          // message = 'added';
+          // message = 'deleted';
+          // message = 'modified';
+          // if(new) {
+
+          // }
+
           globalChanges.set(key, message);
         }
-      infixedDeepWalk(newCurrentObj, oldCurrentObj, globalChanges.get(key));
+      }
+      // else {
+      //   if(newStatusNode === 'node') {
+      //     globalChanges.set(key, new Map());
+      //   }
+      // }
+
+      ///////////////
+      // if(!globalChanges?.get(key) && newStatusNode === 'node') {
+      //   globalChanges.set(key, new Map());
+      // }
+      // if(newStatusNode === 'node') {
+      //     globalChanges.set(key, new Map());
+      // }
+      // else if(newStatusNode === 'leaf') {
+      //   /**
+      //    * Todo:
+      //    * - Type checking
+      //    * - Value setting
+      //    */
+      //   let message = 'changed';
+      //   globalChanges.set(key, message);
+      // }
     }
   }
 }
