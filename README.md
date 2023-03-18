@@ -1,4 +1,4 @@
-<img align="center" alt="# Nodesecure Scanner" src="https://user-images.githubusercontent.com/4438263/216045720-779bf16d-1d35-409f-a0e6-4019bda8edde.jpg" alt="@nodesecure/rc">
+<img align="center" alt="# Nodesecure Scanner" src="https://user-images.githubusercontent.com/4438263/226018084-113c49e6-6c69-4baa-8f84-87e6d695be6d.jpg">
 
 ![version](https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/master/package.json&query=$.version&label=Version)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/commit-activity)
