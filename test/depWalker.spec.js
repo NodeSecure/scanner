@@ -1,11 +1,12 @@
 // Require Node.js Dependencies
-import { join, dirname } from "path";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
+import { join, dirname } from "node:path";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { describe, it, afterEach } from "node:test";
+import assert from "node:assert";
 
 // Third party Dependencies
 import { setStrategy, strategies } from "@nodesecure/vuln";
-import test from "tape";
 import snapshot from "snap-shot-core";
 
 // Require Internal Dependencies
@@ -40,139 +41,125 @@ function cleanupPayload(payload) {
   }
 }
 
-test.onFinish(snapshot.restore);
-
-test("execute depWalker on @slimio/is", async(tape) => {
-  await setStrategy(strategies.NPM_AUDIT);
-
-  const result = await depWalker(is, { verbose: false });
-  const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
-  cleanupPayload(resultAsJSON);
-
-  snapshot.core({
-    what: resultAsJSON,
-    file: fileURLToPath(import.meta.url),
-    specName: "walk @slimio/is"
-  });
-
-  tape.end();
+afterEach(() => {
+  snapshot.restore();
 });
 
-test("execute depWalker on @slimio/config", async(tape) => {
-  await setStrategy(strategies.NPM_AUDIT);
+describe("depWalker", () => {
+  it("execute depWalker on @slimio/is", async() => {
+    await setStrategy(strategies.NPM_AUDIT);
 
-  const result = await depWalker(config, { verbose: false });
-  const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
+    const result = await depWalker(is, { verbose: false });
+    const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
+    cleanupPayload(resultAsJSON);
 
-  const packages = Object.keys(resultAsJSON).sort();
-  tape.deepEqual(packages, [
-    "lodash.clonedeep",
-    "zen-observable",
-    "lodash.set",
-    "lodash.get",
-    "node-watch",
-    "fast-deep-equal",
-    "fast-json-stable-stringify",
-    "json-schema-traverse",
-    "punycode",
-    "uri-js",
-    "ajv",
-    "@slimio/is",
-    "@iarna/toml",
-    "@slimio/config"
-  ].sort());
-
-  tape.end();
-});
-
-test("execute depWalker on pkg.gitdeps", async(tape) => {
-  await setStrategy(strategies.NPM_AUDIT);
-
-  const result = await depWalker(pkgGitdeps, { verbose: false });
-  const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
-
-  const packages = Object.keys(resultAsJSON).sort();
-  tape.deepEqual(packages, [
-    "@nodesecure/estree-ast-utils",
-    "@nodesecure/js-x-ray",
-    "@nodesecure/sec-literal",
-    "@types/estree",
-    "eastasianwidth",
-    "emoji-regex",
-    "estree-walker",
-    "fast-xml-parser",
-    "frequency-set",
-    "is-base64",
-    "is-minified-code",
-    "is-svg",
-    "meriyah",
-    "nanodelay",
-    "nanoevents",
-    "nanoid",
-    "pkg.gitdeps",
-    "regexp-tree",
-    "safe-regex",
-    "string-width",
-    "strip-ansi",
-    "zen-observable"
-  ].sort());
-
-  tape.end();
-});
-
-test("fetch payload of pacote on the npm registry", async(tape) => {
-  tape.teardown(snapshot.restore);
-
-  const result = await from("pacote", {
-    verbose: false,
-    maxDepth: 10,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
-  });
-  snapshot.core({
-    what: Object.keys(result),
-    file: fileURLToPath(import.meta.url),
-    specName: "from pacote"
+    snapshot.core({
+      what: resultAsJSON,
+      file: fileURLToPath(import.meta.url),
+      specName: "walk @slimio/is"
+    });
   });
 
-  tape.end();
-});
+  it("execute depWalker on @slimio/config", async() => {
+    await setStrategy(strategies.NPM_AUDIT);
 
-test("fetch payload of pacote on the gitlab registry", async(tape) => {
-  tape.teardown(snapshot.restore);
+    const result = await depWalker(config, { verbose: false });
+    const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
-  const result = await from("pacote", {
-    registry: "https://gitlab.com/api/v4/packages/npm/",
-    verbose: false,
-    maxDepth: 10,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
+    const packages = Object.keys(resultAsJSON).sort();
+    assert.deepEqual(packages, [
+      "lodash.clonedeep",
+      "zen-observable",
+      "lodash.set",
+      "lodash.get",
+      "node-watch",
+      "fast-deep-equal",
+      "fast-json-stable-stringify",
+      "json-schema-traverse",
+      "punycode",
+      "uri-js",
+      "ajv",
+      "@slimio/is",
+      "@iarna/toml",
+      "@slimio/config"
+    ].sort());
   });
 
-  snapshot.core({
-    what: Object.keys(result),
-    file: fileURLToPath(import.meta.url),
-    specName: "from pacote"
+  it("execute depWalker on pkg.gitdeps", async() => {
+    await setStrategy(strategies.NPM_AUDIT);
+
+    const result = await depWalker(pkgGitdeps, { verbose: false });
+    const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
+
+    const packages = Object.keys(resultAsJSON).sort();
+    assert.deepEqual(packages, [
+      "@nodesecure/estree-ast-utils",
+      "@nodesecure/js-x-ray",
+      "@nodesecure/sec-literal",
+      "@types/estree",
+      "eastasianwidth",
+      "emoji-regex",
+      "estree-walker",
+      "fast-xml-parser",
+      "frequency-set",
+      "is-base64",
+      "is-minified-code",
+      "is-svg",
+      "meriyah",
+      "nanodelay",
+      "nanoevents",
+      "nanoid",
+      "pkg.gitdeps",
+      "regexp-tree",
+      "safe-regex",
+      "string-width",
+      "strip-ansi",
+      "zen-observable"
+    ].sort());
   });
 
-  tape.end();
-});
-
-test("execute cwd on scanner project", async(tape) => {
-  await cwd(join(__dirname, ".."), {
-    verbose: false,
-    maxDepth: 2,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
+  it("fetch payload of pacote on the npm registry", async() => {
+    const result = await from("pacote", {
+      verbose: false,
+      maxDepth: 10,
+      vulnerabilityStrategy: strategies.NPM_AUDIT
+    });
+    snapshot.core({
+      what: Object.keys(result),
+      file: fileURLToPath(import.meta.url),
+      specName: "from pacote"
+    });
   });
 
-  tape.end();
-});
+  it("fetch payload of pacote on the gitlab registry", async() => {
+    const result = await from("pacote", {
+      registry: "https://gitlab.com/api/v4/packages/npm/",
+      verbose: false,
+      maxDepth: 10,
+      vulnerabilityStrategy: strategies.NPM_AUDIT
+    });
 
-test("execute cwd on scanner project with a different registry", async(tape) => {
-  await cwd(join(__dirname, ".."), {
-    registry: "https://gitlab.com/api/v4/packages/npm/",
-    verbose: false,
-    maxDepth: 2,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
+    snapshot.core({
+      what: Object.keys(result),
+      file: fileURLToPath(import.meta.url),
+      specName: "from pacote"
+    });
   });
 
-  tape.end();
+  it("execute cwd on scanner project", async() => {
+    await cwd(join(__dirname, ".."), {
+      verbose: false,
+      maxDepth: 2,
+      vulnerabilityStrategy: strategies.NPM_AUDIT
+    });
+  });
+
+  it("execute cwd on scanner project with a different registry", async() => {
+    await cwd(join(__dirname, ".."), {
+      registry: "https://gitlab.com/api/v4/packages/npm/",
+      verbose: false,
+      maxDepth: 2,
+      vulnerabilityStrategy: strategies.NPM_AUDIT
+    });
+  });
 });

@@ -1,96 +1,96 @@
 // Import Node.js Dependencies
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { describe, it, after } from "node:test";
+import assert from "node:assert";
 
 // Import Third-party Dependencies
-import test from "tape";
 import sinon from "sinon";
 
 // Import Internal Dependencies
 import * as manifest from "../src/manifest.js";
 
-test("manifest.readAnalyze with a fake empty package.json (so all default values must be returned)", async(tape) => {
-  const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({}));
-  tape.teardown(() => readFile.restore());
+describe("manifest", () => {
+  it("manifest.readAnalyze with a fake empty package.json (so all default values must be returned)", async() => {
+    const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({}));
 
-  const manifestResult = await manifest.readAnalyze(process.cwd());
+    const manifestResult = await manifest.readAnalyze(process.cwd());
 
-  tape.deepEqual(manifestResult.packageDeps, []);
-  tape.deepEqual(manifestResult.packageDevDeps, []);
-  tape.false(manifestResult.hasNativeElements);
-  tape.false(manifestResult.hasScript);
-  tape.deepEqual(manifestResult.author, {});
-  tape.strictEqual(manifestResult.description, "");
-  tape.deepEqual(manifestResult.nodejs, { imports: {} });
-  tape.true(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
-  tape.true(readFile.calledOnce);
+    assert.deepEqual(manifestResult.packageDeps, []);
+    assert.deepEqual(manifestResult.packageDevDeps, []);
+    assert.ok(!manifestResult.hasNativeElements);
+    assert.ok(!manifestResult.hasScript);
+    assert.deepEqual(manifestResult.author, {});
+    assert.strictEqual(manifestResult.description, "");
+    assert.deepEqual(manifestResult.nodejs, { imports: {} });
+    assert.ok(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
+    assert.ok(readFile.calledOnce);
 
-  tape.end();
-});
+    readFile.restore();
+  });
 
-test("manifest.readAnalyze with a fake but consistent data", async(tape) => {
-  const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({
-    description: "foobar",
-    author: "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
-    scripts: {
-      preinstall: "npx foobar"
-    },
-    dependencies: {
-      "@slimio/is": "^1.0.0"
-    },
-    devDependencies: {
-      mocha: ">=2.5.0"
-    },
-    imports: {
+  it("manifest.readAnalyze with a fake but consistent data", async() => {
+    const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({
+      description: "foobar",
+      author: "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+      scripts: {
+        preinstall: "npx foobar"
+      },
+      dependencies: {
+        "@slimio/is": "^1.0.0"
+      },
+      devDependencies: {
+        mocha: ">=2.5.0"
+      },
+      imports: {
+        "#dep": {
+          node: "kleur"
+        }
+      },
+      gypfile: true
+    }));
+
+    const manifestResult = await manifest.readAnalyze(process.cwd());
+
+    assert.deepEqual(manifestResult.packageDeps, ["@slimio/is"]);
+    assert.deepEqual(manifestResult.packageDevDeps, ["mocha"]);
+    assert.deepEqual(manifestResult.nodejs.imports, {
       "#dep": {
         node: "kleur"
       }
-    },
-    gypfile: true
-  }));
-  tape.teardown(() => readFile.restore());
+    });
+    assert.deepEqual(manifestResult.scripts, {
+      preinstall: "npx foobar"
+    });
+    assert.deepEqual(manifestResult.engines, {});
+    assert.deepEqual(manifestResult.repository, {});
+    assert.ok(manifestResult.hasNativeElements);
+    assert.ok(manifestResult.hasScript);
+    assert.deepEqual(manifestResult.author, {
+      name: "GENTILHOMME Thomas",
+      email: "gentilhomme.thomas@gmail.com"
+    });
+    assert.strictEqual(manifestResult.description, "foobar");
 
-  const manifestResult = await manifest.readAnalyze(process.cwd());
+    assert.ok(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
+    assert.ok(readFile.calledOnce);
 
-  tape.deepEqual(manifestResult.packageDeps, ["@slimio/is"]);
-  tape.deepEqual(manifestResult.packageDevDeps, ["mocha"]);
-  tape.deepEqual(manifestResult.nodejs.imports, {
-    "#dep": {
-      node: "kleur"
-    }
+    readFile.restore();
   });
-  tape.deepEqual(manifestResult.scripts, {
-    preinstall: "npx foobar"
+
+  it("manifest.readAnalyze should return hasNativeElements: true because of the dependencies", async() => {
+    const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({
+      dependencies: {
+        "node-addon-api": "^1.0.0"
+      },
+      devDependencies: {
+        "node-gyp": "8.0.0"
+      }
+    }));
+
+    const manifestResult = await manifest.readAnalyze(process.cwd());
+    assert.ok(manifestResult.hasNativeElements);
+
+    readFile.restore();
   });
-  tape.deepEqual(manifestResult.engines, {});
-  tape.deepEqual(manifestResult.repository, {});
-  tape.true(manifestResult.hasNativeElements);
-  tape.true(manifestResult.hasScript);
-  tape.deepEqual(manifestResult.author, {
-    name: "GENTILHOMME Thomas",
-    email: "gentilhomme.thomas@gmail.com"
-  });
-  tape.strictEqual(manifestResult.description, "foobar");
-
-  tape.true(readFile.calledWith(path.join(process.cwd(), "package.json"), "utf-8"));
-  tape.true(readFile.calledOnce);
-
-  tape.end();
-});
-
-test("manifest.readAnalyze should return hasNativeElements: true because of the dependencies", async(tape) => {
-  const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify({
-    dependencies: {
-      "node-addon-api": "^1.0.0"
-    },
-    devDependencies: {
-      "node-gyp": "8.0.0"
-    }
-  }));
-  tape.teardown(() => readFile.restore());
-
-  const manifestResult = await manifest.readAnalyze(process.cwd());
-  tape.true(manifestResult.hasNativeElements);
-
-  tape.end();
 });

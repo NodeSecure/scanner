@@ -1,23 +1,20 @@
-// Import Third-party Dependencies
-import test from "tape";
+// Import Node.js Dependencies
+import { describe, it } from "node:test";
+import assert from "node:assert";
 
 // Import Internal Dependencies
 import { getPackageName } from "../../src/utils/index.js";
 
-test("getPackageName should return the package name (if there is not slash char at all)", (tape) => {
-  tape.is(getPackageName("mocha"), "mocha");
+describe("getPackageName", () => {
+  it("getPackageName should return the package name (if there is not slash char at all)", () => {
+    assert.deepStrictEqual(getPackageName("mocha"), "mocha");
+  });
 
-  tape.end();
-});
+  it("getPackageName should return the package name (first part before '/' character)", () => {
+    assert.deepStrictEqual(getPackageName("foo/bar"), "foo");
+  });
 
-test("getPackageName should return the package name (first part before '/' character)", (tape) => {
-  tape.is(getPackageName("foo/bar"), "foo");
-
-  tape.end();
-});
-
-test("getPackageName should return the package name with organization namespace", (tape) => {
-  tape.is(getPackageName("@slimio/is/test"), "@slimio/is");
-
-  tape.end();
+  it("getPackageName should return the package name with organization namespace", () => {
+    assert.deepStrictEqual(getPackageName("@slimio/is/test"), "@slimio/is");
+  });
 });
