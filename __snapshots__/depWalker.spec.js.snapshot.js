@@ -132,13 +132,3 @@ exports['from pacote 1'] = [
   "flaggedAuthors",
   "dependencies"
 ]
-
-exports['from pacote 2'] = [
-  "id",
-  "rootDependencyName",
-  "scannerVersion",
-  "vulnerabilityStrategy",
-  "warnings",
-  "flaggedAuthors",
-  "dependencies"
-]
