@@ -1,26 +1,21 @@
-// Import Third-party Dependencies
-import test from "tape";
+// Require Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Import Internal Dependencies
 import { isSensitiveFile } from "../../src/utils/index.js";
 
-test("isSensitiveFile should return true for sensitive files", (tape) => {
-  tape.true(isSensitiveFile(".npmrc"));
-  tape.true(isSensitiveFile(".env"));
-
-  tape.end();
+test("isSensitiveFile should return true for sensitive files", () => {
+  assert.ok(isSensitiveFile(".npmrc"));
+  assert.ok(isSensitiveFile(".env"));
 });
 
-test("isSensitiveFile should return true for sensitive extensions", (tape) => {
-  tape.true(isSensitiveFile("lol.key"), ".key extension is sensible");
-  tape.true(isSensitiveFile("bar.pem"), ".pem extension is sensible");
-
-  tape.end();
+test("isSensitiveFile should return true for sensitive extensions", () => {
+  assert.ok(isSensitiveFile("lol.key"), ".key extension is sensible");
+  assert.ok(isSensitiveFile("bar.pem"), ".pem extension is sensible");
 });
 
-test("isSensitiveFile should return false for classical extension or file name", (tape) => {
-  tape.false(isSensitiveFile("test.js"));
-  tape.false(isSensitiveFile(".eslintrc"));
-
-  tape.end();
+test("isSensitiveFile should return false for classical extension or file name", () => {
+  assert.ok(!isSensitiveFile("test.js"));
+  assert.ok(!isSensitiveFile(".eslintrc"));
 });

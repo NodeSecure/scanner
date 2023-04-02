@@ -1,10 +1,11 @@
-// Import Third-party Dependencies
-import test from "tape";
+// Require Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Import Internal Dependencies
 import { addMissingVersionFlags } from "../../src/utils/index.js";
 
-test("addMissingVersionFlags should return all missing flags", (tape) => {
+test("addMissingVersionFlags should return all missing flags", () => {
   const flags = new Set([
     "hasOutdatedDependency"
   ]);
@@ -18,14 +19,12 @@ test("addMissingVersionFlags should return all missing flags", (tape) => {
     versions: ["1.1.1", "1.5.0"]
   });
   const resultFlags = [...gen];
-  tape.deepEqual(resultFlags, [
+  assert.deepEqual(resultFlags, [
     "isDead", "hasManyPublishers", "hasChangedAuthor", "hasVulnerabilities", "hasDuplicate"
   ]);
-
-  tape.end();
 });
 
-test("addMissingVersionFlags should return an empty array", (tape) => {
+test("addMissingVersionFlags should return an empty array", () => {
   const flags = new Set([
     "hasOutdatedDependency", "isDead", "hasManyPublishers", "hasChangedAuthor", "hasVulnerabilities", "hasDuplicate"
   ]);
@@ -39,7 +38,5 @@ test("addMissingVersionFlags should return an empty array", (tape) => {
     versions: ["1.1.1", "1.5.0"]
   });
   const resultFlags = [...gen];
-  tape.deepEqual(resultFlags, []);
-
-  tape.end();
+  assert.deepEqual(resultFlags, []);
 });

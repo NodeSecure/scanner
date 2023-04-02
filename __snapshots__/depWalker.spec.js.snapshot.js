@@ -1,4 +1,4 @@
-exports['walk @slimio/is 1'] ={
+exports['walk @slimio/is 1'] = {
   "@slimio/is": {
     "versions": {
       "1.5.1": {

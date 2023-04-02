@@ -1,12 +1,11 @@
-// Import Third-party Dependencies
-import test from "tape";
+// Require Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Import Internal Dependencies
 import { booleanToFlags } from "../../src/utils/index.js";
 
-test("booleanToFlags should transform the Record in flag list where value are true", (tape) => {
+test("booleanToFlags should transform the Record in flag list where value are true", () => {
   const flags = booleanToFlags({ hasScript: true, foo: false, bar: true });
-  tape.deepEqual([...flags], ["hasScript", "bar"]);
-
-  tape.end();
+  assert.deepEqual([...flags], ["hasScript", "bar"]);
 });

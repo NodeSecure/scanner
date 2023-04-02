@@ -1,9 +1,8 @@
 // Require Node.js Dependencies
-import path from "path";
-import { fileURLToPath } from "url";
-
-// Third party Dependencies
-import test from "tape";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Require Internal Dependencies
 import { scanPackage } from "../../src/tarball.js";
@@ -12,11 +11,11 @@ import { scanPackage } from "../../src/tarball.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "scanPackage");
 
-test("scanPackage (caseone)", async(tape) => {
+test("scanPackage (caseone)", async() => {
   const result = await scanPackage(path.join(FIXTURE_PATH, "caseone"));
   result.files.extensions.sort();
 
-  tape.deepEqual(result.files, {
+  assert.deepEqual(result.files, {
     list: [
       ".gitignore",
       "foobar.txt",
@@ -35,11 +34,11 @@ test("scanPackage (caseone)", async(tape) => {
     ].map((location) => location.replaceAll("\\", path.sep))
   });
 
-  tape.true(typeof result.directorySize === "number", "directorySize should be a number");
-  tape.true(result.directorySize > 0, "directorySize has a size different of zero");
+  assert.ok(typeof result.directorySize === "number", "directorySize should be a number");
+  assert.ok(result.directorySize > 0, "directorySize has a size different of zero");
 
-  tape.deepEqual(result.uniqueLicenseIds, ["MIT"], "Unique license ID should only contain MIT");
-  tape.deepEqual(result.licenses, [
+  assert.deepEqual(result.uniqueLicenseIds, ["MIT"], "Unique license ID should only contain MIT");
+  assert.deepEqual(result.licenses, [
     {
       uniqueLicenseIds: [
         "MIT"
@@ -57,18 +56,16 @@ test("scanPackage (caseone)", async(tape) => {
     }
   ]);
 
-  tape.true(result.ast.warnings.length === 0);
-  tape.deepEqual(Object.keys(result.ast.dependencies), [
+  assert.ok(result.ast.warnings.length === 0);
+  assert.deepEqual(Object.keys(result.ast.dependencies), [
     "index.js",
     "src\\deps.js",
     "src\\other.min.js"
   ].map((location) => location.replaceAll("\\", path.sep)));
-  tape.deepEqual(Object.keys(result.ast.dependencies["index.js"]), [
+  assert.deepEqual(Object.keys(result.ast.dependencies["index.js"]), [
     "./src/deps.js",
     "fs",
     "kleur"
   ]);
-  tape.true(result.ast.dependencies["index.js"].fs.inTry);
-
-  tape.end();
+  assert.ok(result.ast.dependencies["index.js"].fs.inTry);
 });

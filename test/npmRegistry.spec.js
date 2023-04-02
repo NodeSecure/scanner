@@ -1,5 +1,8 @@
+// Import Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
+
 // Import Third-party Dependencies
-import test from "tape";
 import semver from "semver";
 import is from "@slimio/is";
 
@@ -7,29 +10,23 @@ import is from "@slimio/is";
 import Logger from "../src/class/logger.class.js";
 import * as registry from "../src/npmRegistry.js";
 
-test("registry.parseAuthor should be able to parse an author string", (tape) => {
+test("registry.parseAuthor should be able to parse an author string", () => {
   const result = registry.parseAuthor("GENTILHOMME Thomas");
-  tape.deepEqual(result, { name: "GENTILHOMME Thomas" });
-
-  tape.end();
+  assert.deepEqual(result, { name: "GENTILHOMME Thomas" });
 });
 
-test("registry.parseAuthor should return value if not a string", (tape) => {
+test("registry.parseAuthor should return value if not a string", () => {
   const result = registry.parseAuthor({});
-  tape.deepEqual(result, {});
-
-  tape.end();
+  assert.deepEqual(result, {});
 });
 
-test("registry.packageMetadata should not throw error", async(tape) => {
+test("registry.packageMetadata should not throw error", async() => {
   const logger = new Logger().start("registry");
 
   await registry.packageMetadata("@slimio/is", "1.5.0", { logger });
-
-  tape.end();
 });
 
-test("registry.packageMetadata", async(tape) => {
+test("registry.packageMetadata", async() => {
   const ref = {
     metadata: {},
     versions: {
@@ -45,21 +42,19 @@ test("registry.packageMetadata", async(tape) => {
     logger
   });
 
-  tape.deepEqual(ref.versions["1.5.0"].flags, ["isOutdated"]);
-  tape.strictEqual(logger.count("registry"), 1);
+  assert.deepEqual(ref.versions["1.5.0"].flags, ["isOutdated"]);
+  assert.strictEqual(logger.count("registry"), 1);
 
-  tape.deepEqual(ref.metadata.author, { name: "SlimIO" });
-  tape.strictEqual(ref.metadata.homepage, "https://github.com/SlimIO/is#readme");
-  tape.true(semver.gt(ref.metadata.lastVersion, "1.5.0"));
+  assert.deepEqual(ref.metadata.author, { name: "SlimIO" });
+  assert.strictEqual(ref.metadata.homepage, "https://github.com/SlimIO/is#readme");
+  assert.ok(semver.gt(ref.metadata.lastVersion, "1.5.0"));
 
-  tape.true(Array.isArray(ref.metadata.publishers));
-  tape.true(Array.isArray(ref.metadata.maintainers));
-  tape.true(ref.metadata.publishers.length > 0);
-  tape.true(ref.metadata.maintainers.length > 0);
+  assert.ok(Array.isArray(ref.metadata.publishers));
+  assert.ok(Array.isArray(ref.metadata.maintainers));
+  assert.ok(ref.metadata.publishers.length > 0);
+  assert.ok(ref.metadata.maintainers.length > 0);
 
-  tape.true(ref.metadata.hasManyPublishers);
-  tape.true(typeof ref.metadata.publishedCount === "number");
-  tape.true(is.date(new Date(ref.metadata.lastUpdateAt)));
-
-  tape.end();
+  assert.ok(ref.metadata.hasManyPublishers);
+  assert.ok(typeof ref.metadata.publishedCount === "number");
+  assert.ok(is.date(new Date(ref.metadata.lastUpdateAt)));
 });

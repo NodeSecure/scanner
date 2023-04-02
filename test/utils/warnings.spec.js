@@ -1,5 +1,6 @@
-// Require Third-party Dependencies
-import test from "tape";
+// Require Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Require Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";
@@ -17,19 +18,17 @@ function createDependency(maintainers = [], publishers = []) {
   };
 }
 
-test("getDependenciesWarnings for '@scarf/scarf'", async(tape) => {
+test("getDependenciesWarnings for '@scarf/scarf'", async() => {
   const deps = new Map([
     ["@scarf/scarf", createDependency()]
   ]);
 
   const warnsArray = await getDependenciesWarnings(deps);
-  tape.strictEqual(warnsArray.warnings.length, 1);
+  assert.strictEqual(warnsArray.warnings.length, 1);
 
-  tape.strictEqual(
+  assert.strictEqual(
     warnsArray.warnings[0],
     // eslint-disable-next-line max-len
     "The dependency '@scarf/scarf' has been detected in the dependency Tree. This dependency could collect data against your will so think to disable it with the env var: SCARF_ANALYTICS"
   );
-
-  tape.end();
 });

@@ -1,10 +1,11 @@
-// Import Third-party Dependencies
-import test from "tape";
+// Require Node.js Dependencies
+import { test } from "node:test";
+import assert from "node:assert";
 
 // Import Internal Dependencies
 import { analyzeDependencies } from "../../src/utils/index.js";
 
-test("analyzeDependencies should detect Node.js dependencies and also flag hasExternalCapacity", (tape) => {
+test("analyzeDependencies should detect Node.js dependencies and also flag hasExternalCapacity", () => {
   const packageDeps = [];
   const packageDevDeps = [];
 
@@ -13,7 +14,7 @@ test("analyzeDependencies should detect Node.js dependencies and also flag hasEx
     "http"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: ["fs", "http"],
     thirdPartyDependencies: [],
     subpathImportsDependencies: [],
@@ -21,11 +22,9 @@ test("analyzeDependencies should detect Node.js dependencies and also flag hasEx
     missingDependencies: [],
     flags: { hasExternalCapacity: true, hasMissingOrUnusedDependency: false }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should detect prefixed (namespaced 'node:') core dependencies", (tape) => {
+test("analyzeDependencies should detect prefixed (namespaced 'node:') core dependencies", () => {
   const packageDeps = ["node:foo"];
   const packageDevDeps = [];
 
@@ -35,7 +34,7 @@ test("analyzeDependencies should detect prefixed (namespaced 'node:') core depen
     "node:bar"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: ["node:fs"],
     thirdPartyDependencies: ["node:foo", "node:bar"],
     subpathImportsDependencies: [],
@@ -43,11 +42,9 @@ test("analyzeDependencies should detect prefixed (namespaced 'node:') core depen
     missingDependencies: ["node:bar"],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: true }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should be capable of detecting unused dependency 'koa'", (tape) => {
+test("analyzeDependencies should be capable of detecting unused dependency 'koa'", () => {
   const packageDeps = ["koa", "kleur"];
   const packageDevDeps = ["mocha"];
 
@@ -56,7 +53,7 @@ test("analyzeDependencies should be capable of detecting unused dependency 'koa'
     "kleur"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: ["kleur"],
     subpathImportsDependencies: [],
@@ -64,11 +61,9 @@ test("analyzeDependencies should be capable of detecting unused dependency 'koa'
     missingDependencies: [],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: true }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should be capable of detecting unused dependency 'kleur'", (tape) => {
+test("analyzeDependencies should be capable of detecting unused dependency 'kleur'", () => {
   const packageDeps = ["mocha"];
   const packageDevDeps = [];
 
@@ -77,7 +72,7 @@ test("analyzeDependencies should be capable of detecting unused dependency 'kleu
     "kleur"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: ["mocha", "kleur"],
     subpathImportsDependencies: [],
@@ -85,11 +80,9 @@ test("analyzeDependencies should be capable of detecting unused dependency 'kleu
     missingDependencies: ["kleur"],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: true }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should ignore '@types' for third-party dependencies", (tape) => {
+test("analyzeDependencies should ignore '@types' for third-party dependencies", () => {
   const packageDeps = ["@types/npm"];
   const packageDevDeps = ["kleur"];
 
@@ -97,7 +90,7 @@ test("analyzeDependencies should ignore '@types' for third-party dependencies", 
     "kleur"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set() });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: [],
     subpathImportsDependencies: [],
@@ -105,11 +98,9 @@ test("analyzeDependencies should ignore '@types' for third-party dependencies", 
     missingDependencies: [],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should ignore file dependencies and try dependencies", (tape) => {
+test("analyzeDependencies should ignore file dependencies and try dependencies", () => {
   const packageDeps = [];
   const packageDevDeps = ["kleur"];
 
@@ -119,7 +110,7 @@ test("analyzeDependencies should ignore file dependencies and try dependencies",
     "./foobar.js"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set(["httpie"]) });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: [],
     subpathImportsDependencies: [],
@@ -127,11 +118,9 @@ test("analyzeDependencies should ignore file dependencies and try dependencies",
     missingDependencies: [],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should detect Node.js subpath import and set relation between #dep and kleur.", (tape) => {
+test("analyzeDependencies should detect Node.js subpath import and set relation between #dep and kleur.", () => {
   const packageDeps = ["kleur"];
   const packageDevDeps = [];
   const nodeImports = {
@@ -144,7 +133,7 @@ test("analyzeDependencies should detect Node.js subpath import and set relation 
     "#dep"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set(), nodeImports });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: ["#dep"],
     subpathImportsDependencies: [
@@ -154,11 +143,9 @@ test("analyzeDependencies should detect Node.js subpath import and set relation 
     missingDependencies: [],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
   });
-
-  tape.end();
 });
 
-test("analyzeDependencies should detect Node.js subpath import (with a default property pointing to a file)", (tape) => {
+test("analyzeDependencies should detect Node.js subpath import (with a default property pointing to a file)", () => {
   const packageDeps = ["kleur"];
   const packageDevDeps = [];
   const nodeImports = {
@@ -171,7 +158,7 @@ test("analyzeDependencies should detect Node.js subpath import (with a default p
     "#dep"
   ], { packageDeps, packageDevDeps, tryDependencies: new Set(), nodeImports });
 
-  tape.deepEqual(result, {
+  assert.deepEqual(result, {
     nodeDependencies: [],
     thirdPartyDependencies: ["#dep"],
     subpathImportsDependencies: [
@@ -181,6 +168,4 @@ test("analyzeDependencies should detect Node.js subpath import (with a default p
     missingDependencies: [],
     flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: true }
   });
-
-  tape.end();
 });

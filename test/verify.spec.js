@@ -1,16 +1,19 @@
 // Import Node.js Dependencies
-import { fileURLToPath } from "url";
-import path from "path";
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+import { test, afterEach } from "node:test";
+import assert from "node:assert";
 
 // Import Third-party Dependencies
-import test from "tape";
 import snapshot from "snap-shot-core";
 import Result from "folktale/result/index.js";
 
 // Import Internal Dependencies
 import { verify } from "../index.js";
 
-test.onFinish(snapshot.restore);
+afterEach(() => {
+  snapshot.restore();
+});
 
 function cleanupAstDependenciesSnapshot(dependencies) {
   const cleaned = {};
@@ -22,11 +25,11 @@ function cleanupAstDependenciesSnapshot(dependencies) {
   return cleaned;
 }
 
-test("verify 'express' package", async(tape) => {
+test("verify 'express' package", async() => {
   const data = await verify("express@4.17.0");
   data.files.extensions.sort();
 
-  tape.deepEqual(data.files, {
+  assert.deepEqual(data.files, {
     list: [
       "History.md",
       "LICENSE",
@@ -48,11 +51,11 @@ test("verify 'express' package", async(tape) => {
     extensions: [".md", ".js", ".json"].sort(),
     minified: []
   });
-  tape.true(data.directorySize > 0);
+  assert.ok(data.directorySize > 0);
 
   // licenses
-  tape.deepEqual(data.uniqueLicenseIds, ["MIT"]);
-  tape.deepEqual(data.licenses, [
+  assert.deepEqual(data.uniqueLicenseIds, ["MIT"]);
+  assert.deepEqual(data.licenses, [
     {
       uniqueLicenseIds: ["MIT"],
       spdxLicenseLinks: ["https://spdx.org/licenses/MIT.html#licenseText"],
@@ -77,9 +80,9 @@ test("verify 'express' package", async(tape) => {
     }
   ]);
 
-  tape.true(data.ast.warnings.length === 1);
+  assert.ok(data.ast.warnings.length === 1);
   const warningName = data.ast.warnings.map((row) => row.kind);
-  tape.deepEqual(warningName, ["unsafe-import"]);
+  assert.deepEqual(warningName, ["unsafe-import"]);
 
   snapshot.core({
     what: data.ast.dependencies,
@@ -97,6 +100,4 @@ test("verify 'express' package", async(tape) => {
       return Result.Error(`${expected} !== ${value}`);
     }
   });
-
-  tape.end();
 });

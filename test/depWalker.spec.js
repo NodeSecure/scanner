@@ -1,11 +1,12 @@
 // Require Node.js Dependencies
-import { join, dirname } from "path";
-import { readFileSync } from "fs";
-import { fileURLToPath } from "url";
+import { join, dirname } from "node:path";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { test, afterEach } from "node:test";
+import assert from "node:assert";
 
 // Third party Dependencies
 import { setStrategy, strategies } from "@nodesecure/vuln";
-import test from "tape";
 import snapshot from "snap-shot-core";
 
 // Require Internal Dependencies
@@ -40,9 +41,11 @@ function cleanupPayload(payload) {
   }
 }
 
-test.onFinish(snapshot.restore);
+afterEach(() => {
+  snapshot.restore();
+});
 
-test("execute depWalker on @slimio/is", async(tape) => {
+test("execute depWalker on @slimio/is", async() => {
   await setStrategy(strategies.NPM_AUDIT);
 
   const result = await depWalker(is, { verbose: false });
@@ -54,18 +57,16 @@ test("execute depWalker on @slimio/is", async(tape) => {
     file: fileURLToPath(import.meta.url),
     specName: "walk @slimio/is"
   });
-
-  tape.end();
 });
 
-test("execute depWalker on @slimio/config", async(tape) => {
+test("execute depWalker on @slimio/config", async() => {
   await setStrategy(strategies.NPM_AUDIT);
 
   const result = await depWalker(config, { verbose: false });
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
   const packages = Object.keys(resultAsJSON).sort();
-  tape.deepEqual(packages, [
+  assert.deepEqual(packages, [
     "lodash.clonedeep",
     "zen-observable",
     "lodash.set",
@@ -81,18 +82,16 @@ test("execute depWalker on @slimio/config", async(tape) => {
     "@iarna/toml",
     "@slimio/config"
   ].sort());
-
-  tape.end();
 });
 
-test("execute depWalker on pkg.gitdeps", async(tape) => {
+test("execute depWalker on pkg.gitdeps", async() => {
   await setStrategy(strategies.NPM_AUDIT);
 
   const result = await depWalker(pkgGitdeps, { verbose: false });
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
   const packages = Object.keys(resultAsJSON).sort();
-  tape.deepEqual(packages, [
+  assert.deepEqual(packages, [
     "@nodesecure/estree-ast-utils",
     "@nodesecure/js-x-ray",
     "@nodesecure/sec-literal",
@@ -116,13 +115,9 @@ test("execute depWalker on pkg.gitdeps", async(tape) => {
     "strip-ansi",
     "zen-observable"
   ].sort());
-
-  tape.end();
 });
 
-test("fetch payload of pacote on the npm registry", async(tape) => {
-  tape.teardown(snapshot.restore);
-
+test("fetch payload of pacote on the npm registry", async() => {
   const result = await from("pacote", {
     verbose: false,
     maxDepth: 10,
@@ -133,13 +128,9 @@ test("fetch payload of pacote on the npm registry", async(tape) => {
     file: fileURLToPath(import.meta.url),
     specName: "from pacote"
   });
-
-  tape.end();
 });
 
-test("fetch payload of pacote on the gitlab registry", async(tape) => {
-  tape.teardown(snapshot.restore);
-
+test("fetch payload of pacote on the gitlab registry", async() => {
   const result = await from("pacote", {
     registry: "https://gitlab.com/api/v4/packages/npm/",
     verbose: false,
@@ -152,27 +143,21 @@ test("fetch payload of pacote on the gitlab registry", async(tape) => {
     file: fileURLToPath(import.meta.url),
     specName: "from pacote"
   });
-
-  tape.end();
 });
 
-test("execute cwd on scanner project", async(tape) => {
+test("execute cwd on scanner project", async() => {
   await cwd(join(__dirname, ".."), {
     verbose: false,
     maxDepth: 2,
     vulnerabilityStrategy: strategies.NPM_AUDIT
   });
-
-  tape.end();
 });
 
-test("execute cwd on scanner project with a different registry", async(tape) => {
+test("execute cwd on scanner project with a different registry", async() => {
   await cwd(join(__dirname, ".."), {
     registry: "https://gitlab.com/api/v4/packages/npm/",
     verbose: false,
     maxDepth: 2,
     vulnerabilityStrategy: strategies.NPM_AUDIT
   });
-
-  tape.end();
 });
