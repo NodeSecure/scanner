@@ -10,9 +10,9 @@ import util from "util";
 
 // Processes
 function getCurrentNode(node) {
-  if (['number', 'string', 'boolean', 'undefined'].includes(typeof(node)) || node === null) {
+  if (["number", "string", "boolean", "undefined"].includes(typeof (node)) || node === null) {
     // case current node is primitive type
-    return [{}, 'leaf'];
+    return [{}, "leaf"];
   }
   else if (node instanceof Array) {
     // case current node is an Array
@@ -20,33 +20,34 @@ function getCurrentNode(node) {
       // with no element
       return [
         { length: 0 },
-        'leaf'
+        "leaf"
       ];
     }
 
-    let firstItem = node[0];
-    if (['number', 'string', 'boolean', 'undefined'].includes(typeof(firstItem)) || firstItem === null) {
+    const firstItem = node[0];
+    if (["number", "string", "boolean", "undefined"].includes(typeof (firstItem)) || firstItem === null) {
       // of primitives
       return [
         { length: node.length },
-        'leaf'
+        "leaf"
       ];
     }
-    else {
-      // of Objects
-      let obj = {};
-      let objItem = 0;
-      for (const item of node) {
-        obj['array-item-' + objItem++] = item;
-      }
-
-      return [obj, 'node'];
+    // else {
+    // of Objects
+    const obj = {};
+    let objItem = 0;
+    for (const item of node) {
+      obj["array-item-" + objItem++] = item;
     }
+
+    return [obj, "node"];
+    // }
   }
-  else { // if (node instanceof Object)
-    // case current node is an Object
-    return [node, 'node']
-  }
+  // else {  if (node instanceof Object)
+  // case current node is an Object
+  
+  return [node, "node"];
+  // }
 }
 
 // Helpers
@@ -110,31 +111,31 @@ export function hasSomethingChanged(newObj, oldObj, key) {
 }
 
 export function posfixedDeepWalk(newObj, oldObj, globalChanges) {
-  let nodes = getUniqueMergedKeys(newObj, oldObj);
+  const nodes = getUniqueMergedKeys(newObj, oldObj);
 
   for (const key of nodes) {
     const [newCurrentObj, newStatusNode] = getCurrentNode(newObj[key]);
     const [oldCurrentObj, oldStatusNode] = getCurrentNode(oldObj[key]);
 
-    // console.log(key + ' === ' + newStatusNode  + '<--->' + oldStatusNode);
+    // console.log(key + " === " + newStatusNode  + "<--->" + oldStatusNode);
 
     if (!util.isDeepStrictEqual(newCurrentObj, oldCurrentObj)) {
-      if(!globalChanges.has(key)) {
-        if(newStatusNode === 'node') {
+      if (!globalChanges.has(key)) {
+        if (newStatusNode === "node") {
           globalChanges.set(key, new Map());
           posfixedDeepWalk(newCurrentObj, oldCurrentObj, globalChanges.get(key));
         }
-        else if(newStatusNode === 'leaf') {
+        else if (newStatusNode === "leaf") {
           /**
            * Todo:
            * - Type checking
            * - Value setting
            */
-          let message;
-          message = 'changed';
-          // message = 'added';
-          // message = 'deleted';
-          // message = 'modified';
+          let message = "";
+          message = "changed";
+          // message = "added";
+          // message = "deleted";
+          // message = "modified";
           // if(new) {
 
           // }
@@ -143,25 +144,24 @@ export function posfixedDeepWalk(newObj, oldObj, globalChanges) {
         }
       }
       // else {
-      //   if(newStatusNode === 'node') {
+      //   if(newStatusNode === "node") {
       //     globalChanges.set(key, new Map());
       //   }
       // }
-
-      ///////////////
-      // if(!globalChanges?.get(key) && newStatusNode === 'node') {
+      //
+      // if(!globalChanges?.get(key) && newStatusNode === "node") {
       //   globalChanges.set(key, new Map());
       // }
-      // if(newStatusNode === 'node') {
+      // if(newStatusNode === "node") {
       //     globalChanges.set(key, new Map());
       // }
-      // else if(newStatusNode === 'leaf') {
+      // else if(newStatusNode === "leaf") {
       //   /**
       //    * Todo:
       //    * - Type checking
       //    * - Value setting
       //    */
-      //   let message = 'changed';
+      //   let message = "changed";
       //   globalChanges.set(key, message);
       // }
     }
