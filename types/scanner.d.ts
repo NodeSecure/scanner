@@ -5,6 +5,7 @@ import * as Vuln from "@nodesecure/vuln";
 
 // Import Third-party Dependencies
 import { Maintainer } from "@npm/types";
+import { extractedAuthor } from "@nodesecure/authors";
 
 export = Scanner;
 
