@@ -6,7 +6,7 @@ import os from "os";
 
 // Import Third-party Dependencies
 import combineAsyncIterators from "combine-async-iterators";
-import iter from "itertools";
+import * as iter from "itertools";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
 import Lock from "@slimio/lock";
