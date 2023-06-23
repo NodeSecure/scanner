@@ -4,7 +4,7 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/graphs/commit-activity)
 [![OpenSSF
 Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge?style=for-the-badge)](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner)
-[![mit](https://img.shields.io/github/license/Naereen/StrapDown.js.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/blob/master/LICENSE)
+[![mit](https://img.shields.io/github/license/NodeSecure/scanner.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/blob/master/LICENSE)
 ![build](https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml?style=for-the-badge)
 
 ⚡️ Run a static analysis of your module's dependencies.
