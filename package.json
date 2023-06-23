@@ -11,7 +11,7 @@
     "prepublishOnly": "pkg-ok",
     "test": "npm run lint && npm run test-only",
     "test:ci": "node --test test/**.spec.js test/**/*.spec.js",
-    "test-only": "node --test --test-reporter=spec test/**.spec.js test/**/*.spec.js",
+    "test-only": "glob -c \"node --test-reporter=spec --test\" \"./test/**/*.spec.js\"",
     "coverage": "c8 -r html npm run test-only"
   },
   "files": [
@@ -56,6 +56,7 @@
     "dotenv": "^16.0.3",
     "eslint": "^8.37.0",
     "get-folder-size": "^4.0.0",
+    "glob": "^10.3.4",
     "pkg-ok": "^3.0.0",
     "sinon": "^15.0.3",
     "snap-shot-core": "^10.2.4"
@@ -64,7 +65,7 @@
     "@nodesecure/authors": "^1.0.2",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/fs-walk": "^1.0.0",
-    "@nodesecure/i18n": "^3.2.0",
+    "@nodesecure/i18n": "^3.3.0",
     "@nodesecure/js-x-ray": "^6.0.1",
     "@nodesecure/npm-registry-sdk": "^1.5.2",
     "@nodesecure/ntlp": "^2.2.1",

@@ -2,6 +2,9 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
+// Import Third-party Dependencies
+import * as i18n from "@nodesecure/i18n";
+
 // Require Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";
 
@@ -26,9 +29,8 @@ test("getDependenciesWarnings for '@scarf/scarf'", async() => {
   const warnsArray = await getDependenciesWarnings(deps);
   assert.strictEqual(warnsArray.warnings.length, 1);
 
-  assert.strictEqual(
-    warnsArray.warnings[0],
-    // eslint-disable-next-line max-len
-    "The dependency '@scarf/scarf' has been detected in the dependency Tree. This dependency could collect data against your will so think to disable it with the env var: SCARF_ANALYTICS"
+  const message = await i18n.getToken("scanner.disable_scarf");
+  assert.ok(
+    warnsArray.warnings[0].includes(message)
   );
 });
