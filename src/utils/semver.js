@@ -1,7 +1,3 @@
-// Import Node.js Dependencies
-import path from "node:path";
-import { readFileSync } from "node:fs";
-
 // Import Third-party Dependencies
 import pacote from "pacote";
 import semver from "semver";
@@ -9,9 +5,6 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { NPM_TOKEN } from "./index.js";
-
-// CONSTANTS
-const KVersionsToWarn = ["0.0.0", "0.0", "0"];
 
 /**
  * @param {!string} version semver range
@@ -53,16 +46,4 @@ export async function getCleanDependencyName([depName, range]) {
   const [depVer, isLatest] = await getExpectedSemVer(depName, range);
 
   return [`${depName}@${range}`, `${depName}@${depVer}`, isLatest];
-}
-
-export function addSASTWarning(dirPath) {
-  const packageJsonPath = path.join(dirPath, "package.json");
-
-  const packageJsonVersion = JSON.parse(readFileSync(packageJsonPath, "utf8")).version;
-
-  if (KVersionsToWarn.includes(packageJsonVersion)) {
-    throw new Error("The version of package.json is invalid");
-  }
-
-  return true;
 }

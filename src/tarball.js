@@ -18,6 +18,7 @@ import * as manifest from "./manifest.js";
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
+const KVersionsToWarn = new Set(["0.0.0", "0.0", "0"]);
 
 export async function scanJavascriptFile(dest, file, packageName) {
   const result = await runASTAnalysisOnFile(path.join(dest, file), { packageName });
@@ -93,6 +94,10 @@ export async function scanDirOrArchive(name, version, options) {
       .map((promiseSettledResult) => promiseSettledResult.value);
 
     ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
+
+    if (KVersionsToWarn.has(version)) {
+      ref.warnings.push(getSemVerWarning(version));
+    }
 
     const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
     const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
@@ -173,5 +178,17 @@ export async function scanPackage(dest, packageName) {
     uniqueLicenseIds,
     licenses,
     ast: { dependencies, warnings }
+  };
+}
+
+function getSemVerWarning(value) {
+  return {
+    skind: "invalid-semver",
+    file: "package.json",
+    value,
+    location: null,
+    i18n: "warnings.invalidSemVer",
+    severity: "Warning",
+    experimental: false
   };
 }
