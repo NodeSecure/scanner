@@ -11,7 +11,7 @@ import ntlp from "@nodesecure/ntlp";
 // Import Internal Dependencies
 import {
   getTarballComposition, isSensitiveFile, filterDependencyKind, analyzeDependencies, booleanToFlags,
-  NPM_TOKEN
+  NPM_TOKEN, getSemVerWarning
 } from "./utils/index.js";
 import * as manifest from "./manifest.js";
 
@@ -181,14 +181,3 @@ export async function scanPackage(dest, packageName) {
   };
 }
 
-function getSemVerWarning(value) {
-  return {
-    skind: "invalid-semver",
-    file: "package.json",
-    value,
-    location: null,
-    i18n: "warnings.invalidSemVer",
-    severity: "Warning",
-    experimental: false
-  };
-}
