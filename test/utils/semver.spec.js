@@ -7,7 +7,7 @@ import pacote from "pacote";
 import sinon from "sinon";
 
 // Import Internal Dependencies
-import { addSASTWarning, getDirNameFromUrl, getExpectedSemVer } from "../../src/utils/index.js";
+import { getExpectedSemVer } from "../../src/utils/index.js";
 
 test("should not match the range and return the latest version", async() => {
   const mockedPackument = sinon.stub(pacote, "packument").resolves({
