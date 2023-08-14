@@ -10,7 +10,7 @@ import { getSemVerWarning } from "../../src/utils/index.js";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "verifySemVer");
+const kFixturePath = path.join(__dirname, "..", "fixtures", "verifySemVer");
 
 describe("getSemVerWarning", () => {
   test("should return a warning for version '0.0.0'.", () => {
@@ -56,7 +56,7 @@ describe("getSemVerWarning", () => {
   });
 
   test("verify semver parsing error (fixture package.json)", async() => {
-    const packageJsonPath = path.join(FIXTURE_PATH, "package.json");
+    const packageJsonPath = path.join(kFixturePath, "package.json");
     const { version } = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
     const expectedWarning = {
