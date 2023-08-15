@@ -23,7 +23,6 @@ import * as manifest from "./manifest.js";
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
-const KVersionsToWarn = new Set(["0.0.0", "0.0", "0"]);
 
 export async function scanJavascriptFile(dest, file, packageName) {
   const result = await runASTAnalysisOnFile(path.join(dest, file), { packageName });
@@ -100,7 +99,7 @@ export async function scanDirOrArchive(name, version, options) {
 
     ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
 
-    if (KVersionsToWarn.has(version)) {
+    if (/^0(\.\d+)*$/.test(version)) {
       ref.warnings.push(getSemVerWarning(version));
     }
 

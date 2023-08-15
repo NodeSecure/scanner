@@ -50,7 +50,7 @@ export async function getCleanDependencyName([depName, range]) {
 
 export function getSemVerWarning(value) {
   return {
-    skind: "invalid-semver",
+    kind: "invalid-semver",
     file: "package.json",
     value,
     location: null,

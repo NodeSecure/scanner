@@ -15,7 +15,7 @@ const kFixturePath = path.join(__dirname, "..", "fixtures", "verifySemVer");
 describe("getSemVerWarning", () => {
   test("should return a warning for version '0.0.0'.", () => {
     const expectedWarning = {
-      skind: "invalid-semver",
+      kind: "invalid-semver",
       file: "package.json",
       value: "0.0.0",
       location: null,
@@ -29,7 +29,7 @@ describe("getSemVerWarning", () => {
 
   test("should return a warning for version '0.0'.", () => {
     const expectedWarning = {
-      skind: "invalid-semver",
+      kind: "invalid-semver",
       file: "package.json",
       value: "0.0",
       location: null,
@@ -43,7 +43,7 @@ describe("getSemVerWarning", () => {
 
   test("should return a warning for version '0'.", () => {
     const expectedWarning = {
-      skind: "invalid-semver",
+      kind: "invalid-semver",
       file: "package.json",
       value: "0",
       location: null,
@@ -60,7 +60,7 @@ describe("getSemVerWarning", () => {
     const { version } = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
     const expectedWarning = {
-      skind: "invalid-semver",
+      kind: "invalid-semver",
       file: "package.json",
       value: version,
       location: null,
