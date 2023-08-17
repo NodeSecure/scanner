@@ -10,8 +10,13 @@ import ntlp from "@nodesecure/ntlp";
 
 // Import Internal Dependencies
 import {
-  getTarballComposition, isSensitiveFile, filterDependencyKind, analyzeDependencies, booleanToFlags,
-  NPM_TOKEN
+  getTarballComposition,
+  isSensitiveFile,
+  filterDependencyKind,
+  analyzeDependencies,
+  booleanToFlags,
+  NPM_TOKEN,
+  getSemVerWarning
 } from "./utils/index.js";
 import * as manifest from "./manifest.js";
 
@@ -93,6 +98,10 @@ export async function scanDirOrArchive(name, version, options) {
       .map((promiseSettledResult) => promiseSettledResult.value);
 
     ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
+
+    if (/^0(\.\d+)*$/.test(version)) {
+      ref.warnings.push(getSemVerWarning(version));
+    }
 
     const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
     const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
