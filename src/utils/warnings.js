@@ -1,16 +1,26 @@
+// Import Node.js Dependencies
+import path from "node:path";
+
 // Import Third-party Dependencies
-import { getToken, taggedString } from "@nodesecure/i18n";
+import * as i18n from "@nodesecure/i18n";
 import { extractAllAuthors } from "@nodesecure/authors";
 
+// Import Internal Dependencies
+import { getDirNameFromUrl } from "./dirname.js";
+
+i18n.extendFromSystemPath(
+  path.join(getDirNameFromUrl(import.meta.url), "..", "..", "i18n")
+);
+
 // CONSTANTS
-const kDetectedDep = taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
+const kDetectedDep = i18n.taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
 const kFlaggedAuthors = [{
   name: "marak",
   email: "marak.squires@gmail.com"
 }];
 const kDependencyWarnMessage = Object.freeze({
-  "@scarf/scarf": await getToken("warnings.disable_scarf"),
-  iohook: await getToken("warnings.keylogging")
+  "@scarf/scarf": await i18n.getToken("scanner.disable_scarf"),
+  iohook: await i18n.getToken("scanner.keylogging")
 });
 
 /**
