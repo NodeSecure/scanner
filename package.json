@@ -72,7 +72,7 @@
     "@nodesecure/utils": "^1.1.0",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
-    "@npmcli/arborist": "^6.2.6",
+    "@npmcli/arborist": "^7.0.0",
     "@slimio/lock": "^1.0.0",
     "builtins": "^5.0.1",
     "combine-async-iterators": "^2.0.1",
