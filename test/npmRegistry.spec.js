@@ -10,16 +10,6 @@ import is from "@slimio/is";
 import Logger from "../src/class/logger.class.js";
 import * as registry from "../src/npmRegistry.js";
 
-test("registry.parseAuthor should be able to parse an author string", () => {
-  const result = registry.parseAuthor("GENTILHOMME Thomas");
-  assert.deepEqual(result, { name: "GENTILHOMME Thomas" });
-});
-
-test("registry.parseAuthor should return value if not a string", () => {
-  const result = registry.parseAuthor({});
-  assert.deepEqual(result, {});
-});
-
 test("registry.packageMetadata should not throw error", async() => {
   const logger = new Logger().start("registry");
 

@@ -4,12 +4,22 @@ import { license as License } from "@nodesecure/ntlp";
 import * as Vuln from "@nodesecure/vuln";
 
 // Import Third-party Dependencies
-import { Maintainer } from "@npm/types";
 import { extractedAuthor } from "@nodesecure/authors";
 
 export = Scanner;
 
 declare namespace Scanner {
+  export interface Author {
+    name: string;
+    email?: string;
+    url?: string;
+  }
+
+  export interface Maintainer {
+    name: string;
+    email: string;
+  }
+
   export interface Publisher {
     /**
      * Publisher npm user name.
@@ -46,7 +56,7 @@ declare namespace Scanner {
     /** Package description */
     description: string;
     /** Author of the package. This information is not trustable and can be empty. */
-    author: Maintainer;
+    author: Author | null;
     engines: {
       node?: string;
       npm?: string;
@@ -110,13 +120,13 @@ declare namespace Scanner {
       hasManyPublishers: boolean;
       hasReceivedUpdateInOneYear: boolean;
       /** Author of the package. This information is not trustable and can be empty. */
-      author: Maintainer;
+      author: Author | null;
       /** Package home page */
       homepage: string | null;
       /**
        * List of maintainers (list of people in the organization related to the package)
        */
-      maintainers: { name: string, email: string }[];
+      maintainers: Maintainer[];
       /**
        * List of people who published this package
        */

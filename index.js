@@ -38,7 +38,7 @@ export async function cwd(location = process.cwd(), options = {}, logger = new L
   return depWalker(JSON.parse(str), finalizedOptions, logger);
 }
 
-export async function from(packageName, options, logger = new Logger()) {
+export async function from(packageName, options = {}, logger = new Logger()) {
   const registry = options.registry ? new URL(options.registry).toString() : getLocalRegistryURL();
 
   logger.start(ScannerLoggerEvents.manifest.fetch);
