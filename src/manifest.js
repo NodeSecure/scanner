@@ -1,9 +1,9 @@
 // Import Node.js Dependencies
-import fs from "fs/promises";
-import path from "path";
+import fs from "node:fs/promises";
+import path from "node:path";
 
-// Import Third-party Dependencies
-import { parseManifestAuthor } from "@nodesecure/utils";
+// Import Internal Dependencies
+import { parseAuthor } from "./utils/index.js";
 
 // CONSTANTS
 // PR welcome to contribute to this list!
@@ -16,8 +16,10 @@ const kNativeNpmPackages = new Set([
  */
 const kUnsafeNpmScripts = new Set([
   "install",
-  "preinstall", "postinstall",
-  "preuninstall", "postuninstall"
+  "preinstall",
+  "postinstall",
+  "preuninstall",
+  "postuninstall"
 ]);
 
 /**
@@ -48,7 +50,7 @@ export async function readAnalyze(location) {
     .some((pkg) => kNativeNpmPackages.has(pkg));
 
   return {
-    author: typeof author === "string" ? parseManifestAuthor(author) : author,
+    author: parseAuthor(author),
     description,
     engines,
     repository,

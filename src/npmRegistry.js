@@ -1,11 +1,9 @@
 // Import Third-party Dependencies
 import semver from "semver";
-import { parseManifestAuthor } from "@nodesecure/utils";
 import { packument } from "@nodesecure/npm-registry-sdk";
 
-export function parseAuthor(author) {
-  return typeof author === "string" ? parseManifestAuthor(author) : author;
-}
+// Import Internal Dependencies
+import { parseAuthor } from "./utils/index.js";
 
 export async function packageMetadata(name, version, options) {
   const { ref, logger } = options;
@@ -19,7 +17,7 @@ export async function packageMetadata(name, version, options) {
     const lastVersion = pkg["dist-tags"].latest;
     const lastUpdateAt = new Date(pkg.time[lastVersion]);
     const metadata = {
-      author: parseAuthor(pkg.author) ?? {},
+      author: parseAuthor(pkg.author),
       homepage: pkg.homepage || null,
       publishedCount: Object.values(pkg.versions).length,
       lastVersion,

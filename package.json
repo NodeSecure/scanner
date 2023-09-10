@@ -69,7 +69,6 @@
     "@nodesecure/js-x-ray": "^6.0.1",
     "@nodesecure/npm-registry-sdk": "^1.5.2",
     "@nodesecure/ntlp": "^2.2.1",
-    "@nodesecure/utils": "^1.1.0",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
     "@npmcli/arborist": "^6.2.6",
