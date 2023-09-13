@@ -13,9 +13,13 @@ export default class Dependency {
     this.alias = {};
 
     if (parent !== null) {
-      parent.dependencyCount++;
+      parent.addChildren();
     }
     this.#parent = parent;
+  }
+
+  addChildren() {
+    this.dependencyCount += 1;
   }
 
   get fullName() {
