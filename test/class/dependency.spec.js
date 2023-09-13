@@ -80,3 +80,11 @@ test("Dependency.addFlag should throw a TypeError if flagName is not string", ()
     }
   );
 });
+
+test("Dependency.addChildren must increment dependencyCount one by one", () => {
+  const semverDep = new Dependency("semver", "1.0.0");
+  assert.equal(semverDep.dependencyCount, 0);
+
+  semverDep.addChildren();
+  assert.equal(semverDep.dependencyCount, 1);
+});

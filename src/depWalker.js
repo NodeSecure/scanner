@@ -76,6 +76,7 @@ export async function* searchDeepDependencies(packageName, gitURL, options) {
       }
 
       if (exclude.has(cleanName)) {
+        current.addChildren();
         exclude.get(cleanName).add(current.fullName);
       }
       else {
@@ -122,6 +123,7 @@ export async function* deepReadEdges(currentPackageName, options) {
     const cleanName = `${packageName}@${toNode.package.version}`;
 
     if (exclude.has(cleanName)) {
+      current.addChildren();
       exclude.get(cleanName).add(current.fullName);
     }
     else {
@@ -335,8 +337,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     for (const [verStr, verDescriptor] of Object.entries(dependency.versions)) {
       verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), dependency));
 
-      const fullName = `${packageName}@${verStr}`;
-      const usedDeps = exclude.get(fullName) || new Set();
+      const usedDeps = exclude.get(`${packageName}@${verStr}`) || new Set();
       if (usedDeps.size === 0) {
         continue;
       }
