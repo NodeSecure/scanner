@@ -19,7 +19,7 @@ import {
   NPM_TOKEN
 } from "./utils/index.js";
 import { scanDirOrArchive } from "./tarball.js";
-import { packageMetadata } from "./npmRegistry.js";
+import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
 import Dependency from "./class/dependency.class.js";
 import Logger from "./class/logger.class.js";
 
@@ -262,12 +262,13 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
     const rootDepsOptions = { maxDepth, exclude, usePackageLock, fullLockMode, includeDevDeps, location, registry };
     for await (const currentDep of getRootDependencies(manifest, rootDepsOptions)) {
       const { name, version, dev } = currentDep;
+
       const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
       let proceedDependencyAnalysis = true;
 
       if (dependencies.has(name)) {
-        // TODO: how to handle different metadata ?
         const dep = dependencies.get(name);
+        promisesToWait.push(manifestMetadata(name, version, dep.metadata));
 
         const currVersion = Object.keys(current.versions)[0];
         if (currVersion in dep.versions) {
@@ -333,7 +334,20 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.
+  const globalWarnings = [];
   for (const [packageName, dependency] of dependencies) {
+    const metadataIntegrities = dependency.metadata?.integrity ?? {};
+
+    for (const [version, integrity] of Object.entries(metadataIntegrities)) {
+      const dependencyVer = dependency.versions[version];
+      if (!("integrity" in dependencyVer) || dependencyVer.flags.includes("isGit")) {
+        continue;
+      }
+
+      if (dependencyVer.integrity !== integrity) {
+        globalWarnings.push(`${packageName}@${version} manifest & tarball integrity doesn't match!`);
+      }
+    }
     for (const [verStr, verDescriptor] of Object.entries(dependency.versions)) {
       verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), dependency));
 
@@ -352,7 +366,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
   try {
     const { warnings, flaggedAuthors } = await getDependenciesWarnings(dependencies);
-    payload.warnings = warnings;
+    payload.warnings = globalWarnings.concat(warnings);
     payload.flaggedAuthors = flaggedAuthors;
     payload.dependencies = Object.fromEntries(dependencies);
 

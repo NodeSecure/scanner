@@ -1,6 +1,7 @@
 // Import Node.js Dependencies
 import fs from "node:fs/promises";
 import path from "node:path";
+import crypto from "node:crypto";
 
 // Import Internal Dependencies
 import { parseAuthor } from "./utils/index.js";
@@ -10,6 +11,7 @@ import { parseAuthor } from "./utils/index.js";
 const kNativeNpmPackages = new Set([
   "node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"
 ]);
+const kNodemodulesBinPrefix = "node_modules/.bin/";
 
 /**
  * @see https://www.nerdycode.com/prevent-npm-executing-scripts-security/
@@ -24,7 +26,7 @@ const kUnsafeNpmScripts = new Set([
 
 /**
  * @param {!string} location
- * @returns {import("@npm/types").PackageJson}
+ * @returns {Promise<import("@npm/types").PackageJson>}
  */
 export async function read(location) {
   const packageStr = await fs.readFile(
@@ -37,12 +39,36 @@ export async function read(location) {
 
 export async function readAnalyze(location) {
   const {
-    description = "", author = {}, scripts = {},
-    dependencies = {}, devDependencies = {}, gypfile = false,
+    name,
+    version,
+    description = "",
+    author = {},
+    scripts = {},
+    dependencies = {},
+    devDependencies = {},
+    gypfile = false,
     engines = {},
     repository = {},
-    imports = {}
+    imports = {},
+    license = ""
   } = await read(location);
+
+  for (const [scriptName, scriptValue] of Object.entries(scripts)) {
+    scripts[scriptName] = scriptValue.replaceAll(kNodemodulesBinPrefix, "");
+  }
+
+  const integrityObj = {
+    name,
+    version,
+    dependencies,
+    license,
+    scripts
+  };
+
+  const integrity = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(integrityObj))
+    .digest("hex");
 
   const packageDeps = Object.keys(dependencies);
   const packageDevDeps = Object.keys(devDependencies);
@@ -60,6 +86,7 @@ export async function readAnalyze(location) {
     packageDeps,
     packageDevDeps,
     nodejs: { imports },
-    hasNativeElements: hasNativePackage || gypfile
+    hasNativeElements: hasNativePackage || gypfile,
+    integrity
   };
 }

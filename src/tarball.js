@@ -72,10 +72,19 @@ export async function scanDirOrArchive(name, version, options) {
     const {
       packageDeps,
       packageDevDeps,
-      author, description, hasScript, hasNativeElements, nodejs,
-      engines, repository, scripts
+      author,
+      description,
+      hasScript,
+      hasNativeElements,
+      nodejs,
+      engines,
+      repository,
+      scripts,
+      integrity
     } = await manifest.readAnalyze(dest);
-    Object.assign(ref, { author, description, engines, repository, scripts });
+    Object.assign(ref, {
+      author, description, engines, repository, scripts, integrity
+    });
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);

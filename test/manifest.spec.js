@@ -1,8 +1,9 @@
 // Import Node.js Dependencies
 import fs from "node:fs/promises";
 import path from "node:path";
-import { test } from "node:test";
+import crypto from "node:crypto";
 import assert from "node:assert";
+import { test } from "node:test";
 
 // Import Third-party Dependencies
 import sinon from "sinon";
@@ -96,6 +97,39 @@ test("manifest.readAnalyze should return hasNativeElements: true because of the 
   try {
     const manifestResult = await manifest.readAnalyze(process.cwd());
     assert.ok(manifestResult.hasNativeElements);
+  }
+  finally {
+    readFile.restore();
+  }
+});
+
+test("manifest.readAnalyze should generate the proper integrity", async() => {
+  // Warning: property must be in the same order
+  const manifestJSON = {
+    name: "foo",
+    version: "1.0.0",
+    dependencies: {
+      "node-addon-api": "^1.0.0"
+    },
+    license: "MIT",
+    scripts: {
+      test: "hello world!"
+    }
+  };
+  const expectedIntegrity = crypto
+    .createHash("sha256")
+    .update(JSON.stringify(manifestJSON))
+    .digest("hex");
+
+  const readFile = sinon.stub(fs, "readFile").resolves(JSON.stringify(manifestJSON));
+
+  try {
+    const manifestResult = await manifest.readAnalyze(process.cwd());
+
+    assert.equal(
+      manifestResult.integrity,
+      expectedIntegrity
+    );
   }
   finally {
     readFile.restore();
