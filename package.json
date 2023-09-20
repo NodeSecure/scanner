@@ -16,6 +16,7 @@
   },
   "files": [
     "src",
+    "i18n",
     "types",
     "index.js",
     "index.d.ts"
