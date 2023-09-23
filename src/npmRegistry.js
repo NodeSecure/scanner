@@ -1,12 +1,28 @@
+// Import Node.js Dependencies
+import crypto from "node:crypto";
+
 // Import Third-party Dependencies
 import semver from "semver";
-import { packument } from "@nodesecure/npm-registry-sdk";
+import { packument, packumentVersion } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { parseAuthor } from "./utils/index.js";
 
+export async function manifestMetadata(name, version, metadata) {
+  try {
+    const pkgVersion = await packumentVersion(name, version);
+
+    const integrity = getPackumentVersionIntegrity(pkgVersion);
+    metadata.integrity[version] = integrity;
+  }
+  catch {
+    // Ignore
+  }
+}
+
 export async function packageMetadata(name, version, options) {
   const { ref, logger } = options;
+  const packageSpec = `${name}:${version}`;
 
   try {
     const pkg = await packument(name);
@@ -24,7 +40,8 @@ export async function packageMetadata(name, version, options) {
       lastUpdateAt,
       hasReceivedUpdateInOneYear: !(oneYearFromToday > lastUpdateAt),
       maintainers: pkg.maintainers ?? [],
-      publishers: []
+      publishers: [],
+      integrity: {}
     };
 
     const isOutdated = semver.neq(version, lastVersion);
@@ -35,6 +52,13 @@ export async function packageMetadata(name, version, options) {
     const publishers = new Set();
     let searchForMaintainersInVersions = metadata.maintainers.length === 0;
     for (const ver of Object.values(pkg.versions).reverse()) {
+      const versionSpec = `${ver.name}:${ver.version}`;
+      if (packageSpec === versionSpec) {
+        metadata.integrity[ver.version] = getPackumentVersionIntegrity(
+          ver
+        );
+      }
+
       const { _npmUser: npmUser, version, maintainers = [] } = ver;
       const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
       if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
@@ -69,4 +93,26 @@ export async function packageMetadata(name, version, options) {
   finally {
     logger.tick("registry");
   }
+}
+
+function getPackumentVersionIntegrity(packumentVersion) {
+  const { name, version, dependencies = {}, license = "", scripts = {} } = packumentVersion;
+
+  // See https://github.com/npm/cli/issues/5234
+  if ("install" in dependencies && dependencies.install === "node-gyp rebuild") {
+    delete dependencies.install;
+  }
+
+  const integrityObj = {
+    name,
+    version,
+    dependencies,
+    license,
+    scripts
+  };
+
+  return crypto
+    .createHash("sha256")
+    .update(JSON.stringify(integrityObj))
+    .digest("hex");
 }

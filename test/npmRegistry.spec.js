@@ -10,10 +10,28 @@ import is from "@slimio/is";
 import Logger from "../src/class/logger.class.js";
 import * as registry from "../src/npmRegistry.js";
 
-test("registry.packageMetadata should not throw error", async() => {
+test("registry.packageMetadata should not throw error for unknown/invalid package", async() => {
   const logger = new Logger().start("registry");
 
-  await registry.packageMetadata("@slimio/is", "1.5.0", { logger });
+  await registry.packageMetadata("foobarrxldkedeoxcjek", "1.5.0", { logger });
+});
+
+test("registry.manifestMetadata should not throw error for unknown/invalid package", async() => {
+  await registry.manifestMetadata("foobarrxldkedeoxcjek", "1.5.0", {});
+});
+
+test("registry.manifestMetadata", async() => {
+  const metadata = {
+    integrity: {}
+  };
+
+  await registry.manifestMetadata("@slimio/is", "1.5.0", metadata);
+  assert.equal(Object.keys(metadata).length, 1);
+  assert.deepEqual(metadata, {
+    integrity: {
+      "1.5.0": "d9cdfeeddb9e5cadfa4188942b4456e2a9c2f60787e772e59394076711ebb9e1"
+    }
+  });
 });
 
 test("registry.packageMetadata", async() => {

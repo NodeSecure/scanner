@@ -84,7 +84,8 @@ exports['walk @slimio/is 1'] = {
             }
           ]
         },
-        "gitUrl": null
+        "gitUrl": null,
+        "integrity": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9"
       }
     },
     "vulnerabilities": [],
@@ -118,7 +119,10 @@ exports['walk @slimio/is 1'] = {
           "name": "alexandre.malaj",
           "email": "alexandre.malaj@gmail.com"
         }
-      ]
+      ],
+      "integrity": {
+        "1.5.1": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9"
+      }
     }
   }
 }
