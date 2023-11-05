@@ -4,7 +4,7 @@
   "description": "A package API to run a static analysis of your module's dependencies.",
   "exports": "./index.js",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "scripts": {
     "lint": "eslint src test",
