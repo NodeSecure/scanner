@@ -59,7 +59,7 @@
     "get-folder-size": "^4.0.0",
     "glob": "^10.3.4",
     "pkg-ok": "^3.0.0",
-    "sinon": "^16.0.0",
+    "sinon": "^17.0.1",
     "snap-shot-core": "^10.2.4"
   },
   "dependencies": {
