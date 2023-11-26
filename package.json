@@ -50,16 +50,16 @@
   },
   "homepage": "https://github.com/NodeSecure/scanner#readme",
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.7.0",
+    "@nodesecure/eslint-config": "^1.8.0",
     "@slimio/is": "^2.0.0",
-    "@types/node": "^20.4.5",
-    "c8": "^7.13.0",
-    "dotenv": "^16.0.3",
+    "@types/node": "^20.10.0",
+    "c8": "^8.0.1",
+    "dotenv": "^16.3.1",
     "eslint": "^8.37.0",
     "get-folder-size": "^4.0.0",
-    "glob": "^10.3.4",
+    "glob": "^10.3.10",
     "pkg-ok": "^3.0.0",
-    "sinon": "^16.0.0",
+    "sinon": "^17.0.1",
     "snap-shot-core": "^10.2.4"
   },
   "dependencies": {
@@ -67,19 +67,19 @@
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^3.3.0",
-    "@nodesecure/js-x-ray": "^6.0.1",
-    "@nodesecure/npm-registry-sdk": "^1.5.2",
+    "@nodesecure/js-x-ray": "^6.2.0",
+    "@nodesecure/npm-registry-sdk": "^1.6.1",
     "@nodesecure/ntlp": "^2.2.1",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
-    "@npmcli/arborist": "^7.1.0",
+    "@npmcli/arborist": "^7.2.1",
     "@slimio/lock": "^1.0.0",
     "builtins": "^5.0.1",
-    "combine-async-iterators": "^2.0.1",
-    "itertools": "^2.1.1",
+    "combine-async-iterators": "^2.1.0",
+    "itertools": "^2.1.2",
     "lodash.difference": "^4.5.0",
     "pacote": "^17.0.4",
-    "semver": "^7.3.8"
+    "semver": "^7.5.4"
   },
   "type": "module"
 }
