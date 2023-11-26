@@ -8,7 +8,7 @@ import { extractAllAuthors } from "@nodesecure/authors";
 // Import Internal Dependencies
 import { getDirNameFromUrl } from "./dirname.js";
 
-i18n.extendFromSystemPath(
+await i18n.extendFromSystemPath(
   path.join(getDirNameFromUrl(import.meta.url), "..", "..", "i18n")
 );
 
