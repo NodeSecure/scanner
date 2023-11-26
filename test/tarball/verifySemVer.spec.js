@@ -15,12 +15,13 @@ const kFixturePath = path.join(__dirname, "..", "fixtures", "verifySemVer");
 describe("getSemVerWarning", () => {
   test("should return a warning for version '0.0.0'.", () => {
     const expectedWarning = {
-      kind: "invalid-semver",
+      kind: "zero-semver",
       file: "package.json",
       value: "0.0.0",
       location: null,
-      i18n: "sast_warnings.invalidSemVer",
+      i18n: "sast_warnings.zeroSemVer",
       severity: "Information",
+      source: "Scanner",
       experimental: false
     };
 
@@ -29,12 +30,13 @@ describe("getSemVerWarning", () => {
 
   test("should return a warning for version '0.0'.", () => {
     const expectedWarning = {
-      kind: "invalid-semver",
+      kind: "zero-semver",
       file: "package.json",
       value: "0.0",
       location: null,
-      i18n: "sast_warnings.invalidSemVer",
+      i18n: "sast_warnings.zeroSemVer",
       severity: "Information",
+      source: "Scanner",
       experimental: false
     };
 
@@ -43,12 +45,13 @@ describe("getSemVerWarning", () => {
 
   test("should return a warning for version '0'.", () => {
     const expectedWarning = {
-      kind: "invalid-semver",
+      kind: "zero-semver",
       file: "package.json",
       value: "0",
       location: null,
-      i18n: "sast_warnings.invalidSemVer",
+      i18n: "sast_warnings.zeroSemVer",
       severity: "Information",
+      source: "Scanner",
       experimental: false
     };
 
@@ -60,12 +63,13 @@ describe("getSemVerWarning", () => {
     const { version } = JSON.parse(await fs.readFile(packageJsonPath, "utf-8"));
 
     const expectedWarning = {
-      kind: "invalid-semver",
+      kind: "zero-semver",
       file: "package.json",
       value: version,
       location: null,
-      i18n: "sast_warnings.invalidSemVer",
+      i18n: "sast_warnings.zeroSemVer",
       severity: "Information",
+      source: "Scanner",
       experimental: false
     };
 

@@ -50,12 +50,13 @@ export async function getCleanDependencyName([depName, range]) {
 
 export function getSemVerWarning(value) {
   return {
-    kind: "invalid-semver",
+    kind: "zero-semver",
     file: "package.json",
     value,
     location: null,
-    i18n: "sast_warnings.invalidSemVer",
+    i18n: "sast_warnings.zeroSemVer",
     severity: "Information",
+    source: "Scanner",
     experimental: false
   };
 }
