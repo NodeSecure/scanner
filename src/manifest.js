@@ -54,7 +54,9 @@ export async function readAnalyze(location) {
   } = await read(location);
 
   for (const [scriptName, scriptValue] of Object.entries(scripts)) {
-    scripts[scriptName] = scriptValue.replaceAll(kNodemodulesBinPrefix, "");
+    if (scriptValue.startsWith(kNodemodulesBinPrefix)) {
+      scripts[scriptName] = scriptValue.replaceAll(kNodemodulesBinPrefix, "");
+    }
   }
 
   const integrityObj = {
