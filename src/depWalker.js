@@ -340,6 +340,13 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
     for (const [version, integrity] of Object.entries(metadataIntegrities)) {
       const dependencyVer = dependency.versions[version];
+
+      const isEmptyPackage = dependencyVer.warnings
+        .some((warning) => warning.kind === "empty-package");
+      if (isEmptyPackage) {
+        globalWarnings.push(`${packageName}@${version} only contain a package.json file!`);
+      }
+
       if (!("integrity" in dependencyVer) || dependencyVer.flags.includes("isGit")) {
         continue;
       }

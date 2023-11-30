@@ -88,6 +88,17 @@ export async function scanDirOrArchive(name, version, options) {
 
     // Get the composition of the (extracted) directory
     const { ext, files, size } = await getTarballComposition(dest);
+    if (files.length === 1 && files.includes("package.json")) {
+      ref.warnings.push({
+        kind: "empty-package",
+        location: null,
+        i18n: "sast_warnings.emptyPackage",
+        severity: "Critical",
+        source: "Scanner",
+        experimental: false
+      });
+    }
+
     ref.size = size;
     ref.composition.extensions.push(...ext);
     ref.composition.files.push(...files);
