@@ -67,6 +67,10 @@ export async function scanDirOrArchive(name, version, options) {
       });
       await timers.setImmediate();
     }
+    else {
+      // Set links to an empty object because theses are generated only for NPM tarballs
+      Object.assign(ref, { links: {} });
+    }
 
     // Read the package.json at the root of the directory or archive.
     const {

@@ -40,6 +40,15 @@ declare namespace Scanner {
     at: string;
   }
 
+  export interface DependencyLinks {
+    /** NPM Registry page */
+    npm: string;
+    /** Homepage URL */
+    homepage?: string;
+    /** VCS repository URL */
+    repository?: string;
+  }
+
   export interface DependencyVersion {
     /** Id of the package (useful for usedBy relation) */
     id: number;
@@ -111,6 +120,7 @@ declare namespace Scanner {
      * (Not supported on GIT dependency)
      */
     integrity?: string;
+    links: DependencyLinks;
   }
 
   export interface Dependency {

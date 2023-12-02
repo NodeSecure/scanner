@@ -65,4 +65,33 @@ test("registry.packageMetadata", async() => {
   assert.ok(ref.metadata.hasManyPublishers);
   assert.ok(typeof ref.metadata.publishedCount === "number");
   assert.ok(is.date(new Date(ref.metadata.lastUpdateAt)));
+
+  assert.deepEqual(ref.versions["1.5.0"].links, {
+    npm: "https://www.npmjs.com/package/@slimio/is/v/1.5.0",
+    homepage: "https://github.com/SlimIO/is#readme",
+    repository: "https://github.com/SlimIO/is"
+  });
+});
+
+test("registry.packageMetadata should find GitLab links", async() => {
+  const ref = {
+    metadata: {},
+    versions: {
+      "71.2.0": {
+        flags: []
+      }
+    }
+  };
+  const logger = new Logger().start("registry");
+
+  await registry.packageMetadata("@gitlab/ui", "71.2.0", {
+    ref,
+    logger
+  });
+
+  assert.deepEqual(ref.versions["71.2.0"].links, {
+    npm: "https://www.npmjs.com/package/@gitlab/ui/v/71.2.0",
+    homepage: "https://gitlab.com/gitlab-org/gitlab-ui#readme",
+    repository: "https://gitlab.com/gitlab-org/gitlab-ui"
+  });
 });
