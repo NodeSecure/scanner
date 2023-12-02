@@ -95,3 +95,25 @@ test("registry.packageMetadata should find GitLab links", async() => {
     repository: "https://gitlab.com/gitlab-org/gitlab-ui"
   });
 });
+
+test("registry.packageMetadata should detect a deprecated package", async() => {
+  const ref = {
+    metadata: {},
+    versions: {
+      "2.5.9": {
+        flags: []
+      }
+    }
+  };
+  const logger = new Logger().start("registry");
+
+  await registry.packageMetadata("express", "2.5.9", {
+    ref,
+    logger
+  });
+
+  assert.deepEqual(ref.versions["2.5.9"].flags, [
+    "isOutdated",
+    "isDeprecated"
+  ]);
+});

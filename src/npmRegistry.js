@@ -45,8 +45,9 @@ export async function packageMetadata(name, version, options) {
     };
 
     const isOutdated = semver.neq(version, lastVersion);
+    const flags = ref.versions[version].flags;
     if (isOutdated) {
-      ref.versions[version].flags.push("isOutdated");
+      flags.push("isOutdated");
     }
 
     const publishers = new Set();
@@ -54,12 +55,17 @@ export async function packageMetadata(name, version, options) {
     for (const ver of Object.values(pkg.versions).reverse()) {
       const versionSpec = `${ver.name}:${ver.version}`;
       if (packageSpec === versionSpec) {
+        if (ver.deprecated && !flags.includes("isDeprecated")) {
+          flags.push("isDeprecated");
+        }
+
         metadata.integrity[ver.version] = getPackumentVersionIntegrity(
           ver
         );
       }
 
       const { _npmUser: npmUser, version, maintainers = [] } = ver;
+
       const isNullOrUndefined = typeof npmUser === "undefined" || npmUser === null;
       if (isNullOrUndefined || !("name" in npmUser) || typeof npmUser.name !== "string") {
         continue;
