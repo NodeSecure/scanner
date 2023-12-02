@@ -89,8 +89,7 @@ exports['walk @slimio/is 1'] = {
         "links": {
           "npm": "https://www.npmjs.com/package/@slimio/is/v/1.5.1",
           "homepage": "https://github.com/SlimIO/is#readme",
-          "github": "https://github.com/SlimIO/is",
-          "gitlab": null
+          "repository": "https://github.com/SlimIO/is"
         }
       }
     },

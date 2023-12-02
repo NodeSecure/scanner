@@ -69,8 +69,7 @@ test("registry.packageMetadata", async() => {
   assert.deepEqual(ref.versions["1.5.0"].links, {
     npm: "https://www.npmjs.com/package/@slimio/is/v/1.5.0",
     homepage: "https://github.com/SlimIO/is#readme",
-    github: "https://github.com/SlimIO/is",
-    gitlab: null
+    repository: "https://github.com/SlimIO/is"
   });
 });
 
@@ -93,7 +92,6 @@ test("registry.packageMetadata should find GitLab links", async() => {
   assert.deepEqual(ref.versions["71.2.0"].links, {
     npm: "https://www.npmjs.com/package/@gitlab/ui/v/71.2.0",
     homepage: "https://gitlab.com/gitlab-org/gitlab-ui#readme",
-    github: null,
-    gitlab: "https://gitlab.com/gitlab-org/gitlab-ui"
+    repository: "https://gitlab.com/gitlab-org/gitlab-ui"
   });
 });

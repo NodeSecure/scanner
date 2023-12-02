@@ -40,7 +40,7 @@ declare namespace Scanner {
     at: string;
   }
 
-  export interface DepdencyLinks {
+  export interface DependencyLinks {
     /** NPM Registry page */
     npm: string;
     /** Homepage URL */
@@ -122,7 +122,7 @@ declare namespace Scanner {
      * (Not supported on GIT dependency)
      */
     integrity?: string;
-    links: DepdencyLinks;
+    links: DependencyLinks;
   }
 
   export interface Dependency {

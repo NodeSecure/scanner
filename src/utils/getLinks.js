@@ -1,18 +1,18 @@
-// Import Third-party Dependencies
-import { packument } from "@nodesecure/npm-registry-sdk";
+// CONSTANTS
+const kVCSHosts = new Set(["github.com", "gitlab.com"]);
 
-function getVCSRepositoryURL(host, link) {
+function getVCSRepositoryURL(link) {
   try {
     const url = new URL(link);
     const { hostname, pathname } = url;
 
-    if (hostname !== host) {
+    if (kVCSHosts.has(hostname) === false) {
       return null;
     }
 
     const [owner, repo] = pathname.split("/").filter(Boolean).map((curr) => curr.replace(".git", ""));
 
-    return `https://${host}/${owner}/${repo}`;
+    return `https://${hostname}/${owner}/${repo}`;
   }
   catch {
     return null;
@@ -26,7 +26,6 @@ export function getLinks(pkg) {
   return {
     npm: `https://www.npmjs.com/package/${pkg.name}/v/${pkg.version}`,
     homepage,
-    github: getVCSRepositoryURL("github.com", homepage ?? repositoryUrl),
-    gitlab: getVCSRepositoryURL("gitlab.com", homepage ?? repositoryUrl)
+    repository: getVCSRepositoryURL(homepage) ?? getVCSRepositoryURL(repositoryUrl)
   };
 }
