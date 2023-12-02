@@ -1,4 +1,4 @@
-exports['verify express@4.17.0 1'] = {
+{
   "index.js": {
     "./lib/express": {
       "unsafe": false,

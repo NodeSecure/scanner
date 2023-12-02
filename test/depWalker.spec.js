@@ -2,12 +2,11 @@
 import { join, dirname } from "node:path";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { test, afterEach } from "node:test";
+import { test } from "node:test";
 import assert from "node:assert";
 
 // Third party Dependencies
 import { setStrategy, strategies } from "@nodesecure/vuln";
-import snapshot from "snap-shot-core";
 
 // Require Internal Dependencies
 import { depWalker } from "../src/depWalker.js";
@@ -41,10 +40,6 @@ function cleanupPayload(payload) {
   }
 }
 
-afterEach(() => {
-  snapshot.restore();
-});
-
 test("execute depWalker on @slimio/is", async() => {
   await setStrategy(strategies.NPM_AUDIT);
 
@@ -52,11 +47,8 @@ test("execute depWalker on @slimio/is", async() => {
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
   cleanupPayload(resultAsJSON);
 
-  snapshot.core({
-    what: resultAsJSON,
-    file: fileURLToPath(import.meta.url),
-    specName: "walk @slimio/is"
-  });
+  const expectedResult = JSON.parse(readFileSync(join("test", FIXTURE_PATH, "slimio.is-result.json"), "utf-8"));
+  assert.deepEqual(resultAsJSON, expectedResult);
 });
 
 test("execute depWalker on @slimio/config", async() => {
@@ -123,11 +115,16 @@ test("fetch payload of pacote on the npm registry", async() => {
     maxDepth: 10,
     vulnerabilityStrategy: strategies.NPM_AUDIT
   });
-  snapshot.core({
-    what: Object.keys(result),
-    file: fileURLToPath(import.meta.url),
-    specName: "from pacote"
-  });
+
+  assert.deepEqual(Object.keys(result), [
+    "id",
+    "rootDependencyName",
+    "scannerVersion",
+    "vulnerabilityStrategy",
+    "warnings",
+    "flaggedAuthors",
+    "dependencies"
+  ]);
 });
 
 test("fetch payload of pacote on the gitlab registry", async() => {
@@ -138,11 +135,15 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     vulnerabilityStrategy: strategies.NPM_AUDIT
   });
 
-  snapshot.core({
-    what: Object.keys(result),
-    file: fileURLToPath(import.meta.url),
-    specName: "from pacote"
-  });
+  assert.deepEqual(Object.keys(result), [
+    "id",
+    "rootDependencyName",
+    "scannerVersion",
+    "vulnerabilityStrategy",
+    "warnings",
+    "flaggedAuthors",
+    "dependencies"
+  ]);
 });
 
 test("execute cwd on scanner project", async() => {
