@@ -1,6 +1,6 @@
 // Import NodeSecure Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
-import { license as License } from "@nodesecure/ntlp";
+import type { SpdxLicenseConformance } from "@nodesecure/ntlp";
 import * as Vuln from "@nodesecure/vuln";
 
 // Import Third-party Dependencies
@@ -113,7 +113,7 @@ declare namespace Scanner {
      * @see https://github.com/NodeSecure/licenses-conformance
      * @see https://github.com/NodeSecure/npm-tarball-license-parser
      */
-    license: License[];
+    license: SpdxLicenseConformance[];
     /**
      * Flags (Array of string)
      *
@@ -204,7 +204,7 @@ declare namespace Scanner {
     };
     directorySize: number;
     uniqueLicenseIds: string[];
-    licenses: License[];
+    licenses: SpdxLicenseConformance[];
     ast: {
       dependencies: Record<string, JSXRay.Dependency>;
       warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
@@ -252,7 +252,7 @@ declare namespace Scanner {
      */
     readonly fullLockMode?: boolean;
   }
-  
+
   export interface PayloadComparison {
     title: string;
     flaggedAuthors: ArrayDiff<Author>;
@@ -261,26 +261,26 @@ declare namespace Scanner {
     vulnerabilityStrategyComparison: ValueComparison<string>;
     dependencies: DependenciesComparison;
   }
-  
+
   export interface DependenciesComparison {
     compared: Map<string, DependencyComparison>;
     added: Map<string, Dependency>;
     removed: Map<string, Dependency>;
   }
-  
+
   export interface DependencyComparison {
     publishers: ArrayDiff<Publisher>;
     maintainers: ArrayDiff<Maintainer>;
     versions: VersionsComparisonResult;
     vulnerabilities: ArrayDiff<Vuln.Strategy.StandardVulnerability>;
   }
-  
+
   export interface VersionsComparisonResult {
     compared: Map<string, DependencyVersionComparison>;
     added: Map<string, DependencyVersion>;
     remove?: Map<string, DependencyVersion>;
   }
-  
+
   export interface DependencyVersionComparison {
     id: ValueComparison<string>;
     size: ValueComparison<number>;
@@ -294,17 +294,17 @@ declare namespace Scanner {
     scripts: DictionaryComparison<Record<string, string>>;
     warnings: ArrayDiff<JSXRay.Warning>;
     composition: CompositionComparison;
-    licenseIds: ArrayDiff<License>;
+    licenseIds: ArrayDiff<SpdxLicenseConformance>;
     flags: ArrayDiff<string>;
     links: ValueComparison<DependencyLinks>;
   }
-  
+
   export interface DictionaryComparison<T> {
     compared: Map<string, T>;
     added: Map<string, T>;
     removed: Map<string, T>;
   }
-  
+
   export interface CompositionComparison {
     minified: ArrayDiff<string>;
     required_thirdparty: ArrayDiff<string>;
@@ -317,7 +317,7 @@ declare namespace Scanner {
     prev: T;
     now: T;
   } | undefined
-  
+
   export interface ArrayDiff<T> {
     added: T[];
     removed: T[];

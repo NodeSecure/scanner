@@ -1,18 +1,18 @@
 // Import Node.js Dependencies
-import path from "path";
+import path from "node:path";
 
 // CONSTANTS
 const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 
 /**
  * @see https://nodejs.org/docs/latest/api/modules.html#file-modules
- *
- * @param {IterableIterator<string>} dependencies
- * @param {!string} relativeFileLocation
  */
-export function filterDependencyKind(dependencies, relativeFileLocation) {
-  const packages = [];
-  const files = [];
+export function filterDependencyKind(
+  dependencies: string[],
+  relativeFileLocation: string
+): { packages: string[], files: string[] } {
+  const packages: string[] = [];
+  const files: string[] = [];
 
   for (const moduleNameOrPath of dependencies) {
     const firstChar = moduleNameOrPath.charAt(0);

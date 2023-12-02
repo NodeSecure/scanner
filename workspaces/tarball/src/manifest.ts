@@ -3,8 +3,12 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
+// Import Third-party Dependencies
+import * as npm from "@npm/types";
+import { parseAuthor } from "@nodesecure/utils";
+
 // Import Internal Dependencies
-import { parseAuthor } from "./utils/index.js";
+import { UNSAFE_SCRIPTS } from "./constants.js";
 
 // CONSTANTS
 // PR welcome to contribute to this list!
@@ -13,22 +17,16 @@ const kNativeNpmPackages = new Set([
 ]);
 const kNodemodulesBinPrefix = "node_modules/.bin/";
 
-/**
- * @see https://www.nerdycode.com/prevent-npm-executing-scripts-security/
- */
-const kUnsafeNpmScripts = new Set([
-  "install",
-  "preinstall",
-  "postinstall",
-  "preuninstall",
-  "postuninstall"
-]);
+export type PackageJSON = npm.PackageJson & {
+  type?: "script" | "module";
+  gypfile?: boolean;
+  imports?: Record<string, any>;
+  exports?: Record<string, any>;
+}
 
-/**
- * @param {!string} location
- * @returns {Promise<import("@npm/types").PackageJson>}
- */
-export async function read(location) {
+export async function read(
+  location: string
+): Promise<PackageJSON> {
   const packageStr = await fs.readFile(
     path.join(location, "package.json"),
     "utf-8"
@@ -37,7 +35,7 @@ export async function read(location) {
   return JSON.parse(packageStr);
 }
 
-export async function readAnalyze(location) {
+export async function readAnalyze(location: string) {
   const {
     name,
     version,
@@ -84,7 +82,7 @@ export async function readAnalyze(location) {
     repository,
     scripts,
     hasScript: Object.keys(scripts)
-      .some((value) => kUnsafeNpmScripts.has(value.toLowerCase())),
+      .some((value) => UNSAFE_SCRIPTS.has(value.toLowerCase())),
     packageDeps,
     packageDevDeps,
     nodejs: { imports },
