@@ -68,7 +68,7 @@
     "@nodesecure/fs-walk": "^1.0.0",
     "@nodesecure/i18n": "^3.4.0",
     "@nodesecure/js-x-ray": "^6.2.1",
-    "@nodesecure/npm-registry-sdk": "^1.6.1",
+    "@nodesecure/npm-registry-sdk": "^2.0.0",
     "@nodesecure/ntlp": "^2.2.1",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
