@@ -85,7 +85,13 @@ exports['walk @slimio/is 1'] = {
           ]
         },
         "gitUrl": null,
-        "integrity": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9"
+        "integrity": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9",
+        "links": {
+          "npm": "https://www.npmjs.com/package/@slimio/is/v/1.5.1",
+          "homepage": "https://github.com/SlimIO/is#readme",
+          "github": "https://github.com/SlimIO/is",
+          "gitlab": null
+        }
       }
     },
     "vulnerabilities": [],

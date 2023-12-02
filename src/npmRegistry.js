@@ -6,7 +6,7 @@ import semver from "semver";
 import { packument, packumentVersion } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
-import { parseAuthor } from "./utils/index.js";
+import { parseAuthor, getLinks } from "./utils/index.js";
 
 export async function manifestMetadata(name, version, metadata) {
   try {
@@ -85,6 +85,7 @@ export async function packageMetadata(name, version, options) {
       }
     }
 
+    Object.assign(ref.versions[version], { links: getLinks(pkg.versions[version]) });
     Object.assign(ref.metadata, metadata);
   }
   catch {
