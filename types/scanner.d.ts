@@ -45,10 +45,8 @@ declare namespace Scanner {
     npm: string;
     /** Homepage URL */
     homepage?: string;
-    /** GitHub repository URL */
-    github?: string;
-    /** GitLab repository URL */
-    gitlab?: string;
+    /** VCS repository URL */
+    repository?: string;
   }
 
   export interface DependencyVersion {
