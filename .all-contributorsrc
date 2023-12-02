@@ -111,6 +111,18 @@
       "contributions": [
         "maintenance"
       ]
+    },
+    {
+      "login": "PierreDemailly",
+      "name": "PierreDemailly",
+      "avatar_url": "https://avatars.githubusercontent.com/u/39910767?v=4",
+      "profile": "https://github.com/PierreDemailly",
+      "contributions": [
+        "code",
+        "review",
+        "bug",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -119,5 +131,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }
