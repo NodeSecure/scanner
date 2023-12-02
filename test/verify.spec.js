@@ -1,29 +1,16 @@
 // Import Node.js Dependencies
 import { fileURLToPath } from "node:url";
 import path from "node:path";
-import { test, afterEach } from "node:test";
+import fs from "node:fs";
+import { test } from "node:test";
 import assert from "node:assert";
-
-// Import Third-party Dependencies
-import snapshot from "snap-shot-core";
-import Result from "folktale/result/index.js";
 
 // Import Internal Dependencies
 import { verify } from "../index.js";
 
-afterEach(() => {
-  snapshot.restore();
-});
-
-function cleanupAstDependenciesSnapshot(dependencies) {
-  const cleaned = {};
-
-  for (const [file, value] of Object.entries(dependencies)) {
-    cleaned[file.replaceAll("\\", path.sep)] = value;
-  }
-
-  return cleaned;
-}
+// CONSTANTS
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const kFixturePath = path.join(__dirname, "fixtures", "verify");
 
 test("verify 'express' package", async() => {
   const data = await verify("express@4.17.0");
@@ -84,20 +71,6 @@ test("verify 'express' package", async() => {
   const warningName = data.ast.warnings.map((row) => row.kind);
   assert.deepEqual(warningName, ["unsafe-import"]);
 
-  snapshot.core({
-    what: data.ast.dependencies,
-    file: fileURLToPath(import.meta.url),
-    specName: "verify express@4.17.0",
-    compare: (options) => {
-      const cleanSnapshot = cleanupAstDependenciesSnapshot(options.expected);
-      const expected = JSON.stringify(cleanSnapshot);
-      const value = JSON.stringify(options.value);
-
-      if (expected === value) {
-        return Result.Ok();
-      }
-
-      return Result.Error(`${expected} !== ${value}`);
-    }
-  });
+  const expectedResult = JSON.parse(fs.readFileSync(path.join(kFixturePath, "express-result.json"), "utf-8"));
+  assert.deepEqual(data.ast.dependencies, expectedResult);
 });
