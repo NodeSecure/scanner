@@ -71,6 +71,8 @@ test("verify 'express' package", async() => {
   const warningName = data.ast.warnings.map((row) => row.kind);
   assert.deepEqual(warningName, ["unsafe-import"]);
 
-  const expectedResult = JSON.parse(fs.readFileSync(path.join(kFixturePath, "express-result.json"), "utf-8"));
+  const expectedResult = JSON.parse(
+    fs.readFileSync(path.join(kFixturePath, "express-result.json"), "utf-8").replaceAll("\\", path.sep)
+  );
   assert.deepEqual(data.ast.dependencies, expectedResult);
 });
