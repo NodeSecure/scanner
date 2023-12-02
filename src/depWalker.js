@@ -293,7 +293,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
         logger.tick(ScannerLoggerEvents.analysis.tree);
 
         // There is no need to fetch 'N' times the npm metadata for the same package.
-        if (fetchedMetadataPackages.has(name)) {
+        if (fetchedMetadataPackages.has(name) || !current.versions[version].existOnRemoteRegistry) {
           logger.tick(ScannerLoggerEvents.analysis.registry);
         }
         else {
