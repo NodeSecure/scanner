@@ -66,7 +66,7 @@
     "@nodesecure/authors": "^1.0.2",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/fs-walk": "^1.0.0",
-    "@nodesecure/i18n": "^3.4.0",
+    "@nodesecure/i18n": "^3.5.0",
     "@nodesecure/js-x-ray": "^6.3.0",
     "@nodesecure/npm-registry-sdk": "^2.0.0",
     "@nodesecure/ntlp": "^2.2.1",
