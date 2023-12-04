@@ -268,7 +268,7 @@ export async function depWalker(manifest, options = {}, logger = new Logger()) {
 
       if (dependencies.has(name)) {
         const dep = dependencies.get(name);
-        promisesToWait.push(manifestMetadata(name, version, dep.metadata));
+        promisesToWait.push(manifestMetadata(name, version, dep));
 
         const currVersion = Object.keys(current.versions)[0];
         if (currVersion in dep.versions) {

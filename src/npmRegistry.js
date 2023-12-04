@@ -8,12 +8,23 @@ import { packument, packumentVersion } from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import { parseAuthor, getLinks } from "./utils/index.js";
 
-export async function manifestMetadata(name, version, metadata) {
+export async function manifestMetadata(
+  name,
+  version,
+  dependency
+) {
   try {
     const pkgVersion = await packumentVersion(name, version);
 
     const integrity = getPackumentVersionIntegrity(pkgVersion);
-    metadata.integrity[version] = integrity;
+    Object.assign(
+      dependency.versions[version],
+      {
+        links: getLinks(pkgVersion)
+      }
+    );
+
+    dependency.metadata.integrity[version] = integrity;
   }
   catch {
     // Ignore
