@@ -19,12 +19,17 @@ function getVCSRepositoryURL(link) {
   }
 }
 
-export function getLinks(pkg) {
-  const homepage = pkg.homepage || null;
-  const repositoryUrl = pkg.repository?.url || null;
+/**
+ * @param {import("@nodesecure/npm-registry-sdk").PackumentVersion} packumentVersion
+ */
+export function getLinks(
+  packumentVersion
+) {
+  const homepage = packumentVersion.homepage || null;
+  const repositoryUrl = packumentVersion.repository?.url || null;
 
   return {
-    npm: `https://www.npmjs.com/package/${pkg.name}/v/${pkg.version}`,
+    npm: `https://www.npmjs.com/package/${packumentVersion.name}/v/${packumentVersion.version}`,
     homepage,
     repository: getVCSRepositoryURL(homepage) ?? getVCSRepositoryURL(repositoryUrl)
   };
