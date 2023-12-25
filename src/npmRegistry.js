@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 
 // Import Third-party Dependencies
 import semver from "semver";
-import { packument, packumentVersion } from "@nodesecure/npm-registry-sdk";
+import { packument, packumentVersion, user as npmUserProfile } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { parseAuthor, getLinks } from "./utils/index.js";
@@ -102,6 +102,7 @@ export async function packageMetadata(name, version, options) {
       }
     }
 
+    await addNpmAvatar(metadata);
     Object.assign(ref.versions[version], { links: getLinks(pkg.versions[version]) });
     Object.assign(ref.metadata, metadata);
   }
@@ -133,4 +134,33 @@ function getPackumentVersionIntegrity(packumentVersion) {
     .createHash("sha256")
     .update(JSON.stringify(integrityObj))
     .digest("hex");
+}
+
+async function addNpmAvatar(metadata) {
+  const contributors = [metadata.author, ...metadata.maintainers, ...metadata.publishers];
+  const emailToAvatar = {};
+
+  const promises = contributors.map(contributor => {
+    if(contributor.email && emailToAvatar[contributor.email]){
+      contributor.npmAvatar = emailToAvatar[contributor.email];
+      return Promise.resolve();
+    }
+    return npmUserProfile(contributor.name, {perPage: 1}).then(profile => {
+      contributor.npmAvatar = profile.avatars.small;
+      if(contributor.email && contributor.npmAvatar){
+        emailToAvatar[contributor.email] = contributor.npmAvatar;
+      }
+    }).catch(() => {
+      contributor.npmAvatar = null;
+    });
+  });
+
+  await Promise.all(promises)
+
+  // back fill npmAvatar if any name property was not npm username in first pass
+  for (const contributor of contributors) {
+    if (!contributor.npmAvatar && contributor.email && emailToAvatar[contributor.email]) {
+      contributor.npmAvatar = emailToAvatar[contributor.email];
+    }
+  }
 }
