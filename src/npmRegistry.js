@@ -140,14 +140,16 @@ async function addNpmAvatar(metadata) {
   const contributors = [metadata.author, ...metadata.maintainers, ...metadata.publishers];
   const emailToAvatar = {};
 
-  const promises = contributors.map(contributor => {
-    if(contributor.email && emailToAvatar[contributor.email]){
+  const promises = contributors.map((contributor) => {
+    if (contributor.email && emailToAvatar[contributor.email]) {
       contributor.npmAvatar = emailToAvatar[contributor.email];
+
       return Promise.resolve();
     }
-    return npmUserProfile(contributor.name, {perPage: 1}).then(profile => {
+
+    return npmUserProfile(contributor.name, { perPage: 1 }).then((profile) => {
       contributor.npmAvatar = profile.avatars.small;
-      if(contributor.email && contributor.npmAvatar){
+      if (contributor.email && contributor.npmAvatar) {
         emailToAvatar[contributor.email] = contributor.npmAvatar;
       }
     }).catch(() => {
@@ -155,7 +157,7 @@ async function addNpmAvatar(metadata) {
     });
   });
 
-  await Promise.all(promises)
+  await Promise.all(promises);
 
   // back fill npmAvatar if any name property was not npm username in first pass
   for (const contributor of contributors) {
