@@ -13,11 +13,13 @@ declare namespace Scanner {
     name: string;
     email?: string;
     url?: string;
+    npmAvatar?: string;
   }
 
   export interface Maintainer {
     name: string;
     email: string;
+    npmAvatar?: string;
   }
 
   export interface Publisher {
@@ -38,6 +40,11 @@ declare namespace Scanner {
      * @example 2021-08-10T20:45:08.342Z
      */
     at: string;
+    /**
+     * Path to publisher's avatar on "https://www.npmjs.com"
+     * @example /npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.LwimMJA3puF3ioGeS-tfczR3370GXBZMIL-bdpu4hOU
+     */
+    npmAvatar?: string;
   }
 
   export interface DependencyLinks {
