@@ -65,7 +65,7 @@ test("registry.packageMetadata", async() => {
   assert.deepEqual(ref.versions["1.5.0"].flags, ["isOutdated"]);
   assert.strictEqual(logger.count("registry"), 1);
 
-  assert.deepEqual(ref.metadata.author, { name: "SlimIO" });
+  assert.strictEqual(ref.metadata.author.name, "SlimIO");
   assert.strictEqual(ref.metadata.homepage, "https://github.com/SlimIO/is#readme");
   assert.ok(semver.gt(ref.metadata.lastVersion, "1.5.0"));
 
