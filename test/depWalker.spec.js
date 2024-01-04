@@ -37,6 +37,10 @@ function cleanupPayload(payload) {
       delete verDescriptor.composition.files;
       delete verDescriptor.composition.required_files;
     }
+    for (const contributor of [pkg.metadata.author, ...pkg.metadata.publishers, ...pkg.metadata.maintainers]) {
+      // this is a dynamic property
+      delete contributor.npmAvatar;
+    }
   }
 }
 
