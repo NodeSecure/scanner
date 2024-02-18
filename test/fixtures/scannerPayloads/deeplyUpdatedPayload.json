@@ -1,0 +1,198 @@
+{
+    "id": "YuK0CL",
+    "rootDependencyName": "is-wsl",
+    "warnings": [],
+    "dependencies": {
+      "foo": {
+        "versions": {
+          "3.0.0": {
+            "usedBy": {
+              "bar": "1.0.0",
+              "foo": "1.0.0"
+            },
+            "isDevDependency": false,
+            "author": {
+              "name": "Sindre Sorhus",
+              "email": "sindresorhus@gmail.com",
+              "url": "https://sindresorhus.com"
+            },
+            "engines": {
+              "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+            },
+            "warnings": [],
+            "license": {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "hasMultipleLicenses": false,
+              "licenses": [
+                {
+                  "uniqueLicenseIds": [
+                    "MIT"
+                  ],
+                  "spdxLicenseLinks": [
+                    "https://spdx.org/licenses/MIT.html#licenseText"
+                  ],
+                  "spdx": {
+                    "osi": true,
+                    "fsf": true,
+                    "fsfAndOsi": true,
+                    "includesDeprecated": false
+                  },
+                  "from": "package.json"
+                }
+              ]
+            }
+          },"3.0.2": {
+            "usedBy": {
+              "bar": "1.0.0"
+            },
+            "isDevDependency": false,
+            "author": {
+              "name": "Sindre Sorhus",
+              "email": "sindresorhus@gmail.com",
+              "url": "https://sindresorhus.com"
+            },
+            "engines": {
+              "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+            },
+            "warnings": [],
+            "license": {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "hasMultipleLicenses": false,
+              "licenses": [
+                {
+                  "uniqueLicenseIds": [
+                    "MIT"
+                  ],
+                  "spdxLicenseLinks": [
+                    "https://spdx.org/licenses/MIT.html#licenseText"
+                  ],
+                  "spdx": {
+                    "osi": true,
+                    "fsf": true,
+                    "fsfAndOsi": true,
+                    "includesDeprecated": false
+                  },
+                  "from": "package.json"
+                }
+              ]
+            }
+          }
+        },
+        "vulnerabilities": [],
+        "metadata": {
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+          },
+          "publishers": [
+            {
+              "name": "sindresorhus",
+              "email": "sindresorhus@gmail.com",
+              "version": "3.0.0",
+              "at": "2021-08-31T23:02:35.148Z",
+              "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+            },
+            {
+              "name": "hugo",
+              "email": "hugo@gmail.com"
+            }
+          ],
+          "maintainers": [
+            {
+              "name": "sindresorhus",
+              "email": "sindresorhus@gmail.com",
+              "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+              "at": "2021-08-31T23:02:35.148Z",
+              "version": "3.0.0"
+            },
+            {
+              "name": "hugo",
+              "email": "hugo@gmail.com"
+            }
+          ],
+          "integrity": {
+            "3.0.0": "26f8beccbe8d0766a3af2cc5a06a55dd902cdc136eeb3d9f6fb6b19131903456"
+          }
+        }
+      },
+      "baz": {
+        "versions": {
+          "3.0.0": {
+            "usedBy": {
+              "is-inside-container": "1.0.0"
+            },
+            "isDevDependency": false,
+            "author": {
+              "name": "Sindre Sorhus",
+              "email": "sindresorhus@gmail.com",
+              "url": "https://sindresorhus.com"
+            },
+            "engines": {
+              "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+            },
+            "warnings": [],
+            "license": {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "hasMultipleLicenses": false,
+              "licenses": [
+                {
+                  "uniqueLicenseIds": [
+                    "MIT"
+                  ],
+                  "spdxLicenseLinks": [
+                    "https://spdx.org/licenses/MIT.html#licenseText"
+                  ],
+                  "spdx": {
+                    "osi": true,
+                    "fsf": true,
+                    "fsfAndOsi": true,
+                    "includesDeprecated": false
+                  },
+                  "from": "package.json"
+                }
+              ]
+            }
+          }
+        },
+        "vulnerabilities": [],
+        "metadata": {
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+          },
+          "publishers": [
+            {
+              "name": "sindresorhus",
+              "email": "sindresorhus@gmail.com",
+              "version": "3.0.0",
+              "at": "2021-08-31T23:02:35.148Z",
+              "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+            }
+          ],
+          "maintainers": [
+            {
+              "name": "sindresorhus",
+              "email": "sindresorhus@gmail.com",
+              "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+              "at": "2021-08-31T23:02:35.148Z",
+              "version": "3.0.0"
+            }
+          ],
+          "integrity": {
+            "3.0.0": "26f8beccbe8d0766a3af2cc5a06a55dd902cdc136eeb3d9f6fb6b19131903456"
+          }
+        }
+      }
+    }
+  }
+  
