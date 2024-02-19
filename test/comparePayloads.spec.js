@@ -62,9 +62,22 @@ it("should detect deep dependencies diff", () => {
     url: "https://franck.com"
   });
 
+  const engines = comparedVersion2.engines;
+  console.log(engines);
+  assert.ok(engines.added.has("node4"));
+  assert.ok(engines.removed.has("node"));
+
+  assert.ok(engines.compared.has("node2"));
+  assert.ok(engines.compared.has("node3"));
+  assert.strictEqual(engines.compared.size, 2);
+
+  assert.strictEqual(engines.compared.get("node2").prev, "^12.20.0 || ^14.13.1 || >=16.0.0");
+  assert.strictEqual(engines.compared.get("node2").now, "^14.20.0 || ^16.13.1 || >=18.0.0");
+  assert.strictEqual(engines.compared.get("node3"), undefined);
+
   const comparedVersion3 = foo.versions.compared.get("3.0.0");
-  assert.ok(comparedVersion3.devDependency === undefined);
-  assert.ok(comparedVersion3.author === undefined);
+  assert.strictEqual(comparedVersion3.devDependency, undefined);
+  assert.strictEqual(comparedVersion3.author, undefined);
   assert.ok(comparedVersion3.usedBy.added.has("foo"));
   assert.strictEqual(comparedVersion3.usedBy.added.size, 1);
 
