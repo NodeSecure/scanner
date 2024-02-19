@@ -48,14 +48,28 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(foo.versions.removed.size, 1);
 
   assert.ok(foo.versions.compared.has("3.0.0"));
-  assert.strictEqual(foo.versions.compared.size, 1);
+  assert.ok(foo.versions.compared.has("2.0.0"));
+  assert.strictEqual(foo.versions.compared.size, 2);
 
-  const comparedVersion = foo.versions.compared.get("3.0.0");
-  assert.ok(comparedVersion.usedBy.added.has("foo"));
-  assert.strictEqual(comparedVersion.usedBy.added.size, 1);
+  const comparedVersion2 = foo.versions.compared.get("2.0.0");
+  assert.ok(comparedVersion2.devDependency.prev === false);
+  assert.ok(comparedVersion2.devDependency.now === true);
 
-  assert.ok(comparedVersion.usedBy.removed.has("baz"));
-  assert.strictEqual(comparedVersion.usedBy.removed.size, 1);
+  assert.equal(comparedVersion2.author.prev.name, "Sindre Sorhus");
+  assert.deepStrictEqual(comparedVersion2.author.now, {
+    name: "Franck Sorhus",
+    email: "franck@gmail.com",
+    url: "https://franck.com"
+  });
+
+  const comparedVersion3 = foo.versions.compared.get("3.0.0");
+  assert.ok(comparedVersion3.devDependency === undefined);
+  assert.ok(comparedVersion3.author === undefined);
+  assert.ok(comparedVersion3.usedBy.added.has("foo"));
+  assert.strictEqual(comparedVersion3.usedBy.added.size, 1);
+
+  assert.ok(comparedVersion3.usedBy.removed.has("baz"));
+  assert.strictEqual(comparedVersion3.usedBy.removed.size, 1);
 });
 
 const payloads = {};

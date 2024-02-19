@@ -37,8 +37,17 @@ function compareVersions(original, toCompare) {
   const comparedVersions = new Map();
   for (const [name, [version, comparedVersion]] of comparable) {
     const diff = {
-      usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy)
+      usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
+      devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
+      author: objectDiff("name", version.author, comparedVersion.author)
     };
+
+    if (version.isDevDependency !== comparedVersion.isDevDependency) {
+      diff.devDependency = {
+        prev: version.isDevDependency,
+        now: comparedVersion.isDevDependency
+      };
+    }
 
     comparedVersions.set(name, diff);
   }
@@ -97,4 +106,26 @@ function arrayDiff(key, original, toCompare) {
   }
 
   return { added, removed };
+}
+
+function objectDiff(key, original, toCompare) {
+  if (original[key] === toCompare[key]) {
+    return undefined;
+  }
+
+  return {
+    prev: original,
+    now: toCompare
+  };
+}
+
+function valueDiff(original, toCompare) {
+  if (original === toCompare) {
+    return undefined;
+  }
+
+  return {
+    prev: original,
+    now: toCompare
+  };
 }

@@ -5,6 +5,45 @@
     "dependencies": {
       "foo": {
         "versions": {
+          "2.0.0": {
+            "usedBy": {
+              "bar": "1.0.0",
+              "foo": "1.0.0"
+            },
+            "isDevDependency": true,
+            "author": {
+              "name": "Franck Sorhus",
+              "email": "franck@gmail.com",
+              "url": "https://franck.com"
+            },
+            "engines": {
+              "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+            },
+            "warnings": [],
+            "license": {
+              "uniqueLicenseIds": [
+                "MIT"
+              ],
+              "hasMultipleLicenses": false,
+              "licenses": [
+                {
+                  "uniqueLicenseIds": [
+                    "MIT"
+                  ],
+                  "spdxLicenseLinks": [
+                    "https://spdx.org/licenses/MIT.html#licenseText"
+                  ],
+                  "spdx": {
+                    "osi": true,
+                    "fsf": true,
+                    "fsfAndOsi": true,
+                    "includesDeprecated": false
+                  },
+                  "from": "package.json"
+                }
+              ]
+            }
+          },
           "3.0.0": {
             "usedBy": {
               "bar": "1.0.0",
