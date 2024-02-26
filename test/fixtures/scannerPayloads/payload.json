@@ -149,7 +149,13 @@
             }
           }
         },
-        "vulnerabilities": [],
+        "vulnerabilities": [
+          {
+            "id": "foo"
+          },{
+            "id": "bar"
+          }
+        ],
         "metadata": {
           "author": {
             "name": "Sindre Sorhus",

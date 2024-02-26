@@ -74,6 +74,9 @@ it("should detect deep dependencies diff", () => {
 
   // Updated dependency deep comparison
   const foo = compared.get("foo");
+  assert.ok(foo.vulnerabilities.added.some((v) => v.id === "baz"));
+  assert.ok(foo.vulnerabilities.removed.some((v) => v.id === "bar"));
+
   assert.ok(foo.publishers.added.some((m) => m.name === "hugo"));
   assert.ok(foo.publishers.removed.some((m) => m.name === "jack"));
 

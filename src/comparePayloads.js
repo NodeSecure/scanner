@@ -43,7 +43,8 @@ function compareDependencies(original, toCompare) {
     const diff = {
       publishers: arrayObjectDiff("name", dep.metadata.publishers, comparedDep.metadata.publishers),
       maintainers: arrayObjectDiff("name", dep.metadata.maintainers, comparedDep.metadata.maintainers),
-      versions: compareVersions(dep.versions, comparedDep.versions)
+      versions: compareVersions(dep.versions, comparedDep.versions),
+      vulnerabilities: arrayObjectDiff("id", dep.vulnerabilities, comparedDep.vulnerabilities)
     };
 
     comparedDependencies.set(name, diff);
