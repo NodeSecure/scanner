@@ -11,10 +11,20 @@ export function comparePayloads(payload, comparedPayload) {
     );
   }
 
+  const warnings = compareWarnings(payload.warnings, comparedPayload.warnings);
+
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
+    warnings,
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
+}
+
+function compareWarnings(original, toCompare) {
+  const removed = original.filter((o, k) => JSON.stringify(o) !== JSON.stringify(toCompare[k]));
+  const added = toCompare.filter((o, k) => JSON.stringify(o) !== JSON.stringify(original[k]));
+
+  return { added, removed };
 }
 
 function compareDependencies(original, toCompare) {

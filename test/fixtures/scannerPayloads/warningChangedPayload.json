@@ -1,0 +1,29 @@
+{
+    "id": "hbefDHkf",
+    "rootDependencyName": "is-wsl",
+    "warnings": [
+        {
+          "kind": "unsafe-import",
+          "location": [
+            [3, 16],
+            [3, 55]
+          ],
+          "source": "JS-X-Ray",
+          "i18n": "sast_warnings.unsafe_import",
+          "severity": "Warning",
+          "file": "examples/asyncawait.js"
+        },
+        {
+            "kind": "unsafe-import",
+            "location": [
+              [4, 26],
+              [4, 65]
+            ],
+            "source": "JS-X-Ray",
+            "i18n": "sast_warnings.unsafe_import",
+            "severity": "Warning",
+            "file": "examples/asyncawait.js"
+        }
+    ],
+    "dependencies": {}
+}

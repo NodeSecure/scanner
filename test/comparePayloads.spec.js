@@ -27,6 +27,36 @@ it("should throw an error if compared payloads are not from the same package", (
   );
 });
 
+it("should detect warning diff", () => {
+  const { warnings: { added, removed } } = compareTo("warningChangedPayload");
+
+  assert.strictEqual(added.length, 1);
+  assert.deepStrictEqual(added[0], {
+    kind: "unsafe-import",
+    location: [
+      [4, 26],
+      [4, 65]
+    ],
+    source: "JS-X-Ray",
+    i18n: "sast_warnings.unsafe_import",
+    severity: "Warning",
+    file: "examples/asyncawait.js"
+  });
+
+  assert.strictEqual(removed.length, 1);
+  assert.deepStrictEqual(removed[0], {
+    kind: "unsafe-regex",
+    location: [
+      [3, 16],
+      [3, 55]
+    ],
+    source: "JS-X-Ray",
+    i18n: "sast_warnings.unsafe_import",
+    severity: "Warning",
+    file: "examples/asyncawait.js"
+  });
+});
+
 it("should detect deep dependencies diff", () => {
   const { dependencies: { compared, added, removed } } = compareTo("deeplyUpdatedPayload");
 
