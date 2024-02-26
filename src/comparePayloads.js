@@ -11,11 +11,9 @@ export function comparePayloads(payload, comparedPayload) {
     );
   }
 
-  const warnings = compareWarnings(payload.warnings, comparedPayload.warnings);
-
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    warnings,
+    warnings: compareWarnings(payload.warnings, comparedPayload.warnings),
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
 }
@@ -56,7 +54,8 @@ function compareVersions(original, toCompare) {
       usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
       devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
       author: objectDiff("name", version.author, comparedVersion.author),
-      engines: compareEngines(version.engines, comparedVersion.engines)
+      engines: compareEngines(version.engines, comparedVersion.engines),
+      warnings: compareWarnings(version.warnings, comparedVersion.warnings)
     };
 
     comparedVersions.set(name, diff);

@@ -44,7 +44,30 @@
               "node2": "^12.20.0 || ^14.13.1 || >=16.0.0",
               "node3": "12.20.0 || ^14.13.1 || >=16.0.0"
             },
-            "warnings": [],
+            "warnings": [
+              {
+                "kind": "unsafe-import",
+                "location": [
+                  [3, 16],
+                  [3, 55]
+                ],
+                "source": "JS-X-Ray",
+                "i18n": "sast_warnings.unsafe_import",
+                "severity": "Warning",
+                "file": "examples/asyncawait.js"
+              },
+              {
+                "kind": "unsafe-regex",
+                "location": [
+                  [3, 16],
+                  [3, 55]
+                ],
+                "source": "JS-X-Ray",
+                "i18n": "sast_warnings.unsafe_import",
+                "severity": "Warning",
+                "file": "examples/asyncawait.js"
+              }        
+          ],
             "license": {
               "uniqueLicenseIds": [
                 "MIT"
