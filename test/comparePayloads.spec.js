@@ -31,37 +31,32 @@ it("should throw an error if compared payloads are not from the same package", (
 it("should detect warnings diff", () => {
   const { warnings: { added, removed }, dependencies: { compared } } = compareTo("warningChangedPayload");
 
-  const expected = {
-    added: [{
-      kind: "unsafe-import",
-      location: [[4, 26], [4, 65]],
-      source: "JS-X-Ray",
-      i18n: "sast_warnings.unsafe_import",
-      severity: "Warning",
-      file: "examples/asyncawait.js"
-    }],
-    removed: [{
-      kind: "unsafe-regex",
-      location: [[3, 16], [3, 55]],
-      source: "JS-X-Ray",
-      i18n: "sast_warnings.unsafe_import",
-      severity: "Warning",
-      file: "examples/asyncawait.js"
-    }]
-  };
-
   assert.strictEqual(added.length, 1);
-  assert.deepStrictEqual(added[0], expected.added[0]);
+  assert.deepStrictEqual(added[0], "encoded-literal");
 
   assert.strictEqual(removed.length, 1);
-  assert.deepStrictEqual(removed[0], expected.removed[0]);
+  assert.deepStrictEqual(removed[0], "unsafe-regex");
 
   const deepWarnings = compared.get("foo").versions.compared.get("2.0.0").warnings;
   assert.strictEqual(deepWarnings.added.length, 1);
-  assert.deepStrictEqual(deepWarnings.added[0], expected.added[0]);
+  assert.deepStrictEqual(deepWarnings.added[0], {
+    kind: "unsafe-import",
+    location: [[4, 26], [4, 65]],
+    source: "JS-X-Ray",
+    i18n: "sast_warnings.unsafe_import",
+    severity: "Warning",
+    file: "examples/asyncawait.js"
+  });
 
   assert.strictEqual(deepWarnings.removed.length, 1);
-  assert.deepStrictEqual(deepWarnings.removed[0], expected.removed[0]);
+  assert.deepStrictEqual(deepWarnings.removed[0], {
+    kind: "unsafe-regex",
+    location: [[3, 16], [3, 55]],
+    source: "JS-X-Ray",
+    i18n: "sast_warnings.unsafe_import",
+    severity: "Warning",
+    file: "examples/asyncawait.js"
+  });
 });
 
 it("should detect deep dependencies diff", () => {

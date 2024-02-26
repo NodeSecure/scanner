@@ -13,9 +13,16 @@ export function comparePayloads(payload, comparedPayload) {
 
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    warnings: compareWarnings(payload.warnings, comparedPayload.warnings),
+    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings),
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
+}
+
+function arrayLiteralDiff(original, toCompare) {
+  const removed = original.filter((v, i) => v !== toCompare[i]);
+  const added = toCompare.filter((v, i) => v !== original[i]);
+
+  return { added, removed };
 }
 
 function compareWarnings(original, toCompare) {
@@ -34,8 +41,8 @@ function compareDependencies(original, toCompare) {
   const comparedDependencies = new Map();
   for (const [name, [dep, comparedDep]] of comparable) {
     const diff = {
-      publishers: arrayDiff("name", dep.metadata.publishers, comparedDep.metadata.publishers),
-      maintainers: arrayDiff("name", dep.metadata.maintainers, comparedDep.metadata.maintainers),
+      publishers: arrayObjectDiff("name", dep.metadata.publishers, comparedDep.metadata.publishers),
+      maintainers: arrayObjectDiff("name", dep.metadata.maintainers, comparedDep.metadata.maintainers),
       versions: compareVersions(dep.versions, comparedDep.versions)
     };
 
@@ -111,7 +118,7 @@ function collectionObjectDiff(original, toCompare) {
   return { comparable, added, removed };
 }
 
-function arrayDiff(key, original, toCompare) {
+function arrayObjectDiff(key, original, toCompare) {
   const removed = [];
   for (const obj of original) {
     const comparedObj = toCompare.find((o) => o[key] === obj[key]);
