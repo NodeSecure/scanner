@@ -1,4 +1,10 @@
 export function comparePayloads(payload, comparedPayload) {
+  if (payload.id === comparedPayload.id) {
+    throw new Error(
+      `You try to compare two payloads with the same id '${payload.id}'`
+    );
+  }
+
   if (payload.rootDependencyName !== comparedPayload.rootDependencyName) {
     throw new Error(
       `You can't compare different package payloads '${payload.rootDependencyName}' and '${comparedPayload.rootDependencyName}'`
