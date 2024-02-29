@@ -13,20 +13,19 @@ export function comparePayloads(payload, comparedPayload) {
 
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings),
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies),
-    flaggedAuthors: arrayObjectDiff("name", payload.flaggedAuthors, comparedPayload.flaggedAuthors)
+    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings)
   };
 }
 
-function arrayLiteralDiff(original, toCompare) {
+function arrayLiteralDiff(original = [], toCompare = []) {
   const removed = original.filter((v, i) => v !== toCompare[i]);
   const added = toCompare.filter((v, i) => v !== original[i]);
 
   return { added, removed };
 }
 
-function compareWarnings(original, toCompare) {
+function compareWarnings(original = [], toCompare = []) {
   const removed = original.filter((o, k) => JSON.stringify(o) !== JSON.stringify(toCompare[k]));
   const added = toCompare.filter((o, k) => JSON.stringify(o) !== JSON.stringify(original[k]));
 
@@ -90,7 +89,7 @@ function compareEngines(original, toCompare) {
   };
 }
 
-function collectionObjectDiff(original, toCompare) {
+function collectionObjectDiff(original = {}, toCompare = {}) {
   const comparable = new Map();
   const removed = new Map();
   for (const name in original) {
@@ -120,7 +119,7 @@ function collectionObjectDiff(original, toCompare) {
   return { comparable, added, removed };
 }
 
-function arrayObjectDiff(key, original, toCompare) {
+function arrayObjectDiff(key, original = [], toCompare = []) {
   const removed = [];
   for (const obj of original) {
     const comparedObj = toCompare.find((o) => o[key] === obj[key]);
@@ -140,7 +139,7 @@ function arrayObjectDiff(key, original, toCompare) {
   return { added, removed };
 }
 
-function objectDiff(key, original, toCompare) {
+function objectDiff(key, original = {}, toCompare = {}) {
   if (original[key] === toCompare[key]) {
     return undefined;
   }
