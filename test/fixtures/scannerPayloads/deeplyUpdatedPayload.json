@@ -12,6 +12,7 @@
             },
             "isDevDependency": true,
             "existOnRemoteRegistry": true,
+            "description": "bar",
             "author": {
               "name": "Franck Sorhus",
               "email": "franck@gmail.com",

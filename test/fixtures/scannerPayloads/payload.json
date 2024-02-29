@@ -27,6 +27,7 @@
             },
             "isDevDependency": false,
             "existOnRemoteRegistry": false,
+            "description": "foo",
             "author": {
               "name": "Sindre Sorhus",
               "email": "sindresorhus@gmail.com",

@@ -65,6 +65,7 @@ function compareVersions(original, toCompare) {
       usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
       devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
       existOnRemoteRegistry: valueDiff(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
+      description: valueDiff(version.description, comparedVersion.description),
       author: objectDiff("name", version.author, comparedVersion.author),
       engines: compareEngines(version.engines, comparedVersion.engines),
       warnings: compareWarnings(version.warnings, comparedVersion.warnings),
