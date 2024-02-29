@@ -13,9 +13,10 @@ export function comparePayloads(payload, comparedPayload) {
 
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies),
     flaggedAuthors: arrayObjectDiff("name", payload.flaggedAuthors, comparedPayload.flaggedAuthors),
-    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings)
+    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings),
+    scannerVersion: valueDiff(payload.scannerVersion, comparedPayload.scannerVersion),
+    dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
 }
 

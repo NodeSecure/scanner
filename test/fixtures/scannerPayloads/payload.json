@@ -15,6 +15,7 @@
         "email": "jack@gmail.com"
       }
     ],
+    "scannerVersion": "1.0.0",
     "dependencies": {
       "foo": {
         "versions": {

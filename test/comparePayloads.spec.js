@@ -74,6 +74,13 @@ it("should detect flagged authors diff", () => {
   });
 });
 
+it("should detect scanner version diff", () => {
+  const { scannerVersion: { prev, now } } = compareTo("scannerVersionChanged");
+
+  assert.strictEqual(prev, "1.0.0");
+  assert.strictEqual(now, "1.0.1");
+});
+
 it("should detect deep dependencies diff", () => {
   const { dependencies: { compared, added, removed } } = compareTo("deeplyUpdatedPayload");
 
