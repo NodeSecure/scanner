@@ -11,6 +11,7 @@
               "foo": "1.0.0"
             },
             "isDevDependency": true,
+            "existOnRemoteRegistry": true,
             "author": {
               "name": "Franck Sorhus",
               "email": "franck@gmail.com",

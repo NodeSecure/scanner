@@ -16,6 +16,7 @@ export function comparePayloads(payload, comparedPayload) {
     flaggedAuthors: arrayObjectDiff("name", payload.flaggedAuthors, comparedPayload.flaggedAuthors),
     warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings),
     scannerVersion: valueDiff(payload.scannerVersion, comparedPayload.scannerVersion),
+    vulnerabilityStrategy: valueDiff(payload.vulnerabilityStrategy, comparedPayload.vulnerabilityStrategy),
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
 }
@@ -63,6 +64,7 @@ function compareVersions(original, toCompare) {
     const diff = {
       usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
       devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
+      existOnRemoteRegistry: valueDiff(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
       author: objectDiff("name", version.author, comparedVersion.author),
       engines: compareEngines(version.engines, comparedVersion.engines),
       warnings: compareWarnings(version.warnings, comparedVersion.warnings),

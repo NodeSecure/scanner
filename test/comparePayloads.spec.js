@@ -126,6 +126,9 @@ it("should detect deep dependencies diff", () => {
   assert.ok(comparedVersion2.devDependency.prev === false);
   assert.ok(comparedVersion2.devDependency.now === true);
 
+  assert.ok(comparedVersion2.existOnRemoteRegistry.prev === false);
+  assert.ok(comparedVersion2.existOnRemoteRegistry.now === true);
+
   assert.equal(comparedVersion2.author.prev.name, "Sindre Sorhus");
   assert.deepStrictEqual(comparedVersion2.author.now, {
     name: "Franck Sorhus",
