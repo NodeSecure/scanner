@@ -150,6 +150,18 @@ it("should detect deep dependencies diff", () => {
     url: "https://github.com/NodeSecure/js-x-ray"
   });
 
+  assert.deepStrictEqual(comparedVersion2.links.prev, {
+    npm: "https://www.npmjs.com/package/example-package",
+    homepage: "https://example-package.com",
+    repository: "https://github.com/example-package/example-repo"
+  });
+
+  assert.deepStrictEqual(comparedVersion2.links.now, {
+    npm: "https://www.npmjs.com/package/example-package2",
+    homepage: "https://example-package2.com",
+    repository: "https://github.com/example-package/example-repo2"
+  });
+
   const licenseIds = comparedVersion2.licenseIds;
   assert.strictEqual(licenseIds.added.length, 1);
   assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");

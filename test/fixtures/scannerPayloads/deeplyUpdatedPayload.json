@@ -57,7 +57,12 @@
                 }
               ]
             },
-            "flags": ["⚔️", "🌲"]
+            "flags": ["⚔️", "🌲"],
+            "links": {
+              "npm": "https://www.npmjs.com/package/example-package2",
+              "homepage": "https://example-package2.com",
+              "repository": "https://github.com/example-package/example-repo2"
+            }
           },
           "3.0.0": {
             "usedBy": {

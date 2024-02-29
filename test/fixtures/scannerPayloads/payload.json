@@ -95,7 +95,12 @@
                 }
               ]
             },
-            "flags": ["⚔️", "💎"]
+            "flags": ["⚔️", "💎"],
+            "links": {
+              "npm": "https://www.npmjs.com/package/example-package",
+              "homepage": "https://example-package.com",
+              "repository": "https://github.com/example-package/example-repo"
+            }
           },
           "3.0.0": {
             "usedBy": {

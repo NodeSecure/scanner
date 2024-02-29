@@ -28,13 +28,6 @@ function arrayLiteralDiff(original = [], toCompare = []) {
   return { added, removed };
 }
 
-function compareWarnings(original = [], toCompare = []) {
-  const removed = original.filter((o, k) => JSON.stringify(o) !== JSON.stringify(toCompare[k]));
-  const added = toCompare.filter((o, k) => JSON.stringify(o) !== JSON.stringify(original[k]));
-
-  return { added, removed };
-}
-
 function compareDependencies(original, toCompare) {
   const {
     comparable,
@@ -71,10 +64,13 @@ function compareVersions(original, toCompare) {
       repository: objectDiff("type", version.repository, comparedVersion.repository)
         ?? objectDiff("url", version.repository, comparedVersion.repository),
       scripts: compareCollectionObjectDiff(version.scripts, comparedVersion.scripts),
-      warnings: compareWarnings(version.warnings, comparedVersion.warnings),
+      warnings: diffSnapShotArray(version.warnings, comparedVersion.warnings),
       licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
-      flags: arrayLiteralDiff(version.flags, comparedVersion.flags)
+      flags: arrayLiteralDiff(version.flags, comparedVersion.flags),
+      links: compareSnapShot(version.links, comparedVersion.links)
     };
+
+    console.log(diff.links);
 
     comparedVersions.set(name, diff);
   }
@@ -97,6 +93,21 @@ function compareCollectionObjectDiff(original, toCompare) {
     compared,
     ...diff
   };
+}
+
+function diffSnapShotArray(original = [], toCompare = []) {
+  const removed = original.filter((o, k) => JSON.stringify(o) !== JSON.stringify(toCompare[k]));
+  const added = toCompare.filter((o, k) => JSON.stringify(o) !== JSON.stringify(original[k]));
+
+  return { added, removed };
+}
+
+function compareSnapShot(original = {}, toCompare = {}) {
+  if (JSON.stringify(original) === JSON.stringify(toCompare)) {
+    return undefined;
+  }
+
+  return { prev: original, now: toCompare };
 }
 
 function collectionObjectDiff(original = {}, toCompare = {}, withValueDiff = false) {
