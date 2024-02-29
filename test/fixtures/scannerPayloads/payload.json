@@ -5,6 +5,16 @@
       "unsafe-import",
       "unsafe-regex"     
     ],
+    "flaggedAuthors": [
+      {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      {
+        "name": "jack",
+        "email": "jack@gmail.com"
+      }
+    ],
     "dependencies": {
       "foo": {
         "versions": {
