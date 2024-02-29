@@ -21,8 +21,8 @@ export function comparePayloads(payload, comparedPayload) {
 }
 
 function arrayLiteralDiff(original = [], toCompare = []) {
-  const removed = original.filter((v, i) => v !== toCompare[i]);
   const added = toCompare.filter((v, i) => v !== original[i]);
+  const removed = original.filter((v, i) => v !== toCompare[i]);
 
   return { added, removed };
 }
@@ -65,7 +65,8 @@ function compareVersions(original, toCompare) {
       devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
       author: objectDiff("name", version.author, comparedVersion.author),
       engines: compareEngines(version.engines, comparedVersion.engines),
-      warnings: compareWarnings(version.warnings, comparedVersion.warnings)
+      warnings: compareWarnings(version.warnings, comparedVersion.warnings),
+      licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds)
     };
 
     comparedVersions.set(name, diff);

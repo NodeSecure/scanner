@@ -24,7 +24,8 @@
             "warnings": [],
             "license": {
               "uniqueLicenseIds": [
-                "MIT"
+                "MIT",
+                "BSD-3-Clause"
               ],
               "hasMultipleLicenses": false,
               "licenses": [

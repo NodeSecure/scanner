@@ -58,10 +58,11 @@
                 "severity": "Warning",
                 "file": "examples/asyncawait.js"
               }        
-          ],
+            ],
             "license": {
               "uniqueLicenseIds": [
-                "MIT"
+                "MIT",
+                "GPL-3.0"
               ],
               "hasMultipleLicenses": false,
               "licenses": [

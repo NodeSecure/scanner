@@ -126,13 +126,23 @@ it("should detect deep dependencies diff", () => {
     url: "https://franck.com"
   });
 
+  const licenseIds = comparedVersion2.licenseIds;
+  assert.strictEqual(licenseIds.added.length, 1);
+  assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");
+
+  assert.strictEqual(licenseIds.removed.length, 1);
+  assert.strictEqual(licenseIds.removed[0], "GPL-3.0");
+
   const engines = comparedVersion2.engines;
+  assert.strictEqual(engines.added.size, 1);
   assert.ok(engines.added.has("node4"));
+
+  assert.strictEqual(engines.removed.size, 1);
   assert.ok(engines.removed.has("node"));
 
+  assert.strictEqual(engines.compared.size, 2);
   assert.ok(engines.compared.has("node2"));
   assert.ok(engines.compared.has("node3"));
-  assert.strictEqual(engines.compared.size, 2);
 
   assert.strictEqual(engines.compared.get("node2").prev, "^12.20.0 || ^14.13.1 || >=16.0.0");
   assert.strictEqual(engines.compared.get("node2").now, "^14.20.0 || ^16.13.1 || >=18.0.0");
