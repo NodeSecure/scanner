@@ -15,6 +15,7 @@
         "email": "jack@gmail.com"
       }
     ],
+    "vulnerabilityStrategy": "npm",
     "scannerVersion": "1.0.0",
     "dependencies": {
       "foo": {

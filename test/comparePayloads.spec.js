@@ -81,6 +81,13 @@ it("should detect scanner version diff", () => {
   assert.strictEqual(now, "1.0.1");
 });
 
+it("should detect vulnerability strategy version diff", () => {
+  const { vulnerabilityStrategy: { prev, now } } = compareTo("vulnerabilityStrategyChanged");
+
+  assert.strictEqual(prev, "npm");
+  assert.strictEqual(now, "snyk");
+});
+
 it("should detect deep dependencies diff", () => {
   const { dependencies: { compared, added, removed } } = compareTo("deeplyUpdatedPayload");
 
