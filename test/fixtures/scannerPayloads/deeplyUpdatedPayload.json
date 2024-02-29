@@ -23,6 +23,10 @@
               "node3": "12.20.0 || ^14.13.1 || >=16.0.0",
               "node4": "^14.20.0 || ^16.13.1 || >=18.0.0"
             },
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/NodeSecure/js-x-ray"
+            },
             "warnings": [],
             "license": {
               "uniqueLicenseIds": [
@@ -62,6 +66,10 @@
             },
             "engines": {
               "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+            },
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/NodeSecure/js-x-ray2"
             },
             "warnings": [],
             "license": {

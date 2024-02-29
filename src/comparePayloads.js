@@ -68,6 +68,8 @@ function compareVersions(original, toCompare) {
       description: valueDiff(version.description, comparedVersion.description),
       author: objectDiff("name", version.author, comparedVersion.author),
       engines: compareEngines(version.engines, comparedVersion.engines),
+      repository: objectDiff("type", version.repository, comparedVersion.repository)
+        ?? objectDiff("url", version.repository, comparedVersion.repository),
       warnings: compareWarnings(version.warnings, comparedVersion.warnings),
       licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds)
     };

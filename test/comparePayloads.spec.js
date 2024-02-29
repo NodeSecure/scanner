@@ -139,6 +139,17 @@ it("should detect deep dependencies diff", () => {
     url: "https://franck.com"
   });
 
+  // repository: diff on type only
+  assert.deepStrictEqual(comparedVersion2.repository.prev, {
+    type: "svn",
+    url: "https://github.com/NodeSecure/js-x-ray"
+  });
+
+  assert.deepStrictEqual(comparedVersion2.repository.now, {
+    type: "git",
+    url: "https://github.com/NodeSecure/js-x-ray"
+  });
+
   const licenseIds = comparedVersion2.licenseIds;
   assert.strictEqual(licenseIds.added.length, 1);
   assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");
@@ -169,6 +180,17 @@ it("should detect deep dependencies diff", () => {
 
   assert.ok(comparedVersion3.usedBy.removed.has("baz"));
   assert.strictEqual(comparedVersion3.usedBy.removed.size, 1);
+
+  // repository: diff on url only
+  assert.deepStrictEqual(comparedVersion3.repository.prev, {
+    type: "git",
+    url: "https://github.com/NodeSecure/js-x-ray"
+  });
+
+  assert.deepStrictEqual(comparedVersion3.repository.now, {
+    type: "git",
+    url: "https://github.com/NodeSecure/js-x-ray2"
+  });
 });
 
 const payloads = {};
