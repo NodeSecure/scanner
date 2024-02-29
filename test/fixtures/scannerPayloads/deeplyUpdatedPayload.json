@@ -27,6 +27,11 @@
               "type": "git",
               "url": "https://github.com/NodeSecure/js-x-ray"
             },
+            "scripts": {
+              "test": "foo",
+              "standard": "npx standard --fix",
+              "lint": "lint"
+            },
             "warnings": [],
             "license": {
               "uniqueLicenseIds": [

@@ -67,9 +67,10 @@ function compareVersions(original, toCompare) {
       existOnRemoteRegistry: valueDiff(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
       description: valueDiff(version.description, comparedVersion.description),
       author: objectDiff("name", version.author, comparedVersion.author),
-      engines: compareEngines(version.engines, comparedVersion.engines),
+      engines: compareCollectionObjectDiff(version.engines, comparedVersion.engines),
       repository: objectDiff("type", version.repository, comparedVersion.repository)
         ?? objectDiff("url", version.repository, comparedVersion.repository),
+      scripts: compareCollectionObjectDiff(version.scripts, comparedVersion.scripts),
       warnings: compareWarnings(version.warnings, comparedVersion.warnings),
       licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds)
     };
@@ -83,21 +84,21 @@ function compareVersions(original, toCompare) {
   };
 }
 
-function compareEngines(original, toCompare) {
+function compareCollectionObjectDiff(original, toCompare) {
   const { comparable, ...diff } = collectionObjectDiff(original, toCompare);
 
-  const comparedEngines = new Map();
-  for (const [name, [engine, comparedEngine]] of comparable) {
-    comparedEngines.set(name, valueDiff(engine, comparedEngine));
+  const compared = new Map();
+  for (const [name, [entity, comparedEntity]] of comparable) {
+    compared.set(name, valueDiff(entity, comparedEntity));
   }
 
   return {
-    compared: comparedEngines,
+    compared,
     ...diff
   };
 }
 
-function collectionObjectDiff(original = {}, toCompare = {}) {
+function collectionObjectDiff(original = {}, toCompare = {}, withValueDiff = false) {
   const comparable = new Map();
   const removed = new Map();
   for (const name in original) {

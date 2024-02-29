@@ -42,6 +42,11 @@
               "type": "svn",
               "url": "https://github.com/NodeSecure/js-x-ray"
             },
+            "scripts": {
+              "test": "foo",
+              "ci": "npm ci",
+              "standard": "npx standard"
+            },
             "warnings": [
               {
                 "kind": "unsafe-import",

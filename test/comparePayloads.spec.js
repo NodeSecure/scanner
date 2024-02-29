@@ -172,6 +172,21 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(engines.compared.get("node2").now, "^14.20.0 || ^16.13.1 || >=18.0.0");
   assert.strictEqual(engines.compared.get("node3"), undefined);
 
+  const scripts = comparedVersion2.scripts;
+  assert.strictEqual(scripts.added.size, 1);
+  assert.ok(scripts.added.has("lint"));
+
+  assert.strictEqual(scripts.removed.size, 1);
+  assert.ok(scripts.removed.has("ci"));
+
+  assert.strictEqual(scripts.compared.size, 2);
+  assert.ok(scripts.compared.has("test"));
+  assert.strictEqual(scripts.compared.get("test"), undefined);
+
+  assert.ok(scripts.compared.has("standard"));
+  assert.strictEqual(scripts.compared.get("standard").prev, "npx standard");
+  assert.strictEqual(scripts.compared.get("standard").now, "npx standard --fix");
+
   const comparedVersion3 = foo.versions.compared.get("3.0.0");
   assert.strictEqual(comparedVersion3.devDependency, undefined);
   assert.strictEqual(comparedVersion3.author, undefined);
