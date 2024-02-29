@@ -21,6 +21,7 @@
       "foo": {
         "versions": {
           "2.0.0": {
+            "id": "abc",
             "usedBy": {
               "bar": "1.0.0",
               "foo": "1.0.0"

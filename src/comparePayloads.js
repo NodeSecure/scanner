@@ -55,6 +55,7 @@ function compareVersions(original, toCompare) {
   const comparedVersions = new Map();
   for (const [name, [version, comparedVersion]] of comparable) {
     const diff = {
+      id: valueDiff(version.id, comparedVersion.id),
       usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
       devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
       existOnRemoteRegistry: valueDiff(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),

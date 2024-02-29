@@ -123,6 +123,9 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(foo.versions.compared.size, 2);
 
   const comparedVersion2 = foo.versions.compared.get("2.0.0");
+  assert.ok(comparedVersion2.id.prev === "abc");
+  assert.ok(comparedVersion2.id.now === "bcd");
+
   assert.ok(comparedVersion2.devDependency.prev === false);
   assert.ok(comparedVersion2.devDependency.now === true);
 
