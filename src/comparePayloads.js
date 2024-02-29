@@ -72,7 +72,8 @@ function compareVersions(original, toCompare) {
         ?? objectDiff("url", version.repository, comparedVersion.repository),
       scripts: compareCollectionObjectDiff(version.scripts, comparedVersion.scripts),
       warnings: compareWarnings(version.warnings, comparedVersion.warnings),
-      licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds)
+      licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
+      flags: arrayLiteralDiff(version.flags, comparedVersion.flags)
     };
 
     comparedVersions.set(name, diff);

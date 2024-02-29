@@ -157,6 +157,13 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(licenseIds.removed.length, 1);
   assert.strictEqual(licenseIds.removed[0], "GPL-3.0");
 
+  const flags = comparedVersion2.flags;
+  assert.strictEqual(flags.added.length, 1);
+  assert.strictEqual(flags.added[0], "🌲");
+
+  assert.strictEqual(flags.removed.length, 1);
+  assert.strictEqual(flags.removed[0], "💎");
+
   const engines = comparedVersion2.engines;
   assert.strictEqual(engines.added.size, 1);
   assert.ok(engines.added.has("node4"));
