@@ -67,12 +67,11 @@ function compareVersions(original, toCompare) {
         ?? objectDiff("url", version.repository, comparedVersion.repository),
       scripts: compareCollectionObjectDiff(version.scripts, comparedVersion.scripts),
       warnings: diffSnapShotArray(version.warnings, comparedVersion.warnings),
+      composition: compareComposition(version.composition, comparedVersion.composition),
       licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
       flags: arrayLiteralDiff(version.flags, comparedVersion.flags),
       links: compareSnapShot(version.links, comparedVersion.links)
     };
-
-    console.log(diff.links);
 
     comparedVersions.set(name, diff);
   }
@@ -82,6 +81,17 @@ function compareVersions(original, toCompare) {
     ...versions
   };
 }
+
+function compareComposition(original = {}, toCompare = {}) {
+  return {
+    minified: arrayLiteralDiff(original.minified, toCompare.minified),
+    required_thirdparty: arrayLiteralDiff(original.required_thirdparty, toCompare.required_thirdparty),
+    required_nodejs: arrayLiteralDiff(original.required_nodejs, toCompare.required_nodejs),
+    required_unused: arrayLiteralDiff(original.required_unused, toCompare.required_unused),
+    required_missing: arrayLiteralDiff(original.required_missing, toCompare.required_missing)
+  };
+}
+
 
 function compareCollectionObjectDiff(original, toCompare) {
   const { comparable, ...diff } = collectionObjectDiff(original, toCompare);

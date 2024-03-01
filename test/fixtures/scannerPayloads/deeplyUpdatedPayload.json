@@ -35,6 +35,28 @@
               "lint": "lint"
             },
             "warnings": [],
+            "composition": {
+              "minified": [
+                "foo.min.js",
+                "baz.min.js"
+              ],
+              "required_thirdparty": [
+                "foo",
+                "baz"
+              ],
+              "required_nodejs": [
+                "foo",
+                "baz"
+              ],
+              "required_unused": [
+                "foo",
+                "baz"
+              ],
+              "required_missing": [
+                "foo",
+                "baz"
+              ]
+            },
             "license": {
               "uniqueLicenseIds": [
                 "MIT",

@@ -73,6 +73,28 @@
                 "file": "examples/asyncawait.js"
               }        
             ],
+            "composition": {
+              "minified": [
+                "foo.min.js",
+                "bar.min.js"
+              ],
+              "required_thirdparty": [
+                "foo",
+                "bar"
+              ],
+              "required_nodejs": [
+                "foo",
+                "bar"
+              ],
+              "required_unused": [
+                "foo",
+                "bar"
+              ],
+              "required_missing": [
+                "foo",
+                "bar"
+              ]
+            },
             "license": {
               "uniqueLicenseIds": [
                 "MIT",

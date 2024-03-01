@@ -168,6 +168,37 @@ it("should detect deep dependencies diff", () => {
     repository: "https://github.com/example-package/example-repo2"
   });
 
+  const composition = comparedVersion2.composition;
+  assert.strictEqual(composition.minified.added.length, 1);
+  assert.strictEqual(composition.minified.added[0], "baz.min.js");
+
+  assert.strictEqual(composition.minified.removed.length, 1);
+  assert.strictEqual(composition.minified.removed[0], "bar.min.js");
+
+  assert.strictEqual(composition.required_thirdparty.added.length, 1);
+  assert.strictEqual(composition.required_thirdparty.added[0], "baz");
+
+  assert.strictEqual(composition.required_thirdparty.removed.length, 1);
+  assert.strictEqual(composition.required_thirdparty.removed[0], "bar");
+
+  assert.strictEqual(composition.required_nodejs.added.length, 1);
+  assert.strictEqual(composition.required_nodejs.added[0], "baz");
+
+  assert.strictEqual(composition.required_nodejs.removed.length, 1);
+  assert.strictEqual(composition.required_nodejs.removed[0], "bar");
+
+  assert.strictEqual(composition.required_unused.added.length, 1);
+  assert.strictEqual(composition.required_unused.added[0], "baz");
+
+  assert.strictEqual(composition.required_unused.removed.length, 1);
+  assert.strictEqual(composition.required_unused.removed[0], "bar");
+
+  assert.strictEqual(composition.required_missing.added.length, 1);
+  assert.strictEqual(composition.required_missing.added[0], "baz");
+
+  assert.strictEqual(composition.required_missing.removed.length, 1);
+  assert.strictEqual(composition.required_missing.removed[0], "bar");
+
   const licenseIds = comparedVersion2.licenseIds;
   assert.strictEqual(licenseIds.added.length, 1);
   assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");
