@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 
 // Require Internal Dependencies
-import { comparePayloads } from "../src/comparePayloads.js";
+import { comparePayloads } from "../index.js";
 
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));

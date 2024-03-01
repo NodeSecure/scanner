@@ -5,6 +5,7 @@ import * as Vuln from "@nodesecure/vuln";
 
 // Import Third-party Dependencies
 import { extractedAuthor } from "@nodesecure/authors";
+import { Vulnerability } from "@nodesecure/vuln/types/npm-strategy";
 
 export = Scanner;
 
@@ -56,6 +57,16 @@ declare namespace Scanner {
     repository?: string;
   }
 
+  export interface Engines {
+    node?: string;
+    npm?: string;
+  }
+
+  export interface Repository {
+    type: string;
+    url: string;
+  }
+
   export interface DependencyVersion {
     /** Id of the package (useful for usedBy relation) */
     id: number;
@@ -73,14 +84,8 @@ declare namespace Scanner {
     description: string;
     /** Author of the package. This information is not trustable and can be empty. */
     author: Author | null;
-    engines: {
-      node?: string;
-      npm?: string;
-    };
-    repository: {
-      type: string;
-      url: string;
-    };
+    engines: Engines;
+    repository: Repository;
     scripts: Record<string, string>;
     /**
      * JS-X-Ray warnings
@@ -247,5 +252,75 @@ declare namespace Scanner {
      * @default false
      */
     readonly fullLockMode?: boolean;
+  }
+  
+  export interface PayloadComparison {
+    title: string;
+    flaggedAuthors: ArrayDiff<Author>;
+    warnings: ArrayDiff<GlobalWarning>;
+    scannerVersionComparison: ValueComparison<string>;
+    vulnerabilityStrategyComparison: ValueComparison<string>;
+    dependencies: DependenciesComparison;
+  }
+  
+  export interface DependenciesComparison {
+    compared: Map<string, DependencyComparison>;
+    added?: Map<string, Dependency>;
+    removed?: Map<string, Dependency>;
+  }
+  
+  export interface DependencyComparison {
+    publishers: ArrayDiff<Publisher>;
+    maintainers: ArrayDiff<Maintainer>;
+    versions: VersionsComparisonResult;
+    vulnerabilities: ArrayDiff<Vuln.Strategy.StandardVulnerability>;
+  }
+  
+  export interface VersionsComparisonResult {
+    compared: Map<string, DependencyVersionComparison>;
+    added?: Map<string, DependencyVersion>;
+    removed?: Map<string, DependencyVersion>;
+  }
+  
+  export interface DependencyVersionComparison {
+    id: ValueComparison<string>;
+    size: ValueComparison<number>;
+    usedBy: DictionaryComparison<Record<string, string>>;
+    devDependency: ValueComparison<boolean>;
+    existOnRemoteRegistry: ValueComparison<boolean>;
+    description: ValueComparison<string>;
+    author: ValueComparison<Author>;
+    engines: DictionaryComparison<Engines>;
+    repository: ValueComparison<Repository>;
+    scripts: DictionaryComparison<Record<string, string>>;
+    warnings: ArrayDiff<JSXRay.Warning>;
+    composition: CompositionComparisonResult;
+    licenseIds: ArrayDiff<License>;
+    flags: ArrayDiff<string>;
+    links: ValueComparison<DependencyLinks>;
+  }
+  
+  export interface DictionaryComparison<T> {
+    compared: Map<string, T>;
+    added?: Map<string, T>;
+    removed?: Map<string, T>;
+  }
+  
+  export interface CompositionComparisonResult {
+    minified: ArrayDiff<string>;
+    required_thirdparty: ArrayDiff<string>;
+    required_nodejs: ArrayDiff<string>;
+    require_unused: ArrayDiff<string>;
+    required_missing: ArrayDiff<string>;
+  }
+
+  type ValueComparison<T> = {
+    prev: T;
+    now: T;
+  } | undefined
+  
+  export interface ArrayDiff<T> {
+    added: T[];
+    removed: T[];
   }
 }

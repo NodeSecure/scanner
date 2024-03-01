@@ -99,6 +99,33 @@ function compareDictionnaries(original, toCompare) {
   };
 }
 
+function compareObjects(key, original = {}, toCompare = {}) {
+  if (original[key] === toCompare[key]) {
+    return undefined;
+  }
+
+  return {
+    prev: original,
+    now: toCompare
+  };
+}
+
+function compareValues(original, toCompare) {
+  if (typeof original === "object") {
+    if (JSON.stringify(original) === JSON.stringify(toCompare)) {
+      return undefined;
+    }
+  }
+  else if (original === toCompare) {
+    return undefined;
+  }
+
+  return {
+    prev: original,
+    now: toCompare
+  };
+}
+
 function dictionariesDiff(original = {}, toCompare = {}) {
   const added = new Map();
   const removed = new Map();
