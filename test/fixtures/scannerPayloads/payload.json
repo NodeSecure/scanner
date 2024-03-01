@@ -24,8 +24,8 @@
             "id": "abc",
             "size": "1",
             "usedBy": {
-              "bar": "1.0.0",
-              "foo": "1.0.0"
+              "foo": "1.0.0",
+              "bar": "1.0.0"
             },
             "isDevDependency": false,
             "existOnRemoteRegistry": false,
@@ -127,10 +127,6 @@
             }
           },
           "3.0.0": {
-            "usedBy": {
-              "bar": "1.0.0",
-              "baz": "1.0.0"
-            },
             "isDevDependency": false,
             "author": {
               "name": "Sindre Sorhus",
@@ -169,9 +165,6 @@
               ]
             }
           },"3.0.1": {
-            "usedBy": {
-              "bar": "1.0.0"
-            },
             "isDevDependency": false,
             "author": {
               "name": "Sindre Sorhus",
@@ -255,9 +248,6 @@
       "bar": {
         "versions": {
           "3.0.0": {
-            "usedBy": {
-              "is-inside-container": "1.0.0"
-            },
             "isDevDependency": false,
             "author": {
               "name": "Sindre Sorhus",

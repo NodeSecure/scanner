@@ -13,34 +13,27 @@ export function comparePayloads(payload, comparedPayload) {
 
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    flaggedAuthors: arrayObjectDiff("name", payload.flaggedAuthors, comparedPayload.flaggedAuthors),
-    warnings: arrayLiteralDiff(payload.warnings, comparedPayload.warnings),
-    scannerVersion: valueDiff(payload.scannerVersion, comparedPayload.scannerVersion),
-    vulnerabilityStrategy: valueDiff(payload.vulnerabilityStrategy, comparedPayload.vulnerabilityStrategy),
+    flaggedAuthors: arrayOfObjectsDiffByKey("name", payload.flaggedAuthors, comparedPayload.flaggedAuthors),
+    warnings: arrayDiff(payload.warnings, comparedPayload.warnings),
+    scannerVersion: compareValues(payload.scannerVersion, comparedPayload.scannerVersion),
+    vulnerabilityStrategy: compareValues(payload.vulnerabilityStrategy, comparedPayload.vulnerabilityStrategy),
     dependencies: compareDependencies(payload.dependencies, comparedPayload.dependencies)
   };
-}
-
-function arrayLiteralDiff(original = [], toCompare = []) {
-  const added = toCompare.filter((v, i) => v !== original[i]);
-  const removed = original.filter((v, i) => v !== toCompare[i]);
-
-  return { added, removed };
 }
 
 function compareDependencies(original, toCompare) {
   const {
     comparable,
     ...dependencies
-  } = collectionObjectDiff(original, toCompare);
+  } = dictionariesDiff(original, toCompare);
 
   const comparedDependencies = new Map();
   for (const [name, [dep, comparedDep]] of comparable) {
     const diff = {
-      publishers: arrayObjectDiff("name", dep.metadata.publishers, comparedDep.metadata.publishers),
-      maintainers: arrayObjectDiff("name", dep.metadata.maintainers, comparedDep.metadata.maintainers),
+      publishers: arrayOfObjectsDiffByKey("name", dep.metadata.publishers, comparedDep.metadata.publishers),
+      maintainers: arrayOfObjectsDiffByKey("name", dep.metadata.maintainers, comparedDep.metadata.maintainers),
       versions: compareVersions(dep.versions, comparedDep.versions),
-      vulnerabilities: arrayObjectDiff("id", dep.vulnerabilities, comparedDep.vulnerabilities)
+      vulnerabilities: arrayOfObjectsDiffByKey("id", dep.vulnerabilities, comparedDep.vulnerabilities)
     };
 
     comparedDependencies.set(name, diff);
@@ -50,27 +43,27 @@ function compareDependencies(original, toCompare) {
 }
 
 function compareVersions(original, toCompare) {
-  const { comparable, ...versions } = collectionObjectDiff(original, toCompare);
+  const { comparable, ...versions } = dictionariesDiff(original, toCompare);
 
   const comparedVersions = new Map();
   for (const [name, [version, comparedVersion]] of comparable) {
     const diff = {
-      id: valueDiff(version.id, comparedVersion.id),
-      size: valueDiff(version.size, comparedVersion.size),
-      usedBy: collectionObjectDiff(version.usedBy, comparedVersion.usedBy),
-      devDependency: valueDiff(version.isDevDependency, comparedVersion.isDevDependency),
-      existOnRemoteRegistry: valueDiff(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
-      description: valueDiff(version.description, comparedVersion.description),
-      author: objectDiff("name", version.author, comparedVersion.author),
-      engines: compareCollectionObjectDiff(version.engines, comparedVersion.engines),
-      repository: objectDiff("type", version.repository, comparedVersion.repository)
-        ?? objectDiff("url", version.repository, comparedVersion.repository),
-      scripts: compareCollectionObjectDiff(version.scripts, comparedVersion.scripts),
-      warnings: diffSnapShotArray(version.warnings, comparedVersion.warnings),
+      id: compareValues(version.id, comparedVersion.id),
+      size: compareValues(version.size, comparedVersion.size),
+      usedBy: compareDictionnaries(version.usedBy, comparedVersion.usedBy),
+      devDependency: compareValues(version.isDevDependency, comparedVersion.isDevDependency),
+      existOnRemoteRegistry: compareValues(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
+      description: compareValues(version.description, comparedVersion.description),
+      author: compareObjects("name", version.author, comparedVersion.author),
+      engines: compareDictionnaries(version.engines, comparedVersion.engines),
+      repository: compareObjects("type", version.repository, comparedVersion.repository)
+        ?? compareObjects("url", version.repository, comparedVersion.repository),
+      scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),
+      warnings: arrayDiff(version.warnings, comparedVersion.warnings),
       composition: compareComposition(version.composition, comparedVersion.composition),
-      licenseIds: arrayLiteralDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
-      flags: arrayLiteralDiff(version.flags, comparedVersion.flags),
-      links: compareSnapShot(version.links, comparedVersion.links)
+      licenseIds: arrayDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
+      flags: arrayDiff(version.flags, comparedVersion.flags),
+      links: compareValues(version.links, comparedVersion.links)
     };
 
     comparedVersions.set(name, diff);
@@ -84,21 +77,20 @@ function compareVersions(original, toCompare) {
 
 function compareComposition(original = {}, toCompare = {}) {
   return {
-    minified: arrayLiteralDiff(original.minified, toCompare.minified),
-    required_thirdparty: arrayLiteralDiff(original.required_thirdparty, toCompare.required_thirdparty),
-    required_nodejs: arrayLiteralDiff(original.required_nodejs, toCompare.required_nodejs),
-    required_unused: arrayLiteralDiff(original.required_unused, toCompare.required_unused),
-    required_missing: arrayLiteralDiff(original.required_missing, toCompare.required_missing)
+    minified: arrayDiff(original.minified, toCompare.minified),
+    required_thirdparty: arrayDiff(original.required_thirdparty, toCompare.required_thirdparty),
+    required_nodejs: arrayDiff(original.required_nodejs, toCompare.required_nodejs),
+    required_unused: arrayDiff(original.required_unused, toCompare.required_unused),
+    required_missing: arrayDiff(original.required_missing, toCompare.required_missing)
   };
 }
 
-
-function compareCollectionObjectDiff(original, toCompare) {
-  const { comparable, ...diff } = collectionObjectDiff(original, toCompare);
+function compareDictionnaries(original, toCompare) {
+  const { comparable, ...diff } = dictionariesDiff(original, toCompare);
 
   const compared = new Map();
   for (const [name, [entity, comparedEntity]] of comparable) {
-    compared.set(name, valueDiff(entity, comparedEntity));
+    compared.set(name, compareValues(entity, comparedEntity));
   }
 
   return {
@@ -107,89 +99,55 @@ function compareCollectionObjectDiff(original, toCompare) {
   };
 }
 
-function diffSnapShotArray(original = [], toCompare = []) {
-  const removed = original.filter((o, k) => JSON.stringify(o) !== JSON.stringify(toCompare[k]));
-  const added = toCompare.filter((o, k) => JSON.stringify(o) !== JSON.stringify(original[k]));
-
-  return { added, removed };
-}
-
-function compareSnapShot(original = {}, toCompare = {}) {
-  if (JSON.stringify(original) === JSON.stringify(toCompare)) {
-    return undefined;
-  }
-
-  return { prev: original, now: toCompare };
-}
-
-function collectionObjectDiff(original = {}, toCompare = {}, withValueDiff = false) {
-  const comparable = new Map();
+function dictionariesDiff(original = {}, toCompare = {}) {
+  const added = new Map();
   const removed = new Map();
-  for (const name in original) {
-    if (!Object.hasOwn(original, name)) {
-      continue;
-    }
+  const comparable = new Map();
 
-    if (Object.hasOwn(toCompare, name)) {
-      comparable.set(name, [original[name], toCompare[name]]);
+  Object.keys(original).forEach((key) => {
+    if (Object.hasOwn(toCompare, key)) {
+      comparable.set(key, [original[key], toCompare[key]]);
     }
     else {
-      removed.set(name, original[name]);
+      removed.set(key, original[key]);
     }
-  }
+  });
 
-  const added = new Map();
-  for (const name in toCompare) {
-    if (!Object.hasOwn(toCompare, name)) {
-      continue;
+  Object.keys(toCompare).forEach((key) => {
+    if (!Object.hasOwn(original, key)) {
+      added.set(key, toCompare[key]);
     }
+  });
 
-    if (!Object.hasOwn(original, name)) {
-      added.set(name, toCompare[name]);
-    }
-  }
-
-  return { comparable, added, removed };
+  return { added, removed, comparable };
 }
 
-function arrayObjectDiff(key, original = [], toCompare = []) {
-  const removed = [];
-  for (const obj of original) {
-    const comparedObj = toCompare.find((o) => o[key] === obj[key]);
-    if (!comparedObj) {
-      removed.push(obj);
+function arrayDiff(original = [], toCompare = []) {
+  const added = toCompare.filter((v, i) => {
+    if (typeof v !== "object") {
+      return v !== original[i];
     }
-  }
 
-  const added = [];
-  for (const comparedObj of toCompare) {
-    const obj = original.find((o) => o[key] === comparedObj[key]);
-    if (!obj) {
-      added.push(comparedObj);
+    return JSON.stringify(v) !== JSON.stringify(original[i]);
+  });
+
+  const removed = original.filter((v, i) => {
+    if (typeof v !== "object") {
+      return v !== toCompare[i];
     }
-  }
+
+    return JSON.stringify(v) !== JSON.stringify(toCompare[i]);
+  });
 
   return { added, removed };
 }
 
-function objectDiff(key, original = {}, toCompare = {}) {
-  if (original[key] === toCompare[key]) {
-    return undefined;
-  }
+export function arrayOfObjectsDiffByKey(key, original = [], toCompare = []) {
+  const toCompareMap = new Map(toCompare.map((item) => [item[key], item]));
+  const originalMap = new Map(original.map((item) => [item[key], item]));
 
-  return {
-    prev: original,
-    now: toCompare
-  };
-}
+  const added = toCompare.filter((item) => !originalMap.has(item[key]));
+  const removed = original.filter((item) => !toCompareMap.has(item[key]));
 
-function valueDiff(original, toCompare) {
-  if (original === toCompare) {
-    return undefined;
-  }
-
-  return {
-    prev: original,
-    now: toCompare
-  };
+  return { added, removed };
 }

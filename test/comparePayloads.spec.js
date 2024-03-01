@@ -129,6 +129,16 @@ it("should detect deep dependencies diff", () => {
   assert.ok(comparedVersion2.size.prev === "1");
   assert.ok(comparedVersion2.size.now === "2");
 
+  const usedBy = comparedVersion2.usedBy;
+  assert.ok(usedBy.added.has("baz"));
+  assert.strictEqual(usedBy.added.size, 1);
+
+  assert.ok(usedBy.removed.has("bar"));
+  assert.strictEqual(usedBy.removed.size, 1);
+
+  assert.strictEqual(usedBy.compared.get("foo").prev, "1.0.0");
+  assert.strictEqual(usedBy.compared.get("foo").now, "1.0.1");
+
   assert.ok(comparedVersion2.devDependency.prev === false);
   assert.ok(comparedVersion2.devDependency.now === true);
 
@@ -246,11 +256,6 @@ it("should detect deep dependencies diff", () => {
   const comparedVersion3 = foo.versions.compared.get("3.0.0");
   assert.strictEqual(comparedVersion3.devDependency, undefined);
   assert.strictEqual(comparedVersion3.author, undefined);
-  assert.ok(comparedVersion3.usedBy.added.has("foo"));
-  assert.strictEqual(comparedVersion3.usedBy.added.size, 1);
-
-  assert.ok(comparedVersion3.usedBy.removed.has("baz"));
-  assert.strictEqual(comparedVersion3.usedBy.removed.size, 1);
 
   // repository: diff on url only
   assert.deepStrictEqual(comparedVersion3.repository.prev, {

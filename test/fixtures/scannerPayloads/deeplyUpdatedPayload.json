@@ -9,8 +9,8 @@
             "id": "bcd",
             "size": "2",
             "usedBy": {
-              "bar": "1.0.0",
-              "foo": "1.0.0"
+              "foo": "1.0.1",
+              "baz": "1.0.0"
             },
             "isDevDependency": true,
             "existOnRemoteRegistry": true,
