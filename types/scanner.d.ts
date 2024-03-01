@@ -293,7 +293,7 @@ declare namespace Scanner {
     repository: ValueComparison<Repository>;
     scripts: DictionaryComparison<Record<string, string>>;
     warnings: ArrayDiff<JSXRay.Warning>;
-    composition: CompositionComparisonResult;
+    composition: CompositionComparison;
     licenseIds: ArrayDiff<License>;
     flags: ArrayDiff<string>;
     links: ValueComparison<DependencyLinks>;
@@ -305,7 +305,7 @@ declare namespace Scanner {
     removed: Map<string, T>;
   }
   
-  export interface CompositionComparisonResult {
+  export interface CompositionComparison {
     minified: ArrayDiff<string>;
     required_thirdparty: ArrayDiff<string>;
     required_nodejs: ArrayDiff<string>;
