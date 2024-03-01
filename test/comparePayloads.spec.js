@@ -126,6 +126,9 @@ it("should detect deep dependencies diff", () => {
   assert.ok(comparedVersion2.id.prev === "abc");
   assert.ok(comparedVersion2.id.now === "bcd");
 
+  assert.ok(comparedVersion2.size.prev === "1");
+  assert.ok(comparedVersion2.size.now === "2");
+
   assert.ok(comparedVersion2.devDependency.prev === false);
   assert.ok(comparedVersion2.devDependency.now === true);
 
