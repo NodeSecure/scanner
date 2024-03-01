@@ -264,8 +264,8 @@ declare namespace Scanner {
   
   export interface DependenciesComparison {
     compared: Map<string, DependencyComparison>;
-    added?: Map<string, Dependency>;
-    removed?: Map<string, Dependency>;
+    added: Map<string, Dependency>;
+    removed: Map<string, Dependency>;
   }
   
   export interface DependencyComparison {
@@ -277,8 +277,8 @@ declare namespace Scanner {
   
   export interface VersionsComparisonResult {
     compared: Map<string, DependencyVersionComparison>;
-    added?: Map<string, DependencyVersion>;
-    removed?: Map<string, DependencyVersion>;
+    added: Map<string, DependencyVersion>;
+    remove?: Map<string, DependencyVersion>;
   }
   
   export interface DependencyVersionComparison {
@@ -301,8 +301,8 @@ declare namespace Scanner {
   
   export interface DictionaryComparison<T> {
     compared: Map<string, T>;
-    added?: Map<string, T>;
-    removed?: Map<string, T>;
+    added: Map<string, T>;
+    removed: Map<string, T>;
   }
   
   export interface CompositionComparisonResult {
