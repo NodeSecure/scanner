@@ -11,7 +11,7 @@ import { comparePayloads } from "../index.js";
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const kFixturePath = join(__dirname, "fixtures", "scannerPayloads");
-const payload = JSON.parse(readFileSync(join(FIXTURE_PATH, "/payload.json"), "utf8"));
+const kPayload = JSON.parse(readFileSync(join(FIXTURE_PATH, "/payload.json"), "utf8"));
 
 it("should throw an error if compared payloads have the same id", () => {
   assert.throws(
