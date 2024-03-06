@@ -48,11 +48,11 @@
                 "foo",
                 "baz"
               ],
-              "required_unused": [
+              "unused": [
                 "foo",
                 "baz"
               ],
-              "required_missing": [
+              "missing": [
                 "foo",
                 "baz"
               ]

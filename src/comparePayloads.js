@@ -80,8 +80,8 @@ function compareComposition(original = {}, toCompare = {}) {
     minified: arrayDiff(original.minified, toCompare.minified),
     required_thirdparty: arrayDiff(original.required_thirdparty, toCompare.required_thirdparty),
     required_nodejs: arrayDiff(original.required_nodejs, toCompare.required_nodejs),
-    required_unused: arrayDiff(original.required_unused, toCompare.required_unused),
-    required_missing: arrayDiff(original.required_missing, toCompare.required_missing)
+    unused: arrayDiff(original.unused, toCompare.unused),
+    missing: arrayDiff(original.missing, toCompare.missing)
   };
 }
 

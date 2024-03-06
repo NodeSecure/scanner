@@ -309,8 +309,8 @@ declare namespace Scanner {
     minified: ArrayDiff<string>;
     required_thirdparty: ArrayDiff<string>;
     required_nodejs: ArrayDiff<string>;
-    require_unused: ArrayDiff<string>;
-    required_missing: ArrayDiff<string>;
+    unused: ArrayDiff<string>;
+    missing: ArrayDiff<string>;
   }
 
   type ValueComparison<T> = {

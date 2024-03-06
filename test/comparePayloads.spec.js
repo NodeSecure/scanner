@@ -11,12 +11,12 @@ import { comparePayloads } from "../index.js";
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const kFixturePath = join(__dirname, "fixtures", "scannerPayloads");
-const kPayload = JSON.parse(readFileSync(join(FIXTURE_PATH, "/payload.json"), "utf8"));
+const kPayload = JSON.parse(readFileSync(join(kFixturePath, "/payload.json"), "utf8"));
 
 it("should throw an error if compared payloads have the same id", () => {
   assert.throws(
     () => compareTo("sameIdPayload"),
-    { message: `You try to compare two payloads with the same id '${payload.id}'` }
+    { message: `You try to compare two payloads with the same id '${kPayload.id}'` }
   );
 });
 
@@ -88,7 +88,8 @@ it("should detect vulnerability strategy version diff", () => {
   assert.strictEqual(now, "snyk");
 });
 
-it("should detect deep dependencies diff", () => {
+
+it("should detect dependencies diff", () => {
   const { dependencies: { compared, added, removed } } = compareTo("deeplyUpdatedPayload");
 
   // Global comparison of dependencies
@@ -121,13 +122,17 @@ it("should detect deep dependencies diff", () => {
   assert.ok(foo.versions.compared.has("3.0.0"));
   assert.ok(foo.versions.compared.has("2.0.0"));
   assert.strictEqual(foo.versions.compared.size, 2);
+});
 
-  const comparedVersion2 = foo.versions.compared.get("2.0.0");
+it("should detect version diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+
+  const comparedVersion2 = compared.get("foo").versions.compared.get("2.0.0");
   assert.ok(comparedVersion2.id.prev === "abc");
   assert.ok(comparedVersion2.id.now === "bcd");
 
-  assert.ok(comparedVersion2.size.prev === "1");
-  assert.ok(comparedVersion2.size.now === "2");
+  assert.strictEqual(comparedVersion2.size.prev, "1");
+  assert.strictEqual(comparedVersion2.size.now, "2");
 
   const usedBy = comparedVersion2.usedBy;
   assert.ok(usedBy.added.has("baz"));
@@ -178,6 +183,27 @@ it("should detect deep dependencies diff", () => {
     repository: "https://github.com/example-package/example-repo2"
   });
 
+  const comparedVersion3 = compared.get("foo").versions.compared.get("3.0.0");
+  assert.strictEqual(comparedVersion3.devDependency, undefined);
+  assert.strictEqual(comparedVersion3.author, undefined);
+
+  // repository: diff on url only
+  assert.deepStrictEqual(comparedVersion3.repository.prev, {
+    type: "git",
+    url: "https://github.com/NodeSecure/js-x-ray"
+  });
+
+  assert.deepStrictEqual(comparedVersion3.repository.now, {
+    type: "git",
+    url: "https://github.com/NodeSecure/js-x-ray2"
+  });
+});
+
+it("should detect compared version composition diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+
+  const comparedVersion2 = compared.get("foo").versions.compared.get("2.0.0");
+
   const composition = comparedVersion2.composition;
   assert.strictEqual(composition.minified.added.length, 1);
   assert.strictEqual(composition.minified.added[0], "baz.min.js");
@@ -197,33 +223,45 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(composition.required_nodejs.removed.length, 1);
   assert.strictEqual(composition.required_nodejs.removed[0], "bar");
 
-  assert.strictEqual(composition.required_unused.added.length, 1);
-  assert.strictEqual(composition.required_unused.added[0], "baz");
+  assert.strictEqual(composition.unused.added.length, 1);
+  assert.strictEqual(composition.unused.added[0], "baz");
 
-  assert.strictEqual(composition.required_unused.removed.length, 1);
-  assert.strictEqual(composition.required_unused.removed[0], "bar");
+  assert.strictEqual(composition.unused.removed.length, 1);
+  assert.strictEqual(composition.unused.removed[0], "bar");
 
-  assert.strictEqual(composition.required_missing.added.length, 1);
-  assert.strictEqual(composition.required_missing.added[0], "baz");
+  assert.strictEqual(composition.missing.added.length, 1);
+  assert.strictEqual(composition.missing.added[0], "baz");
 
-  assert.strictEqual(composition.required_missing.removed.length, 1);
-  assert.strictEqual(composition.required_missing.removed[0], "bar");
+  assert.strictEqual(composition.missing.removed.length, 1);
+  assert.strictEqual(composition.missing.removed[0], "bar");
+});
 
-  const licenseIds = comparedVersion2.licenseIds;
+it("should detect license IDs diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+  const { licenseIds } = compared.get("foo").versions.compared.get("2.0.0");
+
   assert.strictEqual(licenseIds.added.length, 1);
   assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");
 
   assert.strictEqual(licenseIds.removed.length, 1);
   assert.strictEqual(licenseIds.removed[0], "GPL-3.0");
+});
 
-  const flags = comparedVersion2.flags;
+it("should detect flags diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+  const { flags } = compared.get("foo").versions.compared.get("2.0.0");
+
   assert.strictEqual(flags.added.length, 1);
   assert.strictEqual(flags.added[0], "🌲");
 
   assert.strictEqual(flags.removed.length, 1);
   assert.strictEqual(flags.removed[0], "💎");
+});
 
-  const engines = comparedVersion2.engines;
+it("should detect engines diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+  const { engines } = compared.get("foo").versions.compared.get("2.0.0");
+
   assert.strictEqual(engines.added.size, 1);
   assert.ok(engines.added.has("node4"));
 
@@ -233,12 +271,14 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(engines.compared.size, 2);
   assert.ok(engines.compared.has("node2"));
   assert.ok(engines.compared.has("node3"));
-
   assert.strictEqual(engines.compared.get("node2").prev, "^12.20.0 || ^14.13.1 || >=16.0.0");
   assert.strictEqual(engines.compared.get("node2").now, "^14.20.0 || ^16.13.1 || >=18.0.0");
-  assert.strictEqual(engines.compared.get("node3"), undefined);
+});
 
-  const scripts = comparedVersion2.scripts;
+it("should detect scripts diff", () => {
+  const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
+  const { scripts } = compared.get("foo").versions.compared.get("2.0.0");
+
   assert.strictEqual(scripts.added.size, 1);
   assert.ok(scripts.added.has("lint"));
 
@@ -248,35 +288,19 @@ it("should detect deep dependencies diff", () => {
   assert.strictEqual(scripts.compared.size, 2);
   assert.ok(scripts.compared.has("test"));
   assert.strictEqual(scripts.compared.get("test"), undefined);
-
   assert.ok(scripts.compared.has("standard"));
   assert.strictEqual(scripts.compared.get("standard").prev, "npx standard");
   assert.strictEqual(scripts.compared.get("standard").now, "npx standard --fix");
-
-  const comparedVersion3 = foo.versions.compared.get("3.0.0");
-  assert.strictEqual(comparedVersion3.devDependency, undefined);
-  assert.strictEqual(comparedVersion3.author, undefined);
-
-  // repository: diff on url only
-  assert.deepStrictEqual(comparedVersion3.repository.prev, {
-    type: "git",
-    url: "https://github.com/NodeSecure/js-x-ray"
-  });
-
-  assert.deepStrictEqual(comparedVersion3.repository.now, {
-    type: "git",
-    url: "https://github.com/NodeSecure/js-x-ray2"
-  });
 });
 
 const payloads = {};
 function compareTo(name) {
   if (!payloads[name]) {
-    payloads[name] = JSON.parse(readFileSync(join(FIXTURE_PATH, `/${name}.json`), "utf8"));
+    payloads[name] = JSON.parse(readFileSync(join(kFixturePath, `/${name}.json`), "utf8"));
   }
 
   return comparePayloads(
-    payload,
+    kPayload,
     payloads[name]
   );
 }

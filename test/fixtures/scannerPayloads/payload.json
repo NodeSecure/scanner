@@ -86,11 +86,11 @@
                 "foo",
                 "bar"
               ],
-              "required_unused": [
+              "unused": [
                 "foo",
                 "bar"
               ],
-              "required_missing": [
+              "missing": [
                 "foo",
                 "bar"
               ]
