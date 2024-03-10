@@ -109,6 +109,7 @@ test("execute depWalker on pkg.gitdeps", async() => {
     "safe-regex",
     "string-width",
     "strip-ansi",
+    "ts-pattern",
     "zen-observable"
   ].sort());
 });
