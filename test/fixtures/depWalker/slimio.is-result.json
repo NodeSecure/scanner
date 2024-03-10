@@ -100,7 +100,7 @@
       "lastUpdateAt": "2023-01-23T02:15:37.203Z",
       "lastVersion": "2.0.0",
       "hasManyPublishers": true,
-      "hasReceivedUpdateInOneYear": true,
+      "hasReceivedUpdateInOneYear": false,
       "homepage": "https://github.com/SlimIO/is#readme",
       "author": {
         "name": "SlimIO"
