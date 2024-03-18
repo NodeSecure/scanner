@@ -1,6 +1,6 @@
 // Import Node.js Dependencies
-import { EventEmitter } from "events";
-import { performance } from "perf_hooks";
+import { EventEmitter } from "node:events";
+import { performance } from "node:perf_hooks";
 
 export default class Logger extends EventEmitter {
   constructor() {

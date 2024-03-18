@@ -50,6 +50,7 @@
           "uniqueLicenseIds": [
             "MIT"
           ],
+          "invalidLicenseIds": [],
           "hasMultipleLicenses": false,
           "licenses": [
             {

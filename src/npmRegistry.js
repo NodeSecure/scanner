@@ -3,10 +3,15 @@ import crypto from "node:crypto";
 
 // Import Third-party Dependencies
 import semver from "semver";
-import { packument, packumentVersion, user as npmUserProfile } from "@nodesecure/npm-registry-sdk";
+import { parseAuthor } from "@nodesecure/utils";
+import {
+  packument,
+  packumentVersion,
+  user as npmUserProfile
+} from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
-import { parseAuthor, getLinks } from "./utils/index.js";
+import { getLinks } from "./utils/index.js";
 
 export async function manifestMetadata(
   name,

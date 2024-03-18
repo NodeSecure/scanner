@@ -1,57 +1,45 @@
 // Import Node.js Dependencies
-import path from "path";
-import os from "os";
-import timers from "timers/promises";
+import path from "node:path";
+import os from "node:os";
+import timers from "node:timers/promises";
 
 // Import Third-party Dependencies
-import { runASTAnalysisOnFile } from "@nodesecure/js-x-ray";
+import { runASTAnalysisOnFile, Warning, Dependency } from "@nodesecure/js-x-ray";
+import Locker from "@slimio/lock";
 import pacote from "pacote";
-import ntlp from "@nodesecure/ntlp";
+import * as ntlp from "@nodesecure/ntlp";
 
 // Import Internal Dependencies
 import {
   getTarballComposition,
   isSensitiveFile,
-  filterDependencyKind,
   analyzeDependencies,
   booleanToFlags,
-  NPM_TOKEN,
   getSemVerWarning
 } from "./utils/index.js";
+import { NPM_TOKEN } from "./constants.js";
+import { DependencyRef } from "./types.js";
 import * as manifest from "./manifest.js";
+import * as sast from "./sast/index.js";
 
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
-export async function scanJavascriptFile(dest, file, packageName) {
-  const result = await runASTAnalysisOnFile(path.join(dest, file), { packageName });
-
-  const warnings = result.warnings.map((curr) => Object.assign({}, curr, { file }));
-  if (!result.ok) {
-    return {
-      file,
-      warnings,
-      isMinified: false,
-      tryDependencies: [],
-      dependencies: [],
-      filesDependencies: []
-    };
-  }
-  const { packages, files } = filterDependencyKind(result.dependencies, path.dirname(file));
-
-  return {
-    file,
-    warnings,
-    isMinified: result.isMinified,
-    tryDependencies: [...result.dependencies.getDependenciesInTryStatement()],
-    dependencies: packages,
-    filesDependencies: files
-  };
+export interface scanDirOrArchiveOptions {
+  ref: DependencyRef;
+  location?: string;
+  tmpLocation?: null | string;
+  locker: Locker;
+  registry: string;
 }
 
-export async function scanDirOrArchive(name, version, options) {
-  const { ref, location = process.cwd(), tmpLocation, locker, registry } = options;
+export async function scanDirOrArchive(
+  name: string,
+  version: string,
+  options: scanDirOrArchiveOptions
+) {
+  const { ref, location = process.cwd(), tmpLocation = null, locker, registry } = options;
 
   const isNpmTarball = !(tmpLocation === null);
   const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : location;
@@ -60,7 +48,7 @@ export async function scanDirOrArchive(name, version, options) {
   try {
     // If this is an NPM tarball then we extract it on the disk with pacote.
     if (isNpmTarball) {
-      await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl : `${name}@${version}`, dest, {
+      await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`, dest, {
         ...NPM_TOKEN,
         registry,
         cache: `${os.homedir()}/.npm`
@@ -114,12 +102,12 @@ export async function scanDirOrArchive(name, version, options) {
     const fileAnalysisRaw = await Promise.allSettled(
       files
         .filter((name) => kJsExtname.has(path.extname(name)))
-        .map((file) => scanJavascriptFile(dest, file, name))
+        .map((file) => sast.scanFile(dest, file, name))
     );
 
     const fileAnalysisResults = fileAnalysisRaw
       .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
-      .map((promiseSettledResult) => promiseSettledResult.value);
+      .map((promiseSettledResult) => (promiseSettledResult as PromiseFulfilledResult<sast.scanFileReport>).value);
 
     ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
 
@@ -134,7 +122,10 @@ export async function scanDirOrArchive(name, version, options) {
 
     const {
       nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
-    } = analyzeDependencies(dependencies, { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports });
+    } = analyzeDependencies(
+      dependencies,
+      { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports }
+    );
 
     ref.composition.required_thirdparty = thirdPartyDependencies;
     ref.composition.required_subpath = Object.fromEntries(subpathImportsDependencies);
@@ -146,7 +137,7 @@ export async function scanDirOrArchive(name, version, options) {
 
     // License
     await timers.setImmediate();
-    const licenses = await ntlp(dest);
+    const licenses = await ntlp.extractLicenses(dest);
     const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
     ref.license = licenses;
     ref.license.uniqueLicenseIds = uniqueLicenseIds;
@@ -170,7 +161,31 @@ export async function scanDirOrArchive(name, version, options) {
   }
 }
 
-export async function scanPackage(dest, packageName) {
+export interface ScannedPackageResult {
+  files: {
+    /** Complete list of files for the given package */
+    list: string[];
+    /** Complete list of extensions (.js, .md etc.) */
+    extensions: string[];
+    /** List of minified javascript files */
+    minified: string[];
+  };
+  /** Size of the directory in bytes */
+  directorySize: number;
+  /** Unique license contained in the tarball (MIT, ISC ..) */
+  uniqueLicenseIds: string[];
+  /** All licenses with their SPDX */
+  licenses: ntlp.SpdxLicenseConformance[];
+  ast: {
+    dependencies: Record<string, Record<string, Dependency>>;
+    warnings: Warning[];
+  };
+}
+
+export async function scanPackage(
+  dest: string,
+  packageName?: string
+): Promise<ScannedPackageResult> {
   const { type = "script", name } = await manifest.read(dest);
 
   await timers.setImmediate();
@@ -178,8 +193,9 @@ export async function scanPackage(dest, packageName) {
   ext.delete("");
 
   // Search for runtime dependencies
-  const dependencies = Object.create(null);
-  const [minified, warnings] = [[], []];
+  const dependencies: Record<string, Record<string, Dependency>> = Object.create(null);
+  const minified: string[] = [];
+  const warnings: Warning[] = [];
 
   const JSFiles = files.filter((name) => kJsExtname.has(path.extname(name)));
   for (const file of JSFiles) {
@@ -198,7 +214,7 @@ export async function scanPackage(dest, packageName) {
   }
 
   await timers.setImmediate();
-  const { uniqueLicenseIds, licenses } = await ntlp(dest);
+  const { uniqueLicenseIds, licenses } = await ntlp.extractLicenses(dest);
 
   return {
     files: { list: files, extensions: [...ext], minified },

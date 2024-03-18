@@ -1,16 +1,17 @@
 // Require Node.js Dependencies
 import path from "node:path";
-import { test } from "node:test";
 import assert from "node:assert";
+import { fileURLToPath } from "node:url";
+import { test } from "node:test";
 
 // Require Third-party Dependencies
 import getSize from "get-folder-size";
 
 // Require Internal Dependencies
-import { getTarballComposition, getDirNameFromUrl } from "../../src/utils/index.js";
+import { getTarballComposition } from "../../src/utils/index.js";
 
 // CONSTANTS
-const __dirname = getDirNameFromUrl(import.meta.url);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "getTarballComposition");
 
 test("should return the composition of a directory", async() => {

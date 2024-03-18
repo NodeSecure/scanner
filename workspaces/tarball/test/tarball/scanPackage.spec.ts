@@ -5,14 +5,16 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Require Internal Dependencies
-import { scanPackage } from "../../src/tarball.js";
+import { scanPackage } from "../../src/index.js";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "scanPackage");
 
 test("scanPackage (caseone)", async() => {
-  const result = await scanPackage(path.join(FIXTURE_PATH, "caseone"));
+  const result = await scanPackage(
+    path.join(FIXTURE_PATH, "caseone")
+  );
   result.files.extensions.sort();
 
   assert.deepEqual(result.files, {
@@ -23,7 +25,7 @@ test("scanPackage (caseone)", async() => {
       "package.json",
       "src\\deps.js",
       "src\\other.min.js"
-    ].map((location) => location.replaceAll("\\", path.sep)),
+    ].map((location) => location.replace(/\\/g, path.sep)),
     extensions: [
       ".txt",
       ".js",
@@ -31,7 +33,7 @@ test("scanPackage (caseone)", async() => {
     ].sort(),
     minified: [
       "src\\other.min.js"
-    ].map((location) => location.replaceAll("\\", path.sep))
+    ].map((location) => location.replace(/\\/g, path.sep))
   });
 
   assert.ok(typeof result.directorySize === "number", "directorySize should be a number");
@@ -61,7 +63,7 @@ test("scanPackage (caseone)", async() => {
     "index.js",
     "src\\deps.js",
     "src\\other.min.js"
-  ].map((location) => location.replaceAll("\\", path.sep)));
+  ].map((location) => location.replace(/\\/g, path.sep)));
   assert.deepEqual(Object.keys(result.ast.dependencies["index.js"]), [
     "./src/deps.js",
     "fs",

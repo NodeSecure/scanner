@@ -1,8 +1,8 @@
 // Import Node.js Dependencies
-import path from "path";
-import { readFileSync, promises as fs } from "fs";
-import timers from "timers/promises";
-import os from "os";
+import path from "node:path";
+import { readFileSync, promises as fs } from "node:fs";
+import timers from "node:timers/promises";
+import os from "node:os";
 
 // Import Third-party Dependencies
 import combineAsyncIterators from "combine-async-iterators";
@@ -13,12 +13,14 @@ import Lock from "@slimio/lock";
 import * as vuln from "@nodesecure/vuln";
 import { ScannerLoggerEvents } from "./constants.js";
 
+// Import Workspaces Dependencies
+import { scanDirOrArchive } from "@nodesecure/tarball";
+
 // Import Internal Dependencies
 import {
   mergeDependencies, getCleanDependencyName, getDependenciesWarnings, addMissingVersionFlags, isGitDependency,
   NPM_TOKEN
 } from "./utils/index.js";
-import { scanDirOrArchive } from "./tarball.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
 import Dependency from "./class/dependency.class.js";
 import Logger from "./class/logger.class.js";
@@ -98,7 +100,7 @@ export async function* deepReadEdges(currentPackageName, options) {
   current.dev = to.dev;
 
   if (fullLockMode && !includeDevDeps) {
-    const { deprecated, _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
+    const { _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
       ...NPM_TOKEN,
       registry,
       cache: `${os.homedir()}/.npm`

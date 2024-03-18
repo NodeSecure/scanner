@@ -6,7 +6,12 @@
   "engines": {
     "node": ">=18"
   },
+  "type": "module",
+  "workspaces": [
+    "workspaces/tarball"
+  ],
   "scripts": {
+    "build": "tsc -b",
     "lint": "eslint src test",
     "prepublishOnly": "pkg-ok",
     "test": "npm run lint && npm run test-only",
@@ -53,6 +58,7 @@
     "@nodesecure/eslint-config": "^1.8.0",
     "@slimio/is": "^2.0.0",
     "@types/node": "^20.10.0",
+    "@types/pacote": "^11.1.8",
     "c8": "^9.1.0",
     "dotenv": "^16.3.1",
     "eslint": "8.57.0",
@@ -60,16 +66,19 @@
     "glob": "^10.3.10",
     "pkg-ok": "^3.0.0",
     "sinon": "^17.0.1",
-    "snap-shot-core": "^10.2.4"
+    "snap-shot-core": "^10.2.4",
+    "tsx": "^4.7.1",
+    "typescript": "^5.4.2"
   },
   "dependencies": {
     "@nodesecure/authors": "^1.0.2",
     "@nodesecure/flags": "^2.4.0",
-    "@nodesecure/fs-walk": "^1.0.0",
+    "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/i18n": "^4.0.0",
     "@nodesecure/js-x-ray": "^6.3.0",
-    "@nodesecure/npm-registry-sdk": "^2.0.0",
-    "@nodesecure/ntlp": "^2.2.1",
+    "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@nodesecure/ntlp": "^3.0.0",
+    "@nodesecure/utils": "^2.0.1",
     "@nodesecure/vuln": "^1.7.0",
     "@npm/types": "^1.0.2",
     "@npmcli/arborist": "^7.2.1",
@@ -80,6 +89,5 @@
     "lodash.difference": "^4.5.0",
     "pacote": "^17.0.4",
     "semver": "^7.5.4"
-  },
-  "type": "module"
+  }
 }

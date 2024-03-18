@@ -9,8 +9,30 @@ import { getPackageName } from "./getPackageName.js";
 const kNodeModules = new Set(builtins({ experimental: true }));
 const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
 
-export function analyzeDependencies(dependencies, deps = {}) {
-  const { packageDeps, packageDevDeps, tryDependencies, nodeImports = {} } = deps;
+export interface analyzeDependenciesOptions {
+  packageDeps: string[];
+  packageDevDeps: string[];
+  tryDependencies: Set<string>;
+  nodeImports?: Record<string, any>;
+}
+
+export interface analyzeDependenciesResult {
+  nodeDependencies: string[];
+  thirdPartyDependencies: string[];
+  subpathImportsDependencies: [string, string][];
+  unusedDependencies: string[];
+  missingDependencies: string[];
+  flags: {
+    hasExternalCapacity: boolean;
+    hasMissingOrUnusedDependency: boolean;
+  }
+}
+
+export function analyzeDependencies(
+  dependencies: string[],
+  options: analyzeDependenciesOptions
+): analyzeDependenciesResult {
+  const { packageDeps, packageDevDeps, tryDependencies, nodeImports = {} } = options;
 
   // See: https://nodejs.org/api/packages.html#subpath-imports
   const subpathImportsDependencies = dependencies
@@ -31,8 +53,8 @@ export function analyzeDependencies(dependencies, deps = {}) {
     packageDeps.filter((name) => !name.startsWith("@types")),
     [...thirdPartyDependencies, ...thirdPartyDependenciesAliased]
   );
-  const missingDependencies = [...new Set(difference(thirdPartyDependencies, packageDeps))]
-    .filter((name) => !(name in nodeImports));
+  const missingDependencies = [...new Set<string>(difference(thirdPartyDependencies, packageDeps))]
+    .filter((name: string) => !(name in nodeImports));
   const nodeDependencies = dependencies.filter((name) => isNodeCoreModule(name));
 
   return {
@@ -53,18 +75,21 @@ export function analyzeDependencies(dependencies, deps = {}) {
  * @param {!string} moduleName
  * @returns {boolean}
  */
-function isNodeCoreModule(moduleName) {
+function isNodeCoreModule(moduleName: string): boolean {
   const cleanModuleName = moduleName.startsWith("node:") ? moduleName.slice(5) : moduleName;
 
   // Note: We need to also check moduleName because builtins package only return true for 'node:test'.
   return kNodeModules.has(cleanModuleName) || kNodeModules.has(moduleName);
 }
 
-function isAliasDependency(moduleName) {
+function isAliasDependency(moduleName: string): boolean {
   return moduleName.charAt(0) === "#";
 }
 
-function buildSubpathDependency(alias, nodeImports) {
+function buildSubpathDependency(
+  alias: string,
+  nodeImports: Record<string, { node?: string, default: string }>
+): [string, string] {
   const importedDependency = nodeImports[alias].node ?? nodeImports[alias].default;
 
   return [alias, importedDependency];

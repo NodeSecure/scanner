@@ -7,13 +7,13 @@ import os from "os";
 // Import Third-party Dependencies
 import pacote from "pacote";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
+import * as tarball from "@nodesecure/tarball";
 
 // Import Internal Dependencies
 import { depWalker } from "./src/depWalker.js";
 import { NPM_TOKEN } from "./src/utils/index.js";
 import { ScannerLoggerEvents } from "./src/constants.js";
 import Logger from "./src/class/logger.class.js";
-import * as tarball from "./src/tarball.js";
 import { comparePayloads } from "./src/comparePayloads.js";
 
 // CONSTANTS

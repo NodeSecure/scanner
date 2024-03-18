@@ -1,16 +1,9 @@
-export * from "./getTarballComposition.js";
-export * from "./isSensitiveFile.js";
 export * from "./isGitDependency.js";
-export * from "./getPackageName.js";
 export * from "./mergeDependencies.js";
 export * from "./semver.js";
 export * from "./dirname.js";
 export * from "./warnings.js";
-export * from "./filterDependencyKind.js";
-export * from "./analyzeDependencies.js";
-export * from "./booleanToFlags.js";
 export * from "./addMissingVersionFlags.js";
-export * from "./parseManifestAuthor.js";
 export * from "./getLinks.js";
 
 export const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
