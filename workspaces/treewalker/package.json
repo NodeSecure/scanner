@@ -1,0 +1,29 @@
+{
+  "name": "@nodesecure/depwalker",
+  "version": "1.0.0",
+  "description": "NodeSecure depwalker",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test": "c8 -r html npm run test-only"
+  },
+  "files": [
+    "index.js",
+    "src"
+  ],
+  "keywords": [
+    "NodeSecure"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@nodesecure/js-x-ray": "^6.3.0",
+    "@npm/types": "^1.0.2"
+  },
+  "devDependencies": {
+    "get-folder-size": "^4.0.0"
+  }
+}

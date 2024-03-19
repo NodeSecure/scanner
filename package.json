@@ -8,7 +8,8 @@
   },
   "type": "module",
   "workspaces": [
-    "workspaces/tarball"
+    "workspaces/tarball",
+    "workspaces/depwalker"
   ],
   "scripts": {
     "build": "tsc -b",
