@@ -1,7 +1,7 @@
 {
-  "name": "@nodesecure/depwalker",
+  "name": "@nodesecure/treewalker",
   "version": "1.0.0",
-  "description": "NodeSecure depwalker",
+  "description": "NodeSecure treewalker",
   "type": "module",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -13,7 +13,7 @@ await i18n.extendFromSystemPath(
 );
 
 // CONSTANTS
-const kDetectedDep = i18n.taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
+const kDetectedDep = i18n.taggedString(`The dependency '${0}' has been detected in the dependency Tree.`);
 const kFlaggedAuthors = [{
   name: "marak",
   email: "marak.squires@gmail.com"

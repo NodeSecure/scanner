@@ -9,7 +9,7 @@
   "type": "module",
   "workspaces": [
     "workspaces/tarball",
-    "workspaces/depwalker"
+    "workspaces/treewalker"
   ],
   "scripts": {
     "build": "tsc -b",

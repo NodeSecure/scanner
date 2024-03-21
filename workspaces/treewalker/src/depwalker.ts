@@ -35,12 +35,12 @@
 
   interface GetRootDependenciesOptions {
     maxDepth?: number; 
-    exclude?: string[]; 
+    exclude: Map<number, Set<string>>; 
     usePackageLock?: boolean; 
     fullLockMode?: boolean; 
     includeDevDeps?: boolean; 
     location: string; 
-    registry?: string; 
+    registry: string; 
 }
   
   export async function* getRootDependencies(manifest : ManifestInterface, options : GetRootDependenciesOptions) {
@@ -118,7 +118,7 @@
           parent.addFlag("hasOutdatedDependency");
         }
         if (exclude.has(fullRange)) {
-          exclude.get(fullRange).add(parent.fullName);
+          exclude.get(fullRange)?.add(parent.fullName);
         }
       }
     
