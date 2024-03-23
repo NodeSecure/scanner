@@ -1,11 +1,11 @@
-export * from './mergeDependencies'
-export * from "./isGitDependency.js";
-export * from "./mergeDependencies";
-export * from "./semver.js";
-export * from "./dirname.js";
-export * from "./warnings.js";
-export * from "./addMissingVersionFlags.js";
-export * from "./getLinks.js";
+
+export * from "./isGitDependency.ts";
+export * from "./mergeDependencies.ts";
+export * from "./semver.ts";
+export * from "./dirname.ts";
+export * from "./warnings.ts";
+export * from "./addMissingVersionFlags.ts";
+export * from "./getLinks.ts";
 
 export const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
   { token: process.env.NODE_SECURE_TOKEN } :

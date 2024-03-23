@@ -1,7 +1,7 @@
 {
-  "name": "@nodesecure/treewalker",
+  "name": "@nodesecure/treeWalker",
   "version": "1.0.0",
-  "description": "NodeSecure treewalker",
+  "description": "Efficient dependencies walker",
   "type": "module",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -11,11 +11,15 @@
     "test": "c8 -r html npm run test-only"
   },
   "files": [
-    "index.js",
-    "src"
+    "dist"
   ],
   "keywords": [
-    "NodeSecure"
+    "NodeSecure",
+    "TreeWalker",
+    "Tree",
+    "Walker",
+    "Dependencies",
+    "Traversal"
   ],
   "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",

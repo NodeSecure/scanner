@@ -1,1 +1,1 @@
-export * from "./depwalker.js";
+export * from "./depwalker.ts";
