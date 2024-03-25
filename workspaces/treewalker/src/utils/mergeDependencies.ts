@@ -1,3 +1,9 @@
+import { ManifestVersion} from "@npm/types";
+
+
+
+
+
 export function mergeDependencies(manifest, types = ["dependencies"]) {
     const dependencies = new Map();
     const customResolvers = new Map();
@@ -14,7 +20,7 @@ export function mergeDependencies(manifest, types = ["dependencies"]) {
          * Version can be file:, github:, git:, git+, ./...
          * @see https://docs.npmjs.com/cli/v7/configuring-npm/package-json#dependencies
          */
-        if (/^([a-zA-Z]+:|git\+|\.\\)/.test(version)) {
+        if (typeof version === 'string' && /^([a-zA-Z]+:|git\+|\.\\)/.test(version)) {
           customResolvers.set(name, version);
           if (!version.startsWith("npm:")) {
             continue;

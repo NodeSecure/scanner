@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
-import * as i18n from "@nodesecure/i18n";
+import i18n from "@nodesecure/i18n";
 
 // Require Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";

@@ -15,7 +15,10 @@
   import pacote from "pacote";
   import Arborist from "@npmcli/arborist";
   
-  
+  //import types
+  import {Options} from '../../../types/scanner.js'
+  import { ManifestVersion, ObjectOfStrings  } from "@npm/types";
+
   
   
   // Import Internal Dependencies
@@ -27,23 +30,20 @@
   import Dependency from "../../../src/class/dependency.class.js";
   
   
-  interface ManifestInterface {
-    name: string;
-    version: string
+  
 
-  }
-
-  interface GetRootDependenciesOptions {
-    maxDepth?: number; 
+  interface GetRootDependenciesOptions extends Options{
+    // maxDepth?: number; 
     exclude: Map<number, Set<string>>; 
-    usePackageLock?: boolean; 
-    fullLockMode?: boolean; 
-    includeDevDeps?: boolean; 
+    // usePackageLock?: boolean; 
+    // fullLockMode?: boolean; 
+    // includeDevDeps?: boolean; 
     location: string; 
-    registry: string; 
+    // registry: string; 
+
 }
   
-  export async function* getRootDependencies(manifest : ManifestInterface, options : GetRootDependenciesOptions) {
+  export async function* getRootDependencies(manifest : ManifestVersion, options : GetRootDependenciesOptions) {
       const {
         maxDepth = 4, exclude,
         usePackageLock, fullLockMode, includeDevDeps,
@@ -58,7 +58,7 @@
       try {
         await pacote.manifest(`${manifest.name}@${manifest.version}`, {
           ...NPM_TOKEN,
-          registry,
+          registry : registry as string | undefined ,
           cache: `${os.homedir()}/.npm`
         });
       }
@@ -135,7 +135,15 @@
             registry,
             cache: `${os.homedir()}/.npm`
           });
-          const { dependencies, customResolvers, alias } = mergeDependencies(pkg);
+
+         
+
+          const pkgWithMetadata = {
+            name,
+            version,
+            ...pkg
+        };
+          const { dependencies, customResolvers, alias } = mergeDependencies(pkgWithMetadata);
         
           const current = new Dependency(name, version, parent);
           current.alias = Object.fromEntries(alias);

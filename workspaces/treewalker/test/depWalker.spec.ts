@@ -5,34 +5,43 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert";
 
+
 // Third party Dependencies
 import { setStrategy, strategies } from "@nodesecure/vuln";
 
 // Require Internal Dependencies
-import { depWalker } from "../src/depWalker.js";
-import { from, cwd } from "../index.js";
+import { depWalker } from "../../../src/depWalker";
+import { from, cwd } from "../../index.js";
 
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = join("fixtures", "depWalker");
 
+//import types
+// import { Manifest } from "@npm/types";
+import { DependencyRef } from "../src/types";
+import {PlainDependencyObject} from '../src/types'
+
+
 // JSON PAYLOADS
 const is = JSON.parse(readFileSync(
   new URL(join(FIXTURE_PATH, "slimio.is.json"), import.meta.url)
-));
+).toString());
 
 const config = JSON.parse(readFileSync(
   new URL(join(FIXTURE_PATH, "slimio.config.json"), import.meta.url)
-));
+).toString());
 
 const pkgGitdeps = JSON.parse(readFileSync(
   new URL(join(FIXTURE_PATH, "pkg.gitdeps.json"), import.meta.url)
-));
+).toString());
 
-function cleanupPayload(payload) {
+
+
+function cleanupPayload(payload : PlainDependencyObject) {
   for (const pkg of Object.values(payload)) {
     for (const verDescriptor of Object.values(pkg.versions)) {
-      verDescriptor.composition.extensions.sort();
+      verDescriptor.composition.extensions.sort() ;
       delete verDescriptor.size;
       delete verDescriptor.composition.files;
       delete verDescriptor.composition.required_files;
