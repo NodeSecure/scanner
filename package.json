@@ -75,7 +75,7 @@
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/i18n": "^4.0.0",
-    "@nodesecure/js-x-ray": "^6.3.0",
+    "@nodesecure/js-x-ray": "^7.0.0",
     "@nodesecure/npm-registry-sdk": "^2.1.1",
     "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/utils": "^2.0.1",
@@ -87,7 +87,7 @@
     "combine-async-iterators": "^2.1.0",
     "itertools": "^2.1.2",
     "lodash.difference": "^4.5.0",
-    "pacote": "^17.0.4",
+    "pacote": "^18.0.2",
     "semver": "^7.5.4"
   }
 }
