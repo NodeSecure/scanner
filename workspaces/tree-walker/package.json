@@ -1,0 +1,32 @@
+{
+  "name": "@nodesecure/tree-walker",
+  "version": "1.0.0",
+  "description": "NodeSecure tree walker",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test": "c8 -r html npm run test-only"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "NodeSecure",
+    "tree",
+    "walker"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@npmcli/arborist": "^7.5.1",
+    "combine-async-iterators": "^3.0.0",
+    "itertools": "^2.3.1",
+    "pacote": "^18.0.4",
+    "semver": "^7.6.0"
+  }
+}

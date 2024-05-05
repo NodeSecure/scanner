@@ -6,7 +6,7 @@ import assert from "node:assert";
 import is from "@slimio/is";
 
 // Require Internal Dependencies
-import Dependency from "../../src/class/dependency.class.js";
+import { Dependency } from "../src/Dependency.class.js";
 
 test("Dependency class should act as expected by assertions", () => {
   assert.ok(is.classObject(Dependency));
@@ -48,7 +48,7 @@ test("Dependency children should write his parent as usedBy when exported", () =
 test("Create a dependency with one warning", () => {
   const semverDep = new Dependency("semver", "1.0.0");
   const fakeWarning = { foo: "bar" };
-  semverDep.warnings.push(fakeWarning);
+  semverDep.warnings.push(fakeWarning as any);
 
   const flatDep = semverDep.exportAsPlainObject(void 0);
   const version = flatDep.versions["1.0.0"];
@@ -73,7 +73,7 @@ test("Create a GIT Dependency (flags.isGit must be set to true)", () => {
 test("Dependency.addFlag should throw a TypeError if flagName is not string", () => {
   const semverDep = new Dependency("semver", "1.0.0");
   assert.throws(
-    () => semverDep.addFlag(10),
+    () => semverDep.addFlag(10 as any),
     {
       name: "TypeError",
       message: "flagName argument must be typeof string"

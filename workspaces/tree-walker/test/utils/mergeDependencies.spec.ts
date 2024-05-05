@@ -1,17 +1,18 @@
 // Require Node.js Dependencies
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
+import { fileURLToPath } from "node:url";
 import assert from "node:assert";
 
 // Require Third-party Dependencies
 import is from "@slimio/is";
 
 // Require Internal Dependencies
-import { mergeDependencies, getDirNameFromUrl } from "../../src/utils/index.js";
+import { mergeDependencies } from "../../src/utils/index.js";
 
 // CONSTANTS
-const currentDirname = getDirNameFromUrl(import.meta.url);
+const currentDirname = dirname(fileURLToPath(import.meta.url));
 const FIXTURE_PATH = join(currentDirname, "..", "fixtures/mergeDependencies");
 
 // JSON PAYLOADS

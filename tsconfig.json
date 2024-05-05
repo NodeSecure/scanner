@@ -3,6 +3,9 @@
   "references": [
     {
       "path": "./workspaces/tarball"
+    },
+    {
+      "path": "./workspaces/tree-walker"
     }
   ]
 }

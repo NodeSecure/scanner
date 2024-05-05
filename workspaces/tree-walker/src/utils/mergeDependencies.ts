@@ -1,13 +1,27 @@
-export function mergeDependencies(manifest, types = ["dependencies"]) {
+// Import Third-party Dependencies
+import pacote from "pacote";
+
+export type NpmDependency =
+  "dependencies" |
+  "devDependencies" |
+  "optionalDependencies" |
+  "peerDependencies" |
+  "bundleDependencies" |
+  "bundledDependencies";
+
+export function mergeDependencies(
+  manifest: Partial<pacote.AbbreviatedManifest & pacote.ManifestResult>,
+  types: NpmDependency[] = ["dependencies"] as const
+) {
   const dependencies = new Map();
   const customResolvers = new Map();
   const alias = new Map();
 
   for (const fieldName of types) {
-    if (!Reflect.has(manifest, fieldName)) {
+    if (!(fieldName in manifest)) {
       continue;
     }
-    const dep = manifest[fieldName];
+    const dep = manifest[fieldName] as Record<string, string>;
 
     for (const [name, version] of Object.entries(dep)) {
       /**
