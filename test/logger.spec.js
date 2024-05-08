@@ -1,5 +1,5 @@
 // Import Node.js Dependencies
-import EventEmitter, { once } from "events";
+import EventEmitter, { once } from "node:events";
 import { test } from "node:test";
 import assert from "node:assert";
 
@@ -7,7 +7,7 @@ import assert from "node:assert";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import Logger from "../../src/class/logger.class.js";
+import Logger from "../src/class/logger.class.js";
 
 test("Logger: Creating a new class instance and assert all properties", () => {
   assert.ok(is.classObject(Logger));

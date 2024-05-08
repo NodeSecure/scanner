@@ -6,6 +6,6 @@
  * @param {string} version
  * @returns {boolean}
  */
-export function isGitDependency(version) {
+export function isGitDependency(version: string): boolean {
   return /^git(:|\+|hub:)/.test(version);
 }

@@ -1,16 +1,28 @@
-export default class Dependency {
-  #flags = new Set();
-  #parent = null;
+// Import Third-party Dependencies
+import * as JSXRay from "@nodesecure/js-x-ray";
 
-  constructor(name, version, parent = null) {
-    this.gitUrl = null;
-    this.dependencyCount = 0;
-    this.warnings = [];
+export class Dependency {
+  static currentId = 1;
+
+  public gitUrl: null | string = null;
+  public dependencyCount = 0;
+  public warnings: JSXRay.Warning<JSXRay.WarningDefault>[] = [];
+  public name: string;
+  public version: string;
+  public dev = false;
+  public existOnRemoteRegistry = true;
+  public alias: Record<string, string> = {};
+
+  #flags = new Set<string>();
+  #parent: null | Dependency = null;
+
+  constructor(
+    name: string,
+    version: string,
+    parent: null | Dependency = null
+  ) {
     this.name = name;
     this.version = version;
-    this.dev = false;
-    this.existOnRemoteRegistry = true;
-    this.alias = {};
 
     if (parent !== null) {
       parent.addChildren();
@@ -34,7 +46,7 @@ export default class Dependency {
     return this.#parent === null ? {} : { [this.#parent.name]: this.#parent.version };
   }
 
-  addFlag(flagName, predicate = true) {
+  addFlag(flagName: string, predicate = true) {
     if (typeof flagName !== "string") {
       throw new TypeError("flagName argument must be typeof string");
     }
@@ -48,7 +60,7 @@ export default class Dependency {
     }
   }
 
-  isGit(url) {
+  isGit(url?: string) {
     this.#flags.add("isGit");
     if (typeof url === "string") {
       this.gitUrl = url;
@@ -57,7 +69,7 @@ export default class Dependency {
     return this;
   }
 
-  exportAsPlainObject(customId) {
+  exportAsPlainObject(customId?: number) {
     if (this.warnings.length > 0) {
       this.addFlag("hasWarnings");
     }
@@ -109,5 +121,3 @@ export default class Dependency {
     };
   }
 }
-
-Dependency.currentId = 1;
