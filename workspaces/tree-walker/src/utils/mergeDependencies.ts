@@ -1,5 +1,6 @@
 // Import Third-party Dependencies
 import pacote from "pacote";
+import type { PackageJson } from "@npm/types";
 
 export type NpmDependency =
   "dependencies" |
@@ -10,17 +11,22 @@ export type NpmDependency =
   "bundledDependencies";
 
 export function mergeDependencies(
-  manifest: Partial<pacote.AbbreviatedManifest & pacote.ManifestResult>,
+  manifest:
+    Partial<PackageJson> |
+    Partial<pacote.AbbreviatedManifest & pacote.ManifestResult>,
   types: NpmDependency[] = ["dependencies"] as const
 ) {
-  const dependencies = new Map();
-  const customResolvers = new Map();
-  const alias = new Map();
+  const dependencies = new Map<string, string>();
+  const customResolvers = new Map<string, string>();
+  const alias = new Map<string, string>();
 
   for (const fieldName of types) {
     if (!(fieldName in manifest)) {
       continue;
     }
+
+    // FIX: replace @npm/types with up to date interface
+    // @ts-ignore
     const dep = manifest[fieldName] as Record<string, string>;
 
     for (const [name, version] of Object.entries(dep)) {

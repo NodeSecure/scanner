@@ -1,0 +1,68 @@
+{
+  "name": "@nodesecure/scanner",
+  "version": "5.3.0",
+  "description": "A package API to run a static analysis of your module's dependencies.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": "./dist/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc -b",
+    "lint": "eslint src test",
+    "prepublishOnly": "npm run build && pkg-ok",
+    "test": "npm run test-only",
+    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "coverage": "c8 -r html npm run test-only"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "keywords": [
+    "node",
+    "nodejs",
+    "security",
+    "cli",
+    "sast",
+    "scanner",
+    "static",
+    "code",
+    "analysis",
+    "node_modules",
+    "tree",
+    "npm",
+    "registry",
+    "graph",
+    "visualization",
+    "dependencies"
+  ],
+  "author": "NodeSecure",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/scanner#readme",
+  "devDependencies": {
+    "@types/pacote": "^11.1.8"
+  },
+  "dependencies": {
+    "@nodesecure/authors": "^1.0.2",
+    "@nodesecure/flags": "^2.4.0",
+    "@nodesecure/i18n": "^4.0.1",
+    "@nodesecure/js-x-ray": "^6.3.0",
+    "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@nodesecure/ntlp": "^3.0.0",
+    "@nodesecure/utils": "^2.2.0",
+    "@nodesecure/vuln": "^1.7.0",
+    "@npm/types": "^1.0.2",
+    "@slimio/lock": "^1.0.0",
+    "pacote": "^17.0.4",
+    "semver": "^7.5.4"
+  }
+}

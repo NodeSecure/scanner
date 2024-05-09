@@ -84,7 +84,7 @@ export class Dependency {
           flags: this.flags,
           description: "",
           size: 0,
-          author: {},
+          author: null,
           engines: {},
           repository: {},
           scripts: {},
@@ -109,14 +109,16 @@ export class Dependency {
       metadata: {
         dependencyCount: this.dependencyCount,
         publishedCount: 0,
-        lastUpdateAt: null,
-        lastVersion: null,
+        lastUpdateAt: new Date(),
+        lastVersion: "N/A",
+        hasChangedAuthor: false,
         hasManyPublishers: false,
         hasReceivedUpdateInOneYear: true,
         homepage: null,
-        author: {},
+        author: null,
         publishers: [],
-        maintainers: []
+        maintainers: [],
+        integrity: {}
       }
     };
   }

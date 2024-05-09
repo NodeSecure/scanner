@@ -31,7 +31,7 @@ jobs:
       - name: build dependencies
         run: npm run build
       - name: Run tests
-        run: npm run test:ci
+        run: npm run test
   nsci:
     runs-on: ubuntu-latest
     strategy:

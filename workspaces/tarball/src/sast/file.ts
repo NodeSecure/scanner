@@ -4,8 +4,8 @@ import path from "node:path";
 // Import Third-party Dependencies
 import {
   runASTAnalysisOnFile,
-  WarningName,
-  WarningDefault
+  type WarningName,
+  type WarningDefault
 } from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
