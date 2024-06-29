@@ -133,7 +133,6 @@ Click on one of the links to access the documentation of the workspace:
 | scanner | [@nodesecure/estree-ast-utils](./workspaces/scanner) |
 | tarball | [@nodesecure/sec-literal ](./workspaces/tarball) |
 | tree-walker | [@nodesecure/ts-source-parser ](./workspaces/tree-walker) |
-```
 
 ## Contributors ✨
 
