@@ -38,10 +38,9 @@ export async function depWalker(
   logger = new Logger()
 ): Promise<Payload> {
   const {
-    forceRootAnalysis = false,
-    usePackageLock = false,
+    scanRootNode = false,
     includeDevDeps = false,
-    fullLockMode = false,
+    packageLock,
     maxDepth,
     location,
     vulnerabilityStrategy = vuln.strategies.NONE,
@@ -74,8 +73,12 @@ export async function depWalker(
     const tarballLocker = new Locker({ maxConcurrent: 5 });
     tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
 
-    const rootDepsOptions = {
-      maxDepth, exclude, usePackageLock, fullLockMode, includeDevDeps, location, registry
+    const rootDepsOptions: treeWalker.npm.WalkOptions = {
+      maxDepth,
+      exclude,
+      includeDevDeps,
+      registry,
+      packageLock
     };
     for await (const currentDep of treeWalker.npm.walk(manifest, rootDepsOptions)) {
       const { name, version, dev } = currentDep;
@@ -125,7 +128,7 @@ export async function depWalker(
         promisesToWait.push(scanDirOrArchive(name, version, {
           ref: current.versions[version] as any,
           location,
-          tmpLocation: forceRootAnalysis && name === manifest.name ? null : tmpLocation,
+          tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
           locker: tarballLocker,
           registry
         }));
