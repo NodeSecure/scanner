@@ -12,7 +12,7 @@
     "test": "c8 -r html npm run test-only"
   },
   "files": [
-    "src"
+    "dist"
   ],
   "keywords": [
     "NodeSecure",

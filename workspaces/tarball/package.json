@@ -11,8 +11,7 @@
     "test": "c8 -r html npm run test-only"
   },
   "files": [
-    "index.js",
-    "src"
+    "dist"
   ],
   "keywords": [
     "NodeSecure",
