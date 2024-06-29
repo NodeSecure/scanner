@@ -198,37 +198,52 @@ export interface Options {
    * @default 4
    */
   readonly maxDepth?: number;
+
   readonly registry?: string | URL;
+
   /**
-   * Use root package-lock.json. This will have the effect of triggering the Arborist package.
+   * Enables the use of Arborist for rapidly walking over the dependency tree.
+   * When enabled, it triggers different methods based on the presence of `node_modules`:
+   * - `loadActual()` if `node_modules` is available.
+   * - `loadVirtual()` otherwise.
    *
-   * @default false for from() API
-   * @default true  for cwd()  API
+   * When disabled, it will iterate on all dependencies by using pacote
    */
-  readonly usePackageLock?: boolean;
+  packageLock?: {
+    /**
+     * Fetches all manifests for additional metadata.
+     * This option is useful only when `usePackageLock` is enabled.
+     *
+     * @default false
+     */
+    fetchManifest?: boolean;
+
+    /**
+     * Specifies the location of the manifest file for Arborist.
+     * This is typically the path to the `package.json` file.
+     */
+    location: string;
+  };
+
   /**
    * Include project devDependencies (only available for cwd command)
    *
    * @default false
    */
   readonly includeDevDeps?: boolean;
+
   /**
    * Vulnerability strategy name (npm, snyk, node)
    *
    * @default NONE
    */
   readonly vulnerabilityStrategy?: Vuln.Strategy.Kind;
+
   /**
    * Analyze root package.
    *
    * @default false for from() API
    * @default true  for cwd()  API
    */
-  readonly forceRootAnalysis?: boolean;
-  /**
-   * Deeper dependencies analysis with cwd() API.
-   *
-   * @default false
-   */
-  readonly fullLockMode?: boolean;
+  readonly scanRootNode?: boolean;
 }

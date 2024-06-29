@@ -18,8 +18,12 @@ import { Dependency } from "../Dependency.class.js";
 const { NPM_TOKEN } = utils;
 
 export interface DefaultSearchOptions {
+  // NOTE: find a way to remove that from options
   exclude: Map<string, Set<string>>;
-  registry: string;
+  /**
+   * URL to the registry to use
+   */
+  registry?: string;
 }
 
 export interface SearchOptions extends DefaultSearchOptions {
@@ -101,21 +105,21 @@ export interface SearchLockOptions extends DefaultSearchOptions {
   parent: Dependency;
   to: Arborist.Node;
   includeDevDeps?: boolean;
-  fullLockMode?: boolean;
+  fetchManifest?: boolean;
 }
 
 export async function* searchLockDependencies(
   currentPackageName: string,
   options: SearchLockOptions
 ): AsyncIterableIterator<Dependency> {
-  const { to, parent, exclude, fullLockMode, includeDevDeps, registry } = options;
+  const { to, parent, exclude, fetchManifest = false, includeDevDeps, registry } = options;
   const { version, integrity = to.integrity } = to.package;
 
   const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
   const current = new Dependency(currentPackageName, updatedVersion, parent);
   current.dev = to.dev;
 
-  if (fullLockMode && !includeDevDeps) {
+  if (fetchManifest && !includeDevDeps) {
     const { _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
       ...NPM_TOKEN,
       registry,
@@ -154,13 +158,44 @@ export async function* searchLockDependencies(
 
 export interface WalkOptions extends DefaultSearchOptions {
   /**
+   * Specifies the maximum depth to traverse for each root dependency.
+   * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
+   *
    * @default 4
    */
   maxDepth?: number;
-  fullLockMode: boolean;
-  usePackageLock: boolean;
-  includeDevDeps: boolean;
-  location: string | undefined;
+
+  /**
+   * Includes development dependencies in the walk.
+   * Note that enabling this option can significantly increase processing time.
+   *
+   * @default false
+   */
+  includeDevDeps?: boolean;
+
+  /**
+   * Enables the use of Arborist for rapidly walking over the dependency tree.
+   * When enabled, it triggers different methods based on the presence of `node_modules`:
+   * - `loadActual()` if `node_modules` is available.
+   * - `loadVirtual()` otherwise.
+   *
+   * When disabled, it will iterate on all dependencies by using pacote
+   */
+  packageLock?: {
+    /**
+     * Fetches all manifests for additional metadata.
+     * This option is useful only when `usePackageLock` is enabled.
+     *
+     * @default false
+     */
+    fetchManifest?: boolean;
+
+    /**
+     * Specifies the location of the manifest file for Arborist.
+     * This is typically the path to the `package.json` file.
+     */
+    location: string;
+  };
 }
 
 export async function* walk(
@@ -170,10 +205,8 @@ export async function* walk(
   const {
     maxDepth = 4,
     exclude,
-    usePackageLock,
-    fullLockMode,
-    includeDevDeps,
-    location,
+    packageLock = null,
+    includeDevDeps = false,
     registry
   } = options;
 
@@ -195,7 +228,18 @@ export async function* walk(
   parent.addFlag("hasDependencies", dependencies.size > 0);
 
   let iterators: AsyncIterableIterator<Dependency>[];
-  if (usePackageLock) {
+  if (packageLock === null) {
+    const configRef = { exclude, maxDepth, parent, registry };
+    iterators = [
+      ...iter
+        .filter(customResolvers.entries(), ([, valueStr]) => utils.isGitDependency(valueStr))
+        .map(([depName, valueStr]) => searchDependencies(depName, valueStr, configRef)),
+      ...iter
+        .map(dependencies.entries(), ([name, ver]) => searchDependencies(`${name}@${ver}`, null, configRef))
+    ];
+  }
+  else {
+    const { location, ...packageLockOptions } = packageLock;
     const arb = new Arborist({
       ...NPM_TOKEN,
       path: location,
@@ -203,7 +247,7 @@ export async function* walk(
     });
     let tree: Arborist.Node;
     try {
-      await fs.access(path.join(location!, "node_modules"));
+      await fs.access(path.join(location, "node_modules"));
       tree = await arb.loadActual();
     }
     catch {
@@ -217,23 +261,14 @@ export async function* walk(
         .map(([packageName, to]) => searchLockDependencies(packageName, {
           to,
           parent,
-          fullLockMode,
           includeDevDeps,
           exclude,
-          registry
+          registry,
+          ...packageLockOptions
         }))
     ];
   }
-  else {
-    const configRef = { exclude, maxDepth, parent, registry };
-    iterators = [
-      ...iter
-        .filter(customResolvers.entries(), ([, valueStr]) => utils.isGitDependency(valueStr))
-        .map(([depName, valueStr]) => searchDependencies(depName, valueStr, configRef)),
-      ...iter
-        .map(dependencies.entries(), ([name, ver]) => searchDependencies(`${name}@${ver}`, null, configRef))
-    ];
-  }
+
   for await (const dep of combineAsyncIterators<Dependency>({}, ...iterators)) {
     yield dep;
   }
