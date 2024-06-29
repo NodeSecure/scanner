@@ -33,7 +33,11 @@ const pkgGitdeps = JSON.parse(readFileSync(
 
 function cleanupPayload(payload: Payload) {
   for (const pkg of Object.values(payload)) {
-    for (const verDescriptor of Object.values(pkg.versions) as DependencyVersion[]) {
+    const versions = Object.values(
+      pkg.versions
+    ) as DependencyVersion[];
+
+    for (const verDescriptor of versions) {
       verDescriptor.composition.extensions.sort();
       // @ts-ignore
       delete verDescriptor.size;

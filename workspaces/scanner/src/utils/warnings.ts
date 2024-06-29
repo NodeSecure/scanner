@@ -18,10 +18,10 @@ const kFlaggedAuthors = [{
   name: "marak",
   email: "marak.squires@gmail.com"
 }];
-const kDependencyWarnMessage = Object.freeze({
+const kDependencyWarnMessage = {
   "@scarf/scarf": await i18n.getToken("scanner.disable_scarf"),
   iohook: await i18n.getToken("scanner.keylogging")
-});
+} as const;
 
 export interface GetWarningsResult {
   warnings: string[];
@@ -31,9 +31,12 @@ export interface GetWarningsResult {
 export async function getDependenciesWarnings(
   dependenciesMap: Map<string, any>
 ): Promise<GetWarningsResult> {
-  const warnings = [...Object.keys(kDependencyWarnMessage)]
+  const vulnerableDependencyNames = Object.keys(
+    kDependencyWarnMessage
+  ) as unknown as (keyof typeof kDependencyWarnMessage)[];
+
+  const warnings = vulnerableDependencyNames
     .filter((depName) => dependenciesMap.has(depName))
-    // @ts-ignore
     .map((depName) => `${kDetectedDep(depName)} ${kDependencyWarnMessage[depName]}`);
 
   // TODO: add support for RC configuration
