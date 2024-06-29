@@ -6,13 +6,12 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
     "test": "c8 -r html npm run test-only"
   },
   "files": [
-    "index.js",
-    "src"
+    "dist"
   ],
   "keywords": [
     "NodeSecure",
@@ -21,10 +20,18 @@
   "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/js-x-ray": "^6.3.0",
-    "@npm/types": "^1.0.2"
+    "@nodesecure/ntlp": "^3.0.0",
+    "@nodesecure/utils": "^2.1.0",
+    "@npm/types": "^1.0.2",
+    "@slimio/lock": "^1.0.0",
+    "builtins": "^5.1.0",
+    "lodash.difference": "^4.5.0",
+    "pacote": "^18.0.6"
   },
   "devDependencies": {
+    "@types/lodash.difference": "^4.5.9",
     "get-folder-size": "^4.0.0"
   }
 }

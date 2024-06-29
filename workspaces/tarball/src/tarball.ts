@@ -4,7 +4,11 @@ import os from "node:os";
 import timers from "node:timers/promises";
 
 // Import Third-party Dependencies
-import { runASTAnalysisOnFile, Warning, Dependency } from "@nodesecure/js-x-ray";
+import {
+  runASTAnalysisOnFile,
+  type Warning,
+  type Dependency
+} from "@nodesecure/js-x-ray";
 import Locker from "@slimio/lock";
 import pacote from "pacote";
 import * as ntlp from "@nodesecure/ntlp";
@@ -18,9 +22,10 @@ import {
   getSemVerWarning
 } from "./utils/index.js";
 import { NPM_TOKEN } from "./constants.js";
-import { DependencyRef } from "./types.js";
 import * as manifest from "./manifest.js";
 import * as sast from "./sast/index.js";
+
+import type { DependencyRef } from "./types.js";
 
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
@@ -224,3 +229,5 @@ export async function scanPackage(
     ast: { dependencies, warnings }
   };
 }
+
+export type { DependencyRef };

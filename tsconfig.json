@@ -6,6 +6,9 @@
     },
     {
       "path": "./workspaces/tree-walker"
-    }
+    },
+    {
+      "path": "./workspaces/scanner"
+    },
   ]
 }

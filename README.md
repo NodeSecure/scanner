@@ -75,6 +75,17 @@ interface Options {
 }
 ```
 
+## Workspaces
+
+Click on one of the links to access the documentation of the workspace:
+
+| name | package and link |
+| --- | --- |
+| scanner | [@nodesecure/estree-ast-utils](./workspaces/scanner) |
+| tarball | [@nodesecure/sec-literal ](./workspaces/tarball) |
+| tree-walker | [@nodesecure/ts-source-parser ](./workspaces/tree-walker) |
+```
+
 ## Contributors ✨
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->

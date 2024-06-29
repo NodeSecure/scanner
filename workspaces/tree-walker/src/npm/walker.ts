@@ -8,6 +8,7 @@ import combineAsyncIterators from "combine-async-iterators";
 import * as iter from "itertools";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
+import type { PackageJson } from "@npm/types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.js";
@@ -98,7 +99,7 @@ export async function* searchDependencies(
 
 export interface SearchLockOptions extends DefaultSearchOptions {
   parent: Dependency;
-  to: any;
+  to: Arborist.Node;
   includeDevDeps?: boolean;
   fullLockMode?: boolean;
 }
@@ -127,7 +128,7 @@ export async function* searchLockDependencies(
     current.addFlag("isDeprecated");
     current.addFlag("hasCustomResolver", customResolvers.size > 0);
 
-    if (utils.isGitDependency(to.resolved)) {
+    if (to.resolved && utils.isGitDependency(to.resolved)) {
       current.isGit(to.resolved);
     }
   }
@@ -159,11 +160,11 @@ export interface WalkOptions extends DefaultSearchOptions {
   fullLockMode: boolean;
   usePackageLock: boolean;
   includeDevDeps: boolean;
-  location: string;
+  location: string | undefined;
 }
 
 export async function* walk(
-  manifest: pacote.AbbreviatedManifest & pacote.ManifestResult,
+  manifest: PackageJson | pacote.AbbreviatedManifest & pacote.ManifestResult,
   options: WalkOptions
 ): AsyncIterableIterator<Dependency> {
   const {
@@ -200,9 +201,9 @@ export async function* walk(
       path: location,
       registry
     });
-    let tree: any;
+    let tree: Arborist.Node;
     try {
-      await fs.access(path.join(location, "node_modules"));
+      await fs.access(path.join(location!, "node_modules"));
       tree = await arb.loadActual();
     }
     catch {
@@ -212,7 +213,7 @@ export async function* walk(
     iterators = [
       ...iter
         .filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
-        .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to])
+        .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
         .map(([packageName, to]) => searchLockDependencies(packageName, {
           to,
           parent,

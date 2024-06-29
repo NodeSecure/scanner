@@ -7,7 +7,7 @@ export interface DependencyRef {
   flags: string[];
   description: string;
   size: number;
-  authors: Record<string, any>;
+  author: Record<string, any>;
   engines: Record<string, any>;
   repository: any;
   scripts: Record<string, string>;

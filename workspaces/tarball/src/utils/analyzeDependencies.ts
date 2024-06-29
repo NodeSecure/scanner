@@ -1,5 +1,6 @@
 // Import Third-party Dependencies
 import difference from "lodash.difference";
+// @ts-ignore
 import builtins from "builtins";
 
 // Import Internal Dependencies
@@ -90,7 +91,8 @@ function buildSubpathDependency(
   alias: string,
   nodeImports: Record<string, { node?: string, default: string }>
 ): [string, string] {
-  const importedDependency = nodeImports[alias].node ?? nodeImports[alias].default;
+  const importEntry = nodeImports[alias]!;
+  const importedDependency = importEntry.node ?? importEntry.default;
 
   return [alias, importedDependency];
 }

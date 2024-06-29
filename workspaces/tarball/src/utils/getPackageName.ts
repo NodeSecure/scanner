@@ -15,5 +15,5 @@ export function getPackageName(
   const parts = name.split(kPackageSeparator);
 
   // Note: only scoped package are allowed to start with @
-  return name.startsWith(kPackageOrgSymbol) ? `${parts[0]}/${parts[1]}` : parts[0];
+  return name.startsWith(kPackageOrgSymbol) ? `${parts[0]}/${parts[1]}` : parts[0]!;
 }

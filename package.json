@@ -2,91 +2,31 @@
   "name": "@nodesecure/scanner",
   "version": "5.3.0",
   "description": "A package API to run a static analysis of your module's dependencies.",
-  "exports": "./index.js",
-  "engines": {
-    "node": ">=18"
-  },
   "type": "module",
   "workspaces": [
+    "workspaces/scanner",
     "workspaces/tarball",
     "workspaces/tree-walker"
   ],
   "scripts": {
     "build": "tsc -b",
-    "lint": "eslint src test",
-    "prepublishOnly": "pkg-ok",
-    "test": "npm run lint && npm run test-only",
-    "test:ci": "node --test test/**.spec.js test/**/*.spec.js",
-    "test-only": "glob -c \"node --test-reporter=spec --test\" \"./test/**/*.spec.js\"",
-    "coverage": "c8 -r html npm run test-only"
+    "test": "npm run test --ws --if-present"
   },
-  "files": [
-    "src",
-    "i18n",
-    "types",
-    "index.js",
-    "index.d.ts"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NodeSecure/scanner.git"
-  },
-  "keywords": [
-    "node",
-    "nodejs",
-    "security",
-    "cli",
-    "sast",
-    "scanner",
-    "static",
-    "code",
-    "analysis",
-    "node_modules",
-    "tree",
-    "npm",
-    "registry",
-    "graph",
-    "visualization",
-    "dependencies"
-  ],
   "author": "NodeSecure",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/NodeSecure/scanner/issues"
-  },
-  "homepage": "https://github.com/NodeSecure/scanner#readme",
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.8.0",
+    "@nodesecure/eslint-config": "^1.9.0",
     "@slimio/is": "^2.0.0",
     "@types/node": "^20.10.0",
     "@types/pacote": "^11.1.8",
     "@types/sinon": "^17.0.3",
     "c8": "^9.1.0",
-    "dotenv": "^16.3.1",
     "eslint": "8.57.0",
-    "get-folder-size": "^4.0.0",
     "glob": "^10.3.10",
     "pkg-ok": "^3.0.0",
     "sinon": "^17.0.1",
-    "snap-shot-core": "^10.2.4",
+    "tsup": "^8.1.0",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.2"
-  },
-  "dependencies": {
-    "@nodesecure/authors": "^1.0.2",
-    "@nodesecure/flags": "^2.4.0",
-    "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/i18n": "^4.0.0",
-    "@nodesecure/js-x-ray": "^6.3.0",
-    "@nodesecure/npm-registry-sdk": "^2.1.1",
-    "@nodesecure/ntlp": "^3.0.0",
-    "@nodesecure/utils": "^2.0.1",
-    "@nodesecure/vuln": "^1.7.0",
-    "@npm/types": "^1.0.2",
-    "@slimio/lock": "^1.0.0",
-    "builtins": "^5.0.1",
-    "lodash.difference": "^4.5.0",
-    "pacote": "^17.0.4",
-    "semver": "^7.5.4"
+    "typescript": "^5.5.2"
   }
 }
