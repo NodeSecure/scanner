@@ -76,12 +76,14 @@ export interface DependencyVersion {
   usedBy: Record<string, string>;
   /** Size on disk of the extracted tarball (in bytes) */
   size: number;
+  /** Count of dependencies */
+  dependencyCount: number;
   /** Package description */
   description: string;
   /** Author of the package. This information is not trustable and can be empty. */
   author: Author | null;
   engines: Engines;
-  repository: Repository;
+  repository?: Repository;
   scripts: Record<string, string>;
   /**
    * JS-X-Ray warnings
@@ -89,6 +91,7 @@ export interface DependencyVersion {
    * @see https://github.com/NodeSecure/js-x-ray/blob/master/WARNINGS.md
    */
   warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
+  alias: Record<string, string>;
   /** Tarball composition (files and dependencies) */
   composition: {
     /** Files extensions (.js, .md, .exe etc..) */
@@ -96,7 +99,6 @@ export interface DependencyVersion {
     files: string[];
     /** Minified files (foo.min.js etc..) */
     minified: string[];
-    alias: Record<string, string>;
     required_files: string[];
     required_thirdparty: string[];
     required_nodejs: string[];
@@ -134,8 +136,6 @@ export interface DependencyVersion {
 export interface Dependency {
   /** NPM Registry metadata */
   metadata: {
-    /** Count of dependencies */
-    dependencyCount: number;
     /** Number of releases published on npm */
     publishedCount: number;
     lastUpdateAt: Date;
