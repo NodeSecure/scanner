@@ -40,7 +40,8 @@ test("Dependency children should write his parent as usedBy when exported", () =
   });
 
   const flatDep = testDep.exportAsPlainObject(void 0);
-  assert.deepEqual(flatDep.versions["1.0.0"].usedBy, {
+  assert.strictEqual(flatDep.name, "test");
+  assert.deepEqual(flatDep.usedBy, {
     [semverDep.name]: semverDep.version
   });
 });
@@ -51,9 +52,8 @@ test("Create a dependency with one warning", () => {
   semverDep.warnings.push(fakeWarning as any);
 
   const flatDep = semverDep.exportAsPlainObject(void 0);
-  const version = flatDep.versions["1.0.0"];
-  assert.deepEqual(version.flags, ["hasWarnings"]);
-  assert.strictEqual(version.warnings[0], fakeWarning);
+  assert.deepEqual(flatDep.flags, ["hasWarnings"]);
+  assert.strictEqual(flatDep.warnings[0], fakeWarning);
 });
 
 test("Create a GIT Dependency (flags.isGit must be set to true)", () => {
@@ -61,13 +61,13 @@ test("Create a GIT Dependency (flags.isGit must be set to true)", () => {
   assert.deepStrictEqual(semverDep.gitUrl, null);
 
   const flatSemver = semverDep.exportAsPlainObject(void 0);
-  assert.ok(flatSemver.versions["1.0.0"].flags.includes("isGit"));
+  assert.ok(flatSemver.flags.includes("isGit"));
 
   const mochaDep = new Dependency("mocha", "1.0.0").isGit("https://github.com/mochajs/mocha");
   assert.strictEqual(mochaDep.gitUrl, "https://github.com/mochajs/mocha");
 
   const flatMocha = mochaDep.exportAsPlainObject(void 0);
-  assert.ok(flatMocha.versions["1.0.0"].flags.includes("isGit"));
+  assert.ok(flatMocha.flags.includes("isGit"));
 });
 
 test("Dependency.addFlag should throw a TypeError if flagName is not string", () => {

@@ -14,7 +14,12 @@ import {
 // Import Internal Dependencies
 import { getLinks } from "./utils/index.js";
 import { Logger } from "./class/logger.class.js";
-import type { Author, Maintainer, Dependency, Publisher } from "./types.js";
+import type {
+  Author,
+  Maintainer,
+  Publisher,
+  Dependency
+} from "./types.js";
 
 export async function manifestMetadata(
   name: string,
@@ -41,9 +46,7 @@ export async function manifestMetadata(
 
 export interface PackageMetadataOptions {
   logger: Logger;
-  ref: Exclude<Dependency, "metadata"> & {
-    metadata: Partial<Dependency["metadata"]>
-  };
+  dependency: Dependency;
 }
 
 export async function packageMetadata(
@@ -51,7 +54,7 @@ export async function packageMetadata(
   version: string,
   options: PackageMetadataOptions
 ): Promise<void> {
-  const { ref, logger } = options;
+  const { dependency, logger } = options;
   const packageSpec = `${name}:${version}`;
 
   try {
@@ -74,12 +77,11 @@ export async function packageMetadata(
       maintainers: pkg.maintainers
         .map((maintainer) => parseAuthor(maintainer)!) ?? [],
       publishers: [],
-      integrity: {},
-      dependencyCount: 0
+      integrity: {}
     };
 
     const isOutdated = semver.neq(version, lastVersion);
-    const flags = ref.versions[version]!.flags;
+    const flags = dependency.versions[version]!.flags;
     if (isOutdated) {
       flags.push("isOutdated");
     }
@@ -132,8 +134,11 @@ export async function packageMetadata(
     }
 
     await addNpmAvatar(metadata);
-    Object.assign(ref.versions[version]!, { links: getLinks(pkg.versions[version]!) });
-    Object.assign(ref.metadata, metadata);
+    Object.assign(
+      dependency.versions[version]!,
+      { links: getLinks(pkg.versions[version]!) }
+    );
+    dependency.metadata = metadata;
   }
   catch {
     // ignore
