@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/js-x-ray": "^6.3.0",
+    "@nodesecure/js-x-ray": "^7.2.0",
     "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/utils": "^2.1.0",
     "@npm/types": "^1.0.2",
