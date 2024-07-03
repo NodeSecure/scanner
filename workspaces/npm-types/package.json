@@ -1,0 +1,34 @@
+{
+  "name": "@nodesecure/npm-types",
+  "version": "1.0.0",
+  "description": "Up to date typescript definitions for npm registry content",
+  "types": "./src/index.d.ts",
+  "exports": "./src/index.d.ts",
+  "scripts": {
+    "test": "tsd"
+  },
+  "files": [
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "keywords": [
+    "npm registry",
+    "types",
+    "typescript",
+    "definitions",
+    "typings"
+  ],
+  "author": "NodeSecure",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/npm-types#readme",
+  "devDependencies": {
+    "tsd": "^0.31.1"
+  },
+  "private": false
+}

@@ -9,8 +9,7 @@ import Locker from "@slimio/lock";
 import { scanDirOrArchive } from "@nodesecure/tarball";
 import * as vuln from "@nodesecure/vuln";
 import * as treeWalker from "@nodesecure/tree-walker";
-import type { PackageJson } from "@npm/types";
-import pacote from "pacote";
+import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
@@ -33,7 +32,7 @@ type WalkerOptions = Omit<Options, "registry"> & {
 }
 
 export async function depWalker(
-  manifest: PackageJson | pacote.AbbreviatedManifest & pacote.ManifestResult,
+  manifest: PackageJSON | ManifestVersion,
   options: WalkerOptions,
   logger = new Logger()
 ): Promise<Payload> {

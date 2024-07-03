@@ -1,6 +1,5 @@
 // Import Third-party Dependencies
-import pacote from "pacote";
-import type { PackageJson } from "@npm/types";
+import type { PackageJSON } from "@nodesecure/npm-types";
 
 export type NpmDependency =
   "dependencies" |
@@ -11,9 +10,7 @@ export type NpmDependency =
   "bundledDependencies";
 
 export function mergeDependencies(
-  manifest:
-    Partial<PackageJson> |
-    Partial<pacote.AbbreviatedManifest & pacote.ManifestResult>,
+  manifest: Partial<PackageJSON>,
   types: NpmDependency[] = ["dependencies"] as const
 ) {
   const dependencies = new Map<string, string>();
@@ -25,8 +22,6 @@ export function mergeDependencies(
       continue;
     }
 
-    // FIX: replace @npm/types with up to date interface
-    // @ts-ignore
     const dep = manifest[fieldName] as Record<string, string>;
 
     for (const [name, version] of Object.entries(dep)) {

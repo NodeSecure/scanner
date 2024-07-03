@@ -8,7 +8,7 @@ import os from "node:os";
 import pacote from "pacote";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as tarball from "@nodesecure/tarball";
-import type { PackageJson } from "@npm/types";
+import type { PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { depWalker } from "./depWalker.js";
@@ -50,7 +50,7 @@ export async function cwd(
   logger.end(ScannerLoggerEvents.manifest.read);
 
   return depWalker(
-    JSON.parse(str) as PackageJson,
+    JSON.parse(str) as PackageJSON,
     finalizedOptions,
     logger
   );
@@ -72,7 +72,8 @@ export async function from(
   logger.end(ScannerLoggerEvents.manifest.fetch);
 
   return depWalker(
-    manifest,
+    // FIX: find a way to merge pacote & registry interfaces
+    manifest as pacote.AbbreviatedManifest,
     Object.assign(options, { registry }),
     logger
   );

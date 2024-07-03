@@ -47,7 +47,7 @@
   "bugs": {
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
-  "homepage": "https://github.com/NodeSecure/scanner#readme",
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/scanner#readme",
   "devDependencies": {
     "@types/pacote": "^11.1.8"
   },
@@ -57,10 +57,10 @@
     "@nodesecure/i18n": "^4.0.1",
     "@nodesecure/js-x-ray": "^6.3.0",
     "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@nodesecure/npm-types": "^1.0.0",
     "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/utils": "^2.2.0",
     "@nodesecure/vuln": "^1.7.0",
-    "@npm/types": "^1.0.2",
     "@slimio/lock": "^1.0.0",
     "pacote": "^17.0.4",
     "semver": "^7.5.4"
