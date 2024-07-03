@@ -4,9 +4,6 @@
   "description": "Up to date typescript definitions for npm registry content",
   "types": "./src/index.d.ts",
   "exports": "./src/index.d.ts",
-  "scripts": {
-    "test": "tsd"
-  },
   "files": [
     "src"
   ],
