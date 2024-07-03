@@ -15,7 +15,7 @@ test("registry.packageMetadata should not throw error for unknown/invalid packag
 
   await registry.packageMetadata("foobarrxldkedeoxcjek", "1.5.0", {
     logger,
-    ref: {} as any
+    dependency: {} as any
   });
 });
 
@@ -50,7 +50,7 @@ test("registry.manifestMetadata", async() => {
 });
 
 test("registry.packageMetadata", async() => {
-  const ref = {
+  const dependency = {
     metadata: {},
     versions: {
       "1.5.0": {
@@ -61,27 +61,27 @@ test("registry.packageMetadata", async() => {
   const logger = new Logger().start("registry");
 
   await registry.packageMetadata("@slimio/is", "1.5.0", {
-    ref,
+    dependency,
     logger
   });
 
-  assert.deepEqual(ref.versions["1.5.0"]!.flags, ["isOutdated"]);
+  assert.deepEqual(dependency.versions["1.5.0"]!.flags, ["isOutdated"]);
   assert.strictEqual(logger.count("registry"), 1);
 
-  assert.strictEqual(ref.metadata.author!.name, "SlimIO");
-  assert.strictEqual(ref.metadata.homepage, "https://github.com/SlimIO/is#readme");
-  assert.ok(semver.gt(ref.metadata.lastVersion, "1.5.0"));
+  assert.strictEqual(dependency.metadata.author!.name, "SlimIO");
+  assert.strictEqual(dependency.metadata.homepage, "https://github.com/SlimIO/is#readme");
+  assert.ok(semver.gt(dependency.metadata.lastVersion, "1.5.0"));
 
-  assert.ok(Array.isArray(ref.metadata.publishers));
-  assert.ok(Array.isArray(ref.metadata.maintainers));
-  assert.ok(ref.metadata.publishers.length > 0);
-  assert.ok(ref.metadata.maintainers.length > 0);
+  assert.ok(Array.isArray(dependency.metadata.publishers));
+  assert.ok(Array.isArray(dependency.metadata.maintainers));
+  assert.ok(dependency.metadata.publishers.length > 0);
+  assert.ok(dependency.metadata.maintainers.length > 0);
 
-  assert.ok(ref.metadata.hasManyPublishers);
-  assert.ok(typeof ref.metadata.publishedCount === "number");
-  assert.ok(is.date(new Date(ref.metadata.lastUpdateAt)));
+  assert.ok(dependency.metadata.hasManyPublishers);
+  assert.ok(typeof dependency.metadata.publishedCount === "number");
+  assert.ok(is.date(new Date(dependency.metadata.lastUpdateAt)));
 
-  assert.deepEqual(ref.versions["1.5.0"]!.links, {
+  assert.deepEqual(dependency.versions["1.5.0"]!.links, {
     npm: "https://www.npmjs.com/package/@slimio/is/v/1.5.0",
     homepage: "https://github.com/SlimIO/is#readme",
     repository: "https://github.com/SlimIO/is"
@@ -89,7 +89,7 @@ test("registry.packageMetadata", async() => {
 });
 
 test("registry.packageMetadata should find GitLab links", async() => {
-  const ref = {
+  const dependency = {
     metadata: {},
     versions: {
       "71.2.0": {
@@ -100,11 +100,11 @@ test("registry.packageMetadata should find GitLab links", async() => {
   const logger = new Logger().start("registry");
 
   await registry.packageMetadata("@gitlab/ui", "71.2.0", {
-    ref,
+    dependency,
     logger
   });
 
-  assert.deepEqual(ref.versions["71.2.0"]!.links, {
+  assert.deepEqual(dependency.versions["71.2.0"]!.links, {
     npm: "https://www.npmjs.com/package/@gitlab/ui/v/71.2.0",
     homepage: "https://gitlab.com/gitlab-org/gitlab-ui#readme",
     repository: "https://gitlab.com/gitlab-org/gitlab-ui"
@@ -112,7 +112,7 @@ test("registry.packageMetadata should find GitLab links", async() => {
 });
 
 test("registry.packageMetadata should detect a deprecated package", async() => {
-  const ref = {
+  const dependency = {
     metadata: {},
     versions: {
       "2.5.9": {
@@ -123,11 +123,11 @@ test("registry.packageMetadata should detect a deprecated package", async() => {
   const logger = new Logger().start("registry");
 
   await registry.packageMetadata("express", "2.5.9", {
-    ref,
+    dependency,
     logger
   });
 
-  assert.deepEqual(ref.versions["2.5.9"]!.flags, [
+  assert.deepEqual(dependency.versions["2.5.9"]!.flags, [
     "isOutdated",
     "isDeprecated"
   ]);

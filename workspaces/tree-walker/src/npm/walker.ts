@@ -12,7 +12,7 @@ import type { PackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.js";
-import { Dependency } from "../Dependency.class.js";
+import { Dependency, type DependencyJSON } from "../Dependency.class.js";
 
 // CONSTANTS
 const { NPM_TOKEN } = utils;
@@ -201,7 +201,7 @@ export interface WalkOptions extends DefaultSearchOptions {
 export async function* walk(
   manifest: PackageJSON | ManifestVersion,
   options: WalkOptions
-): AsyncIterableIterator<Dependency> {
+): AsyncIterableIterator<DependencyJSON> {
   const {
     maxDepth = 4,
     exclude,
@@ -270,7 +270,7 @@ export async function* walk(
   }
 
   for await (const dep of combineAsyncIterators<Dependency>({}, ...iterators)) {
-    yield dep;
+    yield dep.exportAsPlainObject();
   }
 
   // Add root dependencies to the exclude Map (because the parent is not handled by searchDependencies)
@@ -287,5 +287,5 @@ export async function* walk(
     }
   }
 
-  yield parent;
+  yield parent.exportAsPlainObject(0);
 }

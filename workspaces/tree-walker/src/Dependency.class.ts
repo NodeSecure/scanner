@@ -1,16 +1,30 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
 
+export interface DependencyJSON {
+  id: number;
+  name: string;
+  version: string;
+  usedBy: Record<string, string>;
+  isDevDependency: boolean;
+  existOnRemoteRegistry: boolean;
+  flags: string[];
+  warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
+  alias: Record<string, string>;
+  dependencyCount: number;
+  gitUrl: string | null;
+}
+
 export class Dependency {
   static currentId = 1;
 
-  public gitUrl: null | string = null;
-  public dependencyCount = 0;
-  public warnings: JSXRay.Warning<JSXRay.WarningDefault>[] = [];
   public name: string;
   public version: string;
   public dev = false;
   public existOnRemoteRegistry = true;
+  public dependencyCount = 0;
+  public gitUrl: null | string = null;
+  public warnings: JSXRay.Warning<JSXRay.WarningDefault>[] = [];
   public alias: Record<string, string> = {};
 
   #flags = new Set<string>();
@@ -69,57 +83,23 @@ export class Dependency {
     return this;
   }
 
-  exportAsPlainObject(customId?: number) {
+  exportAsPlainObject(customId?: number): DependencyJSON {
     if (this.warnings.length > 0) {
       this.addFlag("hasWarnings");
     }
 
     return {
-      versions: {
-        [this.version]: {
-          id: typeof customId === "number" ? customId : Dependency.currentId++,
-          usedBy: this.parent,
-          isDevDependency: this.dev,
-          existOnRemoteRegistry: this.existOnRemoteRegistry,
-          flags: this.flags,
-          description: "",
-          size: 0,
-          author: null,
-          engines: {},
-          repository: {},
-          scripts: {},
-          warnings: this.warnings,
-          composition: {
-            extensions: [],
-            files: [],
-            minified: [],
-            unused: [],
-            missing: [],
-            alias: this.alias,
-            required_files: [],
-            required_nodejs: [],
-            required_thirdparty: [],
-            required_subpath: []
-          },
-          license: "unkown license",
-          gitUrl: this.gitUrl
-        }
-      },
-      vulnerabilities: [],
-      metadata: {
-        dependencyCount: this.dependencyCount,
-        publishedCount: 0,
-        lastUpdateAt: new Date(),
-        lastVersion: "N/A",
-        hasChangedAuthor: false,
-        hasManyPublishers: false,
-        hasReceivedUpdateInOneYear: true,
-        homepage: null,
-        author: null,
-        publishers: [],
-        maintainers: [],
-        integrity: {}
-      }
+      id: typeof customId === "number" ? customId : Dependency.currentId++,
+      name: this.name,
+      version: this.version,
+      usedBy: this.parent,
+      isDevDependency: this.dev,
+      existOnRemoteRegistry: this.existOnRemoteRegistry,
+      flags: this.flags,
+      warnings: this.warnings,
+      dependencyCount: this.dependencyCount,
+      gitUrl: this.gitUrl,
+      alias: this.alias
     };
   }
 }

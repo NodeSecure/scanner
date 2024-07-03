@@ -14,13 +14,13 @@ export interface DependencyRef {
   warnings: any;
   license: any;
   gitUrl: string | null;
+  alias: Record<string, string>;
   composition: {
     extensions: string[];
     files: string[];
     minified: string[];
     unused: string[];
     missing: string[];
-    alias: Record<string, any>;
     required_files: string[];
     required_nodejs: string[];
     required_thirdparty: string[];

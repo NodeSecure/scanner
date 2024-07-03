@@ -17,7 +17,46 @@ import {
 } from "./utils/index.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
-import type { DependencyVersion, Options, Payload } from "./types.js";
+import type {
+  Dependency,
+  DependencyVersion,
+  Options,
+  Payload
+} from "./types.js";
+
+// CONSTANTS
+const kDefaultDependencyVersionFields = {
+  description: "",
+  size: 0,
+  author: null,
+  engines: {},
+  scripts: {},
+  license: [],
+  composition: {
+    extensions: [],
+    files: [],
+    minified: [],
+    unused: [],
+    missing: [],
+    required_files: [],
+    required_nodejs: [],
+    required_thirdparty: [],
+    required_subpath: []
+  }
+};
+const kDefaultDependencyMetadata: Dependency["metadata"] = {
+  publishedCount: 0,
+  lastUpdateAt: new Date(),
+  lastVersion: "N/A",
+  hasChangedAuthor: false,
+  hasManyPublishers: false,
+  hasReceivedUpdateInOneYear: true,
+  homepage: null,
+  author: null,
+  publishers: [],
+  maintainers: [],
+  integrity: {}
+};
 
 const { version: packageVersion } = JSON.parse(
   readFileSync(
@@ -59,7 +98,7 @@ export async function depWalker(
 
   // We are dealing with an exclude Map to avoid checking a package more than one time in searchDeepDependencies
   const exclude: Map<string, Set<string>> = new Map();
-  const dependencies: Map<string, any> = new Map();
+  const dependencies: Map<string, Dependency> = new Map();
 
   {
     logger
@@ -79,59 +118,66 @@ export async function depWalker(
       registry,
       packageLock
     };
-    for await (const currentDep of treeWalker.npm.walk(manifest, rootDepsOptions)) {
-      const { name, version, dev } = currentDep;
+    for await (const current of treeWalker.npm.walk(manifest, rootDepsOptions)) {
+      const { name, version, ...currentVersion } = current;
+      const dependency: Dependency = {
+        versions: {
+          [version]: {
+            ...currentVersion,
+            ...structuredClone(kDefaultDependencyVersionFields)
+          }
+        },
+        vulnerabilities: [],
+        metadata: structuredClone(kDefaultDependencyMetadata)
+      };
 
-      const current = currentDep.exportAsPlainObject(name === manifest.name ? 0 : void 0);
-      let proceedDependencyAnalysis = true;
-
+      let proceedDependencyScan = true;
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
-        promisesToWait.push(manifestMetadata(name, version, dep));
+        promisesToWait.push(
+          manifestMetadata(name, version, dep)
+        );
 
-        const currVersion = Object.keys(current.versions)[0]!;
-        if (currVersion in dep.versions) {
+        if (version in dep.versions) {
           // The dependency has already entered the analysis
           // This happens if the package is used by multiple packages in the tree
-          proceedDependencyAnalysis = false;
+          proceedDependencyScan = false;
         }
         else {
-          dep.versions[currVersion] = current.versions[currVersion];
+          dep.versions[version] = dependency.versions[version];
         }
       }
       else {
-        dependencies.set(name, current);
+        dependencies.set(name, dependency);
       }
 
       // If the dependency is a DevDependencies we ignore it.
-      if (dev) {
+      if (current.isDevDependency || !proceedDependencyScan) {
         continue;
       }
 
-      if (proceedDependencyAnalysis) {
-        logger.tick(ScannerLoggerEvents.analysis.tree);
+      logger.tick(ScannerLoggerEvents.analysis.tree);
 
-        // There is no need to fetch 'N' times the npm metadata for the same package.
-        if (fetchedMetadataPackages.has(name) || !current.versions[version]!.existOnRemoteRegistry) {
-          logger.tick(ScannerLoggerEvents.analysis.registry);
-        }
-        else {
-          fetchedMetadataPackages.add(name);
-          promisesToWait.push(packageMetadata(name, version, {
-            ref: current as any,
-            logger
-          }));
-        }
-
-        // TODO: re-abstract and fix ref type
-        promisesToWait.push(scanDirOrArchive(name, version, {
-          ref: current.versions[version] as any,
-          location,
-          tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
-          locker: tarballLocker,
-          registry
+      // There is no need to fetch 'N' times the npm metadata for the same package.
+      if (fetchedMetadataPackages.has(name) || !current.existOnRemoteRegistry) {
+        logger.tick(ScannerLoggerEvents.analysis.registry);
+      }
+      else {
+        fetchedMetadataPackages.add(name);
+        promisesToWait.push(packageMetadata(name, version, {
+          dependency,
+          logger
         }));
       }
+
+      // TODO: re-abstract and fix ref type
+      promisesToWait.push(scanDirOrArchive(name, version, {
+        ref: dependency.versions[version] as any,
+        location,
+        tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
+        locker: tarballLocker,
+        registry
+      }));
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
@@ -140,7 +186,9 @@ export async function depWalker(
     await Promise.allSettled(promisesToWait);
     await timers.setImmediate();
 
-    logger.end(ScannerLoggerEvents.analysis.tarball).end(ScannerLoggerEvents.analysis.registry);
+    logger
+      .end(ScannerLoggerEvents.analysis.tarball)
+      .end(ScannerLoggerEvents.analysis.registry);
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
@@ -176,14 +224,16 @@ export async function depWalker(
     }
     for (const version of Object.entries(dependency.versions)) {
       const [verStr, verDescriptor] = version as [string, DependencyVersion];
-      verDescriptor.flags.push(...addMissingVersionFlags(new Set(verDescriptor.flags), dependency));
+      verDescriptor.flags.push(
+        ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
+      );
 
       const usedDeps = exclude.get(`${packageName}@${verStr}`) || new Set();
       if (usedDeps.size === 0) {
         continue;
       }
 
-      const usedBy = Object.create(null);
+      const usedBy: Record<string, string> = Object.create(null);
       for (const [name, version] of [...usedDeps].map((name) => name.split(" ") as [string, string])) {
         usedBy[name] = version;
       }

@@ -28,7 +28,9 @@
           "coverage": "nyc npm test",
           "report": "nyc report --reporter=html"
         },
+        "dependencyCount": 0,
         "warnings": [],
+        "alias": {},
         "composition": {
           "extensions": [
             "",
@@ -41,7 +43,6 @@
           "minified": [],
           "unused": [],
           "missing": [],
-          "alias": {},
           "required_nodejs": [],
           "required_thirdparty": [],
           "required_subpath": {}
@@ -96,7 +97,6 @@
     },
     "vulnerabilities": [],
     "metadata": {
-      "dependencyCount": 0,
       "publishedCount": 8,
       "lastUpdateAt": "2023-01-23T02:15:37.203Z",
       "lastVersion": "2.0.0",
