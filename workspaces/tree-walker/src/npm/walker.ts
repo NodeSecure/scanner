@@ -8,7 +8,7 @@ import combineAsyncIterators from "combine-async-iterators";
 import * as iter from "itertools";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
-import type { PackageJson } from "@npm/types";
+import type { PackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.js";
@@ -199,7 +199,7 @@ export interface WalkOptions extends DefaultSearchOptions {
 }
 
 export async function* walk(
-  manifest: PackageJson | pacote.AbbreviatedManifest & pacote.ManifestResult,
+  manifest: PackageJSON | ManifestVersion,
   options: WalkOptions
 ): AsyncIterableIterator<Dependency> {
   const {

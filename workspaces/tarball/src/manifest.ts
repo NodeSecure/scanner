@@ -4,7 +4,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 
 // Import Third-party Dependencies
-import type { PackageJson } from "@npm/types";
+import type { PackageJSON } from "@nodesecure/npm-types";
 import { parseAuthor } from "@nodesecure/utils";
 
 // Import Internal Dependencies
@@ -16,13 +16,6 @@ const kNativeNpmPackages = new Set([
   "node-gyp", "node-pre-gyp", "node-gyp-build", "node-addon-api"
 ]);
 const kNodemodulesBinPrefix = "node_modules/.bin/";
-
-export type PackageJSON = PackageJson & {
-  type?: "script" | "module";
-  gypfile?: boolean;
-  imports?: Record<string, any>;
-  exports?: Record<string, any>;
-}
 
 export async function read(
   location: string

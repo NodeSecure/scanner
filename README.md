@@ -132,6 +132,7 @@ Click on one of the links to access the documentation of the workspace:
 | --- | --- |
 | tarball | [@nodesecure/sec-literal](./workspaces/tarball) |
 | tree-walker | [@nodesecure/tree-walker](./workspaces/tree-walker) |
+| npm-types | [@nodesecure/npm-types](./workspaces/npm-types) |
 
 ## Contributors ✨
 

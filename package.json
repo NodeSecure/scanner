@@ -6,7 +6,8 @@
   "workspaces": [
     "workspaces/scanner",
     "workspaces/tarball",
-    "workspaces/tree-walker"
+    "workspaces/tree-walker",
+    "workspaces/npm-types"
   ],
   "scripts": {
     "build": "tsc -b",
