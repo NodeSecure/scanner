@@ -9,7 +9,6 @@ import {
   type Warning,
   type Dependency
 } from "@nodesecure/js-x-ray";
-import Locker from "@slimio/lock";
 import pacote from "pacote";
 import * as ntlp from "@nodesecure/ntlp";
 
@@ -35,7 +34,6 @@ export interface scanDirOrArchiveOptions {
   ref: DependencyRef;
   location?: string;
   tmpLocation?: null | string;
-  locker: Locker;
   registry: string;
 }
 
@@ -44,126 +42,117 @@ export async function scanDirOrArchive(
   version: string,
   options: scanDirOrArchiveOptions
 ) {
-  const { ref, location = process.cwd(), tmpLocation = null, locker, registry } = options;
+  const { ref, location = process.cwd(), tmpLocation = null, registry } = options;
 
   const isNpmTarball = !(tmpLocation === null);
   const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : location;
-  const free = await locker.acquireOne();
 
-  try {
-    // If this is an NPM tarball then we extract it on the disk with pacote.
-    if (isNpmTarball) {
-      await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`, dest, {
-        ...NPM_TOKEN,
-        registry,
-        cache: `${os.homedir()}/.npm`
-      });
-      await timers.setImmediate();
-    }
-    else {
-      // Set links to an empty object because theses are generated only for NPM tarballs
-      Object.assign(ref, { links: {} });
-    }
-
-    // Read the package.json at the root of the directory or archive.
-    const {
-      packageDeps,
-      packageDevDeps,
-      author,
-      description,
-      hasScript,
-      hasNativeElements,
-      nodejs,
-      engines,
-      repository,
-      scripts,
-      integrity
-    } = await manifest.readAnalyze(dest);
-    Object.assign(ref, {
-      author, description, engines, repository, scripts, integrity
+  // If this is an NPM tarball then we extract it on the disk with pacote.
+  if (isNpmTarball) {
+    await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`, dest, {
+      ...NPM_TOKEN,
+      registry,
+      cache: `${os.homedir()}/.npm`
     });
-
-    // Get the composition of the (extracted) directory
-    const { ext, files, size } = await getTarballComposition(dest);
-    if (files.length === 1 && files.includes("package.json")) {
-      ref.warnings.push({
-        kind: "empty-package",
-        location: null,
-        i18n: "sast_warnings.emptyPackage",
-        severity: "Critical",
-        source: "Scanner",
-        experimental: false
-      });
-    }
-
-    ref.size = size;
-    ref.composition.extensions.push(...ext);
-    ref.composition.files.push(...files);
-    const hasBannedFile = files.some((path) => isSensitiveFile(path));
-    const hasNativeCode = hasNativeElements || files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
-
-    // Search for minified and runtime dependencies
-    // Run a JS-X-Ray analysis on each JavaScript files of the project!
-    const fileAnalysisRaw = await Promise.allSettled(
-      files
-        .filter((name) => kJsExtname.has(path.extname(name)))
-        .map((file) => sast.scanFile(dest, file, name))
-    );
-
-    const fileAnalysisResults = fileAnalysisRaw
-      .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
-      .map((promiseSettledResult) => (promiseSettledResult as PromiseFulfilledResult<sast.scanFileReport>).value);
-
-    ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
-
-    if (/^0(\.\d+)*$/.test(version)) {
-      ref.warnings.push(getSemVerWarning(version));
-    }
-
-    const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
-    const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
-    const tryDependencies = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
-    const minifiedFiles = fileAnalysisResults.filter((row) => row.isMinified).flatMap((row) => row.file);
-
-    const {
-      nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
-    } = analyzeDependencies(
-      dependencies,
-      { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports }
-    );
-
-    ref.composition.required_thirdparty = thirdPartyDependencies;
-    ref.composition.required_subpath = Object.fromEntries(subpathImportsDependencies);
-    ref.composition.unused.push(...unusedDependencies);
-    ref.composition.missing.push(...missingDependencies);
-    ref.composition.required_files = filesDependencies;
-    ref.composition.required_nodejs = nodeDependencies;
-    ref.composition.minified = minifiedFiles;
-
-    // License
     await timers.setImmediate();
-    const licenses = await ntlp.extractLicenses(dest);
-    const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
-    ref.license = licenses;
-    ref.license.uniqueLicenseIds = uniqueLicenseIds;
+  }
+  else {
+    // Set links to an empty object because theses are generated only for NPM tarballs
+    Object.assign(ref, { links: {} });
+  }
 
-    ref.flags.push(...booleanToFlags({
-      ...flags,
-      hasNoLicense: uniqueLicenseIds.length === 0,
-      hasMultipleLicenses: licenses.hasMultipleLicenses,
-      hasMinifiedCode: minifiedFiles.length > 0,
-      hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
-      hasBannedFile,
-      hasNativeCode,
-      hasScript
-    }));
+  // Read the package.json at the root of the directory or archive.
+  const {
+    packageDeps,
+    packageDevDeps,
+    author,
+    description,
+    hasScript,
+    hasNativeElements,
+    nodejs,
+    engines,
+    repository,
+    scripts,
+    integrity
+  } = await manifest.readAnalyze(dest);
+  Object.assign(ref, {
+    author, description, engines, repository, scripts, integrity
+  });
+
+  // Get the composition of the (extracted) directory
+  const { ext, files, size } = await getTarballComposition(dest);
+  if (files.length === 1 && files.includes("package.json")) {
+    ref.warnings.push({
+      kind: "empty-package",
+      location: null,
+      i18n: "sast_warnings.emptyPackage",
+      severity: "Critical",
+      source: "Scanner",
+      experimental: false
+    });
   }
-  catch {
-    // Ignore
+
+  ref.size = size;
+  ref.composition.extensions.push(...ext);
+  ref.composition.files.push(...files);
+  const hasBannedFile = files.some((path) => isSensitiveFile(path));
+  const hasNativeCode = hasNativeElements || files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
+
+  // Search for minified and runtime dependencies
+  // Run a JS-X-Ray analysis on each JavaScript files of the project!
+  const fileAnalysisRaw = await Promise.allSettled(
+    files
+      .filter((name) => kJsExtname.has(path.extname(name)))
+      .map((file) => sast.scanFile(dest, file, name))
+  );
+
+  const fileAnalysisResults = fileAnalysisRaw
+    .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
+    .map((promiseSettledResult) => (promiseSettledResult as PromiseFulfilledResult<sast.scanFileReport>).value);
+
+  ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
+
+  if (/^0(\.\d+)*$/.test(version)) {
+    ref.warnings.push(getSemVerWarning(version));
   }
-  finally {
-    free();
-  }
+
+  const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
+  const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
+  const tryDependencies = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
+  const minifiedFiles = fileAnalysisResults.filter((row) => row.isMinified).flatMap((row) => row.file);
+
+  const {
+    nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
+  } = analyzeDependencies(
+    dependencies,
+    { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports }
+  );
+
+  ref.composition.required_thirdparty = thirdPartyDependencies;
+  ref.composition.required_subpath = Object.fromEntries(subpathImportsDependencies);
+  ref.composition.unused.push(...unusedDependencies);
+  ref.composition.missing.push(...missingDependencies);
+  ref.composition.required_files = filesDependencies;
+  ref.composition.required_nodejs = nodeDependencies;
+  ref.composition.minified = minifiedFiles;
+
+  // License
+  await timers.setImmediate();
+  const licenses = await ntlp.extractLicenses(dest);
+  const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
+  ref.license = licenses;
+  ref.license.uniqueLicenseIds = uniqueLicenseIds;
+
+  ref.flags.push(...booleanToFlags({
+    ...flags,
+    hasNoLicense: uniqueLicenseIds.length === 0,
+    hasMultipleLicenses: licenses.hasMultipleLicenses,
+    hasMinifiedCode: minifiedFiles.length > 0,
+    hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
+    hasBannedFile,
+    hasNativeCode,
+    hasScript
+  }));
 }
 
 export interface ScannedPackageResult {

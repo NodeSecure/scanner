@@ -5,7 +5,7 @@ import timers from "node:timers/promises";
 import os from "node:os";
 
 // Import Third-party Dependencies
-import Locker from "@slimio/lock";
+import { Mutex, MutexRelease } from "@openally/mutex";
 import { scanDirOrArchive } from "@nodesecure/tarball";
 import * as vuln from "@nodesecure/vuln";
 import * as treeWalker from "@nodesecure/tree-walker";
@@ -108,8 +108,11 @@ export async function depWalker(
     const fetchedMetadataPackages = new Set<string>();
     const promisesToWait: Promise<void>[] = [];
 
-    const tarballLocker = new Locker({ maxConcurrent: 5 });
-    tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
+    const locker = new Mutex({ concurrency: 5 });
+    locker.on(
+      MutexRelease,
+      () => logger.tick(ScannerLoggerEvents.analysis.tarball)
+    );
 
     const rootDepsOptions: treeWalker.npm.WalkOptions = {
       maxDepth,
@@ -170,14 +173,15 @@ export async function depWalker(
         }));
       }
 
-      // TODO: re-abstract and fix ref type
-      promisesToWait.push(scanDirOrArchive(name, version, {
-        ref: dependency.versions[version] as any,
-        location,
-        tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
-        locker: tarballLocker,
-        registry
-      }));
+      const scanDirPromise = locker.acquire().then((free) => {
+        return scanDirOrArchive(name, version, {
+          ref: dependency.versions[version] as any,
+          location,
+          tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
+          registry
+        }).finally(free);
+      });
+      promisesToWait.push(scanDirPromise);
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);

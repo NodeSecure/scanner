@@ -61,7 +61,7 @@
     "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/utils": "^2.2.0",
     "@nodesecure/vuln": "^1.7.0",
-    "@slimio/lock": "^1.0.0",
+    "@openally/mutex": "^1.0.0",
     "pacote": "^17.0.4",
     "semver": "^7.5.4"
   }
