@@ -1,162 +1,60 @@
 // Import Node.js Dependencies
-import path from "node:path";
-import fs from "node:fs/promises";
 import os from "node:os";
 
 // Import Third-party Dependencies
-import combineAsyncIterators from "combine-async-iterators";
 import * as iter from "itertools";
+import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
+import combineAsyncIterators from "combine-async-iterators";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
+import semver from "semver";
 import type { PackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.js";
-import { Dependency, type DependencyJSON } from "../Dependency.class.js";
+import {
+  LocalDependencyTreeLoader,
+  type LocalDependencyTreeLoaderProvider
+} from "./LocalDependencyTreeLoader.js";
+import {
+  Dependency,
+  type DependencyJSON,
+  type NpmSpec
+} from "../Dependency.class.js";
 
-// CONSTANTS
-const { NPM_TOKEN } = utils;
-
-export interface DefaultSearchOptions {
-  // NOTE: find a way to remove that from options
-  exclude: Map<string, Set<string>>;
-  /**
-   * URL to the registry to use
-   */
-  registry?: string;
-}
-
-export interface SearchOptions extends DefaultSearchOptions {
+interface WalkRemoteOptions {
   parent: Dependency;
+  gitURL?: string;
   maxDepth: number;
   currDepth?: number;
 }
 
-export async function* searchDependencies(
-  packageName: string,
-  gitURL: string | null,
-  options: SearchOptions
-): AsyncIterableIterator<Dependency> {
-  const { exclude, currDepth = 0, parent, maxDepth, registry } = options;
-
-  const { name, version, deprecated, ...pkg } = await pacote.manifest(gitURL ?? packageName, {
-    ...NPM_TOKEN,
-    registry,
-    cache: `${os.homedir()}/.npm`
-  });
-  const { dependencies, customResolvers, alias } = utils.mergeDependencies(pkg);
-
-  const current = new Dependency(name, version, parent);
-  current.alias = Object.fromEntries(alias);
-
-  if (gitURL !== null) {
-    current.isGit(gitURL);
-    try {
-      await pacote.manifest(`${name}@${version}`, {
-        ...NPM_TOKEN,
-        registry,
-        cache: `${os.homedir()}/.npm`
-      });
-    }
-    catch {
-      current.existOnRemoteRegistry = false;
-    }
-  }
-  current.addFlag("isDeprecated", deprecated === true);
-  current.addFlag("hasCustomResolver", customResolvers.size > 0);
-  current.addFlag("hasDependencies", dependencies.size > 0);
-
-  if (currDepth !== maxDepth) {
-    const config = {
-      exclude, currDepth: currDepth + 1, parent: current, maxDepth, registry
-    };
-
-    const gitDependencies = iter.filter(
-      customResolvers.entries(),
-      ([, valueStr]) => utils.isGitDependency(valueStr)
-    );
-    for (const [depName, valueStr] of gitDependencies) {
-      yield* searchDependencies(depName, valueStr, config);
-    }
-
-    const depsNames = await Promise.all(
-      iter.map(dependencies.entries(), utils.getCleanDependencyName)
-    );
-    for (const [fullName, cleanName, isLatest] of depsNames) {
-      if (!isLatest) {
-        current.addFlag("hasOutdatedDependency");
-      }
-
-      if (exclude.has(cleanName)) {
-        current.addChildren();
-        exclude.get(cleanName)!.add(current.fullName);
-      }
-      else {
-        exclude.set(cleanName, new Set([current.fullName]));
-        yield* searchDependencies(fullName, null, config);
-      }
-    }
-  }
-
-  yield current;
-}
-
-export interface SearchLockOptions extends DefaultSearchOptions {
+interface WalkLocalOptions {
   parent: Dependency;
-  to: Arborist.Node;
   includeDevDeps?: boolean;
   fetchManifest?: boolean;
 }
 
-export async function* searchLockDependencies(
-  currentPackageName: string,
-  options: SearchLockOptions
-): AsyncIterableIterator<Dependency> {
-  const { to, parent, exclude, fetchManifest = false, includeDevDeps, registry } = options;
-  const { version, integrity = to.integrity } = to.package;
-
-  const updatedVersion = version === "*" || typeof version === "undefined" ? "latest" : version;
-  const current = new Dependency(currentPackageName, updatedVersion, parent);
-  current.dev = to.dev;
-
-  if (fetchManifest && !includeDevDeps) {
-    const { _integrity, ...pkg } = await pacote.manifest(`${currentPackageName}@${updatedVersion}`, {
-      ...NPM_TOKEN,
-      registry,
-      cache: `${os.homedir()}/.npm`
-    });
-    const { customResolvers, alias } = utils.mergeDependencies(pkg);
-
-    current.alias = Object.fromEntries(alias);
-    current.addFlag("hasValidIntegrity", _integrity === integrity);
-    current.addFlag("isDeprecated");
-    current.addFlag("hasCustomResolver", customResolvers.size > 0);
-
-    if (to.resolved && utils.isGitDependency(to.resolved)) {
-      current.isGit(to.resolved);
-    }
-  }
-  current.addFlag("hasDependencies", to.edgesOut.size > 0);
-
-  for (const [packageName, { to: toNode }] of to.edgesOut) {
-    if (toNode === null || (!includeDevDeps && toNode.dev)) {
-      continue;
-    }
-    const cleanName = `${packageName}@${toNode.package.version}`;
-
-    if (exclude.has(cleanName)) {
-      current.addChildren();
-      exclude.get(cleanName)!.add(current.fullName);
-    }
-    else {
-      exclude.set(cleanName, new Set([current.fullName]));
-      yield* searchLockDependencies(packageName, { parent: current, to: toNode, exclude, registry });
-    }
-  }
-  yield current;
+export interface PacoteProviderApi {
+  manifest(
+    spec: string,
+    opts?: pacote.Options
+  ): Promise<pacote.AbbreviatedManifest & pacote.ManifestResult>;
+  packument(
+    spec: string,
+    opts?: pacote.Options
+  ): Promise<pacote.AbbreviatedPackument & pacote.PackumentResult>;
 }
 
-export interface WalkOptions extends DefaultSearchOptions {
+export interface TreeWalkerOptions {
+  registry?: string;
+  providers?: {
+    pacote?: PacoteProviderApi;
+    localTreeLoader?: LocalDependencyTreeLoaderProvider;
+  }
+}
+
+export interface WalkOptions {
   /**
    * Specifies the maximum depth to traverse for each root dependency.
    * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
@@ -198,94 +96,282 @@ export interface WalkOptions extends DefaultSearchOptions {
   };
 }
 
-export async function* walk(
-  manifest: PackageJSON | ManifestVersion,
-  options: WalkOptions
-): AsyncIterableIterator<DependencyJSON> {
-  const {
-    maxDepth = 4,
-    exclude,
-    packageLock = null,
-    includeDevDeps = false,
-    registry
-  } = options;
+export class TreeWalker {
+  /**
+   * A Map of Children Spec -> Parent Spec (as a unique list)
+   */
+  public relationsMap: Map<NpmSpec, Set<NpmSpec>> = new Map();
+  public registry: string;
 
-  const { dependencies, customResolvers, alias } = utils.mergeDependencies(manifest, void 0);
-  const parent = new Dependency(manifest.name, manifest.version);
-  parent.alias = Object.fromEntries(alias);
+  private providers: Required<Required<TreeWalkerOptions>["providers"]> = Object.seal({
+    pacote,
+    localTreeLoader: new LocalDependencyTreeLoader()
+  });
 
-  try {
-    await pacote.manifest(`${manifest.name}@${manifest.version}`, {
-      ...NPM_TOKEN,
-      registry,
+  constructor(
+    options: TreeWalkerOptions = {}
+  ) {
+    const { providers = {} } = options;
+    this.registry = options?.registry ?? getNpmRegistryURL();
+
+    Object.assign(this.providers, providers);
+  }
+
+  private get registryOptions() {
+    return {
+      ...utils.NPM_TOKEN,
+      registry: this.registry,
       cache: `${os.homedir()}/.npm`
-    });
+    };
   }
-  catch {
-    parent.existOnRemoteRegistry = false;
-  }
-  parent.addFlag("hasCustomResolver", customResolvers.size > 0);
-  parent.addFlag("hasDependencies", dependencies.size > 0);
 
-  let iterators: AsyncIterableIterator<Dependency>[];
-  if (packageLock === null) {
-    const configRef = { exclude, maxDepth, parent, registry };
-    iterators = [
-      ...iter
-        .filter(customResolvers.entries(), ([, valueStr]) => utils.isGitDependency(valueStr))
-        .map(([depName, valueStr]) => searchDependencies(depName, valueStr, configRef)),
-      ...iter
-        .map(dependencies.entries(), ([name, ver]) => searchDependencies(`${name}@${ver}`, null, configRef))
-    ];
-  }
-  else {
-    const { location, ...packageLockOptions } = packageLock;
-    const arb = new Arborist({
-      ...NPM_TOKEN,
-      path: location,
-      registry
-    });
-    let tree: Arborist.Node;
+  private async getLatestDependencyVersion(
+    dependencyName: string,
+    range: string
+  ): Promise<[version: string, isLatest: boolean]> {
     try {
-      await fs.access(path.join(location, "node_modules"));
-      tree = await arb.loadActual();
+      const { versions, "dist-tags": { latest } } = await this.providers.pacote.packument(
+        dependencyName,
+        this.registryOptions
+      );
+      const currVersion = semver.maxSatisfying(
+        Object.keys(versions),
+        range
+      );
+
+      return currVersion === null ?
+        [latest, true] :
+        [currVersion, semver.eq(latest, currVersion)];
     }
     catch {
-      tree = await arb.loadVirtual();
-    }
-
-    iterators = [
-      ...iter
-        .filter(tree.edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
-        .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
-        .map(([packageName, to]) => searchLockDependencies(packageName, {
-          to,
-          parent,
-          includeDevDeps,
-          exclude,
-          registry,
-          ...packageLockOptions
-        }))
-    ];
-  }
-
-  for await (const dep of combineAsyncIterators<Dependency>({}, ...iterators)) {
-    yield dep.exportAsPlainObject();
-  }
-
-  // Add root dependencies to the exclude Map (because the parent is not handled by searchDependencies)
-  // if we skip this the code will fail to re-link properly dependencies in the following steps
-  const depsName = await Promise.all(
-    iter.map(dependencies.entries(), utils.getCleanDependencyName)
-  );
-  for (const [, fullRange, isLatest] of depsName) {
-    if (!isLatest) {
-      parent.addFlag("hasOutdatedDependency");
-    }
-    if (exclude.has(fullRange)) {
-      exclude.get(fullRange)!.add(parent.fullName);
+      return [utils.cleanRange(range), true];
     }
   }
 
-  yield parent.exportAsPlainObject(0);
+  private async resolveDependencyVersion(
+    dependency: [name: string, range: string]
+  ): Promise<{ rangedSpec: NpmSpec, spec: NpmSpec, isLatest: boolean }> {
+    const [dependencyName, semVerRange] = dependency;
+
+    const [dependencyVersion, isLatest] = await this.getLatestDependencyVersion(
+      dependencyName,
+      semVerRange
+    );
+
+    return {
+      rangedSpec: `${dependencyName}@${semVerRange}`,
+      spec: `${dependencyName}@${dependencyVersion}`,
+      isLatest
+    };
+  }
+
+  private async* walkRemoteDependency(
+    spec: string,
+    options: WalkRemoteOptions
+  ): AsyncIterableIterator<Dependency> {
+    const { currDepth = 0, parent, maxDepth, gitURL } = options;
+
+    const { name, version, deprecated, ...pkg } = await this.providers.pacote.manifest(
+      gitURL ?? spec,
+      this.registryOptions
+    );
+    const { dependencies, customResolvers, alias } = utils.mergeDependencies(pkg);
+
+    const current = new Dependency(name, version, {
+      parent,
+      alias: Object.fromEntries(alias)
+    });
+
+    if (gitURL !== null) {
+      current.isGit(gitURL);
+      try {
+        await this.providers.pacote.manifest(
+          `${name}@${version}`,
+          this.registryOptions
+        );
+      }
+      catch {
+        current.existOnRemoteRegistry = false;
+      }
+    }
+    current.addFlag("isDeprecated", deprecated === true);
+    current.addFlag("hasCustomResolver", customResolvers.size > 0);
+    current.addFlag("hasDependencies", dependencies.size > 0);
+
+    if (currDepth !== maxDepth) {
+      const config = {
+        currDepth: currDepth + 1, parent: current, maxDepth
+      };
+
+      const gitDependencies = iter.filter(
+        customResolvers.entries(),
+        ([, valueStr]) => utils.isGitDependency(valueStr)
+      );
+      for (const [depName, gitURL] of gitDependencies) {
+        yield* this.walkRemoteDependency(depName, { ...config, gitURL });
+      }
+
+      const resolvedDependencies = await Promise.all(
+        iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
+      );
+      for (const { rangedSpec, spec, isLatest } of resolvedDependencies) {
+        if (!isLatest) {
+          current.addFlag("hasOutdatedDependency");
+        }
+
+        if (this.relationsMap.has(spec)) {
+          current.addChildren();
+          this.relationsMap.get(spec)!.add(current.spec);
+        }
+        else {
+          this.relationsMap.set(spec, new Set([current.spec]));
+
+          yield* this.walkRemoteDependency(rangedSpec, config);
+        }
+      }
+    }
+
+    yield current;
+  }
+
+  private async* walkLocalDependency(
+    packageName: string,
+    node: Arborist.Node,
+    options: WalkLocalOptions
+  ): AsyncIterableIterator<Dependency> {
+    const { parent, fetchManifest = false, includeDevDeps = false } = options;
+    const { version, integrity = node.integrity } = node.package;
+
+    const updatedVersion = version === "*" || typeof version === "undefined" ?
+      "latest" : version;
+    const current = new Dependency(packageName, updatedVersion, {
+      parent,
+      isDevDependency: node.dev
+    });
+
+    if (fetchManifest && !includeDevDeps) {
+      const { _integrity, ...pkg } = await this.providers.pacote.manifest(
+        `${packageName}@${updatedVersion}`,
+        this.registryOptions
+      );
+      const { customResolvers, alias } = utils.mergeDependencies(pkg);
+
+      current.alias = Object.fromEntries(alias);
+      current.addFlag("hasValidIntegrity", _integrity === integrity);
+      current.addFlag("isDeprecated");
+      current.addFlag("hasCustomResolver", customResolvers.size > 0);
+
+      if (node.resolved && utils.isGitDependency(node.resolved)) {
+        current.isGit(node.resolved);
+      }
+    }
+    current.addFlag("hasDependencies", node.edgesOut.size > 0);
+
+    for (const [packageName, { to: toNode }] of node.edgesOut) {
+      if (toNode === null || (!includeDevDeps && toNode.dev)) {
+        continue;
+      }
+      const spec: NpmSpec = `${packageName}@${toNode.package.version}`;
+
+      if (this.relationsMap.has(spec)) {
+        current.addChildren();
+        this.relationsMap.get(spec)!.add(current.spec);
+      }
+      else {
+        this.relationsMap.set(spec, new Set([current.spec]));
+
+        yield* this.walkLocalDependency(packageName, toNode, { parent: current });
+      }
+    }
+
+    yield current;
+  }
+
+  async *walk(
+    manifest: PackageJSON | ManifestVersion,
+    options: WalkOptions
+  ): AsyncIterableIterator<DependencyJSON> {
+    this.relationsMap.clear();
+    const {
+      maxDepth = 4,
+      packageLock = null,
+      includeDevDeps = false
+    } = options;
+
+    const { dependencies, customResolvers, alias } = utils.mergeDependencies(manifest);
+    const rootDependency = new Dependency(
+      manifest.name,
+      manifest.version,
+      {
+        alias: Object.fromEntries(alias)
+      }
+    );
+
+    try {
+      await this.providers.pacote.manifest(
+        `${manifest.name}@${manifest.version}`,
+        this.registryOptions
+      );
+    }
+    catch {
+      rootDependency.existOnRemoteRegistry = false;
+    }
+    rootDependency.addFlag("hasCustomResolver", customResolvers.size > 0);
+    rootDependency.addFlag("hasDependencies", dependencies.size > 0);
+
+    if (packageLock === null) {
+      const walkRemoteOptions = { maxDepth, parent: rootDependency };
+      var iterators = [
+        ...iter
+          .filter(customResolvers.entries(), ([, version]) => utils.isGitDependency(version))
+          .map(([name, gitURL]) => this.walkRemoteDependency(name, { ...walkRemoteOptions, gitURL })),
+        ...iter
+          .map(dependencies.entries(), ([name, ver]) => this.walkRemoteDependency(`${name}@${ver}`, walkRemoteOptions))
+      ];
+    }
+    else {
+      const { location, ...packageLockOptions } = packageLock;
+
+      // TODO: build relationsMap from Arborist
+      const { edgesOut } = await this.providers.localTreeLoader.load(
+        location,
+        this.registry
+      );
+
+      var iterators = [
+        ...iter
+          .filter(edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
+          .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
+          .map(([packageName, to]) => this.walkLocalDependency(packageName, to, {
+            parent: rootDependency,
+            includeDevDeps,
+            ...packageLockOptions
+          }))
+      ];
+    }
+
+    for await (const dep of combineAsyncIterators({}, ...iterators)) {
+      yield dep.exportAsPlainObject();
+    }
+
+    /**
+     * Add root dependencies to the relations Map because the parent is not handled by walkRemoteDependency.
+     * If we skip this step, the code will fail to properly re-link dependencies in the subsequent steps.
+     */
+    const resolvedDependencies = await Promise.all(
+      iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
+    );
+    for (const { spec, isLatest } of resolvedDependencies) {
+      if (!isLatest) {
+        rootDependency.addFlag("hasOutdatedDependency");
+      }
+
+      if (this.relationsMap.has(spec)) {
+        this.relationsMap.get(spec)!.add(rootDependency.spec);
+      }
+    }
+
+    yield rootDependency.exportAsPlainObject(0);
+  }
 }
+

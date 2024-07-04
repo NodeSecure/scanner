@@ -8,7 +8,7 @@ import os from "node:os";
 import { Mutex, MutexRelease } from "@openally/mutex";
 import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
 import * as vuln from "@nodesecure/vuln";
-import * as treeWalker from "@nodesecure/tree-walker";
+import { npm } from "@nodesecure/tree-walker";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
@@ -96,17 +96,17 @@ export async function depWalker(
     warnings: []
   };
 
-  // We are dealing with an exclude Map to avoid checking a package more than one time in searchDeepDependencies
-  const exclude: Map<string, Set<string>> = new Map();
   const dependencies: Map<string, Dependency> = new Map();
-
+  const npmTreeWalker = new npm.TreeWalker({
+    registry
+  });
   {
     logger
       .start(ScannerLoggerEvents.analysis.tree)
       .start(ScannerLoggerEvents.analysis.tarball)
       .start(ScannerLoggerEvents.analysis.registry);
     const fetchedMetadataPackages = new Set<string>();
-    const promisesToWait: Promise<void>[] = [];
+    const operationsQueue: Promise<void>[] = [];
 
     const locker = new Mutex({ concurrency: 5 });
     locker.on(
@@ -114,14 +114,12 @@ export async function depWalker(
       () => logger.tick(ScannerLoggerEvents.analysis.tarball)
     );
 
-    const rootDepsOptions: treeWalker.npm.WalkOptions = {
+    const rootDepsOptions: npm.WalkOptions = {
       maxDepth,
-      exclude,
       includeDevDeps,
-      registry,
       packageLock
     };
-    for await (const current of treeWalker.npm.walk(manifest, rootDepsOptions)) {
+    for await (const current of npmTreeWalker.walk(manifest, rootDepsOptions)) {
       const { name, version, ...currentVersion } = current;
       const dependency: Dependency = {
         versions: {
@@ -137,7 +135,7 @@ export async function depWalker(
       let proceedDependencyScan = true;
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
-        promisesToWait.push(
+        operationsQueue.push(
           manifestMetadata(name, version, dep)
         );
 
@@ -167,7 +165,7 @@ export async function depWalker(
       }
       else {
         fetchedMetadataPackages.add(name);
-        promisesToWait.push(packageMetadata(name, version, {
+        operationsQueue.push(packageMetadata(name, version, {
           dependency,
           logger
         }));
@@ -179,13 +177,11 @@ export async function depWalker(
         tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
         registry
       };
-      promisesToWait.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
+      operationsQueue.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
-
-    // Wait for all extraction to be done!
-    await Promise.allSettled(promisesToWait);
+    await Promise.allSettled(operationsQueue);
     await timers.setImmediate();
 
     logger
@@ -230,13 +226,13 @@ export async function depWalker(
         ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
       );
 
-      const usedDeps = exclude.get(`${packageName}@${verStr}`) || new Set();
+      const usedDeps = npmTreeWalker.relationsMap.get(`${packageName}@${verStr}`) || new Set();
       if (usedDeps.size === 0) {
         continue;
       }
 
       const usedBy: Record<string, string> = Object.create(null);
-      for (const [name, version] of [...usedDeps].map((name) => name.split(" ") as [string, string])) {
+      for (const [name, version] of [...usedDeps].map((name) => name.split("@"))) {
         usedBy[name] = version;
       }
       Object.assign(verDescriptor.usedBy, usedBy);

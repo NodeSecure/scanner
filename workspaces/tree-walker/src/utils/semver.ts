@@ -1,12 +1,3 @@
-// Import Third-party Dependencies
-import pacote from "pacote";
-import semver from "semver";
-import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
-
-export const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
-  { token: process.env.NODE_SECURE_TOKEN } :
-  {};
-
 /**
  * @example
  * cleanRange(">=1.5.0"); // 1.5.0
@@ -22,43 +13,4 @@ export function cleanRange(
   }
 
   return version;
-}
-
-export async function getExpectedSemVer(
-  dependencyName: string,
-  range: string
-): Promise<[version: string, isLatest: boolean]> {
-  try {
-    const { versions, "dist-tags": { latest } } = await pacote.packument(dependencyName, {
-      ...NPM_TOKEN,
-      registry: getLocalRegistryURL()
-    });
-    const currVersion = semver.maxSatisfying(
-      Object.keys(versions),
-      range
-    );
-
-    return currVersion === null ?
-      [latest, true] :
-      [currVersion, semver.eq(latest, currVersion)];
-  }
-  catch {
-    return [cleanRange(range), true];
-  }
-}
-
-export async function getCleanDependencyName(
-  dependency: [name: string, range: string]
-): Promise<[string, string, boolean]> {
-  const [dependencyName, semVerRange] = dependency;
-  const [dependencyVersion, isLatest] = await getExpectedSemVer(
-    dependencyName,
-    semVerRange
-  );
-
-  return [
-    `${dependencyName}@${semVerRange}`,
-    `${dependencyName}@${dependencyVersion}`,
-    isLatest
-  ];
 }

@@ -1,6 +1,8 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
 
+export type NpmSpec = `${string}@${string}`;
+
 export interface DependencyJSON {
   id: number;
   name: string;
@@ -14,6 +16,10 @@ export interface DependencyJSON {
   dependencyCount: number;
   gitUrl: string | null;
 }
+
+export type DependencyOptions = {
+  parent?: Dependency;
+} & Partial<Omit<DependencyJSON, "id" | "name" | "version">>;
 
 export class Dependency {
   static currentId = 1;
@@ -33,23 +39,26 @@ export class Dependency {
   constructor(
     name: string,
     version: string,
-    parent: null | Dependency = null
+    options: DependencyOptions = {}
   ) {
     this.name = name;
     this.version = version;
+    const { parent = null, ...props } = options;
 
     if (parent !== null) {
       parent.addChildren();
     }
     this.#parent = parent;
+
+    Object.assign(this, props);
   }
 
   addChildren() {
     this.dependencyCount += 1;
   }
 
-  get fullName() {
-    return `${this.name} ${this.version}`;
+  get spec(): NpmSpec {
+    return `${this.name}@${this.version}`;
   }
 
   get flags() {
