@@ -25,15 +25,15 @@ $ yarn add @nodesecure/tree-walker
 import os from "node:os";
 
 import pacote from "pacote";
-import * as treeWalker from "@nodesecure/tree-walker";
+import { npm } from "@nodesecure/tree-walker";
 
 const manifest = await pacote.manifest("some-package@1.0.0", {
   cache: `${os.homedir()}/.npm`
 });
 
-const walkOptions = {};
+const treeWalker = new npm.TreeWalker();
 
-for await (const dependency of treeWalker.npm.walk(manifest, walkOptions)) {
+for await (const dependency of treeWalker.walk(manifest)) {
   console.log(dependency);
 }
 ```
@@ -43,29 +43,45 @@ for await (const dependency of treeWalker.npm.walk(manifest, walkOptions)) {
 
 ## API
 
-### npm.walk
+### npm.TreeWalker
 
-The `walk` function processes package metadata from a given **package.json file** or a **Manifest** result from the [pacote](https://www.npmjs.com/package/pacote) library.
+#### constructor(options?: TreeWalkerOptions)
 
 ```ts
-async function* walk(
-  manifest: PackageJson | (pacote.AbbreviatedManifest & pacote.ManifestResult),
-  options: WalkOptions
-): AsyncIterableIterator<Dependency> 
+import pacote from "pacote";
+import Arborist from "@npmcli/arborist";
+
+interface LocalDependencyTreeLoaderProvider {
+  load(
+    location: string,
+    registry?: string
+  ): Promise<Arborist.Node>;
+}
+
+interface PacoteProviderApi {
+  manifest(
+    spec: string,
+    opts?: pacote.Options
+  ): Promise<pacote.AbbreviatedManifest & pacote.ManifestResult>;
+}
+
+interface TreeWalkerOptions {
+  registry?: string;
+  providers?: {
+    pacote?: PacoteProviderApi;
+    localTreeLoader?: LocalDependencyTreeLoaderProvider;
+  }
+}
 ```
+
+#### *walk(manifest: PackageJSON | ManifestVersion, options: WalkOptions): AsyncIterableIterator< DependencyJSON >
+
+The `walk` method processes package metadata from a given **package.json file** or a **Manifest** result from the [pacote](https://www.npmjs.com/package/pacote) library.
 
 The `options` parameter is described by the following TypeScript interface:
 
 ```ts
-interface DefaultSearchOptions {
-  exclude: Map<string, Set<string>>;
-  /**
-   * URL to the registry to use
-   */
-  registry: string;
-}
-
-interface WalkOptions extends DefaultSearchOptions {
+interface WalkOptions {
   /**
    * Specifies the maximum depth to traverse for each root dependency.
    * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.

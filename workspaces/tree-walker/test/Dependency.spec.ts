@@ -15,7 +15,7 @@ test("Dependency class should act as expected by assertions", () => {
   assert.deepEqual(dep.parent, {});
   assert.strictEqual(dep.name, "semver");
   assert.strictEqual(dep.version, "1.0.0");
-  assert.strictEqual(dep.fullName, "semver 1.0.0");
+  assert.strictEqual(dep.spec, "semver@1.0.0");
   assert.strictEqual(dep.dev, false);
   assert.strictEqual(dep.dependencyCount, 0);
   assert.strictEqual(dep.existOnRemoteRegistry, true);
@@ -32,7 +32,9 @@ test("Dependency class should act as expected by assertions", () => {
 
 test("Dependency children should write his parent as usedBy when exported", () => {
   const semverDep = new Dependency("semver", "1.0.0");
-  const testDep = new Dependency("test", "1.0.0", semverDep);
+  const testDep = new Dependency("test", "1.0.0", {
+    parent: semverDep
+  });
 
   assert.strictEqual(semverDep.dependencyCount, 1);
   assert.deepEqual(testDep.parent, {
