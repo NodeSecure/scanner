@@ -5,8 +5,8 @@ import timers from "node:timers/promises";
 import os from "node:os";
 
 // Import Third-party Dependencies
-import Locker from "@slimio/lock";
-import { scanDirOrArchive } from "@nodesecure/tarball";
+import { Mutex, MutexRelease } from "@openally/mutex";
+import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
 import * as vuln from "@nodesecure/vuln";
 import * as treeWalker from "@nodesecure/tree-walker";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
@@ -108,8 +108,11 @@ export async function depWalker(
     const fetchedMetadataPackages = new Set<string>();
     const promisesToWait: Promise<void>[] = [];
 
-    const tarballLocker = new Locker({ maxConcurrent: 5 });
-    tarballLocker.on("freeOne", () => logger.tick(ScannerLoggerEvents.analysis.tarball));
+    const locker = new Mutex({ concurrency: 5 });
+    locker.on(
+      MutexRelease,
+      () => logger.tick(ScannerLoggerEvents.analysis.tarball)
+    );
 
     const rootDepsOptions: treeWalker.npm.WalkOptions = {
       maxDepth,
@@ -170,14 +173,13 @@ export async function depWalker(
         }));
       }
 
-      // TODO: re-abstract and fix ref type
-      promisesToWait.push(scanDirOrArchive(name, version, {
+      const scanDirOptions = {
         ref: dependency.versions[version] as any,
         location,
         tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
-        locker: tarballLocker,
         registry
-      }));
+      };
+      promisesToWait.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
@@ -192,7 +194,7 @@ export async function depWalker(
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
-  await hydratePayloadDependencies(dependencies, {
+  await hydratePayloadDependencies(dependencies as any, {
     useStandardFormat: true,
     path: location
   });
@@ -254,5 +256,24 @@ export async function depWalker(
     await fs.rm(tmpLocation, { recursive: true, force: true });
 
     logger.emit(ScannerLoggerEvents.done);
+  }
+}
+
+async function scanDirOrArchiveEx(
+  name: string,
+  version: string,
+  locker: Mutex,
+  options: scanDirOrArchiveOptions
+) {
+  const free = await locker.acquire();
+
+  try {
+    await scanDirOrArchive(name, version, options);
+  }
+  catch {
+    // ignore
+  }
+  finally {
+    free();
   }
 }
