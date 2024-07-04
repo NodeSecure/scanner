@@ -3,8 +3,9 @@ import pacote from "pacote";
 import semver from "semver";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
-// Import Internal Dependencies
-import { NPM_TOKEN } from "./index.js";
+export const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
+  { token: process.env.NODE_SECURE_TOKEN } :
+  {};
 
 /**
  * @example

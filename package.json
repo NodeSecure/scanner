@@ -10,7 +10,7 @@
     "workspaces/npm-types"
   ],
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc --build",
     "test": "npm run test --ws --if-present"
   },
   "author": "NodeSecure",
@@ -26,8 +26,7 @@
     "glob": "^10.3.10",
     "pkg-ok": "^3.0.0",
     "sinon": "^18.0.0",
-    "tsup": "^8.1.0",
-    "tsx": "^4.7.1",
-    "typescript": "^5.5.2"
+    "tsx": "^4.16.2",
+    "typescript": "^5.5.3"
   }
 }

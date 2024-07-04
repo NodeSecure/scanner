@@ -6,7 +6,7 @@ import os from "node:os";
 
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
-import { scanDirOrArchive } from "@nodesecure/tarball";
+import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
 import * as vuln from "@nodesecure/vuln";
 import * as treeWalker from "@nodesecure/tree-walker";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
@@ -173,15 +173,13 @@ export async function depWalker(
         }));
       }
 
-      const scanDirPromise = locker.acquire().then((free) => {
-        return scanDirOrArchive(name, version, {
-          ref: dependency.versions[version] as any,
-          location,
-          tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
-          registry
-        }).finally(free);
-      });
-      promisesToWait.push(scanDirPromise);
+      const scanDirOptions = {
+        ref: dependency.versions[version] as any,
+        location,
+        tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
+        registry
+      };
+      promisesToWait.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
@@ -196,7 +194,7 @@ export async function depWalker(
   }
 
   const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
-  await hydratePayloadDependencies(dependencies, {
+  await hydratePayloadDependencies(dependencies as any, {
     useStandardFormat: true,
     path: location
   });
@@ -258,5 +256,24 @@ export async function depWalker(
     await fs.rm(tmpLocation, { recursive: true, force: true });
 
     logger.emit(ScannerLoggerEvents.done);
+  }
+}
+
+async function scanDirOrArchiveEx(
+  name: string,
+  version: string,
+  locker: Mutex,
+  options: scanDirOrArchiveOptions
+) {
+  const free = await locker.acquire();
+
+  try {
+    await scanDirOrArchive(name, version, options);
+  }
+  catch {
+    // ignore
+  }
+  finally {
+    free();
   }
 }
