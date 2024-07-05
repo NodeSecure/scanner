@@ -51,8 +51,8 @@
     "@nodesecure/authors": "^1.0.2",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/i18n": "^4.0.1",
-    "@nodesecure/js-x-ray": "^6.3.0",
-    "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@nodesecure/js-x-ray": "^7.2.0",
+    "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.0.0",
     "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/tarball": "^1.0.0",
@@ -60,7 +60,7 @@
     "@nodesecure/utils": "^2.2.0",
     "@nodesecure/vuln": "^1.7.0",
     "@openally/mutex": "^1.0.0",
-    "pacote": "^17.0.4",
+    "pacote": "^18.0.6",
     "semver": "^7.5.4"
   }
 }
