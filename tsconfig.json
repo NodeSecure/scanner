@@ -8,6 +8,9 @@
       "path": "./workspaces/conformance"
     },
     {
+      "path": "./workspaces/mama"
+    },
+    {
       "path": "./workspaces/tarball"
     },
     {

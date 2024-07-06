@@ -1,7 +1,7 @@
 {
-  "name": "@nodesecure/tarball",
+  "name": "@nodesecure/mama",
   "version": "1.0.0",
-  "description": "NodeSecure tarball scanner",
+  "description": "Manifest Manager",
   "type": "module",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -15,8 +15,10 @@
     "dist"
   ],
   "keywords": [
-    "NodeSecure",
-    "tarball"
+    "manifest",
+    "manager",
+    "pacote",
+    "security"
   ],
   "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
   "license": "MIT",
@@ -27,17 +29,11 @@
   "bugs": {
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
-  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tarball#readme",
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/mama#readme",
   "dependencies": {
-    "@nodesecure/conformance": "^1.0.0",
-    "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/js-x-ray": "^6.3.0",
-    "@nodesecure/mama": "^1.0.0",
-    "@nodesecure/npm-types": "^1.0.0",
-    "@nodesecure/utils": "^2.1.0",
-    "pacote": "^18.0.6"
+    "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "get-folder-size": "^4.0.0"
+    "@types/object-hash": "^3.0.6"
   }
 }

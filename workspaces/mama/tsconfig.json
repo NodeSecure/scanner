@@ -8,12 +8,6 @@
   "references": [
     {
       "path": "../npm-types"
-    },
-    {
-      "path": "../conformance"
-    },
-    {
-      "path": "../mama"
     }
   ]
 }

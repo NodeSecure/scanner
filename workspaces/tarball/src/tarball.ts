@@ -11,6 +11,7 @@ import {
 } from "@nodesecure/js-x-ray";
 import pacote from "pacote";
 import * as conformance from "@nodesecure/conformance";
+import { ManifestManager } from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import {
@@ -20,13 +21,44 @@ import {
   booleanToFlags,
   getSemVerWarning
 } from "./utils/index.js";
-import { NPM_TOKEN } from "./constants.js";
-import * as manifest from "./manifest.js";
 import * as sast from "./sast/index.js";
 
-import type { DependencyRef } from "./types.js";
+export interface DependencyRef {
+  id: number;
+  usedBy: Record<string, string>;
+  isDevDependency: boolean;
+  existOnRemoteRegistry: boolean;
+  flags: string[];
+  description: string;
+  size: number;
+  author: Record<string, any>;
+  engines: Record<string, any>;
+  repository: any;
+  scripts: Record<string, string>;
+  warnings: any;
+  licenses: conformance.SpdxFileLicenseConformance[];
+  uniqueLicenseIds: string[];
+  gitUrl: string | null;
+  alias: Record<string, string>;
+  composition: {
+    extensions: string[];
+    files: string[];
+    minified: string[];
+    unused: string[];
+    missing: string[];
+    required_files: string[];
+    required_nodejs: string[];
+    required_thirdparty: string[];
+    required_subpath: Record<string, string>;
+  }
+}
+
 
 // CONSTANTS
+const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
+  { token: process.env.NODE_SECURE_TOKEN } :
+  {};
+
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
@@ -49,35 +81,27 @@ export async function scanDirOrArchive(
 
   // If this is an NPM tarball then we extract it on the disk with pacote.
   if (isNpmTarball) {
-    await pacote.extract(ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`, dest, {
-      ...NPM_TOKEN,
-      registry,
-      cache: `${os.homedir()}/.npm`
-    });
-    await timers.setImmediate();
-  }
-  else {
-    // Set links to an empty object because theses are generated only for NPM tarballs
-    Object.assign(ref, { links: {} });
+    await pacote.extract(
+      ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`,
+      dest,
+      {
+        ...NPM_TOKEN,
+        registry,
+        cache: `${os.homedir()}/.npm`
+      }
+    );
   }
 
   // Read the package.json at the root of the directory or archive.
-  const {
-    packageDeps,
-    packageDevDeps,
-    author,
-    description,
-    hasScript,
-    hasNativeElements,
-    nodejs,
-    engines,
-    repository,
-    scripts,
-    integrity
-  } = await manifest.readAnalyze(dest);
-  Object.assign(ref, {
-    author, description, engines, repository, scripts, integrity
-  });
+  const mama = await ManifestManager.fromPackageJSON(dest);
+  {
+    const { description, engines, repository, scripts } = mama.document;
+    Object.assign(ref, {
+      description, engines, repository, scripts,
+      author: mama.author,
+      integrity: mama.integrity
+    });
+  }
 
   // Get the composition of the (extracted) directory
   const { ext, files, size } = await getTarballComposition(dest);
@@ -95,8 +119,6 @@ export async function scanDirOrArchive(
   ref.size = size;
   ref.composition.extensions.push(...ext);
   ref.composition.files.push(...files);
-  const hasBannedFile = files.some((path) => isSensitiveFile(path));
-  const hasNativeCode = hasNativeElements || files.some((file) => kNativeCodeExtensions.has(path.extname(file)));
 
   // Search for minified and runtime dependencies
   // Run a JS-X-Ray analysis on each JavaScript files of the project!
@@ -125,11 +147,14 @@ export async function scanDirOrArchive(
     nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
   } = analyzeDependencies(
     dependencies,
-    { packageDeps, packageDevDeps, tryDependencies, nodeImports: nodejs.imports }
+    {
+      mama,
+      tryDependencies
+    }
   );
 
   ref.composition.required_thirdparty = thirdPartyDependencies;
-  ref.composition.required_subpath = Object.fromEntries(subpathImportsDependencies);
+  ref.composition.required_subpath = subpathImportsDependencies;
   ref.composition.unused.push(...unusedDependencies);
   ref.composition.missing.push(...missingDependencies);
   ref.composition.required_files = filesDependencies;
@@ -137,7 +162,6 @@ export async function scanDirOrArchive(
   ref.composition.minified = minifiedFiles;
 
   // License
-  await timers.setImmediate();
   const { licenses, uniqueLicenseIds } = await conformance.extractLicenses(dest);
   ref.licenses = licenses;
   ref.uniqueLicenseIds = uniqueLicenseIds;
@@ -148,9 +172,10 @@ export async function scanDirOrArchive(
     hasMultipleLicenses: uniqueLicenseIds.length > 1,
     hasMinifiedCode: minifiedFiles.length > 0,
     hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
-    hasBannedFile,
-    hasNativeCode,
-    hasScript
+    hasBannedFile: files.some((path) => isSensitiveFile(path)),
+    hasNativeCode: mama.flags.isNative ||
+      files.some((file) => kNativeCodeExtensions.has(path.extname(file))),
+    hasScript: mama.flags.hasUnsafeScripts
   }));
 }
 
@@ -179,7 +204,8 @@ export async function scanPackage(
   dest: string,
   packageName?: string
 ): Promise<ScannedPackageResult> {
-  const { type = "script", name } = await manifest.read(dest);
+  const { document } = await ManifestManager.fromPackageJSON(dest);
+  const { type = "script", name } = document;
 
   await timers.setImmediate();
   const { ext, files, size } = await getTarballComposition(dest);
@@ -220,5 +246,3 @@ export async function scanPackage(
     ast: { dependencies, warnings }
   };
 }
-
-export type { DependencyRef };
