@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { PackumentVersion } from "@nodesecure/npm-registry-sdk";
+import type { PackumentVersion } from "@nodesecure/npm-types";
 
 // CONSTANTS
 const kVCSHosts = new Set(["github.com", "gitlab.com"]);

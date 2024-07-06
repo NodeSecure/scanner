@@ -5,29 +5,17 @@ import * as Vuln from "@nodesecure/vuln";
 
 // Import Third-party Dependencies
 import type { extractedAuthor } from "@nodesecure/authors";
+import type { Contact } from "@nodesecure/npm-types";
 
-export interface Author {
-  name: string;
-  email?: string;
-  url?: string;
+export type Maintainer = Contact & {
+  /**
+   * Path to publisher's avatar on "https://www.npmjs.com"
+   * @example /npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.LwimMJA3puF3ioGeS-tfczR3370GXBZMIL-bdpu4hOU
+   */
   npmAvatar?: string;
 }
 
-export interface Maintainer {
-  name: string;
-  email?: string;
-  npmAvatar?: string;
-}
-
-export interface Publisher {
-  /**
-   * Publisher npm user name.
-   */
-  name: string;
-  /**
-   * Publisher npm user email.
-   */
-  email?: string;
+export type Publisher = Omit<Maintainer, "url"> & {
   /**
    * First version published.
    */
@@ -37,11 +25,6 @@ export interface Publisher {
    * @example 2021-08-10T20:45:08.342Z
    */
   at: string;
-  /**
-   * Path to publisher's avatar on "https://www.npmjs.com"
-   * @example /npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.LwimMJA3puF3ioGeS-tfczR3370GXBZMIL-bdpu4hOU
-   */
-  npmAvatar?: string;
 }
 
 export interface DependencyLinks {
@@ -81,7 +64,7 @@ export interface DependencyVersion {
   /** Package description */
   description: string;
   /** Author of the package. This information is not trustable and can be empty. */
-  author: Author | null;
+  author: Maintainer | null;
   engines: Engines;
   repository?: Repository;
   scripts: Record<string, string>;
@@ -145,7 +128,7 @@ export interface Dependency {
     hasManyPublishers: boolean;
     hasReceivedUpdateInOneYear: boolean;
     /** Author of the package. This information is not trustable and can be empty. */
-    author: Author | null;
+    author: Maintainer | null;
     /** Package home page */
     homepage: string | null;
     /**

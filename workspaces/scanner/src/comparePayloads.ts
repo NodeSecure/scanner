@@ -10,7 +10,6 @@ import type {
   Dependencies,
   Dependency,
   DependencyVersion,
-  Author,
   Publisher,
   Maintainer,
   Engines,
@@ -53,7 +52,7 @@ export interface DependencyVersionComparison {
   devDependency: ValueComparison<boolean>;
   existOnRemoteRegistry: ValueComparison<boolean>;
   description: ValueComparison<string>;
-  author: ValueComparison<Author>;
+  author: ValueComparison<Maintainer>;
   engines: DictionaryComparison<ValueComparison<Engines>>;
   repository: ValueComparison<Repository>;
   scripts: DictionaryComparison<Record<string, string>>;

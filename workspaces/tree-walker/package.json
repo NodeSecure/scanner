@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tree-walker#readme",
   "dependencies": {
-    "@nodesecure/npm-registry-sdk": "^2.1.1",
+    "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.0.0",
     "@npmcli/arborist": "^7.5.1",
     "combine-async-iterators": "^3.0.0",

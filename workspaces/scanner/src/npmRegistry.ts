@@ -3,19 +3,13 @@ import crypto from "node:crypto";
 
 // Import Third-party Dependencies
 import semver from "semver";
-import { parseAuthor } from "@nodesecure/utils";
-import {
-  packument,
-  packumentVersion,
-  user as npmUserProfile,
-  type PackumentVersion
-} from "@nodesecure/npm-registry-sdk";
+import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
+import type { PackumentVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { getLinks } from "./utils/index.js";
 import { Logger } from "./class/logger.class.js";
 import type {
-  Author,
   Maintainer,
   Publisher,
   Dependency
@@ -27,7 +21,10 @@ export async function manifestMetadata(
   dependency: any
 ) {
   try {
-    const pkgVersion = await packumentVersion(name, version);
+    const pkgVersion = await npmRegistrySDK.packumentVersion(
+      name,
+      version
+    );
 
     const integrity = getPackumentVersionIntegrity(pkgVersion);
     Object.assign(
@@ -55,10 +52,10 @@ export async function packageMetadata(
   options: PackageMetadataOptions
 ): Promise<void> {
   const { dependency, logger } = options;
-  const packageSpec = `${name}:${version}`;
+  const spec = `${name}:${version}`;
 
   try {
-    const pkg = await packument(name);
+    const pkg = await npmRegistrySDK.packument(name);
 
     const oneYearFromToday = new Date();
     oneYearFromToday.setFullYear(oneYearFromToday.getFullYear() - 1);
@@ -66,7 +63,7 @@ export async function packageMetadata(
     const lastVersion = pkg["dist-tags"].latest!;
     const lastUpdateAt = new Date(pkg.time[lastVersion]!);
     const metadata: Dependency["metadata"] = {
-      author: parseAuthor(pkg.author),
+      author: pkg.author ?? null,
       homepage: pkg.homepage || null,
       publishedCount: Object.values(pkg.versions).length,
       lastVersion,
@@ -74,8 +71,7 @@ export async function packageMetadata(
       hasReceivedUpdateInOneYear: !(oneYearFromToday > lastUpdateAt),
       hasManyPublishers: false,
       hasChangedAuthor: false,
-      maintainers: pkg.maintainers
-        .map((maintainer) => parseAuthor(maintainer)!) ?? [],
+      maintainers: pkg.maintainers ?? [],
       publishers: [],
       integrity: {}
     };
@@ -89,9 +85,8 @@ export async function packageMetadata(
     const publishers = new Set();
     let searchForMaintainersInVersions = metadata.maintainers.length === 0;
     for (const ver of Object.values(pkg.versions).reverse()) {
-      const versionSpec = `${ver.name}:${ver.version}`;
-      if (packageSpec === versionSpec) {
-        if (ver.deprecated && !flags.includes("isDeprecated")) {
+      if (spec === `${ver.name}:${ver.version}`) {
+        if ("deprecated" in ver && !flags.includes("isDeprecated")) {
           flags.push("isDeprecated");
         }
 
@@ -100,35 +95,29 @@ export async function packageMetadata(
         );
       }
 
-      const { _npmUser: npmUser, version, maintainers = [] } = ver;
+      const { _npmUser = null, version, maintainers = [] } = ver;
 
-      const parsedNpmUser = parseAuthor(npmUser);
-      if (parsedNpmUser === null) {
-        continue;
-      }
+      if (_npmUser !== null) {
+        const authorName = metadata.author?.name ?? null;
+        if (authorName === null) {
+          metadata.author = _npmUser;
+        }
+        else if (authorName !== null && _npmUser.name !== authorName) {
+          metadata.hasManyPublishers = true;
+        }
 
-      const authorName = metadata.author?.name ?? null;
-      if (authorName === null) {
-        metadata.author = parsedNpmUser;
-      }
-      else if (parsedNpmUser.name !== metadata.author?.name) {
-        metadata.hasManyPublishers = true;
-      }
-
-      // TODO: add npmUser.email
-      if (!publishers.has(parsedNpmUser.name)) {
-        publishers.add(parsedNpmUser.name);
-        metadata.publishers.push({
-          ...parsedNpmUser,
-          version,
-          at: new Date(pkg.time[version]!).toISOString()
-        });
+        if (!publishers.has(_npmUser.name)) {
+          publishers.add(_npmUser.name);
+          metadata.publishers.push({
+            ..._npmUser,
+            version,
+            at: new Date(pkg.time[version]).toISOString()
+          });
+        }
       }
 
       if (searchForMaintainersInVersions) {
-        metadata.maintainers.push(
-          ...maintainers.map((maintainer) => parseAuthor(maintainer)!)
-        );
+        metadata.maintainers.push(...maintainers);
         searchForMaintainersInVersions = false;
       }
     }
@@ -175,7 +164,7 @@ function getPackumentVersionIntegrity(
 async function addNpmAvatar(
   metadata: Dependency["metadata"]
 ): Promise<void> {
-  const contributors: (Maintainer | Publisher | Author)[] = [
+  const contributors: (Maintainer | Publisher)[] = [
     ...metadata.maintainers,
     ...metadata.publishers
   ];
@@ -191,7 +180,7 @@ async function addNpmAvatar(
       return Promise.resolve();
     }
 
-    return npmUserProfile(contributor.name, { perPage: 1 })
+    return npmRegistrySDK.user(contributor.name, { perPage: 1 })
       .then((profile) => {
         contributor.npmAvatar = profile.avatars.small;
         if (contributor.email && contributor.npmAvatar) {
