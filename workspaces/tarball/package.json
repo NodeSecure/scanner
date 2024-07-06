@@ -28,10 +28,10 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tarball#readme",
   "dependencies": {
+    "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/js-x-ray": "^6.3.0",
     "@nodesecure/npm-types": "^1.0.0",
-    "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/utils": "^2.1.0",
     "builtins": "^5.1.0",
     "lodash.difference": "^4.5.0",

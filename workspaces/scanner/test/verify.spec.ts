@@ -44,26 +44,28 @@ test("verify 'express' package", async() => {
   assert.deepEqual(data.uniqueLicenseIds, ["MIT"]);
   assert.deepEqual(data.licenses, [
     {
-      uniqueLicenseIds: ["MIT"],
-      spdxLicenseLinks: ["https://spdx.org/licenses/MIT.html#licenseText"],
+      licenses: {
+        MIT: "https://spdx.org/licenses/MIT.html#licenseText"
+      },
       spdx: {
         osi: true,
         fsf: true,
         fsfAndOsi: true,
         includesDeprecated: false
       },
-      from: "package.json"
+      fileName: "package.json"
     },
     {
-      uniqueLicenseIds: ["MIT"],
-      spdxLicenseLinks: ["https://spdx.org/licenses/MIT.html#licenseText"],
+      licenses: {
+        MIT: "https://spdx.org/licenses/MIT.html#licenseText"
+      },
       spdx: {
         osi: true,
         fsf: true,
         fsfAndOsi: true,
         includesDeprecated: false
       },
-      from: "LICENSE"
+      fileName: "LICENSE"
     }
   ]);
 

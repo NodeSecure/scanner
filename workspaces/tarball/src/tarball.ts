@@ -10,7 +10,7 @@ import {
   type Dependency
 } from "@nodesecure/js-x-ray";
 import pacote from "pacote";
-import * as ntlp from "@nodesecure/ntlp";
+import * as conformance from "@nodesecure/conformance";
 
 // Import Internal Dependencies
 import {
@@ -138,15 +138,14 @@ export async function scanDirOrArchive(
 
   // License
   await timers.setImmediate();
-  const licenses = await ntlp.extractLicenses(dest);
-  const uniqueLicenseIds = Array.isArray(licenses.uniqueLicenseIds) ? licenses.uniqueLicenseIds : [];
-  ref.license = licenses;
-  ref.license.uniqueLicenseIds = uniqueLicenseIds;
+  const { licenses, uniqueLicenseIds } = await conformance.extractLicenses(dest);
+  ref.licenses = licenses;
+  ref.uniqueLicenseIds = uniqueLicenseIds;
 
   ref.flags.push(...booleanToFlags({
     ...flags,
     hasNoLicense: uniqueLicenseIds.length === 0,
-    hasMultipleLicenses: licenses.hasMultipleLicenses,
+    hasMultipleLicenses: uniqueLicenseIds.length > 1,
     hasMinifiedCode: minifiedFiles.length > 0,
     hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
     hasBannedFile,
@@ -169,7 +168,7 @@ export interface ScannedPackageResult {
   /** Unique license contained in the tarball (MIT, ISC ..) */
   uniqueLicenseIds: string[];
   /** All licenses with their SPDX */
-  licenses: ntlp.SpdxLicenseConformance[];
+  licenses: conformance.SpdxFileLicenseConformance[];
   ast: {
     dependencies: Record<string, Record<string, Dependency>>;
     warnings: Warning[];
@@ -208,7 +207,10 @@ export async function scanPackage(
   }
 
   await timers.setImmediate();
-  const { uniqueLicenseIds, licenses } = await ntlp.extractLicenses(dest);
+  const {
+    uniqueLicenseIds,
+    licenses
+  } = await conformance.extractLicenses(dest);
 
   return {
     files: { list: files, extensions: [...ext], minified },

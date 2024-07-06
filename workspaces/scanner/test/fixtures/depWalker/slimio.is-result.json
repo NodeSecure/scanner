@@ -10,16 +10,16 @@
           "isOutdated",
           "hasManyPublishers"
         ],
+        "warnings": [],
+        "dependencyCount": 0,
+        "gitUrl": null,
+        "alias": {},
         "description": "SlimIO is (JavaScript Primitives &amp; Objects type checker)",
         "author": {
           "name": "SlimIO"
         },
         "engines": {
           "node": ">=10"
-        },
-        "repository": {
-          "type": "git",
-          "url": "git+https://github.com/SlimIO/is.git"
         },
         "scripts": {
           "prepublishOnly": "pkg-ok",
@@ -28,9 +28,6 @@
           "coverage": "nyc npm test",
           "report": "nyc report --reporter=html"
         },
-        "dependencyCount": 0,
-        "warnings": [],
-        "alias": {},
         "composition": {
           "extensions": [
             "",
@@ -47,47 +44,40 @@
           "required_thirdparty": [],
           "required_subpath": {}
         },
-        "license": {
-          "uniqueLicenseIds": [
-            "MIT"
-          ],
-          "invalidLicenseIds": [],
-          "hasMultipleLicenses": false,
-          "licenses": [
-            {
-              "uniqueLicenseIds": [
-                "MIT"
-              ],
-              "spdxLicenseLinks": [
-                "https://spdx.org/licenses/MIT.html#licenseText"
-              ],
-              "spdx": {
-                "osi": true,
-                "fsf": true,
-                "fsfAndOsi": true,
-                "includesDeprecated": false
-              },
-              "from": "package.json"
-            },
-            {
-              "uniqueLicenseIds": [
-                "MIT"
-              ],
-              "spdxLicenseLinks": [
-                "https://spdx.org/licenses/MIT.html#licenseText"
-              ],
-              "spdx": {
-                "osi": true,
-                "fsf": true,
-                "fsfAndOsi": true,
-                "includesDeprecated": false
-              },
-              "from": "LICENSE"
-            }
-          ]
+        "repository": {
+          "type": "git",
+          "url": "git+https://github.com/SlimIO/is.git"
         },
-        "gitUrl": null,
         "integrity": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9",
+        "licenses": [
+          {
+            "licenses": {
+              "MIT": "https://spdx.org/licenses/MIT.html#licenseText"
+            },
+            "spdx": {
+              "osi": true,
+              "fsf": true,
+              "fsfAndOsi": true,
+              "includesDeprecated": false
+            },
+            "fileName": "package.json"
+          },
+          {
+            "licenses": {
+              "MIT": "https://spdx.org/licenses/MIT.html#licenseText"
+            },
+            "spdx": {
+              "osi": true,
+              "fsf": true,
+              "fsfAndOsi": true,
+              "includesDeprecated": false
+            },
+            "fileName": "LICENSE"
+          }
+        ],
+        "uniqueLicenseIds": [
+          "MIT"
+        ],
         "links": {
           "npm": "https://www.npmjs.com/package/@slimio/is/v/1.5.1",
           "homepage": "https://github.com/SlimIO/is#readme",
@@ -97,23 +87,16 @@
     },
     "vulnerabilities": [],
     "metadata": {
-      "publishedCount": 8,
-      "lastUpdateAt": "2023-01-23T02:15:37.203Z",
-      "lastVersion": "2.0.0",
-      "hasManyPublishers": true,
-      "hasReceivedUpdateInOneYear": false,
-      "homepage": "https://github.com/SlimIO/is#readme",
       "author": {
         "name": "SlimIO"
       },
-      "publishers": [
-        {
-          "name": "fraxken",
-          "email": "gentilhomme.thomas@gmail.com",
-          "version": "2.0.0",
-          "at": "2023-01-23T02:15:37.203Z"
-        }
-      ],
+      "homepage": "https://github.com/SlimIO/is#readme",
+      "publishedCount": 8,
+      "lastVersion": "2.0.0",
+      "lastUpdateAt": "2023-01-23T02:15:37.203Z",
+      "hasReceivedUpdateInOneYear": false,
+      "hasManyPublishers": true,
+      "hasChangedAuthor": false,
       "maintainers": [
         {
           "name": "fraxken",
@@ -126,7 +109,14 @@
           "email": "alexandre.malaj@gmail.com"
         }
       ],
-      "hasChangedAuthor": false,
+      "publishers": [
+        {
+          "name": "fraxken",
+          "email": "gentilhomme.thomas@gmail.com",
+          "version": "2.0.0",
+          "at": "2023-01-23T02:15:37.203Z"
+        }
+      ],
       "integrity": {
         "1.5.1": "c9781c55ab750e58bed9ce2560581ff4087b8c3129462543fa6fee4e717ba2a9"
       }

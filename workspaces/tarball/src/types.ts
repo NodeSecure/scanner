@@ -1,3 +1,5 @@
+// Import Third-party Dependencies
+import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 
 export interface DependencyRef {
   id: number;
@@ -12,7 +14,8 @@ export interface DependencyRef {
   repository: any;
   scripts: Record<string, string>;
   warnings: any;
-  license: any;
+  licenses: SpdxFileLicenseConformance[];
+  uniqueLicenseIds: string[];
   gitUrl: string | null;
   alias: Record<string, string>;
   composition: {
