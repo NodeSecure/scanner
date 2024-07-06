@@ -7,6 +7,7 @@
     "workspaces/scanner",
     "workspaces/tarball",
     "workspaces/tree-walker",
+    "workspaces/conformance",
     "workspaces/npm-types"
   ],
   "scripts": {

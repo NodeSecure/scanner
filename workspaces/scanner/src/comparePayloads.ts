@@ -1,7 +1,7 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
-import type { SpdxLicenseConformance } from "@nodesecure/ntlp";
 import * as Vuln from "@nodesecure/vuln";
+import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { extractedAuthor } from "@nodesecure/authors";
 
 // Import Internal Dependencies
@@ -58,7 +58,7 @@ export interface DependencyVersionComparison {
   scripts: DictionaryComparison<Record<string, string>>;
   warnings: ArrayDiff<JSXRay.Warning>;
   composition: CompositionComparison;
-  licenseIds: ArrayDiff<SpdxLicenseConformance>;
+  licenseIds: ArrayDiff<SpdxFileLicenseConformance>;
   flags: ArrayDiff<string>;
   links: ValueComparison<DependencyLinks>;
 }

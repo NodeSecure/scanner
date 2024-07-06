@@ -31,7 +31,8 @@ const kDefaultDependencyVersionFields = {
   author: null,
   engines: {},
   scripts: {},
-  license: [],
+  licenses: [],
+  uniqueLicenseIds: [],
   composition: {
     extensions: [],
     files: [],

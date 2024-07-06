@@ -1,9 +1,8 @@
-// Import NodeSecure Dependencies
-import * as JSXRay from "@nodesecure/js-x-ray";
-import type { SpdxLicenseConformance } from "@nodesecure/ntlp";
-import * as Vuln from "@nodesecure/vuln";
-
 // Import Third-party Dependencies
+import * as JSXRay from "@nodesecure/js-x-ray";
+import * as Vulnera from "@nodesecure/vuln";
+
+import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { extractedAuthor } from "@nodesecure/authors";
 import type { Contact } from "@nodesecure/npm-types";
 
@@ -90,12 +89,10 @@ export interface DependencyVersion {
     missing: string[];
   };
   /**
-   * Package licenses with SPDX expression.
-   *
-   * @see https://github.com/NodeSecure/licenses-conformance
-   * @see https://github.com/NodeSecure/npm-tarball-license-parser
+   * All Licenses with their SPDX conformance
    */
-  license: SpdxLicenseConformance[];
+  licenses: SpdxFileLicenseConformance[];
+  uniqueLicenseIds: string[];
   /**
    * Flags (Array of string)
    *
@@ -152,7 +149,7 @@ export interface Dependency {
    *
    * @see https://github.com/NodeSecure/vuln
    */
-  vulnerabilities: Vuln.Strategy.StandardVulnerability[];
+  vulnerabilities: Vulnera.Strategy.StandardVulnerability[];
 }
 
 export type Dependencies = Record<string, Dependency>;
@@ -171,7 +168,7 @@ export interface Payload {
   /** Version of the scanner used to generate the result */
   scannerVersion: string;
   /** Vulnerability strategy name (npm, snyk, node) */
-  vulnerabilityStrategy: Vuln.Strategy.Kind;
+  vulnerabilityStrategy: Vulnera.Strategy.Kind;
 }
 
 export interface Options {
@@ -220,7 +217,7 @@ export interface Options {
    *
    * @default NONE
    */
-  readonly vulnerabilityStrategy?: Vuln.Strategy.Kind;
+  readonly vulnerabilityStrategy?: Vulnera.Strategy.Kind;
 
   /**
    * Analyze root package.

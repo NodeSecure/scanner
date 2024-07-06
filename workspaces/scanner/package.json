@@ -6,7 +6,7 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build": "tsc -b",
@@ -49,12 +49,12 @@
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/scanner#readme",
   "dependencies": {
     "@nodesecure/authors": "^1.0.2",
+    "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/i18n": "^4.0.1",
     "@nodesecure/js-x-ray": "^6.3.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.0.0",
-    "@nodesecure/ntlp": "^3.0.0",
     "@nodesecure/tarball": "^1.0.0",
     "@nodesecure/tree-walker": "^1.0.0",
     "@nodesecure/vuln": "^1.7.0",

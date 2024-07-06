@@ -42,19 +42,16 @@ test("scanPackage (caseone)", async() => {
   assert.deepEqual(result.uniqueLicenseIds, ["MIT"], "Unique license ID should only contain MIT");
   assert.deepEqual(result.licenses, [
     {
-      uniqueLicenseIds: [
-        "MIT"
-      ],
-      spdxLicenseLinks: [
-        "https://spdx.org/licenses/MIT.html#licenseText"
-      ],
+      fileName: "package.json",
+      licenses: {
+        MIT: "https://spdx.org/licenses/MIT.html#licenseText"
+      },
       spdx: {
         osi: true,
         fsf: true,
         fsfAndOsi: true,
         includesDeprecated: false
-      },
-      from: "package.json"
+      }
     }
   ]);
 

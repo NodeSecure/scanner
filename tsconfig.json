@@ -5,6 +5,9 @@
       "path": "./workspaces/npm-types"
     },
     {
+      "path": "./workspaces/conformance"
+    },
+    {
       "path": "./workspaces/tarball"
     },
     {

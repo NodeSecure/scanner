@@ -1,0 +1,47 @@
+{
+  "name": "@nodesecure/conformance",
+  "version": "1.0.0",
+  "description": "SPDX license conformance for NodeSecure",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": "=>20"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "prepublishOnly": "npm run build",
+    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test": "c8 -r html npm run test-only",
+    "spdx:refresh": "node ./scripts/fetchSpdxLicenses.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "SPDX",
+    "conformance",
+    "license"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/conformance#readme",
+  "devDependencies": {
+    "@myunisoft/httpie": "^5.0.0",
+    "@types/spdx-expression-parse": "^3.0.5",
+    "astring": "^1.8.6",
+    "node-estree": "^4.0.0"
+  },
+  "dependencies": {
+    "@openally/result": "^1.2.1",
+    "fastest-levenshtein": "^1.0.16",
+    "spdx-expression-parse": "^4.0.0"
+  }
+}
