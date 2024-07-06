@@ -1,4 +1,4 @@
-// Import Third-party Dependencies
+// Import Internal Dependencies
 import {
   licenseIdConformance,
   searchSpdxLicenseId,
