@@ -27,6 +27,7 @@ test("scanPackage (caseone)", async() => {
       "src\\other.min.js"
     ].map((location) => location.replace(/\\/g, path.sep)),
     extensions: [
+      "",
       ".txt",
       ".js",
       ".json"

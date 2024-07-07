@@ -60,8 +60,26 @@ export interface Dist {
   signatures?: Signature[];
 }
 
+export type ConditionalNodeExport<V = never> = Partial<Record<
+  "node-addons" | "node" | "import" | "require" | "default",
+  V | string
+>>;
+
+export type NodeExport<V = never> =
+  ConditionalNodeExport<V> &
+  Record<string, ConditionalNodeExport | string | null>;
+
+export type NodeImport =
+  { node: string } |
+  { default: string } |
+  { node: string, default: string };
+
 // this is in the tarball or the project. it really could have anything in it.
 export interface PackageJSON {
+  // Required (except for workspaces)
+  name: string;
+  version: string;
+
   author?: Contact | string;
   bin?: Record<string, string>;
   browser?: Record<string, string> | string;
@@ -80,9 +98,7 @@ export interface PackageJSON {
   homepage?: string;
   keywords?: string[];
   license?: string;
-  main?: string;
   man?: string | string[];
-  name: string;
   optionalDependencies?: Record<string, string>;
   os?: string[];
   peerDependencies?: Record<string, string>;
@@ -91,17 +107,27 @@ export interface PackageJSON {
   repository?: Repository | string;
   scripts?: Record<string, string>;
   types?: string;
-  version: string;
 
-  // Node.js
+  /**
+   * @see https://nodejs.org/api/packages.html#nodejs-packagejson-field-definitions
+   * Node.js package.json field definitions
+   */
+  main?: string;
   type?: "script" | "module";
-  imports?: Record<string, string | Record<string, string>>;
-  exports?: string | Record<string, string | null>;
+  packageManager?: string;
+  imports?: Record<`#${string}`, string | NodeImport>;
+  exports?: string | NodeExport<NodeExport>;
 
   // Others
   gypfile?: boolean;
 
   [field: string]: unknown;
+}
+
+export interface WorkspacesPackageJSON extends PackageJSON {
+  name?: string;
+  version?: string;
+  workspaces: string[];
 }
 
 export interface PackumentVersion extends PackageJSON {

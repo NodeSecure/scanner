@@ -63,6 +63,7 @@ test("execute depWalker on @slimio/is", async() => {
   cleanupPayload(resultAsJSON);
 
   const expectedResult = JSON.parse(readFileSync(join("test", FIXTURE_PATH, "slimio.is-result.json"), "utf-8"));
+  // console.log(JSON.stringify(resultAsJSON, null, 2));
   assert.deepEqual(resultAsJSON, expectedResult);
 });
 

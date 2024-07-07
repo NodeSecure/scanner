@@ -35,7 +35,7 @@ test("verify 'express' package", async() => {
       "lib\\view.js",
       "package.json"
     ].map((location) => location.replaceAll("\\", path.sep)),
-    extensions: [".md", ".js", ".json"].sort(),
+    extensions: ["", ".md", ".js", ".json"].sort(),
     minified: []
   });
   assert.ok(data.directorySize > 0);

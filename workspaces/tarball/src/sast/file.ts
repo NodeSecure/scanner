@@ -13,6 +13,9 @@ import {
   filterDependencyKind
 } from "../utils/index.js";
 
+// CONSTANTS
+const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
+
 export interface scanFileReport {
   file: string;
   warnings: (Omit<WarningDefault<WarningName>, "value"> & { file: string; })[];
@@ -23,12 +26,12 @@ export interface scanFileReport {
 }
 
 export async function scanFile(
-  dest: string,
+  destination: string,
   file: string,
   packageName: string
 ): Promise<scanFileReport> {
   const result = await runASTAnalysisOnFile(
-    path.join(dest, file),
+    path.join(destination, file),
     { packageName }
   );
 
@@ -57,4 +60,20 @@ export async function scanFile(
     dependencies: [],
     filesDependencies: []
   };
+}
+
+export async function scanManyFiles(
+  files: string[],
+  destination: string,
+  packageName: string
+): Promise<scanFileReport[]> {
+  const scannedFiles = await Promise.allSettled(
+    files
+      .filter((fileName) => kJsExtname.has(path.extname(fileName)))
+      .map((file) => scanFile(destination, file, packageName))
+  );
+
+  return scannedFiles
+    .filter((result) => result.status === "fulfilled")
+    .map((result) => result.value);
 }

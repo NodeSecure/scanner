@@ -15,3 +15,16 @@ export function getSemVerWarning(
     experimental: false
   };
 }
+
+export function getEmptyPackageWarning(): WarningDefault<"empty-package"> {
+  return {
+    kind: "empty-package",
+    file: "package.json",
+    value: "package.json",
+    location: null,
+    i18n: "sast_warnings.emptyPackage",
+    severity: "Critical",
+    source: "Scanner",
+    experimental: false
+  }
+}
