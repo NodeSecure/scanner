@@ -4,5 +4,3 @@ export * from "./isSensitiveFile.js";
 export * from "./getPackageName.js";
 export * from "./getTarballComposition.js";
 export * from "./filterDependencyKind.js";
-export * from "./getSemverWarning.js";
-

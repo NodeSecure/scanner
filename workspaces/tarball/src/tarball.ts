@@ -18,9 +18,9 @@ import {
   getTarballComposition,
   isSensitiveFile,
   analyzeDependencies,
-  booleanToFlags,
-  getSemVerWarning
+  booleanToFlags
 } from "./utils/index.js";
+import * as warnings from "./warnings.js";
 import * as sast from "./sast/index.js";
 
 export interface DependencyRef {
@@ -93,7 +93,16 @@ export async function scanDirOrArchive(
   }
 
   // Read the package.json at the root of the directory or archive.
-  const mama = await ManifestManager.fromPackageJSON(dest);
+  const [
+    mama,
+    composition,
+    spdx
+  ] = await Promise.all([
+    ManifestManager.fromPackageJSON(dest),
+    getTarballComposition(dest),
+    conformance.extractLicenses(dest)
+  ]);
+
   {
     const { description, engines, repository, scripts } = mama.document;
     Object.assign(ref, {
@@ -102,57 +111,43 @@ export async function scanDirOrArchive(
       integrity: mama.integrity
     });
   }
+  ref.licenses = spdx.licenses;
+  ref.uniqueLicenseIds = spdx.uniqueLicenseIds;
 
   // Get the composition of the (extracted) directory
-  const { ext, files, size } = await getTarballComposition(dest);
-  if (files.length === 1 && files.includes("package.json")) {
-    ref.warnings.push({
-      kind: "empty-package",
-      location: null,
-      i18n: "sast_warnings.emptyPackage",
-      severity: "Critical",
-      source: "Scanner",
-      experimental: false
-    });
+  if (composition.files.length === 1 && composition.files.includes("package.json")) {
+    ref.warnings.push(warnings.getEmptyPackageWarning());
   }
-
-  ref.size = size;
-  ref.composition.extensions.push(...ext);
-  ref.composition.files.push(...files);
 
   // Search for minified and runtime dependencies
   // Run a JS-X-Ray analysis on each JavaScript files of the project!
-  const fileAnalysisRaw = await Promise.allSettled(
-    files
-      .filter((name) => kJsExtname.has(path.extname(name)))
-      .map((file) => sast.scanFile(dest, file, name))
-  );
+  const scannedFiles = await sast.scanManyFiles(composition.files, dest, name);
 
-  const fileAnalysisResults = fileAnalysisRaw
-    .filter((promiseSettledResult) => promiseSettledResult.status === "fulfilled")
-    .map((promiseSettledResult) => (promiseSettledResult as PromiseFulfilledResult<sast.scanFileReport>).value);
-
-  ref.warnings.push(...fileAnalysisResults.flatMap((row) => row.warnings));
-
+  ref.warnings.push(...scannedFiles.flatMap((row) => row.warnings));
   if (/^0(\.\d+)*$/.test(version)) {
-    ref.warnings.push(getSemVerWarning(version));
+    ref.warnings.push(warnings.getSemVerWarning(version));
   }
 
-  const dependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.dependencies))];
-  const filesDependencies = [...new Set(fileAnalysisResults.flatMap((row) => row.filesDependencies))];
-  const tryDependencies = new Set(fileAnalysisResults.flatMap((row) => row.tryDependencies));
-  const minifiedFiles = fileAnalysisResults.filter((row) => row.isMinified).flatMap((row) => row.file);
+  const dependencies = [...new Set(scannedFiles.flatMap((row) => row.dependencies))];
+  const filesDependencies = [...new Set(scannedFiles.flatMap((row) => row.filesDependencies))];
+  const tryDependencies = new Set(scannedFiles.flatMap((row) => row.tryDependencies));
+  const minifiedFiles = scannedFiles.filter((row) => row.isMinified).flatMap((row) => row.file);
 
   const {
-    nodeDependencies, thirdPartyDependencies, subpathImportsDependencies, missingDependencies, unusedDependencies, flags
+    nodeDependencies,
+    thirdPartyDependencies,
+    subpathImportsDependencies,
+    missingDependencies,
+    unusedDependencies,
+    flags
   } = analyzeDependencies(
     dependencies,
-    {
-      mama,
-      tryDependencies
-    }
+    { mama, tryDependencies }
   );
 
+  ref.size = composition.size;
+  ref.composition.extensions.push(...composition.ext);
+  ref.composition.files.push(...composition.files);
   ref.composition.required_thirdparty = thirdPartyDependencies;
   ref.composition.required_subpath = subpathImportsDependencies;
   ref.composition.unused.push(...unusedDependencies);
@@ -161,20 +156,15 @@ export async function scanDirOrArchive(
   ref.composition.required_nodejs = nodeDependencies;
   ref.composition.minified = minifiedFiles;
 
-  // License
-  const { licenses, uniqueLicenseIds } = await conformance.extractLicenses(dest);
-  ref.licenses = licenses;
-  ref.uniqueLicenseIds = uniqueLicenseIds;
-
   ref.flags.push(...booleanToFlags({
     ...flags,
-    hasNoLicense: uniqueLicenseIds.length === 0,
-    hasMultipleLicenses: uniqueLicenseIds.length > 1,
+    hasNoLicense: spdx.uniqueLicenseIds.length === 0,
+    hasMultipleLicenses: spdx.uniqueLicenseIds.length > 1,
     hasMinifiedCode: minifiedFiles.length > 0,
     hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
-    hasBannedFile: files.some((path) => isSensitiveFile(path)),
+    hasBannedFile: composition.files.some((path) => isSensitiveFile(path)),
     hasNativeCode: mama.flags.isNative ||
-      files.some((file) => kNativeCodeExtensions.has(path.extname(file))),
+      composition.files.some((file) => kNativeCodeExtensions.has(path.extname(file))),
     hasScript: mama.flags.hasUnsafeScripts
   }));
 }
@@ -204,45 +194,51 @@ export async function scanPackage(
   dest: string,
   packageName?: string
 ): Promise<ScannedPackageResult> {
-  const { document } = await ManifestManager.fromPackageJSON(dest);
-  const { type = "script", name } = document;
-
-  await timers.setImmediate();
-  const { ext, files, size } = await getTarballComposition(dest);
-  ext.delete("");
+  const [
+    mama,
+    composition,
+    spdx
+  ] = await Promise.all([
+    ManifestManager.fromPackageJSON(dest),
+    getTarballComposition(dest),
+    conformance.extractLicenses(dest)
+  ])
+  const { type = "script" } = mama.document;
 
   // Search for runtime dependencies
   const dependencies: Record<string, Record<string, Dependency>> = Object.create(null);
   const minified: string[] = [];
   const warnings: Warning[] = [];
 
-  const JSFiles = files.filter((name) => kJsExtname.has(path.extname(name)));
+  const JSFiles = composition.files
+    .filter((name) => kJsExtname.has(path.extname(name)));
   for (const file of JSFiles) {
-    const result = await runASTAnalysisOnFile(path.join(dest, file), {
-      packageName: packageName ?? name,
-      module: type === "module"
-    });
+    const result = await runASTAnalysisOnFile(
+      path.join(dest, file),
+      {
+        packageName: packageName ?? mama.document.name,
+        module: type === "module"
+      }
+    );
 
-    warnings.push(...result.warnings.map((curr) => Object.assign({}, curr, { file })));
-    if (!result.ok) {
-      continue;
+    warnings.push(
+      ...result.warnings.map((curr) => Object.assign({}, curr, { file }))
+    );
+    if (result.ok) {
+      dependencies[file] = result.dependencies.dependencies;
+      result.isMinified && minified.push(file);
     }
-
-    dependencies[file] = result.dependencies.dependencies;
-    result.isMinified && minified.push(file);
   }
 
-  await timers.setImmediate();
-  const {
-    uniqueLicenseIds,
-    licenses
-  } = await conformance.extractLicenses(dest);
-
   return {
-    files: { list: files, extensions: [...ext], minified },
-    directorySize: size,
-    uniqueLicenseIds,
-    licenses,
+    files: {
+      list: composition.files,
+      extensions: [...composition.ext],
+      minified
+    },
+    directorySize: composition.size,
+    uniqueLicenseIds: spdx.uniqueLicenseIds,
+    licenses: spdx.licenses,
     ast: { dependencies, warnings }
   };
 }
