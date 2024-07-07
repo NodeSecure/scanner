@@ -1,10 +1,7 @@
-// Import Node.js Dependencies
-import crypto from "node:crypto";
-
 // Import Third-party Dependencies
 import semver from "semver";
 import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
-import type { PackumentVersion } from "@nodesecure/npm-types";
+import { packageJSONIntegrityHash } from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import { getLinks } from "./utils/index.js";
@@ -26,7 +23,9 @@ export async function manifestMetadata(
       version
     );
 
-    const integrity = getPackumentVersionIntegrity(pkgVersion);
+    const integrity = packageJSONIntegrityHash(pkgVersion, {
+      isFromRemoteRegistry: true
+    });
     Object.assign(
       dependency.versions[version],
       {
@@ -90,8 +89,8 @@ export async function packageMetadata(
           flags.push("isDeprecated");
         }
 
-        metadata.integrity[ver.version] = getPackumentVersionIntegrity(
-          ver
+        metadata.integrity[ver.version] = packageJSONIntegrityHash(
+          ver, { isFromRemoteRegistry: true }
         );
       }
 
@@ -135,30 +134,6 @@ export async function packageMetadata(
   finally {
     logger.tick("registry");
   }
-}
-
-function getPackumentVersionIntegrity(
-  packumentVersion: PackumentVersion
-): string {
-  const { name, version, dependencies = {}, license = "", scripts = {} } = packumentVersion;
-
-  // See https://github.com/npm/cli/issues/5234
-  if ("install" in dependencies && dependencies.install === "node-gyp rebuild") {
-    delete dependencies.install;
-  }
-
-  const integrityObj = {
-    name,
-    version,
-    dependencies,
-    license,
-    scripts
-  };
-
-  return crypto
-    .createHash("sha256")
-    .update(JSON.stringify(integrityObj))
-    .digest("hex");
 }
 
 async function addNpmAvatar(

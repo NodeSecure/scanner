@@ -37,7 +37,7 @@ test("registry.manifestMetadata", async() => {
   assert.equal(Object.keys(dep.metadata).length, 1);
   assert.deepEqual(dep.metadata, {
     integrity: {
-      "1.5.0": "d9cdfeeddb9e5cadfa4188942b4456e2a9c2f60787e772e59394076711ebb9e1"
+      "1.5.0": "0df0f03a28f621111c667e3b50db97a24abf5c02"
     }
   });
   assert.deepEqual(dep.versions["1.5.0"], {
