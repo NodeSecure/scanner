@@ -13,6 +13,9 @@
       "path": "../conformance"
     },
     {
+      "path": "../mama"
+    },
+    {
       "path": "../tarball"
     },
     {
