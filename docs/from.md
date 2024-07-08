@@ -141,17 +141,17 @@ await hydratePayloadDependencies(dependencies, {
 
 For more information on how to create a strategy and how they operate, please [read the following documentation](https://github.com/NodeSecure/vulnera/blob/main/docs/adding_new_strategy.md).
 
-## Steps 4: Get warnings and flagged authors
+## Steps 4: Get warnings and illuminated contacts
 
 In this step, we look for packages or authors potentially identified as problematic (by the person requesting the analysis or us).
 
 ```js
-const { warnings, flaggedAuthors } = await getDependenciesWarnings(dependencies);
+const { warnings, illuminateds } = await getDependenciesWarnings(dependencies);
 payload.warnings = warnings;
-payload.flaggedAuthors = flaggedAuthors;
+payload.highlighted = {
+  contacts: illuminateds
+};
 ```
-
-> Under the hood we use our newest package [@nodesecure/authors](https://github.com/NodeSecure/authors) to optimize and flag authors.
 
 By default we show warnings for the following two packages:
 - @scarf/scarf

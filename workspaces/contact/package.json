@@ -1,0 +1,38 @@
+{
+  "name": "@nodesecure/contact",
+  "version": "1.0.0",
+  "description": "Utilities to extract/fetch data on NPM contacts (author, maintainers ..)",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "prepublishOnly": "npm run build",
+    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test": "c8 -r html npm run test-only"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "author",
+    "contact",
+    "maintainer"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/contact#readme",
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1"
+  }
+}

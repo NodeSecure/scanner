@@ -11,6 +11,9 @@
       "path": "./workspaces/mama"
     },
     {
+      "path": "./workspaces/contact"
+    },
+    {
       "path": "./workspaces/tarball"
     },
     {

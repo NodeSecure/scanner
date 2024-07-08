@@ -2,6 +2,8 @@
  * @see https://github.com/npm/types/blob/main/types/index.d.ts
  */
 
+export type Spec = `${string}@${string}`;
+
 export interface Contact {
   email?: string;
   url?: string;

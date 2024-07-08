@@ -3,7 +3,7 @@ import * as JSXRay from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vuln";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
-import type { extractedAuthor } from "@nodesecure/authors";
+import type { IlluminatedContact } from "@nodesecure/contact";
 import type { Contact } from "@nodesecure/npm-types";
 
 export type Maintainer = Contact & {
@@ -161,8 +161,9 @@ export interface Payload {
   rootDependencyName: string;
   /** Global warnings list */
   warnings: string[];
-  /** List of flagged authors */
-  flaggedAuthors: extractedAuthor[];
+  highlighted: {
+    contacts: IlluminatedContact[];
+  };
   /** All the dependencies of the package (flattened) */
   dependencies: Dependencies;
   /** Version of the scanner used to generate the result */
@@ -204,6 +205,10 @@ export interface Options {
      */
     location: string;
   };
+
+  highlight?: {
+    contacts: Contact[];
+  }
 
   /**
    * Include project devDependencies (only available for cwd command)

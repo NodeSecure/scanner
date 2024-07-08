@@ -5,6 +5,7 @@
     "workspaces/mama",
     "workspaces/tree-walker",
     "workspaces/conformance",
+    "workspaces/contact",
     "workspaces/npm-types"
   ],
   "scripts": {
