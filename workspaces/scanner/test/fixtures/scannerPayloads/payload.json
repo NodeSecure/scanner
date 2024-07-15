@@ -3,18 +3,20 @@
     "rootDependencyName": "is-wsl",
     "warnings": [
       "unsafe-import",
-      "unsafe-regex"     
+      "unsafe-regex"
     ],
-    "flaggedAuthors": [
-      {
-        "name": "sindresorhus",
-        "email": "sindresorhus@gmail.com"
-      },
-      {
-        "name": "jack",
-        "email": "jack@gmail.com"
-      }
-    ],
+    "highlighted": {
+      "contacts": [
+        {
+          "name": "sindresorhus",
+          "email": "sindresorhus@gmail.com"
+        },
+        {
+          "name": "jack",
+          "email": "jack@gmail.com"
+        }
+      ]
+    },
     "vulnerabilityStrategy": "npm",
     "scannerVersion": "1.0.0",
     "dependencies": {
@@ -71,7 +73,7 @@
                 "i18n": "sast_warnings.unsafe_import",
                 "severity": "Warning",
                 "file": "examples/asyncawait.js"
-              }        
+              }
             ],
             "composition": {
               "minified": [
@@ -316,4 +318,3 @@
       }
     }
   }
-  

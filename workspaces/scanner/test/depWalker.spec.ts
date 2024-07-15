@@ -142,7 +142,7 @@ test("fetch payload of pacote on the npm registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "flaggedAuthors",
+    "highlighted",
     "dependencies"
   ]);
 });
@@ -160,7 +160,26 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "flaggedAuthors",
+    "highlighted",
     "dependencies"
   ]);
+});
+
+test("highlight contacts from a remote package", async() => {
+  const spec = "@adonisjs/logger";
+  const result = await from(spec, {
+    highlight: {
+      contacts: [
+        {
+          name: "/.*virk.*/i"
+        }
+      ]
+    }
+  });
+
+  assert.ok(result.highlighted.contacts.length > 0);
+  const maintainer = result.highlighted.contacts[0]!;
+  assert.ok(
+    maintainer.dependencies.includes(spec)
+  );
 });

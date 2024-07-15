@@ -241,9 +241,14 @@ export async function depWalker(
   }
 
   try {
-    const { warnings, flaggedAuthors } = await getDependenciesWarnings(dependencies);
+    const { warnings, illuminated } = await getDependenciesWarnings(
+      dependencies,
+      options.highlight?.contacts
+    );
     payload.warnings = globalWarnings.concat(warnings);
-    payload.flaggedAuthors = flaggedAuthors;
+    payload.highlighted = {
+      contacts: illuminated
+    };
     payload.dependencies = Object.fromEntries(dependencies);
 
     return payload as Payload;

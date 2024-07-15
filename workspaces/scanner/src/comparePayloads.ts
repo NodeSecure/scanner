@@ -2,7 +2,6 @@
 import * as JSXRay from "@nodesecure/js-x-ray";
 import * as Vuln from "@nodesecure/vuln";
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
-import type { extractedAuthor } from "@nodesecure/authors";
 
 // Import Internal Dependencies
 import type {
@@ -19,7 +18,6 @@ import type {
 
 export interface PayloadComparison {
   title: string;
-  flaggedAuthors: ArrayDiff<extractedAuthor>;
   warnings: ArrayDiff<string>;
   scannerVersion: ValueComparison<string>;
   vulnerabilityStrategy: ValueComparison<string>;
@@ -105,11 +103,6 @@ export function comparePayloads(
 
   return {
     title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
-    flaggedAuthors: arrayOfObjectsDiffByKey(
-      "name",
-      payload.flaggedAuthors,
-      comparedPayload.flaggedAuthors
-    ),
     warnings: arrayDiff(
       payload.warnings,
       comparedPayload.warnings

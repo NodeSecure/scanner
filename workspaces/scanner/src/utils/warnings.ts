@@ -3,10 +3,16 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import * as i18n from "@nodesecure/i18n";
-import { extractAllAuthors, type extractedAuthor } from "@nodesecure/authors";
+import {
+  ContactExtractor,
+  type IlluminatedContact,
+  type ContactExtractorPackageMetadata
+} from "@nodesecure/contact";
+import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { getDirNameFromUrl } from "./dirname.js";
+import type { Dependency } from "../types.js";
 
 await i18n.extendFromSystemPath(
   path.join(getDirNameFromUrl(import.meta.url), "..", "i18n")
@@ -14,10 +20,13 @@ await i18n.extendFromSystemPath(
 
 // CONSTANTS
 const kDetectedDep = i18n.taggedString`The dependency '${0}' has been detected in the dependency Tree.`;
-const kFlaggedAuthors = [{
-  name: "marak",
-  email: "marak.squires@gmail.com"
-}];
+const kDefaultIlluminatedContacts: Contact[] = [
+  {
+    name: "marak",
+    email: "marak.squires@gmail.com"
+  }
+];
+
 const kDependencyWarnMessage = {
   "@scarf/scarf": await i18n.getToken("scanner.disable_scarf"),
   iohook: await i18n.getToken("scanner.keylogging")
@@ -25,28 +34,45 @@ const kDependencyWarnMessage = {
 
 export interface GetWarningsResult {
   warnings: string[];
-  flaggedAuthors: extractedAuthor[];
+  illuminated: IlluminatedContact[];
 }
 
 export async function getDependenciesWarnings(
-  dependenciesMap: Map<string, any>
+  dependenciesMap: Map<string, Dependency>,
+  highlightContacts: Contact[] = []
 ): Promise<GetWarningsResult> {
   const vulnerableDependencyNames = Object.keys(
     kDependencyWarnMessage
   ) as unknown as (keyof typeof kDependencyWarnMessage)[];
 
   const warnings = vulnerableDependencyNames
-    .filter((depName) => dependenciesMap.has(depName))
-    .map((depName) => `${kDetectedDep(depName)} ${kDependencyWarnMessage[depName]}`);
+    .flatMap((name) => {
+      return dependenciesMap.has(name) ? `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}` : [];
+    });
 
-  // TODO: add support for RC configuration
-  const res = await extractAllAuthors(
-    { dependencies: Object.fromEntries(dependenciesMap) },
-    { flags: kFlaggedAuthors, domainInformations: false }
+  const dependencies: Record<string, ContactExtractorPackageMetadata> = Object.create(null);
+  for (const [packageName, dependency] of dependenciesMap) {
+    const { author, maintainers } = dependency.metadata;
+
+    dependencies[packageName] = {
+      maintainers,
+      ...( author === null ? {} : { author } )
+    }
+  }
+
+  // TODO: extract illuminated from RC
+  const extractor = new ContactExtractor({
+    highlight: [
+      ...highlightContacts,
+      ...kDefaultIlluminatedContacts
+    ]
+  });
+  const illuminated = extractor.fromDependencies(
+    dependencies
   );
 
   return {
     warnings,
-    flaggedAuthors: res.flaggedAuthors
+    illuminated
   };
 }

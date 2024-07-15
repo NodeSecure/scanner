@@ -100,6 +100,10 @@ interface Options {
     location: string;
   };
 
+  highlight?: {
+    contacts: Contact[];
+  };
+
   /**
    * Include project devDependencies (only available for cwd command)
    *
@@ -133,6 +137,7 @@ Click on one of the links to access the documentation of the workspace:
 | tarball | [@nodesecure/sec-literal](./workspaces/tarball) |
 | tree-walker | [@nodesecure/tree-walker](./workspaces/tree-walker) |
 | mama | [@nodesecure/mama](./workspaces/mama) |
+| contact | [@nodesecure/contact](./workspaces/contact) |
 | conformance | [@nodesecure/npm-types](./workspaces/conformance) |
 | npm-types | [@nodesecure/npm-types](./workspaces/npm-types) |
 

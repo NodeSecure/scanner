@@ -58,22 +58,6 @@ it("should detect warnings diff", () => {
   });
 });
 
-it("should detect flagged authors diff", () => {
-  const { flaggedAuthors: { added, removed } } = compareTo("flaggedAuthorsChanged");
-
-  assert.strictEqual(added.length, 1);
-  assert.deepStrictEqual(added[0], {
-    name: "hugo",
-    email: "hugo@gmail.com"
-  });
-
-  assert.strictEqual(removed.length, 1);
-  assert.deepStrictEqual(removed[0], {
-    name: "jack",
-    email: "jack@gmail.com"
-  });
-});
-
 it("should detect scanner version diff", () => {
   const { scannerVersion } = compareTo("scannerVersionChanged");
 
