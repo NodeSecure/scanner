@@ -51,7 +51,7 @@
     "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/i18n": "^4.0.1",
-    "@nodesecure/js-x-ray": "^6.3.0",
+    "@nodesecure/js-x-ray": "^7.3.0",
     "@nodesecure/mama": "^1.0.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.0.0",

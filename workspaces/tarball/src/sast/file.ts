@@ -3,7 +3,7 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import {
-  runASTAnalysisOnFile,
+  AstAnalyser,
   type WarningName,
   type WarningDefault
 } from "@nodesecure/js-x-ray";
@@ -30,23 +30,28 @@ export async function scanFile(
   file: string,
   packageName: string
 ): Promise<scanFileReport> {
-  const result = await runASTAnalysisOnFile(
+  const result = await new AstAnalyser().analyseFile(
     path.join(destination, file),
-    { packageName }
+    {
+      packageName
+    }
   );
 
   const warnings = result.warnings.map((curr) => Object.assign({}, curr, { file }));
   if (result.ok) {
     const { packages, files } = filterDependencyKind(
-      [...Object.keys(result.dependencies.dependencies)],
+      [...result.dependencies.keys()],
       path.dirname(file)
     );
+
+    const tryDependencies = [...result.dependencies.entries()]
+      .flatMap(([name, dependency]) => dependency.inTry ? [name] : []);
 
     return {
       file,
       warnings,
       isMinified: result.isMinified,
-      tryDependencies: [...result.dependencies.getDependenciesInTryStatement()],
+      tryDependencies,
       dependencies: packages,
       filesDependencies: files
     };

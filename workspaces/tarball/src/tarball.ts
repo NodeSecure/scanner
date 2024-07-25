@@ -1,11 +1,10 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import os from "node:os";
-import timers from "node:timers/promises";
 
 // Import Third-party Dependencies
 import {
-  runASTAnalysisOnFile,
+  AstAnalyser,
   type Warning,
   type Dependency
 } from "@nodesecure/js-x-ray";
@@ -213,7 +212,7 @@ export async function scanPackage(
   const JSFiles = composition.files
     .filter((name) => kJsExtname.has(path.extname(name)));
   for (const file of JSFiles) {
-    const result = await runASTAnalysisOnFile(
+    const result = await new AstAnalyser().analyseFile(
       path.join(dest, file),
       {
         packageName: packageName ?? mama.document.name,
@@ -225,7 +224,7 @@ export async function scanPackage(
       ...result.warnings.map((curr) => Object.assign({}, curr, { file }))
     );
     if (result.ok) {
-      dependencies[file] = result.dependencies.dependencies;
+      dependencies[file] = Object.fromEntries(result.dependencies);
       result.isMinified && minified.push(file);
     }
   }
