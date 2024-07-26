@@ -108,6 +108,7 @@ test("execute depWalker on pkg.gitdeps", async() => {
     "@nodesecure/js-x-ray",
     "@nodesecure/sec-literal",
     "@types/estree",
+    "ansi-regex",
     "eastasianwidth",
     "emoji-regex",
     "estree-walker",
@@ -125,6 +126,7 @@ test("execute depWalker on pkg.gitdeps", async() => {
     "safe-regex",
     "string-width",
     "strip-ansi",
+    "strnum",
     "ts-pattern",
     "zen-observable"
   ].sort());

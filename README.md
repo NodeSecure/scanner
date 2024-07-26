@@ -70,7 +70,7 @@ interface Options {
   /**
    * Maximum tree depth
    *
-   * @default 4
+   * @default Infinity
    */
   readonly maxDepth?: number;
 
