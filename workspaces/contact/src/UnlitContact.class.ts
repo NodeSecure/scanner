@@ -12,7 +12,7 @@ export class UnlitContact {
   private illuminated: Contact;
   private extendedName: RegExp | null = null;
 
-  public dependencies = new Set<string>;
+  public dependencies = new Set<string>();
 
   constructor(contact: Contact) {
     this.illuminated = structuredClone(contact);

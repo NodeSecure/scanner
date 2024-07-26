@@ -49,4 +49,3 @@ fs.writeFileSync(
   new URL("spdx.ts", kSrcDirectory),
   `/* eslint-disable max-lines */\n\n` + astring.generate(prog)
 );
-s

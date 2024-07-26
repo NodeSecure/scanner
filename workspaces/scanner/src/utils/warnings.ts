@@ -46,9 +46,7 @@ export async function getDependenciesWarnings(
   ) as unknown as (keyof typeof kDependencyWarnMessage)[];
 
   const warnings = vulnerableDependencyNames
-    .flatMap((name) => {
-      return dependenciesMap.has(name) ? `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}` : [];
-    });
+    .flatMap((name) => (dependenciesMap.has(name) ? `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}` : []));
 
   const dependencies: Record<string, ContactExtractorPackageMetadata> = Object.create(null);
   for (const [packageName, dependency] of dependenciesMap) {
@@ -56,8 +54,8 @@ export async function getDependenciesWarnings(
 
     dependencies[packageName] = {
       maintainers,
-      ...( author === null ? {} : { author } )
-    }
+      ...(author === null ? {} : { author })
+    };
   }
 
   // TODO: extract illuminated from RC

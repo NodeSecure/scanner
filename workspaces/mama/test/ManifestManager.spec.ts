@@ -152,7 +152,7 @@ describe("ManifestManager", () => {
           ...kMinimalPackageJSON,
           ...ManifestManager.Default
         }
-      )
+      );
     });
   });
 
@@ -223,7 +223,7 @@ describe("ManifestManager", () => {
     test("Given a PackageJSON with one import subpath, it must be returned unchanged", () => {
       const nodeImport: PackageJSON["imports"] = {
         "#dep": {
-          "node": "something"
+          node: "something"
         }
       };
       const packageJSON: PackageJSON = {
@@ -291,7 +291,7 @@ describe("ManifestManager", () => {
             name: "Error",
             message: "spec is not available for the given workspace"
           }
-        )
+        );
       }
     });
   });

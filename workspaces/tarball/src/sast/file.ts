@@ -45,7 +45,7 @@ export async function scanFile(
     );
 
     const tryDependencies = [...result.dependencies.entries()]
-      .flatMap(([name, dependency]) => dependency.inTry ? [name] : []);
+      .flatMap(([name, dependency]) => (dependency.inTry ? [name] : []));
 
     return {
       file,
