@@ -1,3 +1,7 @@
+/* eslint-disable no-redeclare */
+/* eslint-disable block-scoped-var */
+/* eslint-disable no-var */
+/* eslint-disable vars-on-top */
 // Import Node.js Dependencies
 import os from "node:os";
 
@@ -287,7 +291,7 @@ export class TreeWalker {
     yield current;
   }
 
-  async *walk(
+  async* walk(
     manifest: PackageJSON | ManifestVersion,
     options: WalkOptions
   ): AsyncIterableIterator<DependencyJSON> {

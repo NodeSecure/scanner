@@ -46,7 +46,7 @@ export class ContactExtractor {
     }
 
     return unlitContacts.flatMap(
-      (unlit) => unlit.dependencies.size > 0 ? [unlit.illuminate()] : []
+      (unlit) => (unlit.dependencies.size > 0 ? [unlit.illuminate()] : [])
     );
   }
 }

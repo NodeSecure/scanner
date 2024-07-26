@@ -261,6 +261,7 @@ export async function depWalker(
   }
 }
 
+// eslint-disable-next-line max-params
 async function scanDirOrArchiveEx(
   name: string,
   version: string,

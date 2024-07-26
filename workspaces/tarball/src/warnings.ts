@@ -26,5 +26,5 @@ export function getEmptyPackageWarning(): WarningDefault<"empty-package"> {
     severity: "Critical",
     source: "Scanner",
     experimental: false
-  }
+  };
 }

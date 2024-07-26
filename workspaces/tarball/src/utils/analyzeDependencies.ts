@@ -101,7 +101,7 @@ export function analyzeDependencies(
       isCoreModule(name) ||
       devDependencies.includes(name) ||
       tryDependencies.has(name) ?
-        [] : name;
+      [] : name;
   });
 
   const unusedDependencies = difference(
@@ -129,13 +129,13 @@ export function analyzeDependencies(
 }
 
 function difference<T>(arr1: T[], arr2: T[]): T[] {
-  return arr1.filter(item => !arr2.includes(item));
+  return arr1.filter((item) => !arr2.includes(item));
 }
 
 function isFile(
   name: string
 ) {
-  return name.startsWith(".") || path.extname(name) !== ""
+  return name.startsWith(".") || path.extname(name) !== "";
 }
 
 function isCoreModule(

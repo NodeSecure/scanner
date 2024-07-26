@@ -10,18 +10,19 @@
   ],
   "scripts": {
     "build": "tsc --build",
-    "test": "npm run test --ws --if-present"
+    "test": "npm run test --ws --if-present",
+    "lint": "npx eslint workspaces"
   },
   "author": "NodeSecure",
   "license": "MIT",
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.9.0",
+    "@nodesecure/eslint-config": "^2.0.0-beta.0",
     "@slimio/is": "^2.0.0",
     "@types/node": "^20.10.0",
     "@types/pacote": "^11.1.8",
+    "@types/semver": "^7.5.8",
     "@types/sinon": "^17.0.3",
     "c8": "^10.1.2",
-    "eslint": "9.7.0",
     "glob": "^11.0.0",
     "pkg-ok": "^3.0.0",
     "sinon": "^18.0.0",

@@ -48,7 +48,7 @@ describe("ContactExtractor", () => {
       });
 
       const dependencies: Record<string, ContactExtractorPackageMetadata> = {
-        kleur: fakePackageMetadata({ name: "random,jOhn"}, "author"),
+        kleur: fakePackageMetadata({ name: "random,jOhn" }, "author"),
         mocha: fakePackageMetadata({ name: "john.foobar" }, "maintainer"),
         random: fakePackageMetadata()
       };
@@ -87,6 +87,7 @@ function fakePackageMetadata(
   highlighted?: Contact,
   location?: "any" | "maintainer" | "author"
 ): ContactExtractorPackageMetadata {
+  // eslint-disable-next-line no-param-reassign
   location ??= "any";
   let appearAtLeastOnce = false;
   let numberOfMaintainers = getRandomInt(3);
@@ -107,7 +108,7 @@ function fakePackageMetadata(
     maintainers.push(currentMaintainer);
   }
 
-  const hasAuthor = location === "author" ? true : (Math.random() > .5);
+  const hasAuthor = location === "author" ? true : (Math.random() > 0.5);
   if (!hasAuthor) {
     return { maintainers };
   }

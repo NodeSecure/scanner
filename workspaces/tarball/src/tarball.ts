@@ -201,7 +201,7 @@ export async function scanPackage(
     ManifestManager.fromPackageJSON(dest),
     getTarballComposition(dest),
     conformance.extractLicenses(dest)
-  ])
+  ]);
   const { type = "script" } = mama.document;
 
   // Search for runtime dependencies
@@ -225,7 +225,9 @@ export async function scanPackage(
     );
     if (result.ok) {
       dependencies[file] = Object.fromEntries(result.dependencies);
-      result.isMinified && minified.push(file);
+      if (result.isMinified) {
+        minified.push(file);
+      }
     }
   }
 

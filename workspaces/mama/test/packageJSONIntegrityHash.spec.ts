@@ -3,10 +3,6 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 // Import Third-party Dependencies
-import type {
-  PackageJSON,
-  WorkspacesPackageJSON
-} from "@nodesecure/npm-types";
 import hash from "object-hash";
 
 // Import Internal Dependencies
