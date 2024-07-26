@@ -38,6 +38,6 @@
     "pacote": "^18.0.6"
   },
   "devDependencies": {
-    "get-folder-size": "^4.0.0"
+    "get-folder-size": "^5.0.0"
   }
 }
