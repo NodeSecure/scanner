@@ -17,7 +17,7 @@ It is also possible to provide options as a second argument. Here are two useful
 export interface Options {
   /**
    * Maximum tree depth
-   * @default 4
+   * @default Infinity
    */
   readonly maxDepth?: number;
   /**
@@ -98,7 +98,7 @@ Here is a simplified version of the Generator function:
 
 ```js
 export async function* searchDeepDependencies(packageName, gitURL, options) {
-  const { exclude, currDepth = 0, parent, maxDepth } = options;
+  const { exclude, currDepth = 1, parent, maxDepth } = options;
 
   const { name, version } = await pacote.manifest(gitURL ?? packageName, {
     ...NPM_TOKEN,
@@ -108,7 +108,7 @@ export async function* searchDeepDependencies(packageName, gitURL, options) {
   const { dependencies, customResolvers } = mergeDependencies(pkg);
 
   const current = new Dependency(name, version, parent);
-  if (currDepth !== maxDepth) {
+  if (currDepth < maxDepth) {
     const config = {
       exclude, currDepth: currDepth + 1, parent: current, maxDepth
     };

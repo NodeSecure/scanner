@@ -86,7 +86,7 @@ interface WalkOptions {
    * Specifies the maximum depth to traverse for each root dependency.
    * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
    *
-   * @default 4
+   * @default Infinity
    */
   maxDepth?: number;
 

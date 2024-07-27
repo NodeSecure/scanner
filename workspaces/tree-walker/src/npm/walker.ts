@@ -63,7 +63,7 @@ export interface WalkOptions {
    * Specifies the maximum depth to traverse for each root dependency.
    * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
    *
-   * @default 4
+   * @default Infinity
    */
   maxDepth?: number;
 
@@ -173,7 +173,7 @@ export class TreeWalker {
     spec: string,
     options: WalkRemoteOptions
   ): AsyncIterableIterator<Dependency> {
-    const { currDepth = 0, parent, maxDepth, gitURL } = options;
+    const { currDepth = 1, parent, maxDepth, gitURL } = options;
 
     const { name, version, deprecated, ...pkg } = await this.providers.pacote.manifest(
       gitURL ?? spec,
@@ -202,7 +202,7 @@ export class TreeWalker {
     current.addFlag("hasCustomResolver", customResolvers.size > 0);
     current.addFlag("hasDependencies", dependencies.size > 0);
 
-    if (currDepth !== maxDepth) {
+    if (currDepth < maxDepth) {
       const config = {
         currDepth: currDepth + 1, parent: current, maxDepth
       };
@@ -293,11 +293,11 @@ export class TreeWalker {
 
   async* walk(
     manifest: PackageJSON | ManifestVersion,
-    options: WalkOptions
+    options: WalkOptions = {}
   ): AsyncIterableIterator<DependencyJSON> {
     this.relationsMap.clear();
     const {
-      maxDepth = 4,
+      maxDepth = Infinity,
       packageLock = null,
       includeDevDeps = false
     } = options;
