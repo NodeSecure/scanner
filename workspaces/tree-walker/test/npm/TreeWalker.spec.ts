@@ -42,7 +42,7 @@ describe("npm.TreeWalker", () => {
 
     const mockedPacoteProvider = {
       manifest: t.mock.fn(async function mock() {
-        throw "oh no!";
+        throw new Error("oh no!");
       })
     };
     const walker = new npm.TreeWalker({
@@ -134,7 +134,10 @@ describe("npm.TreeWalker", () => {
       const walker = new npm.TreeWalker();
       walker.relationsMap.set("foo@1.5.0", new Set());
 
-      for await (const _ of walker.walk(manifest)) {}
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for await (const _ of walker.walk(manifest)) {
+        // do nothing
+      }
 
       assert.strictEqual(
         walker.relationsMap.size,
