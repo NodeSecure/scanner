@@ -1,17 +1,14 @@
-/* eslint-disable no-redeclare */
-/* eslint-disable block-scoped-var */
-/* eslint-disable no-var */
-/* eslint-disable vars-on-top */
 // Import Node.js Dependencies
 import os from "node:os";
 
 // Import Third-party Dependencies
 import * as iter from "itertools";
-import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import combineAsyncIterators from "combine-async-iterators";
 import pacote from "pacote";
 import Arborist from "@npmcli/arborist";
-import semver from "semver";
+// @ts-ignore
+import pickManifest from "npm-pick-manifest";
+import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type { PackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
@@ -129,44 +126,44 @@ export class TreeWalker {
     };
   }
 
-  private async getLatestDependencyVersion(
-    dependencyName: string,
-    range: string
-  ): Promise<[version: string, isLatest: boolean]> {
-    try {
-      const { versions, "dist-tags": { latest } } = await this.providers.pacote.packument(
-        dependencyName,
-        this.registryOptions
-      );
-      const currVersion = semver.maxSatisfying(
-        Object.keys(versions),
-        range
-      );
+  private addTreeRelation(
+    key: NpmSpec,
+    value: NpmSpec
+  ) {
+    if (!this.relationsMap.has(key)) {
+      return;
+    }
 
-      return currVersion === null ?
-        [latest, true] :
-        [currVersion, semver.eq(latest, currVersion)];
-    }
-    catch {
-      return [utils.cleanRange(range), true];
-    }
+    this.relationsMap
+      .get(key)!
+      .add(value);
   }
 
   private async resolveDependencyVersion(
     dependency: [name: string, range: string]
   ): Promise<{ rangedSpec: NpmSpec, spec: NpmSpec, isLatest: boolean }> {
-    const [dependencyName, semVerRange] = dependency;
+    const [dependencyName, range] = dependency;
 
-    const [dependencyVersion, isLatest] = await this.getLatestDependencyVersion(
-      dependencyName,
-      semVerRange
-    );
+    try {
+      const packument = await this.providers.pacote.packument(
+        dependencyName,
+        this.registryOptions
+      );
+      const manifest = pickManifest(packument, range) as pacote.Manifest;
 
-    return {
-      rangedSpec: `${dependencyName}@${semVerRange}`,
-      spec: `${dependencyName}@${dependencyVersion}`,
-      isLatest
-    };
+      return {
+        rangedSpec: `${dependencyName}@${range}`,
+        spec: `${dependencyName}@${manifest.version}`,
+        isLatest: manifest.version === packument["dist-tags"].latest
+      };
+    }
+    catch {
+      return {
+        rangedSpec: `${dependencyName}@${range}`,
+        spec: `${dependencyName}@${utils.cleanRange(range)}`,
+        isLatest: true
+      };
+    }
   }
 
   private async* walkRemoteDependency(
@@ -325,24 +322,41 @@ export class TreeWalker {
 
     if (packageLock === null) {
       const walkRemoteOptions = { maxDepth, parent: rootDependency };
-      var iterators = [
+      const iterators = [
         ...iter
           .filter(customResolvers.entries(), ([, version]) => utils.isGitDependency(version))
           .map(([name, gitURL]) => this.walkRemoteDependency(name, { ...walkRemoteOptions, gitURL })),
         ...iter
           .map(dependencies.entries(), ([name, ver]) => this.walkRemoteDependency(`${name}@${ver}`, walkRemoteOptions))
       ];
+
+      for await (const dep of combineAsyncIterators({}, ...iterators)) {
+        yield dep.exportAsPlainObject();
+      }
+
+      /**
+       * Add root dependencies to the relations Map because the parent is not handled by walkRemoteDependency.
+       * If we skip this step, the code will fail to properly re-link dependencies in the subsequent steps.
+       */
+      const resolvedDependencies = await Promise.all(
+        iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
+      );
+      for (const { spec, isLatest } of resolvedDependencies) {
+        if (!isLatest) {
+          rootDependency.addFlag("hasOutdatedDependency");
+        }
+        this.addTreeRelation(spec, rootDependency.spec);
+      }
     }
     else {
       const { location, ...packageLockOptions } = packageLock;
 
-      // TODO: build relationsMap from Arborist
       const { edgesOut } = await this.providers.localTreeLoader.load(
         location,
         this.registry
       );
 
-      var iterators = [
+      const iterators = [
         ...iter
           .filter(edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
           .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
@@ -352,26 +366,20 @@ export class TreeWalker {
             ...packageLockOptions
           }))
       ];
-    }
 
-    for await (const dep of combineAsyncIterators({}, ...iterators)) {
-      yield dep.exportAsPlainObject();
-    }
-
-    /**
-     * Add root dependencies to the relations Map because the parent is not handled by walkRemoteDependency.
-     * If we skip this step, the code will fail to properly re-link dependencies in the subsequent steps.
-     */
-    const resolvedDependencies = await Promise.all(
-      iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
-    );
-    for (const { spec, isLatest } of resolvedDependencies) {
-      if (!isLatest) {
-        rootDependency.addFlag("hasOutdatedDependency");
+      for await (const dep of combineAsyncIterators({}, ...iterators)) {
+        yield dep.exportAsPlainObject();
       }
 
-      if (this.relationsMap.has(spec)) {
-        this.relationsMap.get(spec)!.add(rootDependency.spec);
+      for (const [packageName, { to: toNode }] of edgesOut) {
+        if (toNode === null || (!includeDevDeps && toNode.dev)) {
+          continue;
+        }
+
+        this.addTreeRelation(
+          `${packageName}@${toNode.package.version}`,
+          rootDependency.spec
+        );
       }
     }
 
