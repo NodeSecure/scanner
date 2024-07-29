@@ -18,7 +18,7 @@
   "devDependencies": {
     "@nodesecure/eslint-config": "^2.0.0-beta.0",
     "@slimio/is": "^2.0.0",
-    "@types/node": "^20.10.0",
+    "@types/node": "^22.0.0",
     "@types/pacote": "^11.1.8",
     "@types/semver": "^7.5.8",
     "@types/sinon": "^17.0.3",
