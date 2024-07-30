@@ -112,8 +112,8 @@ it("should detect version diff", () => {
   const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
 
   const comparedVersion2 = compared.get("foo")!.versions.compared.get("2.0.0")!;
-  assert.ok(comparedVersion2.id?.prev === "abc");
-  assert.ok(comparedVersion2.id.now === "bcd");
+  assert.ok(comparedVersion2.id?.prev === 1);
+  assert.ok(comparedVersion2.id.now === 0);
 
   assert.strictEqual(comparedVersion2.size?.prev, "1");
   assert.strictEqual(comparedVersion2.size.now, "2");
@@ -128,8 +128,8 @@ it("should detect version diff", () => {
   assert.strictEqual(usedBy.compared.get("foo")!.prev, "1.0.0");
   assert.strictEqual(usedBy.compared.get("foo")!.now, "1.0.1");
 
-  assert.ok(comparedVersion2.devDependency?.prev === false);
-  assert.ok(comparedVersion2.devDependency?.now);
+  assert.ok(comparedVersion2.isDevDependency?.prev === false);
+  assert.ok(comparedVersion2.isDevDependency?.now);
 
   assert.ok(comparedVersion2.existOnRemoteRegistry?.prev === false);
   assert.ok(comparedVersion2.existOnRemoteRegistry?.now === true);
@@ -168,7 +168,7 @@ it("should detect version diff", () => {
   });
 
   const comparedVersion3 = compared.get("foo")!.versions.compared.get("3.0.0")!;
-  assert.strictEqual(comparedVersion3.devDependency, undefined);
+  assert.strictEqual(comparedVersion3.isDevDependency, undefined);
   assert.strictEqual(comparedVersion3.author, undefined);
 
   // repository: diff on url only
@@ -222,13 +222,13 @@ it("should detect compared version composition diff", () => {
 
 it("should detect license IDs diff", () => {
   const { dependencies: { compared } } = compareTo("deeplyUpdatedPayload");
-  const { licenseIds } = compared.get("foo")!.versions.compared.get("2.0.0")!;
+  const { uniqueLicenseIds } = compared.get("foo")!.versions.compared.get("2.0.0")!;
 
-  assert.strictEqual(licenseIds.added.length, 1);
-  assert.strictEqual(licenseIds.added[0], "BSD-3-Clause");
+  assert.strictEqual(uniqueLicenseIds.added.length, 1);
+  assert.strictEqual(uniqueLicenseIds.added[0], "BSD-3-Clause");
 
-  assert.strictEqual(licenseIds.removed.length, 1);
-  assert.strictEqual(licenseIds.removed[0], "GPL-3.0");
+  assert.strictEqual(uniqueLicenseIds.removed.length, 1);
+  assert.strictEqual(uniqueLicenseIds.removed[0], "GPL-3.0");
 });
 
 it("should detect flags diff", () => {
