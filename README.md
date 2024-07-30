@@ -27,7 +27,7 @@ $ yarn add @nodesecure/scanner
 
 ```js
 import * as scanner from "@nodesecure/scanner";
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 
 // CONSTANTS
 const kPackagesToAnalyze = ["mocha", "cacache", "is-wsl"];

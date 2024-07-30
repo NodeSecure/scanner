@@ -1,7 +1,6 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
 import * as Vuln from "@nodesecure/vuln";
-import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 
 // Import Internal Dependencies
 import type {
@@ -11,7 +10,6 @@ import type {
   DependencyVersion,
   Publisher,
   Maintainer,
-  Engines,
   Repository,
   DependencyLinks
 } from "./types.js";
@@ -44,25 +42,25 @@ export interface VersionsComparisonResult {
 }
 
 export interface DependencyVersionComparison {
-  id: ValueComparison<string>;
+  id: ValueComparison<number>;
   size: ValueComparison<number>;
-  usedBy: DictionaryComparison<Record<string, string>>;
-  devDependency: ValueComparison<boolean>;
+  usedBy: DictionaryComparison<string>;
+  isDevDependency: ValueComparison<boolean>;
   existOnRemoteRegistry: ValueComparison<boolean>;
   description: ValueComparison<string>;
   author: ValueComparison<Maintainer>;
-  engines: DictionaryComparison<ValueComparison<Engines>>;
+  engines: DictionaryComparison<string>;
   repository: ValueComparison<Repository>;
-  scripts: DictionaryComparison<Record<string, string>>;
+  scripts: DictionaryComparison<string>;
   warnings: ArrayDiff<JSXRay.Warning>;
   composition: CompositionComparison;
-  licenseIds: ArrayDiff<SpdxFileLicenseConformance>;
+  uniqueLicenseIds: ArrayDiff<string>;
   flags: ArrayDiff<string>;
   links: ValueComparison<DependencyLinks>;
 }
 
 export interface DictionaryComparison<T> {
-  compared: Map<string, T>;
+  compared: Map<string, ValueComparison<T>>;
   added: Map<string, T>;
   removed: Map<string, T>;
 }
@@ -152,25 +150,26 @@ function compareVersions(
 ): VersionsComparisonResult {
   const { comparable, ...versions } = dictionariesDiff(original, toCompare);
 
-  const comparedVersions = new Map();
+  const comparedVersions = new Map<string, DependencyVersionComparison>();
   for (const [name, [version, comparedVersion]] of comparable) {
-    const diff = {
+    const diff: DependencyVersionComparison = {
       id: compareValues(version.id, comparedVersion.id),
       size: compareValues(version.size, comparedVersion.size),
       usedBy: compareDictionnaries(version.usedBy, comparedVersion.usedBy),
-      devDependency: compareValues(version.isDevDependency, comparedVersion.isDevDependency),
+      isDevDependency: compareValues(version.isDevDependency, comparedVersion.isDevDependency),
       existOnRemoteRegistry: compareValues(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
       description: compareValues(version.description, comparedVersion.description),
-      author: compareObjects("name", version.author, comparedVersion.author),
+      author: compareObjects("name", version.author!, comparedVersion.author!),
+      // @ts-ignore
       engines: compareDictionnaries(version.engines, comparedVersion.engines),
       repository: compareObjects("type", version.repository, comparedVersion.repository)
         ?? compareObjects("url", version.repository, comparedVersion.repository),
       scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),
       warnings: arrayDiff(version.warnings, comparedVersion.warnings),
       composition: compareComposition(version.composition, comparedVersion.composition),
-      licenseIds: arrayDiff(version.license.uniqueLicenseIds, comparedVersion.license.uniqueLicenseIds),
+      uniqueLicenseIds: arrayDiff(version.uniqueLicenseIds, comparedVersion.uniqueLicenseIds),
       flags: arrayDiff(version.flags, comparedVersion.flags),
-      links: compareValues(version.links, comparedVersion.links)
+      links: compareValues(version.links!, comparedVersion.links!)
     };
 
     comparedVersions.set(name, diff);
@@ -185,11 +184,7 @@ function compareVersions(
 function compareComposition(
   original: DependencyVersion["composition"],
   toCompare: DependencyVersion["composition"]
-): CompositionComparison | undefined {
-  if (!original || !toCompare) {
-    return undefined;
-  }
-
+): CompositionComparison {
   return {
     minified: arrayDiff(original.minified, toCompare.minified),
     required_thirdparty: arrayDiff(original.required_thirdparty, toCompare.required_thirdparty),
@@ -199,13 +194,13 @@ function compareComposition(
   };
 }
 
-function compareDictionnaries<T>(
-  original: Record<string, T>,
-  toCompare: Record<string, T>
-): DictionaryComparison<T> {
+function compareDictionnaries<K extends string | number | symbol, V>(
+  original: Record<K, V>,
+  toCompare: Record<K, V>
+): DictionaryComparison<V> {
   const { comparable, ...diff } = dictionariesDiff(original, toCompare);
 
-  const compared = new Map();
+  const compared = new Map<string, ValueComparison<V>>();
   for (const [name, [entity, comparedEntity]] of comparable) {
     compared.set(name, compareValues(entity, comparedEntity));
   }
@@ -216,11 +211,11 @@ function compareDictionnaries<T>(
   };
 }
 
-function compareObjects<T>(
-  key: string,
-  original: Record<string, T> = {},
-  toCompare: Record<string, T> = {}
-): ValueComparison<Record<string, T>> {
+function compareObjects<T extends object>(
+  key: keyof T,
+  original: T = Object.create(null),
+  toCompare: T = Object.create(null)
+): ValueComparison<T> {
   if (original[key] === toCompare[key]) {
     return undefined;
   }
@@ -254,9 +249,9 @@ function dictionariesDiff<T>(
   original: Record<string, T> = {},
   toCompare: Record<string, T> = {}
 ) {
-  const added = new Map();
-  const removed = new Map();
-  const comparable = new Map();
+  const added = new Map<string, T>();
+  const removed = new Map<string, T>();
+  const comparable = new Map<string, [T, T]>();
 
   Object.keys(original).forEach((key) => {
     if (key in toCompare) {
