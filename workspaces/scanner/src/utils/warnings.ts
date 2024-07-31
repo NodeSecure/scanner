@@ -3,6 +3,7 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import * as i18n from "@nodesecure/i18n";
+import * as RC from "@nodesecure/rc";
 import {
   ContactExtractor,
   type IlluminatedContact,
@@ -58,10 +59,13 @@ export async function getDependenciesWarnings(
     };
   }
 
-  // TODO: extract illuminated from RC
+  const memoizedConfig = RC.memoized();
   const extractor = new ContactExtractor({
     highlight: [
       ...highlightContacts,
+      ...(memoizedConfig === null ?
+        [] : (memoizedConfig.scanner?.highlight?.contacts ?? [])
+      ),
       ...kDefaultIlluminatedContacts
     ]
   });
