@@ -34,5 +34,8 @@
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/contact#readme",
   "devDependencies": {
     "@faker-js/faker": "^8.4.1"
+  },
+  "dependencies": {
+    "@nodesecure/npm-types": "^1.1.0"
   }
 }
