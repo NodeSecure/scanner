@@ -31,7 +31,9 @@ export class LocalDependencyTreeLoader implements LocalDependencyTreeLoaderProvi
         path.join(location, "node_modules")
       );
 
-      return await arb.loadActual();
+      await arb.loadActual();
+
+      return arb.buildIdealTree();
     }
     catch {
       return arb.loadVirtual();
