@@ -13,7 +13,7 @@ import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
-  getDependenciesWarnings, addMissingVersionFlags
+  getDependenciesWarnings, addMissingVersionFlags, getUsedDeps
 } from "./utils/index.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
@@ -233,7 +233,7 @@ export async function depWalker(
       }
 
       const usedBy: Record<string, string> = Object.create(null);
-      for (const [name, version] of [...usedDeps].map((name) => name.split("@"))) {
+      for (const [name, version] of getUsedDeps(usedDeps)) {
         usedBy[name] = version;
       }
       Object.assign(verDescriptor.usedBy, usedBy);
