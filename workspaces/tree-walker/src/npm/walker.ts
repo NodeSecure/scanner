@@ -183,7 +183,7 @@ export class TreeWalker {
       alias: Object.fromEntries(alias)
     });
 
-    if (gitURL !== null) {
+    if (gitURL !== null && gitURL !== undefined) {
       current.isGit(gitURL);
       try {
         await this.providers.pacote.manifest(
