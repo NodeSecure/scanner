@@ -92,6 +92,12 @@ test("execute depWalker on @slimio/config", async() => {
     "@iarna/toml",
     "@slimio/config"
   ].sort());
+
+  const ajvDescriptor = resultAsJSON.ajv.versions["6.12.6"];
+  const ajvUsedBy = Object.keys(ajvDescriptor.usedBy);
+  assert.deepEqual(ajvUsedBy, [
+    "@slimio/config"
+  ]);
 });
 
 test("execute depWalker on pkg.gitdeps", async() => {
