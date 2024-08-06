@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/scanner",
-  "version": "6.0.1",
+  "version": "6.0.2",
   "description": "A package API to run a static analysis of your module's dependencies.",
   "type": "module",
   "exports": "./dist/index.js",
@@ -58,7 +58,7 @@
     "@nodesecure/npm-types": "^1.1.0",
     "@nodesecure/rc": "^3.0.0",
     "@nodesecure/tarball": "^1.0.0",
-    "@nodesecure/tree-walker": "^1.0.0",
+    "@nodesecure/tree-walker": "^1.1.0",
     "@nodesecure/vuln": "^1.7.0",
     "@openally/mutex": "^1.0.0",
     "pacote": "^18.0.6",
