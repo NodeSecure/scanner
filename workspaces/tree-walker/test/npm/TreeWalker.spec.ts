@@ -1,12 +1,18 @@
 // Import Node.js Dependencies
 import { describe, it, test } from "node:test";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import assert from "node:assert";
+import path from "node:path";
 
 // Import Third-party Dependencies
 import pacote from "pacote";
+import type { WorkspacesPackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { npm, type DependencyJSON } from "../../src/index.js";
+
+// CONSTANTS
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe("npm.TreeWalker", () => {
   test("Given a fixed '@nodesecure/fs-walk' manifest then it must extract one root dependency", async() => {
@@ -125,6 +131,57 @@ describe("npm.TreeWalker", () => {
     );
   });
 
+  test(`Given a the local scanner workspace as Manifest with maxDepth: 1
+    it must return all workspaces as Dependency and complete the manifest name and version with default values`, async() => {
+    const manifestLocation = path.join(__dirname, "..", "..", "..", "..", "package.json");
+
+    const manifest = (
+      await import(pathToFileURL(manifestLocation).href, { with: { type: "json" } })
+    ).default as WorkspacesPackageJSON;
+    const manifestWorkspaces = manifest.workspaces.map(
+      (name) => "@nodesecure" + name.slice("workspaces".length)
+    );
+
+    const walker = new npm.TreeWalker();
+
+    const dependencies: DependencyJSON[] = [];
+    const walkOptions: npm.WalkOptions = {
+      maxDepth: 1,
+      packageLock: {
+        location: path.dirname(manifestLocation),
+        fetchManifest: false
+      }
+    };
+    for await (const dependency of walker.walk(manifest, walkOptions)) {
+      dependencies.push(dependency);
+    }
+
+    const rootDependency = dependencies.at(-1)!;
+    assert.strictEqual(
+      rootDependency.name,
+      "workspace"
+    );
+    assert.strictEqual(
+      rootDependency.version,
+      "1.0.0"
+    );
+
+    const names = dependencies
+      .map((dependency) => dependency.name)
+      .sort(sortByName);
+    assert.strictEqual(
+      names.length,
+      rootDependency.dependencyCount + 1
+    );
+    assert.deepEqual(
+      names,
+      [
+        ...manifestWorkspaces,
+        "workspace"
+      ].sort(sortByName)
+    );
+  });
+
   describe("relationsMaps", () => {
     it("should always be cleared when triggering walk() and return an empty Map if the package has no dependencies", async() => {
       const manifest = await pacote.manifest(
@@ -146,3 +203,7 @@ describe("npm.TreeWalker", () => {
     });
   });
 });
+
+function sortByName(left: string, right: string) {
+  return left.length - right.length;
+}

@@ -9,7 +9,7 @@ import Arborist from "@npmcli/arborist";
 // @ts-ignore
 import pickManifest from "npm-pick-manifest";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
-import type { PackageJSON, ManifestVersion } from "@nodesecure/npm-types";
+import type { PackageJSON, WorkspacesPackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.js";
@@ -23,15 +23,17 @@ import {
   type NpmSpec
 } from "../Dependency.class.js";
 
-interface WalkRemoteOptions {
+interface BaseWalkOptions {
   parent: Dependency;
-  gitURL?: string;
   maxDepth: number;
   currDepth?: number;
 }
 
-interface WalkLocalOptions {
-  parent: Dependency;
+interface WalkRemoteOptions extends BaseWalkOptions {
+  gitURL?: string;
+}
+
+interface WalkLocalOptions extends BaseWalkOptions {
   includeDevDeps?: boolean;
   fetchManifest?: boolean;
 }
@@ -200,7 +202,7 @@ export class TreeWalker {
     current.addFlag("hasDependencies", dependencies.size > 0);
 
     if (currDepth < maxDepth) {
-      const config = {
+      const config: BaseWalkOptions = {
         currDepth: currDepth + 1, parent: current, maxDepth
       };
 
@@ -240,7 +242,13 @@ export class TreeWalker {
     node: Arborist.Node,
     options: WalkLocalOptions
   ): AsyncIterableIterator<Dependency> {
-    const { parent, fetchManifest = false, includeDevDeps = false } = options;
+    const {
+      currDepth = 1,
+      maxDepth,
+      parent,
+      fetchManifest = false,
+      includeDevDeps = false
+    } = options;
     const { version, integrity = node.integrity } = node.package;
 
     const updatedVersion = version === "*" || typeof version === "undefined" ?
@@ -268,20 +276,26 @@ export class TreeWalker {
     }
     current.addFlag("hasDependencies", node.edgesOut.size > 0);
 
-    for (const [packageName, { to: toNode }] of node.edgesOut) {
-      if (toNode === null || (!includeDevDeps && toNode.dev)) {
-        continue;
-      }
-      const spec: NpmSpec = `${packageName}@${toNode.package.version}`;
+    if (currDepth < maxDepth) {
+      const config: WalkLocalOptions = {
+        currDepth: currDepth + 1, parent: current, maxDepth, fetchManifest, includeDevDeps
+      };
 
-      if (this.relationsMap.has(spec)) {
-        current.addChildren();
-        this.relationsMap.get(spec)!.add(current.spec);
-      }
-      else {
-        this.relationsMap.set(spec, new Set([current.spec]));
+      for (const [packageName, { to: toNode }] of node.edgesOut) {
+        if (toNode === null || (!includeDevDeps && toNode.dev)) {
+          continue;
+        }
+        const spec: NpmSpec = `${packageName}@${toNode.package.version}`;
 
-        yield* this.walkLocalDependency(packageName, toNode, { parent: current });
+        if (this.relationsMap.has(spec)) {
+          current.addChildren();
+          this.relationsMap.get(spec)!.add(current.spec);
+        }
+        else {
+          this.relationsMap.set(spec, new Set([current.spec]));
+
+          yield* this.walkLocalDependency(packageName, toNode, config);
+        }
       }
     }
 
@@ -289,7 +303,7 @@ export class TreeWalker {
   }
 
   async* walk(
-    manifest: PackageJSON | ManifestVersion,
+    manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
     options: WalkOptions = {}
   ): AsyncIterableIterator<DependencyJSON> {
     this.relationsMap.clear();
@@ -301,8 +315,8 @@ export class TreeWalker {
 
     const { dependencies, customResolvers, alias } = utils.mergeDependencies(manifest);
     const rootDependency = new Dependency(
-      manifest.name,
-      manifest.version,
+      manifest?.name ?? "workspace",
+      manifest?.version ?? "1.0.0",
       {
         alias: Object.fromEntries(alias)
       }
@@ -361,6 +375,7 @@ export class TreeWalker {
           .filter(edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
           .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
           .map(([packageName, to]) => this.walkLocalDependency(packageName, to, {
+            maxDepth,
             parent: rootDependency,
             includeDevDeps,
             ...packageLockOptions

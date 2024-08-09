@@ -63,7 +63,7 @@ typings/
 *.tsbuildinfo
 
 nsecure-result.json
-vuln.json
-tmp/
+temp/
 dist/
 temp.js
+temp.mjs
