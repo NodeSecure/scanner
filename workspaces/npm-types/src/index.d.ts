@@ -76,12 +76,7 @@ export type NodeImport =
   { default: string } |
   { node: string, default: string };
 
-// this is in the tarball or the project. it really could have anything in it.
-export interface PackageJSON {
-  // Required (except for workspaces)
-  name: string;
-  version: string;
-
+interface BasePackageJSON {
   author?: Contact | string;
   bin?: Record<string, string>;
   browser?: Record<string, string> | string;
@@ -126,7 +121,13 @@ export interface PackageJSON {
   [field: string]: unknown;
 }
 
-export interface WorkspacesPackageJSON extends PackageJSON {
+// this is in the tarball or the project. it really could have anything in it.
+export interface PackageJSON extends BasePackageJSON {
+  name: string;
+  version: string;
+}
+
+export interface WorkspacesPackageJSON extends BasePackageJSON {
   name?: string;
   version?: string;
   workspaces: string[];
