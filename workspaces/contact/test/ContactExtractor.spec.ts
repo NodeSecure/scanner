@@ -41,15 +41,15 @@ describe("ContactExtractor", () => {
     test(`Given a Contact with a RegExp name and three dependencies where the name appears two times,
       it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`, () => {
       const highlighted: Contact = {
-        name: "/.*john.*/i"
+        name: "/.*xxaaahelllowwworld.*/i"
       };
       const extractor = new ContactExtractor({
         highlight: [highlighted]
       });
 
       const dependencies: Record<string, ContactExtractorPackageMetadata> = {
-        kleur: fakePackageMetadata({ name: "random,jOhn" }, "author"),
-        mocha: fakePackageMetadata({ name: "john.foobar" }, "maintainer"),
+        kleur: fakePackageMetadata({ name: "random,xxaaahelLLowwworld" }, "author"),
+        mocha: fakePackageMetadata({ name: "xxaaahelllowwworld.foobar" }, "maintainer"),
         random: fakePackageMetadata()
       };
 
@@ -57,7 +57,10 @@ describe("ContactExtractor", () => {
       assert.deepEqual(
         illuminateds,
         [
-          { ...highlighted, dependencies: ["kleur", "mocha"] }
+          {
+            ...highlighted,
+            dependencies: ["kleur", "mocha"]
+          }
         ]
       );
     });
