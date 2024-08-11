@@ -7,7 +7,7 @@ import os from "node:os";
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
 import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
-import * as vuln from "@nodesecure/vuln";
+import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
@@ -82,7 +82,7 @@ export async function depWalker(
     packageLock,
     maxDepth,
     location,
-    vulnerabilityStrategy = vuln.strategies.NONE,
+    vulnerabilityStrategy = Vulnera.strategies.NONE,
     registry
   } = options;
 
@@ -190,11 +190,18 @@ export async function depWalker(
       .end(ScannerLoggerEvents.analysis.registry);
   }
 
-  const { hydratePayloadDependencies, strategy } = await vuln.setStrategy(vulnerabilityStrategy);
-  await hydratePayloadDependencies(dependencies as any, {
-    useStandardFormat: true,
-    path: location
-  });
+  const { hydratePayloadDependencies, strategy } = Vulnera.setStrategy(
+    vulnerabilityStrategy
+  );
+
+  const isVulnHydratable = (strategy === "github-advisory" || strategy === "snyk")
+    && typeof location === "undefined";
+  if (!isVulnHydratable) {
+    await hydratePayloadDependencies(dependencies as any, {
+      useStandardFormat: true,
+      path: location
+    });
+  }
 
   payload.vulnerabilityStrategy = strategy;
 

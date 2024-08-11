@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
-import { setStrategy, strategies } from "@nodesecure/vuln";
+import * as Vulnera from "@nodesecure/vulnera";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
@@ -54,7 +54,7 @@ function cleanupPayload(payload: Payload) {
 }
 
 test("execute depWalker on @slimio/is", async() => {
-  await setStrategy(strategies.NPM_AUDIT);
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
 
   const result = await depWalker(is, {
     registry: getLocalRegistryURL()
@@ -68,7 +68,7 @@ test("execute depWalker on @slimio/is", async() => {
 });
 
 test("execute depWalker on @slimio/config", async() => {
-  await setStrategy(strategies.NPM_AUDIT);
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
 
   const result = await depWalker(config, {
     registry: getLocalRegistryURL()
@@ -101,7 +101,7 @@ test("execute depWalker on @slimio/config", async() => {
 });
 
 test("execute depWalker on pkg.gitdeps", async() => {
-  await setStrategy(strategies.NPM_AUDIT);
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
 
   const result = await depWalker(pkgGitdeps, {
     registry: getLocalRegistryURL()
@@ -141,7 +141,7 @@ test("execute depWalker on pkg.gitdeps", async() => {
 test("fetch payload of pacote on the npm registry", async() => {
   const result = await from("pacote", {
     maxDepth: 10,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
+    vulnerabilityStrategy: Vulnera.strategies.GITHUB_ADVISORY
   });
 
   assert.deepEqual(Object.keys(result), [
@@ -159,7 +159,7 @@ test("fetch payload of pacote on the gitlab registry", async() => {
   const result = await from("pacote", {
     registry: "https://gitlab.com/api/v4/packages/npm/",
     maxDepth: 10,
-    vulnerabilityStrategy: strategies.NPM_AUDIT
+    vulnerabilityStrategy: Vulnera.strategies.GITHUB_ADVISORY
   });
 
   assert.deepEqual(Object.keys(result), [

@@ -1,6 +1,6 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
-import * as Vulnera from "@nodesecure/vuln";
+import * as Vulnera from "@nodesecure/vulnera";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { IlluminatedContact } from "@nodesecure/contact";
@@ -149,7 +149,7 @@ export interface Dependency {
    *
    * @see https://github.com/NodeSecure/vuln
    */
-  vulnerabilities: Vulnera.Strategy.StandardVulnerability[];
+  vulnerabilities: Vulnera.StandardVulnerability[];
 }
 
 export type Dependencies = Record<string, Dependency>;
@@ -169,7 +169,7 @@ export interface Payload {
   /** Version of the scanner used to generate the result */
   scannerVersion: string;
   /** Vulnerability strategy name (npm, snyk, node) */
-  vulnerabilityStrategy: Vulnera.Strategy.Kind;
+  vulnerabilityStrategy: Vulnera.Kind;
 }
 
 export interface Options {
@@ -222,7 +222,7 @@ export interface Options {
    *
    * @default NONE
    */
-  readonly vulnerabilityStrategy?: Vulnera.Strategy.Kind;
+  readonly vulnerabilityStrategy?: Vulnera.Kind;
 
   /**
    * Analyze root package.
