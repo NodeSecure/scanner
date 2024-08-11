@@ -59,7 +59,7 @@
     "@nodesecure/rc": "^3.0.0",
     "@nodesecure/tarball": "^1.0.0",
     "@nodesecure/tree-walker": "^1.1.0",
-    "@nodesecure/vuln": "^1.7.0",
+    "@nodesecure/vulnera": "^2.0.1",
     "@openally/mutex": "^1.0.0",
     "pacote": "^18.0.6",
     "semver": "^7.5.4"

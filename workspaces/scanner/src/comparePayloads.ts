@@ -1,6 +1,6 @@
 // Import Third-party Dependencies
 import * as JSXRay from "@nodesecure/js-x-ray";
-import * as Vuln from "@nodesecure/vuln";
+import * as Vulnera from "@nodesecure/vulnera";
 
 // Import Internal Dependencies
 import type {
@@ -32,7 +32,7 @@ export interface DependencyComparison {
   publishers: ArrayDiff<Publisher>;
   maintainers: ArrayDiff<Maintainer>;
   versions: VersionsComparisonResult;
-  vulnerabilities: ArrayDiff<Vuln.Strategy.StandardVulnerability>;
+  vulnerabilities: ArrayDiff<Vulnera.StandardVulnerability>;
 }
 
 export interface VersionsComparisonResult {
