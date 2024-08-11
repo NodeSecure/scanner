@@ -238,3 +238,24 @@ export type Manifest = {
   modified: string
   versions: Record<string, ManifestVersion>
 } & Pick<Packument, "_cached" | "name" | "dist-tags">
+
+/**
+ * @see https://docs.npmjs.com/cli/v7/commands/npm-pack
+ */
+export type PackTarball = {
+  id: string;
+  name: string;
+  version: string;
+  size: number;
+  unpackedSize: number;
+  shasum: string;
+  integrity: string;
+  entryCount: number;
+  filename: string;
+  files: {
+    path: string;
+    size: number;
+    mode: number;
+  }[];
+  bundled: string[];
+}
