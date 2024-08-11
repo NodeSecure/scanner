@@ -56,7 +56,7 @@
     "@nodesecure/mama": "^1.0.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.1.0",
-    "@nodesecure/rc": "^3.0.0",
+    "@nodesecure/rc": "^4.0.0",
     "@nodesecure/tarball": "^1.0.0",
     "@nodesecure/tree-walker": "^1.1.0",
     "@nodesecure/vulnera": "^2.0.1",
