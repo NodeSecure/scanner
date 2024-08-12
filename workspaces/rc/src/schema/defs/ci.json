@@ -1,0 +1,58 @@
+{
+  "type": "object",
+  "properties": {
+    "reporters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "html",
+          "console"
+        ]
+      },
+      "default": [
+        "console"
+      ]
+    },
+    "vulnerabilities": {
+      "type": "object",
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": [
+            "medium",
+            "high",
+            "critical",
+            "all"
+          ],
+          "default": "all"
+        }
+      },
+      "additionalProperties": false
+    },
+    "warnings": {
+      "default": "off",
+      "description": "JS-X-Ray warnings configuration",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ciWarnings"
+        },
+        {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[A-Za-z-]+$": {
+              "$ref": "#/$defs/ciWarnings"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "reporters",
+    "warnings"
+  ],
+  "additionalProperties": false
+}

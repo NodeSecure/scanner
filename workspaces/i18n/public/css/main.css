@@ -1,0 +1,224 @@
+@font-face {
+  font-family: 'mononokiBold';
+  src: url('../fonts/mononoki-Bold.woff2') format('woff2'),
+    url('../fonts/mononoki-Bold.eot?#iefix') format('embedded-opentype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'mononokiRegular';
+  src: url('../fonts/mononoki-Regular.woff2') format('woff2'),
+    url('../fonts/mononoki-Regular.eot?#iefix') format('embedded-opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  --color-primary: #5A44DA;
+  --color-dark-grey: #464686;
+  --color-light-grey: #F4F3F8;
+  --color-white: #fff;
+}
+body{
+  background-color: var(--color-white);
+  font-size: 0.75rem;
+  font-family: mononokiBold, sans-serif;
+}
+.header{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 2.5rem 0.75rem;
+}
+.header__title{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1.5rem;
+}
+.header__title h1{
+  font-size: 1rem;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+.header__title img{
+  width: 40px;
+  height: 40px;
+}
+.header__links{
+  position: absolute;
+  top: 40px;
+  right: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.header__links-item a .icon{
+  transition: transform 400ms ease-in-out;
+}
+.header__links-item a:hover .icon{
+  transform: scale(0.9);
+  transition: transform 400ms ease-in-out;
+}
+.select{
+  appearance: none;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  padding: .5rem 3rem .5rem 1rem;
+  font-family: mononokiRegular;
+  color:var(--color-primary);
+  background-color: transparent;
+}
+.select__wrapper{
+  position:relative;
+  width: fit-content;
+  margin-left: 1.25rem;
+  margin-bottom: 2.5rem;
+}
+.select__wrapper::before{
+  content:'';
+  position: absolute;
+  top:calc(50% - 8px);
+  left:-20px;
+  width: 20px;
+  height: 16px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.select__wrapper.en::before{
+  background-image:url('../img/flag-uk.png');
+}
+.select__wrapper.fr::before{
+  background-image:url('../img/flag-fr.png');
+}
+.select__wrapper::after{
+  content:'';
+  position: absolute;
+  top: calc(50% - 4px);
+  right: 0;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #5A44DA;
+}
+.table {
+  display: none;
+  width: 100%;
+  border-collapse: collapse;
+}
+.table.active{
+  display: table;
+}
+.table thead {
+  color: var(--color-white);
+  background-color: var(--color-primary);
+}
+.table tbody{
+  color: var(--color-dark-grey);
+}
+.table th,
+.table td {
+  font-weight: 400;
+}
+td:first-child{
+  width: 40% !important;
+}
+th:first-child,
+td:first-child {
+  padding-left: 1.25rem;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+th:last-child,
+td:last-child {
+  padding-right:1.25rem;
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+th,
+td {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  text-align: left;
+}
+tbody{
+  display: none;
+}
+tbody.active{
+  display: table-row-group;
+  width: 100%;
+}
+tbody tr:nth-of-type(even) {
+  background-color: var(--color-light-grey);
+  border-radius: 8px;
+}
+.table__wrapper{
+  overflow-x: auto;
+  padding-bottom: 240px;
+}
+.table__tabs{
+  display:flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--color-light-grey);
+}
+.table__tabs-item{
+  position: relative;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: var(--color-dark-grey);
+}
+.table__tabs-item.active::before{
+  content:'';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-primary);
+  border-radius: 80px;
+}
+.container{
+  width: 90%;
+  margin: auto;
+  max-width: 1320px;
+}
+.icon{
+  width: 24px;
+  height: 24px;
+}
+@media screen and (min-width: 48em){
+  body{
+    font-size: 1rem;
+  }
+  .header{
+    padding: 2.5rem;
+  }
+  .header__title h1{
+    font-size: 2rem;
+  }
+  .header__title img{
+    width: 64px;
+    height: 64px;
+  }
+  .table__tabs{
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+  }
+  .icon{
+    width: 32px;
+    height: 32px;
+  }
+}
+@media screen and (min-width: 80em){
+  .table__tabs{
+    gap: 5rem;
+  }
+}

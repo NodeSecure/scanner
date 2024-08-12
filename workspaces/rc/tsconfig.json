@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+  },
+  "include": [
+    "src",
+    "src/schema/**/*.json"
+  ],
+  "references": [
+    {
+      "path": "../npm-types"
+    }
+  ]
+}

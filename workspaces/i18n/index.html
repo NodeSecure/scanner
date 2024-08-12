@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NodeSecure - i18n</title>
+  <link rel="stylesheet" href="./public/css/reset.css">
+  <link rel="stylesheet" href="./public/css/main.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header__title">
+      <img src="./public/img/nodesecure-logo.png" width="62" height="62" alt="NodeSecure Organization logo">
+      <h1>NodeSecure - i18n</h1>
+    </div>
+    <ul class="header__links">
+      <li class="header__links-item">
+        <a href="https://github.com/NodeSecure" target="_blank" rel="noreferrer">
+          <img src="./public/img/github.png" width="32" height="32" class="icon" alt="Github official logo">
+        </a>
+      </li>
+      <li class="header__links-item">
+        <a href="https://dev.to/nodesecure" target="_blank" rel="noreferrer">
+          <img src="./public/img/devto.png" width="32" height="32" class="icon" alt="Dev.to official logo">
+        </a>
+      </li>
+      <li class="header__links-item">
+        <a href="https://www.linkedin.com/company/nodesecure/" target="_blank" rel="noreferrer">
+          <img src="./public/img/linkedin.png" width="32" height="32" class="icon" alt="Linkedin official logo">
+        </a>
+      </li>
+    </ul>
+  </header>
+  <main class="main container">
+    <div id="wrapper-select" class="select__wrapper en">
+      <select name="language" id="language-select" class="select">
+        <option value="en">English</option>
+        <option value="fr">French</option>
+      </select>
+    </div>
+    <div class="table__wrapper">
+      <nav class="table__tabs" role="tablist">
+        <button id="table-depwalker-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-depwalker" aria-selected="false">DEPWALKER</button>
+        <button id="table-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-warnings" aria-selected="false">WARNINGS</button>
+        <button id="table-sast-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-sast-warnings" aria-selected="false">SAST_WARNINGS</button>
+      </nav>
+      <table id="table-depwalker" class="table" role="tabpanel" aria-labelledby="table-depwalker-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          
+            <tr>
+              <td>dep_tree</td>
+              <td>dependency tree</td>
+            </tr>
+          
+            <tr>
+              <td>fetch_and_walk_deps</td>
+              <td>Fetching and walking through all dependencies...</td>
+            </tr>
+          
+            <tr>
+              <td>fetch_on_registry</td>
+              <td>Waiting for packages to fetch from npm registry...</td>
+            </tr>
+          
+            <tr>
+              <td>waiting_tarball</td>
+              <td>Waiting tarballs to be analyzed...</td>
+            </tr>
+          
+            <tr>
+              <td>fetch_metadata</td>
+              <td>Fetched package metadata:</td>
+            </tr>
+          
+            <tr>
+              <td>analyzed_tarball</td>
+              <td>Analyzed npm tarballs:</td>
+            </tr>
+          
+            <tr>
+              <td>success_fetch_deptree</td>
+              <td>Successfully navigated through the {0} in {1}</td>
+            </tr>
+          
+            <tr>
+              <td>success_tarball</td>
+              <td>Successfully analyzed {0} packages tarballs in {1}</td>
+            </tr>
+          
+            <tr>
+              <td>success_registry_metadata</td>
+              <td>Successfully fetched required metadata for all packages!</td>
+            </tr>
+          
+            <tr>
+              <td>failed_rmdir</td>
+              <td>Failed to remove directory {0}!</td>
+            </tr>
+          
+          </tbody>
+          <tbody class="fr">
+            
+              <tr>
+                <td>dep_tree</td>
+                <td>arbre de dépendances</td>
+              </tr>
+            
+              <tr>
+                <td>fetch_and_walk_deps</td>
+                <td>Importation et analyse de l'intégralité des dépendances...</td>
+              </tr>
+            
+              <tr>
+                <td>fetch_on_registry</td>
+                <td>En attente de l'importation des packages du registre npm...</td>
+              </tr>
+            
+              <tr>
+                <td>waiting_tarball</td>
+                <td>En attente de l'analyse des tarballs...</td>
+              </tr>
+            
+              <tr>
+                <td>fetch_metadata</td>
+                <td>Metadonnées importées :</td>
+              </tr>
+            
+              <tr>
+                <td>analyzed_tarball</td>
+                <td>Tarballs en cours d'analyse :</td>
+              </tr>
+            
+              <tr>
+                <td>success_fetch_deptree</td>
+                <td>Analyse de l'{0} terminée avec succès en {1}</td>
+              </tr>
+            
+              <tr>
+                <td>success_tarball</td>
+                <td>{0} tarballs analysés avec succès en {1}</td>
+              </tr>
+            
+              <tr>
+                <td>success_registry_metadata</td>
+                <td>Metadonnées requises pour tous les packages importées avec succès !</td>
+              </tr>
+            
+              <tr>
+                <td>failed_rmdir</td>
+                <td>Suppression du dossier {0} échouée !</td>
+              </tr>
+            
+            </tbody>
+      </table>
+      <table id="table-warnings" class="table" role="tabpanel" aria-labelledby="table-warnings-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          
+            <tr>
+              <td>disable_scarf</td>
+              <td>This dependency could collect data against your will so think to disable it with the env var: SCARF_ANALYTICS</td>
+            </tr>
+          
+            <tr>
+              <td>keylogging</td>
+              <td>This dependency can retrieve your keyboard and mouse inputs. It can be used for 'keylogging' attacks/malwares.</td>
+            </tr>
+          
+          </tbody>
+        <tbody class="fr">
+          
+            <tr>
+              <td>disable_scarf</td>
+              <td>Cette dépendance peut récolter des données contre votre volonté, pensez donc à la désactiver en fournissant la variable d'environnement SCARF_ANALYTICS</td>
+            </tr>
+          
+            <tr>
+              <td>keylogging</td>
+              <td>Cette dépendance peut obtenir vos entrées clavier ou de souris. Cette dépendance peut être utilisée en tant que 'keylogging' attacks/malwares.</td>
+            </tr>
+          
+          </tbody>
+      </table>
+      <table id="table-sast-warnings" class="table" role="tabpanel" aria-labelledby="table-sast-warnings-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          
+            <tr>
+              <td>parsing_error</td>
+              <td>An error occured when parsing the JavaScript code with meriyah. It mean that the conversion from string to AST has failed. If you encounter such an error, please open an issue here.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_import</td>
+              <td>Unable to follow an import (require, require.resolve) statement/expr.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_regex</td>
+              <td>A RegEx as been detected as unsafe and may be used for a ReDoS Attack.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_stmt</td>
+              <td>Usage of dangerous statement like eval() or Function("").</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_assign</td>
+              <td>Assignment of a protected global like process or require.</td>
+            </tr>
+          
+            <tr>
+              <td>encoded_literal</td>
+              <td>An encoded literal has been detected (it can be an hexa value, unicode sequence, base64 string etc)</td>
+            </tr>
+          
+            <tr>
+              <td>suspicious_file</td>
+              <td>A suspicious file with more than ten encoded-literal in it.</td>
+            </tr>
+          
+            <tr>
+              <td>short_identifiers</td>
+              <td>This mean that all identifiers has an average length below 1.5. Only possible if the file contains more than 5 identifiers.</td>
+            </tr>
+          
+            <tr>
+              <td>suspicious_literal</td>
+              <td>This mean that the sum of suspicious score of all Literals is bigger than 3.</td>
+            </tr>
+          
+            <tr>
+              <td>obfuscated_code</td>
+              <td>There's a very high probability that the code is obfuscated...</td>
+            </tr>
+          
+            <tr>
+              <td>weak_crypto</td>
+              <td>The code probably contains a weak crypto algorithm (md5, sha1...)</td>
+            </tr>
+          
+            <tr>
+              <td>shady_link</td>
+              <td>A Literal (string) contains an URL to a domain with a suspicious extension.</td>
+            </tr>
+          
+            <tr>
+              <td>zeroSemVer</td>
+              <td>Semantic version starting with 0.x (unstable project or without serious versioning)</td>
+            </tr>
+          
+          </tbody>
+        <tbody class="fr">
+          
+            <tr>
+              <td>parsing_error</td>
+              <td>Une erreur s'est produite lors de l'analyse du code JavaScript avec meriyah.
+              Cela signifie que la conversion de la chaîne de caractères AST a échoué.
+              Si vous rencontrez une telle erreur, veuillez ouvrir une issue.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_import</td>
+              <td>Impossible de suivre l'import (require, require.resolve) statement/expr.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_regex</td>
+              <td>Un RegEx a été détecté comme non sûr et peut être utilisé pour une attaque ReDoS.</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_stmt</td>
+              <td>Utilisation d'instructions dangereuses comme eval() ou Function("").</td>
+            </tr>
+          
+            <tr>
+              <td>unsafe_assign</td>
+              <td>Attribution d'un processus ou d'un require global protégé..</td>
+            </tr>
+          
+            <tr>
+              <td>encoded_literal</td>
+              <td>Un code littérale a été découvert (il peut s'agir d'une valeur hexa, d'une séquence unicode, d'une chaîne de caractères base64, etc.)</td>
+            </tr>
+          
+            <tr>
+              <td>short_identifiers</td>
+              <td>Cela signifie que tous les identifiants ont une longueur moyenne inférieure à 1,5. Seulement possible si le fichier contient plus de 5 identifiants.</td>
+            </tr>
+          
+            <tr>
+              <td>suspicious_literal</td>
+              <td>Cela signifie que la somme des scores suspects de tous les littéraux est supérieure à 3.</td>
+            </tr>
+          
+            <tr>
+              <td>suspicious_file</td>
+              <td>Un fichier suspect contenant plus de dix chaines de caractères encodés</td>
+            </tr>
+          
+            <tr>
+              <td>obfuscated_code</td>
+              <td>Il y a une très forte probabilité que le code soit obscurci...</td>
+            </tr>
+          
+            <tr>
+              <td>weak_crypto</td>
+              <td>Le code contient probablement un algorithme de chiffrement faiblement sécurisé (md5, sha1...).</td>
+            </tr>
+          
+            <tr>
+              <td>shady_link</td>
+              <td>Un Literal (string) contient une URL vers un domaine avec une extension suspecte.</td>
+            </tr>
+          
+            <tr>
+              <td>zeroSemVer</td>
+              <td>Version sémantique commençant par 0.x (projet instable ou sans versionnement sérieux)</td>
+            </tr>
+          
+          </tbody>
+      </table>
+    </div>
+  </main>
+  <script src="./public/js/main.js"></script>
+</body>
+</html>

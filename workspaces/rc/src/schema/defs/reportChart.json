@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "name"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "enum": ["Extensions", "Licenses", "Warnings", "Flags"]
+    },
+    "display": {
+      "type": "boolean",
+      "default": true
+    },
+    "type": {
+      "type": "string",
+      "enum": ["bar", "horizontalBar", "polarArea", "doughnut"],
+      "default": "bar",
+      "description": "Chart.js chart type."
+    },
+    "interpolation": {
+      "type": "string",
+      "description": "D3.js chromatic interpolation set of colors"
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "version of the rc package used to generate the nodesecurerc file"
+    },
+    "i18n": {
+      "type": "string",
+      "enum": [
+        "french",
+        "english"
+      ],
+      "default": "english",
+      "description": "Language to use for i18n"
+    },
+    "strategy": {
+      "type": "string",
+      "enum": [
+        "github-advisory",
+        "sonatype",
+        "snyk",
+        "none"
+      ],
+      "default": "github-advisory",
+      "description": "Vulnerability strategy to use"
+    },
+    "registry": {
+      "type": "string",
+      "description": "Package Registry (default to NPM public registry)",
+      "pattern": "^(https?|http?)://",
+      "default": "https://registry.npmjs.org"
+    },
+    "scanner": {
+      "$ref": "#/$defs/scanner"
+    },
+    "ci": {
+      "$ref": "#/$defs/ci"
+    },
+    "report": {
+      "$ref": "#/$defs/report"
+    }
+  },
+  "required": [
+    "version"
+  ],
+  "additionalProperties": false
+}

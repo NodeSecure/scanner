@@ -6,7 +6,9 @@
     "workspaces/tree-walker",
     "workspaces/conformance",
     "workspaces/contact",
-    "workspaces/npm-types"
+    "workspaces/npm-types",
+    "workspaces/i18n",
+    "workspaces/rc"
   ],
   "scripts": {
     "build": "tsc --build",

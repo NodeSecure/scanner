@@ -2,7 +2,7 @@
 import path from "node:path";
 
 // Import Third-party Dependencies
-import * as i18n from "@nodesecure/i18n";
+import i18n from "@nodesecure/i18n";
 import * as RC from "@nodesecure/rc";
 import {
   ContactExtractor,

@@ -21,6 +21,9 @@
     },
     {
       "path": "./workspaces/scanner"
+    },
+    {
+      "path": "./workspaces/rc"
     }
   ]
 }

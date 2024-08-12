@@ -140,6 +140,8 @@ Click on one of the links to access the documentation of the workspace:
 | contact | [@nodesecure/contact](./workspaces/contact) |
 | conformance | [@nodesecure/conformance](./workspaces/conformance) |
 | npm-types | [@nodesecure/npm-types](./workspaces/npm-types) |
+| i18n | [@nodesecure/i18n](./workspaces/i18n) |
+| rc | [@nodesecure/rc](./workspaces/rc) |
 
 ## Contributors ✨
 
