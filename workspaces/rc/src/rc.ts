@@ -3,7 +3,6 @@ import os from "node:os";
 import path from "node:path";
 
 // Import Third-party Dependencies
-import i18n from "@nodesecure/i18n";
 import * as vulnera from "@nodesecure/vulnera";
 
 // Import Internal Dependencies
@@ -38,7 +37,7 @@ export interface RC {
    *
    * @default `english`
    */
-  i18n?: i18n.languages;
+  i18n?: "english" | "french";
   /**
    * Vulnerability strategy to use. Can be disabled by using `none` as value.
    * @see https://github.com/NodeSecure/vuln#available-strategy

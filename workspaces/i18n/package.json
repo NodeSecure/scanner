@@ -2,13 +2,14 @@
   "name": "@nodesecure/i18n",
   "version": "4.0.1",
   "description": "NodeSecure Internationalization",
-  "exports": "./index.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "lint": "eslint index.js",
-    "test-only": "node --test test/",
-    "test": "npm run lint && npm run test-only",
-    "coverage": "c8 -r html npm test",
-    "build:documentation": "node ./scripts/buildDocumentation.js"
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test-only": "glob -c \"tsx --test\" \"test/**/*.spec.ts\"",
+    "test": "c8 -r html npm test",
+    "build:documentation": "tsx ./scripts/buildDocumentation.ts"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/i18n#readme",
   "devDependencies": {
     "@nodesecure/eslint-config": "^1.8.0",
+    "@types/lodash.get": "^4.4.9",
     "c8": "^10.1.2",
     "zup": "^0.0.2"
   },

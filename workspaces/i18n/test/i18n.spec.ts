@@ -10,7 +10,7 @@ import assert from "node:assert";
 import cacache from "cacache";
 
 // Import Internal Dependencies
-import * as i18n from "../index.js";
+import * as i18n from "../src/index.js";
 import { CACHE_PATH } from "../src/constants.js";
 
 const kI18nDir = "./i18n";
@@ -50,7 +50,7 @@ describe("getLocalLang/setLocalLang", () => {
 describe("getToken", () => {
   it("should throw an Error when called with a token that's not a string primitive", async() => {
     await assert.rejects(
-      i18n.getToken(10),
+      i18n.getToken(10 as any),
       {
         name: "TypeError",
         message: "token must be a string"
@@ -88,7 +88,7 @@ describe("getTokenSync", () => {
   it("should throw an Error when called with a token that's not a string primitive", async() => {
     await i18n.getLocalLang();
     assert.throws(
-      () => i18n.getTokenSync(10),
+      () => i18n.getTokenSync(10 as any),
       {
         name: "TypeError",
         message: "token must be a string"

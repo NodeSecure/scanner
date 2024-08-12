@@ -11,6 +11,9 @@
   "references": [
     {
       "path": "../npm-types"
+    },
+    {
+      "path": "../i18n"
     }
   ]
 }

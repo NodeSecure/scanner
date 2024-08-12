@@ -1,7 +1,7 @@
 /* eslint-disable max-len */
 
 // Import Internal Dependencies
-import { taggedString as tS } from "../src/utils.js";
+import { taggedString as tS } from "../utils.js";
 
 const lang = "fr";
 

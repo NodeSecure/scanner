@@ -1,5 +1,3 @@
-/* eslint-disable no-sync */
-
 // Import Node.js Dependencies
 import fs from "node:fs";
 import path from "node:path";
@@ -11,17 +9,17 @@ import lodashGet from "lodash.get";
 import deepmerge from "deepmerge";
 
 // Import Internals
-import { CACHE_PATH, CURRENT_LANG } from "./src/constants.js";
+import { CACHE_PATH, CURRENT_LANG, type Languages } from "./constants.js";
 import { languages } from "./languages/index.js";
-
-import { taggedString } from "./src/utils.js";
-export { taggedString };
+import { taggedString } from "./utils.js";
 
 export const CONSTANTS = Object.seal({
-  CACHE_PATH, CURRENT_LANG, LANG_UPDATED: true
+  CACHE_PATH,
+  CURRENT_LANG,
+  LANG_UPDATED: true
 });
 
-export async function getLocalLang() {
+export async function getLocalLang(): Promise<Languages> {
   if (CONSTANTS.LANG_UPDATED) {
     try {
       const { data } = await cacache.get(CACHE_PATH, "cli-lang");
@@ -37,12 +35,14 @@ export async function getLocalLang() {
   return CONSTANTS.CURRENT_LANG;
 }
 
-export async function setLocalLang(selectedLang) {
+export async function setLocalLang(
+  selectedLang: Languages
+): Promise<void> {
   await cacache.put(CACHE_PATH, "cli-lang", selectedLang);
   CONSTANTS.LANG_UPDATED = true;
 }
 
-export async function getLanguages() {
+export async function getLanguages(): Promise<string[]> {
   const currentLang = await getLocalLang();
 
   const langs = Object.keys(languages);
@@ -52,7 +52,10 @@ export async function getLanguages() {
   return langs;
 }
 
-export async function getToken(token, ...params) {
+export async function getToken(
+  token: string,
+  ...params: any[]
+): Promise<string> {
   if (typeof token !== "string") {
     throw new TypeError("token must be a string");
   }
@@ -70,7 +73,10 @@ export async function getToken(token, ...params) {
   return params.length === 0 ? langToken : langToken(...params);
 }
 
-export function getTokenSync(token, ...params) {
+export function getTokenSync(
+  token: string,
+  ...params: any[]
+): string {
   if (typeof token !== "string") {
     throw new TypeError("token must be a string");
   }
@@ -87,7 +93,10 @@ export function getTokenSync(token, ...params) {
   return params.length === 0 ? langToken : langToken(...params);
 }
 
-export function extend(extendLanguage, opts = {}) {
+export function extend(
+  extendLanguage: Languages,
+  opts: Record<string, any> = {}
+) {
   if (extendLanguage in languages) {
     languages[extendLanguage] = deepmerge(languages[extendLanguage], opts);
   }
@@ -96,7 +105,9 @@ export function extend(extendLanguage, opts = {}) {
   }
 }
 
-export async function extendFromSystemPath(languagesDirPath) {
+export async function extendFromSystemPath(
+  languagesDirPath: string
+): Promise<void> {
   if (!fs.existsSync(languagesDirPath)) {
     throw new Error(`The ${languagesDirPath} directory does not exist on this project.`);
   }
@@ -107,9 +118,13 @@ export async function extendFromSystemPath(languagesDirPath) {
     const langName = path.basename(file.name, ".js");
     const fileLocation = path.join(languagesDirPath, file.name);
 
-    const i18nTokensFile = await import(pathToFileURL(fileLocation));
+    const i18nTokensFile = await import(
+      pathToFileURL(fileLocation).href
+    );
     if ("default" in i18nTokensFile) {
       extend(langName, i18nTokensFile.default);
     }
   }
 }
+
+export { taggedString, type Languages };

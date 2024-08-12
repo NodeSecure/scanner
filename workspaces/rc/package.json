@@ -12,10 +12,8 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "test-only": "glob -c \"tsx --test\" \"test/**/*.spec.ts\"",
-    "test": "npm run test-only && npm run test:tsd",
     "test:tsd": "npm run build && tsd",
-    "coverage": "c8 -r html npm test",
-    "lint": "eslint src/**/*.ts"
+    "test": "c8 -r html npm run test-only && npm run test:tsd"
   },
   "repository": {
     "type": "git",
@@ -48,7 +46,6 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@nodesecure/i18n": "^4.0.1",
     "@nodesecure/js-x-ray": "^7.3.0",
     "@nodesecure/npm-types": "^1.0.0",
     "@nodesecure/vulnera": "^2.0.1",
