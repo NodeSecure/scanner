@@ -8,7 +8,7 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "test-only": "glob -c \"tsx --test\" \"test/**/*.spec.ts\"",
-    "test": "c8 -r html npm test",
+    "test": "c8 -r html npm run test-only",
     "build:documentation": "tsx ./scripts/buildDocumentation.ts"
   },
   "repository": {
