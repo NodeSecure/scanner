@@ -25,7 +25,7 @@ export interface ReportConfiguration {
      */
     organizationPrefix: string;
     packages: string[];
-  },
+  };
   git?: {
     /**
      * GitHub organization URL
@@ -36,7 +36,7 @@ export interface ReportConfiguration {
      * List of repositories (name are enough, no need to provide .git url or any equivalent)
      */
     repositories: string[];
-  },
+  };
   /**
    * @default html,pdf
    */
@@ -72,7 +72,7 @@ export interface ReportChart {
   interpolation?: string;
 }
 
-export function generateReportConfiguration(): { report: Partial<ReportConfiguration> } {
+export function generateReportConfiguration(): { report: Partial<ReportConfiguration>; } {
   const report: Partial<ReportConfiguration> = {
     theme: "light" as const,
     includeTransitiveInternal: false,

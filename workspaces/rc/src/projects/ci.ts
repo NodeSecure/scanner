@@ -13,7 +13,7 @@ export interface CiConfiguration {
    */
   reporters?: ("console" | "html")[];
   vulnerabilities?: {
-    severity?: "medium" | "high" | "critical" | "all"
+    severity?: "medium" | "high" | "critical" | "all";
   };
   /**
    * JS-X-Ray warnings configuration
@@ -23,7 +23,7 @@ export interface CiConfiguration {
 }
 export type CiWarnings = "off" | "error" | "warning";
 
-export function generateCIConfiguration(): { ci: CiConfiguration } {
+export function generateCIConfiguration(): { ci: CiConfiguration; } {
   const ci: CiConfiguration = {
     reporters: ["console"],
     vulnerabilities: {

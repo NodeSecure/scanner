@@ -191,7 +191,6 @@ describe("npm.TreeWalker", () => {
       const walker = new npm.TreeWalker();
       walker.relationsMap.set("foo@1.5.0", new Set());
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       for await (const _ of walker.walk(manifest)) {
         // do nothing
       }

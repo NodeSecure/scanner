@@ -1,26 +1,6 @@
 {
+  "extends": "@openally/config.typescript",
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "es2022",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "moduleDetection": "force",
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": false,
-    "noImplicitOverride": true,
-
-    /* Others */
-    "module": "NodeNext",
-    "sourceMap": true,
-    "declaration": true,
-    "composite": true,
-    "declarationMap": true,
-    "lib": ["es2022"]
+    "composite": true
   }
 }

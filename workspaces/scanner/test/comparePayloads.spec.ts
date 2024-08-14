@@ -72,7 +72,6 @@ it("should detect vulnerability strategy version diff", () => {
   assert.strictEqual(vulnerabilityStrategy?.now, "snyk");
 });
 
-
 it("should detect dependencies diff", () => {
   const { dependencies: { compared, added, removed } } = compareTo("deeplyUpdatedPayload");
 
@@ -288,5 +287,3 @@ function compareTo(name: string) {
     payloads[name]
   );
 }
-
-

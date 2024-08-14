@@ -6,7 +6,7 @@ import * as utils from "./utils/index.js";
 
 export type IlluminatedContact = Contact & {
   dependencies: string[];
-}
+};
 
 export class UnlitContact {
   private illuminated: Contact;

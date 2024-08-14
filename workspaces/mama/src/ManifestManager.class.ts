@@ -11,7 +11,7 @@ import type {
 // Import Internal Dependencies
 import { packageJSONIntegrityHash } from "./utils/index.js";
 
-type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] }
+type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
 export type NonOptionalPackageJSONProperties =
   "dependencies" |

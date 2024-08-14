@@ -163,7 +163,7 @@ function compareVersions(
       // @ts-ignore
       engines: compareDictionnaries(version.engines, comparedVersion.engines),
       repository: compareObjects("type", version.repository, comparedVersion.repository)
-        ?? compareObjects("url", version.repository, comparedVersion.repository),
+      ?? compareObjects("url", version.repository, comparedVersion.repository),
       scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),
       warnings: arrayDiff(version.warnings, comparedVersion.warnings),
       composition: compareComposition(version.composition, comparedVersion.composition),
