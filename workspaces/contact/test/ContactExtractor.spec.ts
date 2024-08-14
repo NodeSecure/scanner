@@ -121,7 +121,6 @@ function fakePackageMetadata(
   };
   if (highlighted && !appearAtLeastOnce) {
     currentAuthor = structuredClone(highlighted);
-    appearAtLeastOnce = true;
   }
 
   return {

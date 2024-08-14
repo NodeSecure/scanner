@@ -1,5 +1,3 @@
-/* eslint-disable no-sync */
-
 // Import Node.js Dependencies
 import fs from "node:fs";
 import path from "node:path";
@@ -175,7 +173,6 @@ describe("extendFromSystemPath", () => {
       fs.mkdirSync(kI18nDir);
       fs.writeFileSync(
         path.join(kI18nDir, "french.js"),
-        // eslint-disable-next-line quotes
         `export default { hello: "Bonjour" }`
       );
 

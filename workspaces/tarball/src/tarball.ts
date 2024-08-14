@@ -49,9 +49,8 @@ export interface DependencyRef {
     required_nodejs: string[];
     required_thirdparty: string[];
     required_subpath: Record<string, string>;
-  }
+  };
 }
-
 
 // CONSTANTS
 const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?

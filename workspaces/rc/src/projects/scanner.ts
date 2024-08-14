@@ -8,10 +8,10 @@ import type { Contact } from "@nodesecure/npm-types";
 export interface ScannerConfiguration {
   highlight?: {
     contacts: Contact[];
-  }
+  };
 }
 
-export function generateScannerConfiguration(): { scanner: ScannerConfiguration } {
+export function generateScannerConfiguration(): { scanner: ScannerConfiguration; } {
   const scanner: ScannerConfiguration = {
     highlight: {
       contacts: []

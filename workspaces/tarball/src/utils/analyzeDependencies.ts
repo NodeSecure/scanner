@@ -74,7 +74,7 @@ export interface analyzeDependenciesResult {
   flags: {
     hasExternalCapacity: boolean;
     hasMissingOrUnusedDependency: boolean;
-  }
+  };
 }
 
 export function analyzeDependencies(

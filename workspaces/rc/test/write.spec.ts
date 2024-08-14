@@ -3,7 +3,7 @@ import * as fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
 import assert from "node:assert";
-import { describe, it, before, beforeEach, after } from "node:test"
+import { describe, it, before, beforeEach, after } from "node:test";
 
 // Import Internal Dependencies
 import { read, write, CONSTANTS } from "../src/index.js";

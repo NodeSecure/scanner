@@ -10,7 +10,7 @@ const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 export function filterDependencyKind(
   dependencies: string[],
   relativeFileLocation: string
-): { packages: string[], files: string[] } {
+): { packages: string[]; files: string[]; } {
   const packages: string[] = [];
   const files: string[] = [];
 

@@ -69,7 +69,7 @@ const { version: packageVersion } = JSON.parse(
 type WalkerOptions = Omit<Options, "registry"> & {
   registry: string;
   location?: string;
-}
+};
 
 export async function depWalker(
   manifest: PackageJSON | ManifestVersion,

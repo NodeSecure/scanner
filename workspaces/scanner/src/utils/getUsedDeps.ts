@@ -1,12 +1,14 @@
-export function getUsedDeps(deps: Set<`${string}@${string}`>) {
+export function getUsedDeps(
+  deps: Set<`${string}@${string}`>
+): string[][] {
   return [...deps].map((name) => {
-      const isScoped = name.startsWith("@");
-      if (isScoped) {
-          const [nameChunk, version] = name.slice(1).split("@");
+    const isScoped = name.startsWith("@");
+    if (isScoped) {
+      const [nameChunk, version] = name.slice(1).split("@");
 
-          return [`@${nameChunk}`, version];
-      }
+      return [`@${nameChunk}`, version];
+    }
 
-      return name.split("@");
+    return name.split("@");
   });
 }

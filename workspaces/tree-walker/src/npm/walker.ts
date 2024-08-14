@@ -54,7 +54,7 @@ export interface TreeWalkerOptions {
   providers?: {
     pacote?: PacoteProviderApi;
     localTreeLoader?: LocalDependencyTreeLoaderProvider;
-  }
+  };
 }
 
 export interface WalkOptions {
@@ -143,7 +143,7 @@ export class TreeWalker {
 
   private async resolveDependencyVersion(
     dependency: [name: string, range: string]
-  ): Promise<{ rangedSpec: NpmSpec, spec: NpmSpec, isLatest: boolean }> {
+  ): Promise<{ rangedSpec: NpmSpec; spec: NpmSpec; isLatest: boolean; }> {
     const [dependencyName, range] = dependency;
 
     try {

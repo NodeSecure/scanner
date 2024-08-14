@@ -1,5 +1,3 @@
-/* eslint-disable max-len */
-
 // Import Internal Dependencies
 import { taggedString as tS } from "../utils.js";
 

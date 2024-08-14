@@ -27,7 +27,7 @@ export interface writePartialPayload {
 export type writeOptions = writeCompletePayload | writePartialPayload;
 
 export async function write(
-  location = process.cwd(),
+  location: string,
   options: writeOptions
 ): Promise<Result<void, NodeJS.ErrnoException>> {
   try {

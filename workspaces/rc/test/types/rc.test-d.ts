@@ -10,4 +10,4 @@ import {
 } from "../../dist/rc.js";
 
 expectAssignable<RC>(generateDefaultRC());
-expectAssignable<{ ci: CiConfiguration }>(generateCIConfiguration());
+expectAssignable<{ ci: CiConfiguration; }>(generateCIConfiguration());
