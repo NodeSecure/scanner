@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/i18n#readme",
   "devDependencies": {
-    "@nodesecure/eslint-config": "^1.8.0",
+    "@nodesecure/eslint-config": "^2.0.0-beta.0",
     "@types/lodash.get": "^4.4.9",
     "c8": "^10.1.2",
     "zup": "^0.0.2"
