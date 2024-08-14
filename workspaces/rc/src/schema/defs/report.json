@@ -1,0 +1,101 @@
+{
+  "title": "Report configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "title"
+  ],
+  "properties": {
+    "theme": {
+      "type": "string",
+      "enum": [
+        "light",
+        "dark"
+      ],
+      "default": "light"
+    },
+    "title": {
+      "type": "string",
+      "description": "Report title",
+      "default": "Default report title"
+    },
+    "logoUrl": {
+      "type": "string",
+      "description": "Logo",
+      "nullable": true
+    },
+    "includeTransitiveInternal": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show/categorize internal dependencies as transitive"
+    },
+    "npm": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organizationPrefix",
+        "packages"
+      ],
+      "properties": {
+        "organizationPrefix": {
+          "type": "string",
+          "description": "NPM organization prefix starting with @"
+        },
+        "packages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "organizationUrl",
+        "repositories"
+      ],
+      "properties": {
+        "organizationUrl": {
+          "type": "string",
+          "description": "GitHub organization URL"
+        },
+        "repositories": {
+          "type": "array",
+          "description": "List of repositories (name are enough, no need to provide .git url or any equivalent)",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
+    },
+    "reporters": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "html",
+          "pdf"
+        ]
+      },
+      "default": [
+        "html",
+        "pdf"
+      ]
+    },
+    "showFlags": {
+      "type": "boolean",
+      "default": true
+    },
+    "charts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/reportChart"
+      }
+    }
+  }
+}

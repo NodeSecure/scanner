@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "i18n": "english",
+  "strategy": "github-advisory",
+  "ci": {
+    "reporters": ["console"],
+    "vulnerabilities": {
+      "severity": "medium"
+    },
+    "warnings": {
+      "obfuscated-code": "off",
+      "unsafe-regex": "warning",
+      "short-identifiers": "error"
+    }
+  }
+}

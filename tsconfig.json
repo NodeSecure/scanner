@@ -21,6 +21,12 @@
     },
     {
       "path": "./workspaces/scanner"
+    },
+    {
+      "path": "./workspaces/rc"
+    },
+    {
+      "path": "./workspaces/i18n"
     }
   ]
 }
