@@ -30,14 +30,14 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tree-walker#readme",
   "dependencies": {
-    "@nodesecure/js-x-ray": "^7.3.0",
+    "@nodesecure/js-x-ray": "^8.0.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.1.0",
-    "@npmcli/arborist": "^7.5.1",
+    "@npmcli/arborist": "^8.0.0",
     "combine-async-iterators": "^3.0.0",
     "itertools": "^2.3.1",
-    "npm-pick-manifest": "^9.1.0",
-    "pacote": "^18.0.4",
+    "npm-pick-manifest": "^10.0.0",
+    "pacote": "^19.0.0",
     "semver": "^7.6.0"
   },
   "devDependencies": {
