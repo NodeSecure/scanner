@@ -38,7 +38,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "dependencies": {
     "cacache": "^18.0.0",
