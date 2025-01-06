@@ -46,7 +46,7 @@
     "typescript": "^5.5.4"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "^7.3.0",
+    "@nodesecure/js-x-ray": "^8.0.0",
     "@nodesecure/npm-types": "^1.0.0",
     "@nodesecure/vulnera": "^2.0.1",
     "@openally/config": "^1.0.1",
