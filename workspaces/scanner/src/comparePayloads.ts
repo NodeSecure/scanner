@@ -99,8 +99,11 @@ export function comparePayloads(
     );
   }
 
+  const givenVersion = Object.keys(payload.dependencies[payload.rootDependencyName].versions)[0];
+  const comparedVersion = Object.keys(comparedPayload.dependencies[comparedPayload.rootDependencyName].versions)[0];
+
   return {
-    title: `'${payload.rootDependencyName}' -> '${comparedPayload.rootDependencyName}'`,
+    title: `'${payload.rootDependencyName}@${givenVersion}' -> '${comparedPayload.rootDependencyName}@${comparedVersion}'`,
     warnings: arrayDiff(
       payload.warnings,
       comparedPayload.warnings
@@ -159,9 +162,10 @@ function compareVersions(
       isDevDependency: compareValues(version.isDevDependency, comparedVersion.isDevDependency),
       existOnRemoteRegistry: compareValues(version.existOnRemoteRegistry, comparedVersion.existOnRemoteRegistry),
       description: compareValues(version.description, comparedVersion.description),
-      author: compareObjects("name", version.author!, comparedVersion.author!),
+      author: version.author && comparedVersion.author ? compareObjects("name", version.author, comparedVersion.author) : void 0,
       // @ts-ignore
       engines: compareDictionnaries(version.engines, comparedVersion.engines),
+      // FIXME: repository can be a string: https://github.com/pillarjs/encodeurl/blob/master/package.json#L14
       repository: compareObjects("type", version.repository, comparedVersion.repository)
       ?? compareObjects("url", version.repository, comparedVersion.repository),
       scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),

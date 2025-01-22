@@ -1,5 +1,371 @@
 {
   "id": "dhfnczisk",
-  "rootDependencyName": "is-wsl",
-  "scannerVersion": "1.0.1"
+  "rootDependencyName": "foo",
+  "warnings": [
+    "unsafe-import",
+    "unsafe-regex"
+  ],
+  "highlighted": {
+    "contacts": [
+      {
+        "name": "sindresorhus",
+        "email": "sindresorhus@gmail.com"
+      },
+      {
+        "name": "jack",
+        "email": "jack@gmail.com"
+      }
+    ]
+  },
+  "vulnerabilityStrategy": "npm",
+  "scannerVersion": "1.0.1",
+  "dependencies": {
+    "foo": {
+      "versions": {
+        "2.0.0": {
+          "id": 1,
+          "size": "1",
+          "usedBy": {
+            "foo": "1.0.0",
+            "bar": "1.0.0"
+          },
+          "isDevDependency": false,
+          "existOnRemoteRegistry": false,
+          "description": "foo",
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com"
+          },
+          "engines": {
+            "node": "^12.20.0 || ^14.13.1 || >=16.0.0",
+            "node2": "^12.20.0 || ^14.13.1 || >=16.0.0",
+            "node3": "12.20.0 || ^14.13.1 || >=16.0.0"
+          },
+          "repository": {
+            "type": "svn",
+            "url": "https://github.com/NodeSecure/js-x-ray"
+          },
+          "scripts": {
+            "test": "foo",
+            "ci": "npm ci",
+            "standard": "npx standard"
+          },
+          "warnings": [
+            {
+              "kind": "unsafe-import",
+              "location": [
+                [
+                  3,
+                  16
+                ],
+                [
+                  3,
+                  55
+                ]
+              ],
+              "source": "JS-X-Ray",
+              "i18n": "sast_warnings.unsafe_import",
+              "severity": "Warning",
+              "file": "examples/asyncawait.js"
+            },
+            {
+              "kind": "unsafe-regex",
+              "location": [
+                [
+                  3,
+                  16
+                ],
+                [
+                  3,
+                  55
+                ]
+              ],
+              "source": "JS-X-Ray",
+              "i18n": "sast_warnings.unsafe_import",
+              "severity": "Warning",
+              "file": "examples/asyncawait.js"
+            }
+          ],
+          "composition": {
+            "minified": [
+              "foo.min.js",
+              "bar.min.js"
+            ],
+            "required_thirdparty": [
+              "foo",
+              "bar"
+            ],
+            "required_nodejs": [
+              "foo",
+              "bar"
+            ],
+            "unused": [
+              "foo",
+              "bar"
+            ],
+            "missing": [
+              "foo",
+              "bar"
+            ]
+          },
+          "uniqueLicenseIds": [
+            "MIT",
+            "GPL-3.0"
+          ],
+          "license": {
+            "uniqueLicenseIds": [
+              "MIT",
+              "GPL-3.0"
+            ],
+            "hasMultipleLicenses": false,
+            "licenses": [
+              {
+                "uniqueLicenseIds": [
+                  "MIT"
+                ],
+                "spdxLicenseLinks": [
+                  "https://spdx.org/licenses/MIT.html#licenseText"
+                ],
+                "spdx": {
+                  "osi": true,
+                  "fsf": true,
+                  "fsfAndOsi": true,
+                  "includesDeprecated": false
+                },
+                "from": "package.json"
+              }
+            ]
+          },
+          "flags": [
+            "⚔️",
+            "💎"
+          ],
+          "links": {
+            "npm": "https://www.npmjs.com/package/example-package",
+            "homepage": "https://example-package.com",
+            "repository": "https://github.com/example-package/example-repo"
+          }
+        },
+        "3.0.0": {
+          "isDevDependency": false,
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com"
+          },
+          "engines": {
+            "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+          },
+          "repository": {
+            "type": "git",
+            "url": "https://github.com/NodeSecure/js-x-ray"
+          },
+          "warnings": [],
+          "uniqueLicenseIds": [
+            "MIT"
+          ],
+          "license": {
+            "uniqueLicenseIds": [
+              "MIT"
+            ],
+            "hasMultipleLicenses": false,
+            "licenses": [
+              {
+                "uniqueLicenseIds": [
+                  "MIT"
+                ],
+                "spdxLicenseLinks": [
+                  "https://spdx.org/licenses/MIT.html#licenseText"
+                ],
+                "spdx": {
+                  "osi": true,
+                  "fsf": true,
+                  "fsfAndOsi": true,
+                  "includesDeprecated": false
+                },
+                "from": "package.json"
+              }
+            ]
+          },
+          "composition": {
+            "minified": [],
+            "required_thirdparty": [],
+            "required_nodejs": [],
+            "unused": [],
+            "missing": []
+          }
+        },
+        "3.0.1": {
+          "isDevDependency": false,
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com"
+          },
+          "engines": {
+            "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+          },
+          "warnings": [],
+          "uniqueLicenseIds": [
+            "MIT"
+          ],
+          "license": {
+            "uniqueLicenseIds": [
+              "MIT"
+            ],
+            "hasMultipleLicenses": false,
+            "licenses": [
+              {
+                "uniqueLicenseIds": [
+                  "MIT"
+                ],
+                "spdxLicenseLinks": [
+                  "https://spdx.org/licenses/MIT.html#licenseText"
+                ],
+                "spdx": {
+                  "osi": true,
+                  "fsf": true,
+                  "fsfAndOsi": true,
+                  "includesDeprecated": false
+                },
+                "from": "package.json"
+              }
+            ]
+          },
+          "composition": {
+            "minified": [],
+            "required_thirdparty": [],
+            "required_nodejs": [],
+            "unused": [],
+            "missing": []
+          }
+        }
+      },
+      "vulnerabilities": [
+        {
+          "id": "foo"
+        },
+        {
+          "id": "bar"
+        }
+      ],
+      "metadata": {
+        "author": {
+          "name": "Sindre Sorhus",
+          "email": "sindresorhus@gmail.com",
+          "url": "https://sindresorhus.com",
+          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+        },
+        "publishers": [
+          {
+            "name": "sindresorhus",
+            "email": "sindresorhus@gmail.com",
+            "version": "3.0.0",
+            "at": "2021-08-31T23:02:35.148Z",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+          },
+          {
+            "name": "jack",
+            "email": "jack@gmail.com"
+          }
+        ],
+        "maintainers": [
+          {
+            "name": "sindresorhus",
+            "email": "sindresorhus@gmail.com",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+            "at": "2021-08-31T23:02:35.148Z",
+            "version": "3.0.0"
+          },
+          {
+            "name": "jack",
+            "email": "jack@gmail.com"
+          }
+        ],
+        "integrity": {
+          "3.0.0": "26f8beccbe8d0766a3af2cc5a06a55dd902cdc136eeb3d9f6fb6b19131903456"
+        }
+      }
+    },
+    "bar": {
+      "versions": {
+        "3.0.0": {
+          "isDevDependency": false,
+          "author": {
+            "name": "Sindre Sorhus",
+            "email": "sindresorhus@gmail.com",
+            "url": "https://sindresorhus.com"
+          },
+          "engines": {
+            "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
+          },
+          "warnings": [],
+          "uniqueLicenseIds": [
+            "MIT"
+          ],
+          "license": {
+            "uniqueLicenseIds": [
+              "MIT"
+            ],
+            "hasMultipleLicenses": false,
+            "licenses": [
+              {
+                "uniqueLicenseIds": [
+                  "MIT"
+                ],
+                "spdxLicenseLinks": [
+                  "https://spdx.org/licenses/MIT.html#licenseText"
+                ],
+                "spdx": {
+                  "osi": true,
+                  "fsf": true,
+                  "fsfAndOsi": true,
+                  "includesDeprecated": false
+                },
+                "from": "package.json"
+              }
+            ]
+          },
+          "composition": {
+            "minified": [],
+            "required_thirdparty": [],
+            "required_nodejs": [],
+            "unused": [],
+            "missing": []
+          }
+        }
+      },
+      "vulnerabilities": [],
+      "metadata": {
+        "author": {
+          "name": "Sindre Sorhus",
+          "email": "sindresorhus@gmail.com",
+          "url": "https://sindresorhus.com",
+          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+        },
+        "publishers": [
+          {
+            "name": "sindresorhus",
+            "email": "sindresorhus@gmail.com",
+            "version": "3.0.0",
+            "at": "2021-08-31T23:02:35.148Z",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+          }
+        ],
+        "maintainers": [
+          {
+            "name": "sindresorhus",
+            "email": "sindresorhus@gmail.com",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+            "at": "2021-08-31T23:02:35.148Z",
+            "version": "3.0.0"
+          }
+        ],
+        "integrity": {
+          "3.0.0": "26f8beccbe8d0766a3af2cc5a06a55dd902cdc136eeb3d9f6fb6b19131903456"
+        }
+      }
+    }
+  }
 }

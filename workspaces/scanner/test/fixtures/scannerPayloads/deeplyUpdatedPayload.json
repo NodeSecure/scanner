@@ -1,6 +1,6 @@
 {
   "id": "hjnfnJ",
-  "rootDependencyName": "is-wsl",
+  "rootDependencyName": "foo",
   "warnings": [],
   "dependencies": {
     "foo": {

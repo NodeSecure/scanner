@@ -1,5 +1,5 @@
 {
-  "id": "YuK0CL",
+  "id": "YtK0Cx",
   "rootDependencyName": "foo",
   "warnings": [
     "unsafe-import",
@@ -32,11 +32,7 @@
           "isDevDependency": false,
           "existOnRemoteRegistry": false,
           "description": "foo",
-          "author": {
-            "name": "Sindre Sorhus",
-            "email": "sindresorhus@gmail.com",
-            "url": "https://sindresorhus.com"
-          },
+          "author": null,
           "engines": {
             "node": "^12.20.0 || ^14.13.1 || >=16.0.0",
             "node2": "^12.20.0 || ^14.13.1 || >=16.0.0",
@@ -149,11 +145,7 @@
         },
         "3.0.0": {
           "isDevDependency": false,
-          "author": {
-            "name": "Sindre Sorhus",
-            "email": "sindresorhus@gmail.com",
-            "url": "https://sindresorhus.com"
-          },
+          "author": null,
           "engines": {
             "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
           },
@@ -198,11 +190,7 @@
         },
         "3.0.1": {
           "isDevDependency": false,
-          "author": {
-            "name": "Sindre Sorhus",
-            "email": "sindresorhus@gmail.com",
-            "url": "https://sindresorhus.com"
-          },
+          "author": null,
           "engines": {
             "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
           },
@@ -251,12 +239,7 @@
         }
       ],
       "metadata": {
-        "author": {
-          "name": "Sindre Sorhus",
-          "email": "sindresorhus@gmail.com",
-          "url": "https://sindresorhus.com",
-          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
-        },
+        "author": null,
         "publishers": [
           {
             "name": "sindresorhus",
@@ -292,11 +275,7 @@
       "versions": {
         "3.0.0": {
           "isDevDependency": false,
-          "author": {
-            "name": "Sindre Sorhus",
-            "email": "sindresorhus@gmail.com",
-            "url": "https://sindresorhus.com"
-          },
+          "author": null,
           "engines": {
             "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
           },
@@ -338,12 +317,7 @@
       },
       "vulnerabilities": [],
       "metadata": {
-        "author": {
-          "name": "Sindre Sorhus",
-          "email": "sindresorhus@gmail.com",
-          "url": "https://sindresorhus.com",
-          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
-        },
+        "author": null,
         "publishers": [
           {
             "name": "sindresorhus",
