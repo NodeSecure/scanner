@@ -106,7 +106,7 @@ export async function scanDirOrArchive(
     Object.assign(ref, {
       description, engines, repository, scripts,
       author: mama.author,
-      integrity: mama.integrity
+      integrity: mama.isWorkspace ? null : mama.integrity
     });
   }
   ref.licenses = spdx.licenses;
