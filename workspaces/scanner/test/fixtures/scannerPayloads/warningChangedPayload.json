@@ -1,6 +1,6 @@
 {
   "id": "hbefDHkf",
-  "rootDependencyName": "is-wsl",
+  "rootDependencyName": "foo",
   "warnings": [
     "unsafe-import",
     "encoded-literal"

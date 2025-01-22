@@ -23,7 +23,7 @@ it("should throw an error if compared payloads have the same id", () => {
 it("should throw an error if compared payloads are not from the same package", () => {
   assert.throws(
     () => compareTo("otherRootDependency"),
-    { message: "You can't compare different package payloads 'is-wsl' and 'is-not-wsl'" }
+    { message: "You can't compare different package payloads 'foo' and 'bar'" }
   );
 });
 
@@ -274,6 +274,13 @@ it("should detect scripts diff", () => {
   assert.ok(scripts.compared.has("standard"));
   assert.strictEqual(scripts.compared.get("standard")?.prev, "npx standard");
   assert.strictEqual(scripts.compared.get("standard")?.now, "npx standard --fix");
+});
+
+it("should not throw when author is null", () => {
+  const { dependencies: { compared } } = compareTo("nullAuthor");
+  const { author } = compared.get("foo")!.versions.compared.get("2.0.0")!;
+
+  assert.strictEqual(author, void 0);
 });
 
 const payloads = {} as Record<string, any>;
