@@ -25,6 +25,7 @@ const kDefaultCwdOptions = {
 };
 
 export * from "./types.js";
+export * from "./extractors/index.js";
 
 export async function cwd(
   location = process.cwd(),
