@@ -2,7 +2,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import assert from "node:assert";
-import { describe, it, test } from "node:test";
+import { describe, it, test, type TestContext } from "node:test";
 
 // Import Third-party Dependencies
 import type {
@@ -10,7 +10,6 @@ import type {
   WorkspacesPackageJSON
 } from "@nodesecure/npm-types";
 import hash from "object-hash";
-import sinon from "sinon";
 
 // Import Internal Dependencies
 import { ManifestManager } from "../src/index.js";
@@ -39,72 +38,55 @@ describe("ManifestManager", () => {
 
   describe("static fromPackageJSON()", () => {
     test(`Given a location equal to process.cwd(),
-      it should read and parse the JSON from filesystem`, async() => {
-      const readFile = sinon
-        .stub(fs, "readFile")
-        .resolves(JSON.stringify(kMinimalPackageJSON));
+      it should read and parse the JSON from filesystem`, async(t) => {
+      const readfile = t.mock.method(fs, "readFile", async() => JSON.stringify(kMinimalPackageJSON));
 
-      try {
-        const location = process.cwd();
-        const mama = await ManifestManager.fromPackageJSON(
-          location
-        );
+      const location = process.cwd();
+      const mama = await ManifestManager.fromPackageJSON(
+        location
+      );
 
-        assert.ok(readFile.calledOnce);
-        assert.ok(mama instanceof ManifestManager);
+      assert.equal(readfile.mock.callCount(), 1);
+      assert.ok(mama instanceof ManifestManager);
 
-        assert.strictEqual(
-          mama.isWorkspace,
-          false
-        );
-        assert.strictEqual(
-          mama.spec,
-          `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
-        );
-      }
-      finally {
-        readFile.restore();
-      }
+      assert.strictEqual(
+        mama.isWorkspace,
+        false
+      );
+      assert.strictEqual(
+        mama.spec,
+        `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
+      );
     });
 
     test(`Given a location equal to process.cwd() + package.json,
-      it should read and parse the JSON from filesystem`, async() => {
-      const readFile = sinon
-        .stub(fs, "readFile")
-        .resolves(JSON.stringify(kMinimalPackageJSON));
+      it should read and parse the JSON from filesystem`, async(t) => {
+      const readFile = t.mock.method(fs, "readFile", async() => JSON.stringify(kMinimalPackageJSON));
 
-      try {
-        const location = path.join(process.cwd(), "package.json");
-        const mama = await ManifestManager.fromPackageJSON(
-          location
-        );
+      const location = path.join(process.cwd(), "package.json");
+      const mama = await ManifestManager.fromPackageJSON(
+        location
+      );
 
-        assert.ok(readFile.calledOnce);
-        assert.ok(mama instanceof ManifestManager);
+      assert.equal(readFile.mock.callCount(), 1);
+      assert.ok(mama instanceof ManifestManager);
 
-        assert.strictEqual(
-          mama.isWorkspace,
-          false
-        );
-        assert.strictEqual(
-          mama.spec,
-          `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
-        );
-      }
-      finally {
-        readFile.restore();
-      }
+      assert.strictEqual(
+        mama.isWorkspace,
+        false
+      );
+      assert.strictEqual(
+        mama.spec,
+        `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
+      );
     });
 
-    test("Given an invalid JSON, it should throw a custom Error with the parsing error as a cause", async(t) => {
+    test("Given an invalid JSON, it should throw a custom Error with the parsing error as a cause", async(t: TestContext) => {
       const location = process.cwd();
       const expectedLocation = path.join(location, "package.json");
 
-      const readFile = sinon
-        .stub(fs, "readFile")
-        .resolves(`{ foo: NaN }`);
-      t.after(() => readFile.restore());
-      // TODO: add t.plan(5) when available in LTS version of test_runner
+      const readFile = t.mock.method(fs, "readFile", async() => `{ foo: NaN }`);
+      t.plan(5);
 
       try {
         await ManifestManager.fromPackageJSON(
@@ -112,17 +94,17 @@ describe("ManifestManager", () => {
         );
       }
       catch (error) {
-        assert.strictEqual(error.name, "Error");
-        assert.strictEqual(
+        t.assert.strictEqual(error.name, "Error");
+        t.assert.strictEqual(
           error.message,
           `Failed to parse package.json located at: ${expectedLocation}`
         );
 
-        assert.ok("cause" in error);
-        assert.strictEqual(error.cause.name, "SyntaxError");
+        t.assert.ok("cause" in error);
+        t.assert.strictEqual(error.cause.name, "SyntaxError");
       }
 
-      assert.ok(readFile.calledOnce);
+      t.assert.equal(readFile.mock.callCount(), 1);
     });
 
     test("Given the location argument is not a string, it must throw a TypeError", async() => {
