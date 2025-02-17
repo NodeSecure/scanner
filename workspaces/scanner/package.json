@@ -52,7 +52,7 @@
     "@nodesecure/contact": "^1.0.0",
     "@nodesecure/flags": "^2.4.0",
     "@nodesecure/i18n": "^4.0.1",
-    "@nodesecure/js-x-ray": "^7.3.0",
+    "@nodesecure/js-x-ray": "^8.0.0",
     "@nodesecure/mama": "^1.0.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.1.0",
@@ -61,7 +61,7 @@
     "@nodesecure/tree-walker": "^1.1.0",
     "@nodesecure/vulnera": "^2.0.1",
     "@openally/mutex": "^1.0.0",
-    "pacote": "^18.0.6",
+    "pacote": "^21.0.0",
     "semver": "^7.5.4"
   }
 }
