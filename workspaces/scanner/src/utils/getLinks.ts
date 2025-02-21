@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { PackumentVersion } from "@nodesecure/npm-types";
+import type { PackageJSON, PackumentVersion } from "@nodesecure/npm-types";
 
 // CONSTANTS
 const kVCSHosts = new Set(["github.com", "gitlab.com"]);
@@ -38,6 +38,21 @@ export function getLinks(
 
   return {
     npm: `https://www.npmjs.com/package/${packumentVersion.name}/v/${packumentVersion.version}`,
+    homepage,
+    repository:
+      getVCSRepositoryURL(homepage) ??
+      getVCSRepositoryURL(repositoryUrl)
+  };
+}
+
+export function getManifestLinks(manifest: PackageJSON) {
+  const homepage = manifest.homepage ?? null;
+  const repositoryUrl = typeof manifest.repository === "string" ?
+    manifest.repository :
+    manifest.repository?.url ?? null;
+
+  return {
+    npm: null,
     homepage,
     repository:
       getVCSRepositoryURL(homepage) ??
