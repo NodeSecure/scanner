@@ -1,5 +1,6 @@
 // Import Node.js Dependencies
-import { join } from "node:path";
+import path from "node:path";
+import url from "node:url";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import assert from "node:assert";
@@ -10,24 +11,25 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { depWalker } from "../src/depWalker.js";
-import { from, type Payload, type DependencyVersion } from "../src/index.js";
+import { from, type Payload, type DependencyVersion, cwd } from "../src/index.js";
 
 // CONSTANTS
-const FIXTURE_PATH = join("fixtures", "depWalker");
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
+const kFixturePath = path.join(__dirname, "fixtures", "depWalker");
 
 // JSON PAYLOADS
 const is = JSON.parse(readFileSync(
-  new URL(join(FIXTURE_PATH, "slimio.is.json"), import.meta.url),
+  path.join(kFixturePath, "slimio.is.json"),
   "utf8"
 ));
 
 const config = JSON.parse(readFileSync(
-  new URL(join(FIXTURE_PATH, "slimio.config.json"), import.meta.url),
+  path.join(kFixturePath, "slimio.config.json"),
   "utf8"
 ));
 
 const pkgGitdeps = JSON.parse(readFileSync(
-  new URL(join(FIXTURE_PATH, "pkg.gitdeps.json"), import.meta.url),
+  path.join(kFixturePath, "pkg.gitdeps.json"),
   "utf8"
 ));
 
@@ -62,8 +64,7 @@ test("execute depWalker on @slimio/is", async() => {
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
   cleanupPayload(resultAsJSON);
 
-  const expectedResult = JSON.parse(readFileSync(join("test", FIXTURE_PATH, "slimio.is-result.json"), "utf-8"));
-  // console.log(JSON.stringify(resultAsJSON, null, 2));
+  const expectedResult = JSON.parse(readFileSync(path.join(kFixturePath, "slimio.is-result.json"), "utf-8"));
   assert.deepEqual(resultAsJSON, expectedResult);
 });
 
@@ -193,4 +194,33 @@ test("highlight contacts from a remote package", async() => {
   assert.ok(
     maintainer.dependencies.includes(spec)
   );
+});
+
+test("should parse author, homepage and links for non-npm package", async() => {
+  const result = await cwd(path.join(kFixturePath, "non-npm-package"));
+
+  const dep = result.dependencies["non-npm-package"];
+  const v1 = dep.versions["1.0.0"];
+
+  assert.deepEqual(v1.author, {
+    email: void 0,
+    name: "NodeSecure",
+    url: void 0
+  });
+  assert.deepStrictEqual(v1.links, {
+    npm: null,
+    homepage: "https://nodesecure.com",
+    repository: "https://github.com/NodeSecure/non-npm-package"
+  });
+  assert.deepStrictEqual(v1.repository, {
+    type: "git",
+    url: "https://github.com/NodeSecure/non-npm-package.git"
+  });
+
+  assert.deepStrictEqual(dep.metadata.author, {
+    email: void 0,
+    name: "NodeSecure",
+    url: void 0
+  });
+  assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
 });

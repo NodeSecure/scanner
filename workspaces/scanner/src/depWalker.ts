@@ -13,7 +13,11 @@ import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
-  getDependenciesWarnings, addMissingVersionFlags, getUsedDeps
+  getDependenciesWarnings,
+  addMissingVersionFlags,
+  getUsedDeps,
+  manifestAuthor,
+  getManifestLinks
 } from "./utils/index.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
@@ -234,6 +238,19 @@ export async function depWalker(
         ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
       );
 
+      if (isLocalManifest(verDescriptor, manifest, packageName)) {
+        Object.assign(dependency.metadata, {
+          author: manifestAuthor(manifest.author),
+          homepage: manifest.homepage
+        });
+
+        Object.assign(verDescriptor, {
+          author: manifestAuthor(manifest.author),
+          links: getManifestLinks(manifest),
+          repository: manifest.repository
+        });
+      }
+
       const usedDeps = npmTreeWalker.relationsMap.get(`${packageName}@${verStr}`) || new Set();
       if (usedDeps.size === 0) {
         continue;
@@ -286,4 +303,12 @@ async function scanDirOrArchiveEx(
   finally {
     free();
   }
+}
+
+function isLocalManifest(
+  verDescriptor: DependencyVersion,
+  manifest: PackageJSON | ManifestVersion,
+  packageName: string
+): manifest is PackageJSON {
+  return verDescriptor.existOnRemoteRegistry === false && packageName === manifest.name;
 }
