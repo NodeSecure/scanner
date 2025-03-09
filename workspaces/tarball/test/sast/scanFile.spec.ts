@@ -55,7 +55,7 @@ test("scanFile (fixture parsingError.js)", async() => {
     warnings: [
       {
         kind: "parsing-error",
-        value: "[1:5]: Unexpected token: ';'",
+        value: "[1:4-1:5]: Unexpected token: ';'",
         location: [[0, 0], [0, 0]],
         file: "parsingError.js"
       }

@@ -1,5 +1,5 @@
 // Import Types Dependencies
-import * as jsxray from "@nodesecure/js-x-ray";
+import type { WarningName } from "@nodesecure/js-x-ray";
 
 /**
  * Configuration dedicated for NodeSecure CI (or nsci)
@@ -19,7 +19,7 @@ export interface CiConfiguration {
    * JS-X-Ray warnings configuration
    * @see https://github.com/NodeSecure/js-x-ray#warnings-legends-v20
    */
-  warnings?: CiWarnings | Record<jsxray.WarningName, CiWarnings>;
+  warnings?: CiWarnings | Record<WarningName, CiWarnings>;
 }
 export type CiWarnings = "off" | "error" | "warning";
 

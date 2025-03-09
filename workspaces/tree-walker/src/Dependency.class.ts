@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import * as JSXRay from "@nodesecure/js-x-ray";
+import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
 
 export type NpmSpec = `${string}@${string}`;
 
@@ -11,7 +11,7 @@ export interface DependencyJSON {
   isDevDependency: boolean;
   existOnRemoteRegistry: boolean;
   flags: string[];
-  warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
+  warnings: Warning<WarningDefault>[];
   alias: Record<string, string>;
   dependencyCount: number;
   gitUrl: string | null;
@@ -30,7 +30,7 @@ export class Dependency {
   public existOnRemoteRegistry = true;
   public dependencyCount = 0;
   public gitUrl: null | string = null;
-  public warnings: JSXRay.Warning<JSXRay.WarningDefault>[] = [];
+  public warnings: Warning<WarningDefault>[] = [];
   public alias: Record<string, string> = {};
 
   #flags = new Set<string>();

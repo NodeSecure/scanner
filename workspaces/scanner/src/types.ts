@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import * as JSXRay from "@nodesecure/js-x-ray";
+import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
@@ -72,7 +72,7 @@ export interface DependencyVersion {
    *
    * @see https://github.com/NodeSecure/js-x-ray/blob/master/WARNINGS.md
    */
-  warnings: JSXRay.Warning<JSXRay.WarningDefault>[];
+  warnings: Warning<WarningDefault>[];
   alias: Record<string, string>;
   /** Tarball composition (files and dependencies) */
   composition: {
