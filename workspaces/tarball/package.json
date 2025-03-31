@@ -31,11 +31,11 @@
   "dependencies": {
     "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/js-x-ray": "^7.3.0",
+    "@nodesecure/js-x-ray": "^8.1.0",
     "@nodesecure/mama": "^1.0.0",
     "@nodesecure/npm-types": "^1.1.0",
     "@nodesecure/utils": "^2.1.0",
-    "pacote": "^18.0.6"
+    "pacote": "^21.0.0"
   },
   "devDependencies": {
     "get-folder-size": "^5.0.0"
