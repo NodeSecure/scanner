@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import * as JSXRay from "@nodesecure/js-x-ray";
+import type { Warning } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 
 // Import Internal Dependencies
@@ -52,7 +52,7 @@ export interface DependencyVersionComparison {
   engines: DictionaryComparison<string>;
   repository: ValueComparison<Repository>;
   scripts: DictionaryComparison<string>;
-  warnings: ArrayDiff<JSXRay.Warning>;
+  warnings: ArrayDiff<Warning>;
   composition: CompositionComparison;
   uniqueLicenseIds: ArrayDiff<string>;
   flags: ArrayDiff<string>;
