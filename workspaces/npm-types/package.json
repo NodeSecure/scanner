@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/npm-types#readme",
   "devDependencies": {
-    "tsd": "^0.31.1"
+    "tsd": "^0.32.0"
   },
   "private": false
 }
