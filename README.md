@@ -128,6 +128,11 @@ interface Options {
 }
 ```
 
+Additional APIs are available at:
+
+- [from](./workspaces/scanner/docs/from.md)
+- [extractors](./workspaces/scanner/docs/extractors.md)
+
 ## Workspaces
 
 Click on one of the links to access the documentation of the workspace:
