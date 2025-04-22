@@ -1,4 +1,4 @@
-// Import Types Dependencies
+// Import Third-party Dependencies
 import type { WarningName } from "@nodesecure/js-x-ray";
 
 /**

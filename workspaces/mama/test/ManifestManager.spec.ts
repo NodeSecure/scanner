@@ -85,7 +85,7 @@ describe("ManifestManager", () => {
       const location = process.cwd();
       const expectedLocation = path.join(location, "package.json");
 
-      const readFile = t.mock.method(fs, "readFile", async() => `{ foo: NaN }`);
+      const readFile = t.mock.method(fs, "readFile", async() => "{ foo: NaN }");
       t.plan(5);
 
       try {
@@ -535,7 +535,7 @@ describe("ManifestManager", () => {
         }
       });
 
-      it(`Must equal false if none of the script are unsafe`, () => {
+      it("Must equal false if none of the script are unsafe", () => {
         const packageJSON: PackageJSON = {
           ...kMinimalPackageJSON,
           scripts: {

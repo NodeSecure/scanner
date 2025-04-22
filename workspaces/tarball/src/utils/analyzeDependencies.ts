@@ -9,7 +9,7 @@ import type { NodeImport } from "@nodesecure/npm-types";
 import { getPackageName } from "./getPackageName.js";
 
 // CONSTANTS
-export const builtins = new Set([
+export const NODE_BUILTINS = new Set([
   "assert",
   "buffer",
   "child_process",
@@ -144,7 +144,7 @@ function isCoreModule(
   const cleanModuleName = moduleName.startsWith("node:") ? moduleName.slice(5) : moduleName;
 
   // Note: We need to also check moduleName because builtins package only return true for 'node:test'.
-  return builtins.has(cleanModuleName) || builtins.has(moduleName);
+  return NODE_BUILTINS.has(cleanModuleName) || NODE_BUILTINS.has(moduleName);
 }
 
 function isAliasFileModule(

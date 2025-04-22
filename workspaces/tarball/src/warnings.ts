@@ -1,4 +1,4 @@
-// // Import Third-party Dependencies
+// Import Third-party Dependencies
 import type { WarningDefault } from "@nodesecure/js-x-ray";
 
 export function getSemVerWarning(

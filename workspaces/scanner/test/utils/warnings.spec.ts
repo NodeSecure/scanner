@@ -5,7 +5,7 @@ import assert from "node:assert";
 // Import Third-party Dependencies
 import * as i18n from "@nodesecure/i18n";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { getDependenciesWarnings } from "../../src/utils/index.js";
 
 function createDependency(maintainers = [], publishers = []) {

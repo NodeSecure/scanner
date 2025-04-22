@@ -1,19 +1,19 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { scanPackage } from "../../src/index.js";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const FIXTURE_PATH = path.join(__dirname, "..", "fixtures", "scanPackage");
+const kFixturePath = path.join(__dirname, "..", "fixtures", "scanPackage");
 
 test("scanPackage (caseone)", async() => {
   const result = await scanPackage(
-    path.join(FIXTURE_PATH, "caseone")
+    path.join(kFixturePath, "caseone")
   );
   result.files.extensions.sort();
 

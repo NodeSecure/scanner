@@ -4,7 +4,7 @@ import path from "node:path";
 import { describe, it } from "node:test";
 import assert from "node:assert";
 
-// Import Third-party Depedencies
+// Import Third-party Dependencies
 import cacache from "cacache";
 
 // Import Internal Dependencies
@@ -173,7 +173,7 @@ describe("extendFromSystemPath", () => {
       fs.mkdirSync(kI18nDir);
       fs.writeFileSync(
         path.join(kI18nDir, "french.js"),
-        `export default { hello: "Bonjour" }`
+        "export default { hello: \"Bonjour\" }"
       );
 
       await i18n.extendFromSystemPath(kI18nDir);

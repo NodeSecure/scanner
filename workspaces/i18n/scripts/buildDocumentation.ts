@@ -41,7 +41,7 @@ function formatValue(
   key: string,
   obj: any
 ): string {
-  const placeholders = Array.from({ length: 9 }, (value, index) => `{${index}}`);
+  const placeholders = Array.from({ length: 9 }, (_value, index) => `{${index}}`);
 
   return typeof obj[key] === "function" ? obj[key](...placeholders) : obj[key];
 }

@@ -1,8 +1,8 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import { test } from "node:test";
 import assert from "node:assert";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { from } from "../src/index.js";
 
 test("expect one warning from 'darcyclarke-manifest-pkg' with an integrity issue", async() => {

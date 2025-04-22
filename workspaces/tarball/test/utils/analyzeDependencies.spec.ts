@@ -1,4 +1,4 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import { test } from "node:test";
 import assert from "node:assert";
 

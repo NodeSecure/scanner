@@ -1,24 +1,24 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import { dirname, join } from "node:path";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import assert from "node:assert";
 
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import is from "@slimio/is";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { mergeDependencies } from "../../src/utils/index.js";
 
 // CONSTANTS
-const currentDirname = dirname(fileURLToPath(import.meta.url));
-const FIXTURE_PATH = join(currentDirname, "..", "fixtures/mergeDependencies");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const kFixturePath = join(__dirname, "..", "fixtures/mergeDependencies");
 
 // JSON PAYLOADS
-const one = JSON.parse(readFileSync(join(FIXTURE_PATH, "one.json"), "utf-8"));
-const two = JSON.parse(readFileSync(join(FIXTURE_PATH, "two.json"), "utf-8"));
-const three = JSON.parse(readFileSync(join(FIXTURE_PATH, "three.json"), "utf-8"));
+const one = JSON.parse(readFileSync(join(kFixturePath, "one.json"), "utf-8"));
+const two = JSON.parse(readFileSync(join(kFixturePath, "two.json"), "utf-8"));
+const three = JSON.parse(readFileSync(join(kFixturePath, "three.json"), "utf-8"));
 
 test("should return the one.json field 'dependencies' merged", () => {
   const result = mergeDependencies(one);
