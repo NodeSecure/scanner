@@ -3,12 +3,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 
-// Import Third-party Depedencies
+// Import Third-party Dependencies
 import cacache from "cacache";
 import lodashGet from "lodash.get";
 import deepmerge from "deepmerge";
 
-// Import Internals
+// Import Internal Dependencies
 import { CACHE_PATH, CURRENT_LANG, type Languages } from "./constants.js";
 import { languages } from "./languages/index.js";
 import { taggedString } from "./utils.js";

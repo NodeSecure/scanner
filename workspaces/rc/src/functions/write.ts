@@ -1,5 +1,5 @@
 // Import Node.js Dependencies
-import path from "path";
+import path from "node:path";
 
 // Import Third-party Dependencies
 import { AsynchronousConfig } from "@openally/config";

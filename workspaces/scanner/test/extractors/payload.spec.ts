@@ -11,11 +11,11 @@ import {
 } from "../../src/index.js";
 
 // CONSTANTS
-const FIXTURE_PATH = path.join("fixtures", "extractors");
+const kFixturePath = path.join("fixtures", "extractors");
 
 // JSON PAYLOADS
 const expressNodesecurePayload = JSON.parse(fs.readFileSync(
-  new URL(path.join("..", FIXTURE_PATH, "express.json"), import.meta.url),
+  new URL(path.join("..", kFixturePath, "express.json"), import.meta.url),
   "utf8"
 )) as Payload;
 

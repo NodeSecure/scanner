@@ -167,7 +167,7 @@ function compareVersions(
       engines: compareDictionnaries(version.engines, comparedVersion.engines),
       // FIXME: repository can be a string: https://github.com/pillarjs/encodeurl/blob/master/package.json#L14
       repository: compareObjects("type", version.repository, comparedVersion.repository)
-      ?? compareObjects("url", version.repository, comparedVersion.repository),
+        ?? compareObjects("url", version.repository, comparedVersion.repository),
       scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),
       warnings: arrayDiff(version.warnings, comparedVersion.warnings),
       composition: compareComposition(version.composition, comparedVersion.composition),

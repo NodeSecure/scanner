@@ -18,7 +18,7 @@
   "author": "NodeSecure",
   "license": "MIT",
   "devDependencies": {
-    "@openally/config.eslint": "^1.0.0",
+    "@openally/config.eslint": "^2.1.0",
     "@openally/config.typescript": "^1.0.3",
     "@slimio/is": "^2.0.0",
     "@types/node": "^22.0.0",

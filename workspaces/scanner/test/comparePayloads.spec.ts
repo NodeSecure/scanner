@@ -1,11 +1,11 @@
-// Require Node.js Dependencies
+// Import Node.js Dependencies
 import { it } from "node:test";
 import assert from "node:assert";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { comparePayloads } from "../src/index.js";
 
 // CONSTANTS

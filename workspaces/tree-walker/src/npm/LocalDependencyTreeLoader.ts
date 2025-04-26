@@ -2,11 +2,11 @@
 import path from "node:path";
 import fs from "node:fs/promises";
 
-// Import Internal Dependencies
-import * as utils from "../utils/index.js";
-
 // Import Third-party Dependencies
 import Arborist from "@npmcli/arborist";
+
+// Import Internal Dependencies
+import * as utils from "../utils/index.js";
 
 export interface LocalDependencyTreeLoaderProvider {
   load(

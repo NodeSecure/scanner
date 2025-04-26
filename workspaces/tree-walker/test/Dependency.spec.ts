@@ -2,10 +2,10 @@
 import { test } from "node:test";
 import assert from "node:assert";
 
-// Require Third-party Dependencies
+// Import Third-party Dependencies
 import is from "@slimio/is";
 
-// Require Internal Dependencies
+// Import Internal Dependencies
 import { Dependency } from "../src/Dependency.class.js";
 
 test("Dependency class should act as expected by assertions", () => {

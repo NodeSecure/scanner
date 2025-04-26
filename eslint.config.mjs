@@ -1,9 +1,19 @@
-import { typescriptConfig } from "@openally/config.eslint";
+import { typescriptConfig, globals } from "@openally/config.eslint";
 
-export default typescriptConfig({
-  ignores: [
-    "workspaces/**/coverage",
-    "workspaces/**/test/fixtures",
-    "workspaces/i18n/src/languages"
-  ]
-});
+export default [
+  ...typescriptConfig({
+    languageOptions: {
+      globals: {
+        ...globals.browser
+      }
+    }
+  }),
+  {
+    ignores: [
+      "workspaces/**/coverage",
+      "workspaces/**/test/fixtures",
+      "workspaces/**/temp/**",
+      "workspaces/i18n/src/languages"
+    ],
+  }
+];

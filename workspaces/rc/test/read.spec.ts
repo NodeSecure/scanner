@@ -6,7 +6,14 @@ import { fileURLToPath } from "node:url";
 import assert from "node:assert";
 import { describe, before, beforeEach, it, after } from "node:test";
 
-import { read, CONSTANTS, memoized, memoize, clearMemoized } from "../src/index.js";
+// Import Internal Dependencies
+import {
+  read,
+  CONSTANTS,
+  memoized,
+  memoize,
+  clearMemoized
+} from "../src/index.js";
 import { generateDefaultRC } from "../src/rc.js";
 
 // CONSTANTS

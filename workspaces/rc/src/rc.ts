@@ -25,6 +25,7 @@ import {
 } from "./projects/scanner.js";
 
 // CONSTANTS
+// eslint-disable-next-line @openally/constants
 export const JSONSchema = loadJSONSchemaSync();
 
 export interface RC {
