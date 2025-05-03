@@ -4,7 +4,6 @@ import os from "node:os";
 
 // Import Third-party Dependencies
 import {
-  AstAnalyser,
   type Warning,
   type Dependency
 } from "@nodesecure/js-x-ray";
@@ -59,7 +58,6 @@ const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
   {};
 
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
 export interface scanDirOrArchiveOptions {
   ref: DependencyRef;
@@ -190,8 +188,7 @@ export interface ScannedPackageResult {
 }
 
 export async function scanPackage(
-  dest: string,
-  packageName?: string
+  dest: string
 ): Promise<ScannedPackageResult> {
   const extractor = await TarballExtractor.fromFileSystem(dest);
 
@@ -204,7 +201,11 @@ export async function scanPackage(
     dependencies,
     warnings,
     minified
-  } = await extractor.runJavaScriptSast();
+  } = await extractor.runJavaScriptSast(
+    composition.files.filter(
+      (name) => TarballExtractor.JS_EXTENSIONS.has(path.extname(name))
+    )
+  );
 
   return {
     files: {
