@@ -24,7 +24,11 @@ export function compareContact(
 ): boolean {
   const { compareName = true } = options;
 
-  if (compareName) {
+  if (
+    compareName &&
+    typeof contactA.name === "string" &&
+    typeof contactB.name === "string"
+  ) {
     const aName = cleanup(contactA.name);
     const bName = cleanup(contactB.name);
 
