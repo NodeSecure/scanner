@@ -5,7 +5,10 @@ import path from "node:path";
 // Import Third-party Dependencies
 import { parseAuthor } from "@nodesecure/utils";
 import type {
-  PackumentVersion, PackageJSON, WorkspacesPackageJSON, Contact
+  PackumentVersion,
+  PackageJSON,
+  WorkspacesPackageJSON,
+  Contact
 } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
@@ -121,6 +124,40 @@ export class ManifestManager<
     }
 
     return packageJSONIntegrityHash(this.document);
+  }
+
+  * getEntryFiles(): IterableIterator<string> {
+    if (this.document.main) {
+      yield this.document.main;
+    }
+
+    if (!this.document.exports) {
+      return;
+    }
+
+    if (typeof this.document.exports === "string") {
+      yield this.document.exports;
+    }
+    else {
+      yield* this.extractNodejsExport(this.document.exports);
+    }
+  }
+
+  private* extractNodejsExport(
+    exports: Record<string, string | null | Record<string, string | null>>
+  ): IterableIterator<string> {
+    for (const node of Object.values(exports)) {
+      if (node === null) {
+        continue;
+      }
+
+      if (typeof node === "string") {
+        yield node;
+      }
+      else {
+        yield* this.extractNodejsExport(node);
+      }
+    }
   }
 
   static async fromPackageJSON(

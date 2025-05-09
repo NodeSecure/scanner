@@ -552,4 +552,52 @@ describe("ManifestManager", () => {
       });
     });
   });
+
+  describe("getEntryFiles", () => {
+    it("should return PackageJSON main entry files", () => {
+      const packageJSON: PackageJSON = {
+        ...kMinimalPackageJSON,
+        main: "./dist/index.js",
+        exports: "./dist/foobar.js"
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      const files = new Set(mama.getEntryFiles());
+
+      assert.deepEqual(
+        [...files],
+        [
+          "./dist/index.js",
+          "./dist/foobar.js"
+        ]
+      );
+    });
+
+    it("should deep extract Node.js export fields in PackageJSON", () => {
+      const packageJSON: PackageJSON = {
+        ...kMinimalPackageJSON,
+        exports: {
+          ".": {
+            import: "./index.js"
+          },
+          "./web": {
+            import: "./src/web.js"
+          },
+          "./package.json": "./package.json"
+        }
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      const files = new Set(mama.getEntryFiles());
+
+      assert.deepEqual(
+        [...files],
+        [
+          "./index.js",
+          "./src/web.js",
+          "./package.json"
+        ]
+      );
+    });
+  });
 });
