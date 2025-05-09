@@ -88,6 +88,15 @@ export class ManifestManager<
       .some((script) => kUnsafeNPMScripts.has(script.toLowerCase()));
   }
 
+  get hasZeroSemver() {
+    if (typeof this.document.version === "string") {
+      return /^0(\.\d+)*$/
+        .test(this.document.version);
+    }
+
+    return false;
+  }
+
   get nodejsImports() {
     return this.document.imports ?? {};
   }
