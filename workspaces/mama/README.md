@@ -62,6 +62,9 @@ Default values are injected if they are not present in the document. This behavi
 > [!NOTE]
 > document is deep cloned (there will no longer be any reference to the object supplied as an argument)
 
+### getEntryFiles(): IterableIterator< string >
+Deeply extract entry files from package `main` and Node.js `exports` fields.
+
 ### spec
 Return the NPM specification (which is the combinaison of `name@version`).
 
