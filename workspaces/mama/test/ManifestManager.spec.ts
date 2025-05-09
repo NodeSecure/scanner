@@ -435,6 +435,105 @@ describe("ManifestManager", () => {
     });
   });
 
+  describe("get license", () => {
+    test("Given a minimal PackageJSON with no license field then it must return null", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+
+      assert.strictEqual(
+        mama.license,
+        null
+      );
+    });
+
+    test("Given a minimal PackageJSON with a string license then it must return the exact license value", () => {
+      const expectedLicense = "MIT";
+
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        license: expectedLicense
+      });
+
+      assert.strictEqual(
+        mama.license,
+        expectedLicense
+      );
+    });
+
+    test("Given a minimal PackageJSON with a license object then it must return the 'type' property value", () => {
+      const expectedLicense = "MIT";
+
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        license: {
+          type: expectedLicense
+        }
+      });
+
+      assert.strictEqual(
+        mama.license,
+        expectedLicense
+      );
+    });
+
+    test("Given a minimal PackageJSON with a licenses object then it must return the 'type' property value", () => {
+      const expectedLicense = "MIT";
+
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        licenses: {
+          type: expectedLicense
+        }
+      });
+
+      assert.strictEqual(
+        mama.license,
+        expectedLicense
+      );
+    });
+
+    test("Given a minimal PackageJSON with a licenses array then it must return the first license type", () => {
+      const expectedLicense = "MIT";
+
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        licenses: [
+          {
+            type: expectedLicense
+          }
+        ]
+      });
+
+      assert.strictEqual(
+        mama.license,
+        expectedLicense
+      );
+    });
+
+    test("Given a minimal PackageJSON with an empty licenses array then it must return null", () => {
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        licenses: []
+      });
+
+      assert.strictEqual(
+        mama.license,
+        null
+      );
+    });
+
+    test("Given a minimal PackageJSON with licenses array and unexpected values then it must return null", () => {
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        licenses: ["MIT"] as any
+      });
+
+      assert.strictEqual(
+        mama.license,
+        null
+      );
+    });
+  });
+
   describe("flags", () => {
     test("Given a minimal PackageJSON we must verify default values", () => {
       const mama = new ManifestManager(kMinimalPackageJSON);
