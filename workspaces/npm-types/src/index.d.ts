@@ -76,6 +76,10 @@ export type NodeImport =
   { default: string } |
   { node: string, default: string };
 
+export interface PackageJSONLicense {
+  type?: string | undefined | null;
+}
+
 interface BasePackageJSON {
   author?: Contact | string;
   bin?: Record<string, string>;
@@ -94,7 +98,8 @@ interface BasePackageJSON {
   files?: string[];
   homepage?: string;
   keywords?: string[];
-  license?: string;
+  license?: string | PackageJSONLicense;
+  licenses?: PackageJSONLicense[] | PackageJSONLicense;
   man?: string | string[];
   optionalDependencies?: Record<string, string>;
   os?: string[];

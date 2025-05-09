@@ -126,6 +126,30 @@ export class ManifestManager<
     return packageJSONIntegrityHash(this.document);
   }
 
+  get license(): string | null {
+    if (this.document.license) {
+      if (typeof this.document.license === "string") {
+        return this.document.license;
+      }
+
+      if (typeof this.document.license === "object") {
+        return this.document.license.type ?? null;
+      }
+    }
+
+    if (this.document.licenses) {
+      if (Array.isArray(this.document.licenses)) {
+        return this.document.licenses[0]?.type ?? null;
+      }
+
+      if (typeof this.document.licenses === "object") {
+        return this.document.licenses.type ?? null;
+      }
+    }
+
+    return null;
+  }
+
   * getEntryFiles(): IterableIterator<string> {
     if (this.document.main) {
       yield this.document.main;
