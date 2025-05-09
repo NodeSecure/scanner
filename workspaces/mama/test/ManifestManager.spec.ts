@@ -435,6 +435,46 @@ describe("ManifestManager", () => {
     });
   });
 
+  describe("get hasZeroSemver", () => {
+    test("Given a PackageJSON with a semver higher than 1.x.x then it must return false", () => {
+      const packageJSON: PackageJSON = {
+        ...kMinimalPackageJSON
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      assert.strictEqual(mama.hasZeroSemver, false);
+    });
+
+    test("Given a PackageJSON with a semver starting with 0.x it must return true", () => {
+      const packageJSON: PackageJSON = {
+        name: "foobar",
+        version: "0.5.5"
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      assert.ok(mama.hasZeroSemver);
+    });
+
+    test("Given a WorkspacesPackageJSON with no version it must return false", () => {
+      const packageJSON: WorkspacesPackageJSON = {
+        workspaces: []
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      assert.strictEqual(mama.hasZeroSemver, false);
+    });
+
+    test("Given a WorkspacesPackageJSON with a semver starting with 0.x it must return true", () => {
+      const packageJSON: WorkspacesPackageJSON = {
+        version: "0.1.2",
+        workspaces: []
+      };
+
+      const mama = new ManifestManager(packageJSON);
+      assert.ok(mama.hasZeroSemver);
+    });
+  });
+
   describe("get license", () => {
     test("Given a minimal PackageJSON with no license field then it must return null", () => {
       const mama = new ManifestManager(kMinimalPackageJSON);

@@ -119,6 +119,9 @@ Return true if `workspaces` property is present
 > [!NOTE]
 > Workspace are described by the interface `WorkspacesPackageJSON` (from @nodesecure/npm-types)
 
+### hasZeroSemver
+Return true if `version` is starting with `0.x`
+
 ### flags
 
 Since we've created this package for security purposes, the instance contains various flags indicating threats detected in the content:
