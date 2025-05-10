@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/contact",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utilities to extract/fetch data on NPM contacts (author, maintainers ..)",
   "type": "module",
   "exports": "./dist/index.js",
