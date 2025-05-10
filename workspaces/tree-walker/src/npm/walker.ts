@@ -373,8 +373,8 @@ export class TreeWalker {
       const iterators = [
         ...iter
           .filter(edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
-          .map(([packageName, { to }]) => [packageName, to.isWorkspace ? to.target : to] as const)
-          .map(([packageName, to]) => this.walkLocalDependency(packageName, to, {
+          .map(([packageName, { to }]) => [packageName, to!.isWorkspace ? to!.target : to] as const)
+          .map(([packageName, to]) => this.walkLocalDependency(packageName, to!, {
             maxDepth,
             parent: rootDependency,
             includeDevDeps,

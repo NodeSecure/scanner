@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
-    "test-only": "glob -c \"tsx --test\" \"test/**/*.spec.ts\"",
+    "test-only": "tsx --test ./test/**/*.spec.ts",
     "test": "c8 -r html npm run test-only",
     "build:documentation": "tsx ./scripts/buildDocumentation.ts"
   },
@@ -33,7 +33,6 @@
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/i18n#readme",
   "devDependencies": {
     "@types/lodash.get": "^4.4.9",
-    "c8": "^10.1.2",
     "zup": "^0.0.2"
   },
   "type": "module",

@@ -13,7 +13,7 @@
     "lint": "eslint src test",
     "prepublishOnly": "npm run build && pkg-ok",
     "test": "npm run test-only",
-    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test-only": "tsx --test ./test/**/*.spec.ts",
     "coverage": "c8 -r html npm run test-only"
   },
   "files": [
@@ -64,6 +64,12 @@
     "@openally/mutex": "^1.0.0",
     "pacote": "^21.0.0",
     "semver": "^7.5.4",
-    "type-fest": "^4.30.2"
+    "type-fest": "^4.41.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.17",
+    "c8": "^10.1.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
   }
 }

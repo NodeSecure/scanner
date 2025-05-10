@@ -24,8 +24,5 @@
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/npm-types#readme",
-  "devDependencies": {
-    "tsd": "^0.31.1"
-  },
   "private": false
 }
