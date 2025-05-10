@@ -3,6 +3,9 @@ import * as path from "node:path";
 import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 
+// Import Third-party Dependencies
+import { ManifestManager } from "@nodesecure/mama";
+
 // Import Internal Dependencies
 import * as utils from "./utils/index.js";
 import {
@@ -14,6 +17,7 @@ import {
 
 // CONSTANTS
 const kManifestFileName = "package.json";
+const kInvalidLicense = "invalid license";
 
 export interface ExtractAsyncOptions {
   fsEngine?: typeof fs;
@@ -25,16 +29,15 @@ export async function extractLicenses(
 ): Promise<SpdxExtractedResult> {
   const { fsEngine = fs } = options;
 
-  const packageStr = await fsEngine.readFile(
-    path.join(location, kManifestFileName), "utf-8"
+  const mama = await ManifestManager.fromPackageJSON(
+    location
   );
-  const packageJSON = JSON.parse(packageStr);
 
-  const licenseData = new LicenseResult();
-  licenseData.addLicenseID(
-    utils.parsePackageLicense(packageJSON),
-    kManifestFileName
-  );
+  const licenseData = new LicenseResult()
+    .addLicenseID(
+      mama.license ?? kInvalidLicense,
+      kManifestFileName
+    );
 
   const dirents = await fsEngine.readdir(location, {
     withFileTypes: true
@@ -66,10 +69,11 @@ export function extractLicensesSync(
     path.join(location, kManifestFileName), "utf-8"
   );
   const packageJSON = JSON.parse(packageStr);
+  const mama = new ManifestManager(packageJSON);
 
   const licenseData = new LicenseResult();
   licenseData.addLicenseID(
-    utils.parsePackageLicense(packageJSON),
+    mama.license ?? kInvalidLicense,
     kManifestFileName
   );
 
