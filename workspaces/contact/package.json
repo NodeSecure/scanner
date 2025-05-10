@@ -32,10 +32,10 @@
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/contact#readme",
-  "dependencies": {
-    "@nodesecure/npm-types": "^1.1.0"
-  },
   "devDependencies": {
     "@faker-js/faker": "^9.7.0"
+  },
+  "dependencies": {
+    "@nodesecure/npm-types": "^1.2.0"
   }
 }
