@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
-    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test-only": "tsx --test ./test/**/*.spec.ts",
     "test": "c8 -r html npm run test-only",
     "spdx:refresh": "node ./scripts/fetchSpdxLicenses.js"
   },
@@ -34,14 +34,14 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/conformance#readme",
   "devDependencies": {
-    "@myunisoft/httpie": "^5.0.0",
+    "@myunisoft/httpie": "^5.0.1",
     "@types/spdx-expression-parse": "^3.0.5",
-    "astring": "^1.8.6",
     "node-estree": "^4.0.0"
   },
   "dependencies": {
     "@nodesecure/mama": "^1.0.0",
     "@openally/result": "^1.2.1",
+    "astring": "^1.9.0",
     "fastest-levenshtein": "^1.0.16",
     "spdx-expression-parse": "^4.0.0"
   }

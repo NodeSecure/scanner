@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
-    "test-only": "glob -c \"tsx --test\" \"./test/**/*.spec.ts\"",
+    "test-only": "tsx --test ./test/**/*.spec.ts",
     "test": "c8 -r html npm run test-only"
   },
   "files": [
@@ -32,10 +32,10 @@
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/contact#readme",
-  "devDependencies": {
-    "@faker-js/faker": "^8.4.1"
-  },
   "dependencies": {
     "@nodesecure/npm-types": "^1.1.0"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.7.0"
   }
 }
