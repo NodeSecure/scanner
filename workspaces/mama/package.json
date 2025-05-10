@@ -31,7 +31,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/mama#readme",
   "dependencies": {
-    "@nodesecure/npm-types": "^1.1.0",
+    "@nodesecure/npm-types": "^1.2.0",
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
