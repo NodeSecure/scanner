@@ -13,11 +13,15 @@
   "scripts": {
     "build": "tsc --build",
     "test": "npm run test --ws --if-present",
-    "lint": "npx eslint workspaces"
+    "lint": "npx eslint workspaces",
+    "ci:publish": "changeset publish",
+    "ci:version": "changeset version"
   },
   "author": "NodeSecure",
   "license": "MIT",
   "devDependencies": {
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.4",
     "@openally/config.eslint": "^2.1.0",
     "@openally/config.typescript": "^1.0.3",
     "@slimio/is": "^2.0.0",
