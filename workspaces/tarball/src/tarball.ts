@@ -4,7 +4,6 @@ import os from "node:os";
 
 // Import Third-party Dependencies
 import {
-  AstAnalyser,
   type Warning,
   type Dependency
 } from "@nodesecure/js-x-ray";
@@ -19,6 +18,7 @@ import {
   analyzeDependencies,
   booleanToFlags
 } from "./utils/index.js";
+import { TarballExtractor } from "./class/TarballExtractor.class.js";
 import * as warnings from "./warnings.js";
 import * as sast from "./sast/index.js";
 
@@ -58,7 +58,6 @@ const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
   {};
 
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
 export interface scanDirOrArchiveOptions {
   ref: DependencyRef;
@@ -122,7 +121,7 @@ export async function scanDirOrArchive(
   const scannedFiles = await sast.scanManyFiles(composition.files, dest, name);
 
   ref.warnings.push(...scannedFiles.flatMap((row) => row.warnings));
-  if (/^0(\.\d+)*$/.test(version)) {
+  if (mama.hasZeroSemver) {
     ref.warnings.push(warnings.getSemVerWarning(version));
   }
 
@@ -189,46 +188,24 @@ export interface ScannedPackageResult {
 }
 
 export async function scanPackage(
-  dest: string,
-  packageName?: string
+  dest: string
 ): Promise<ScannedPackageResult> {
-  const [
-    mama,
+  const extractor = await TarballExtractor.fromFileSystem(dest);
+
+  const {
     composition,
     spdx
-  ] = await Promise.all([
-    ManifestManager.fromPackageJSON(dest),
-    getTarballComposition(dest),
-    conformance.extractLicenses(dest)
-  ]);
-  const { type = "script" } = mama.document;
+  } = await extractor.scan();
 
-  // Search for runtime dependencies
-  const dependencies: Record<string, Record<string, Dependency>> = Object.create(null);
-  const minified: string[] = [];
-  const warnings: Warning[] = [];
-
-  const JSFiles = composition.files
-    .filter((name) => kJsExtname.has(path.extname(name)));
-  for (const file of JSFiles) {
-    const result = await new AstAnalyser().analyseFile(
-      path.join(dest, file),
-      {
-        packageName: packageName ?? mama.document.name,
-        module: type === "module"
-      }
-    );
-
-    warnings.push(
-      ...result.warnings.map((curr) => Object.assign({}, curr, { file }))
-    );
-    if (result.ok) {
-      dependencies[file] = Object.fromEntries(result.dependencies);
-      if (result.isMinified) {
-        minified.push(file);
-      }
-    }
-  }
+  const {
+    dependencies,
+    warnings,
+    minified
+  } = await extractor.runJavaScriptSast(
+    composition.files.filter(
+      (name) => TarballExtractor.JS_EXTENSIONS.has(path.extname(name))
+    )
+  );
 
   return {
     files: {
