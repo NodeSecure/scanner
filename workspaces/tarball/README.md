@@ -35,23 +35,21 @@ console.log(scanResult);
 
 ## API
 
-### scanDirOrArchive
+- [SourceCode](./docs/SourceCode.md)
+- [NpmTarball](./docs/NpmTarball.md)
 
-Method created for Scanner (to be refactored soon)
+---
 
-```ts
-export interface ScanDirOrArchiveOptions {
-  ref: DependencyRef;
-  location?: string;
-  tmpLocation?: null | string;
-  locker: Locker;
-  registry: string;
-}
-```
+> [!CAUTION]
+> The following APIs are considered legacy and are waiting for deprecation in future releases.
 
-### scanPackage(dest: string, packageName?: string): Promise< ScannedPackageResult > 
+### scanDirOrArchive(locationOrManifest: string | ManifestManager, ref: DependencyRef): Promise< void >
 
-Scan a given tarball archive or a local project.
+Scan a given local project or tarball (by providing the path or directly the ManifestManager instance).
+
+### scanPackage(manifestOrLocation: string | ManifestManager): Promise< ScannedPackageResult > 
+
+Scan a given local project containing a Manifest (package.json).
 
 ```ts
 interface ScannedPackageResult {
@@ -68,13 +66,17 @@ interface ScannedPackageResult {
   /** Unique license contained in the tarball (MIT, ISC ..) */
   uniqueLicenseIds: string[];
   /** All licenses with their SPDX */
-  licenses: ntlp.SpdxLicenseConformance[];
+  licenses: conformance.SpdxFileLicenseConformance[];
   ast: {
     dependencies: Record<string, Record<string, Dependency>>;
     warnings: Warning[];
   };
 }
 ```
+
+### extractAndResolve(location: string, options: TarballResolutionOptions): Promise< ManifestManager >
+
+Extract a given remote package.
 
 ## License
 MIT
