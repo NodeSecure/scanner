@@ -1,26 +1,22 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import os from "node:os";
 
 // Import Third-party Dependencies
 import {
-  AstAnalyser,
   type Warning,
   type Dependency
 } from "@nodesecure/js-x-ray";
-import pacote from "pacote";
 import * as conformance from "@nodesecure/conformance";
-import { ManifestManager } from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import {
-  getTarballComposition,
   isSensitiveFile,
   analyzeDependencies,
+  filterDependencyKind,
   booleanToFlags
 } from "./utils/index.js";
+import { TarballExtractor } from "./class/TarballExtractor.class.js";
 import * as warnings from "./warnings.js";
-import * as sast from "./sast/index.js";
 
 export interface DependencyRef {
   id: number;
@@ -53,12 +49,7 @@ export interface DependencyRef {
 }
 
 // CONSTANTS
-const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
-  { token: process.env.NODE_SECURE_TOKEN } :
-  {};
-
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
 export interface scanDirOrArchiveOptions {
   ref: DependencyRef;
@@ -73,33 +64,22 @@ export async function scanDirOrArchive(
   options: scanDirOrArchiveOptions
 ) {
   const { ref, location = process.cwd(), tmpLocation = null, registry } = options;
+  const spec = `${name}@${version}`;
 
-  const isNpmTarball = !(tmpLocation === null);
-  const dest = isNpmTarball ? path.join(tmpLocation, `${name}@${version}`) : location;
+  let tarex: TarballExtractor;
+  if (typeof tmpLocation === "string") {
+    const location = path.join(tmpLocation, spec);
 
-  // If this is an NPM tarball then we extract it on the disk with pacote.
-  if (isNpmTarball) {
-    await pacote.extract(
-      ref.flags.includes("isGit") ? ref.gitUrl! : `${name}@${version}`,
-      dest,
-      {
-        ...NPM_TOKEN,
-        registry,
-        cache: `${os.homedir()}/.npm`
-      }
-    );
+    tarex = ref.flags.includes("isGit") ?
+      await TarballExtractor.fromGit(location, ref.gitUrl!, { registry }) :
+      await TarballExtractor.fromNpm(location, spec, { registry });
   }
+  else {
+    tarex = await TarballExtractor.fromFileSystem(location);
+  }
+  const mama = tarex.manifest;
 
-  // Read the package.json at the root of the directory or archive.
-  const [
-    mama,
-    composition,
-    spdx
-  ] = await Promise.all([
-    ManifestManager.fromPackageJSON(dest),
-    getTarballComposition(dest),
-    conformance.extractLicenses(dest)
-  ]);
+  const { composition, spdx } = await tarex.scan();
 
   {
     const { description, engines, repository, scripts } = mama.document;
@@ -119,17 +99,34 @@ export async function scanDirOrArchive(
 
   // Search for minified and runtime dependencies
   // Run a JS-X-Ray analysis on each JavaScript files of the project!
-  const scannedFiles = await sast.scanManyFiles(composition.files, dest, name);
+  const scannedFiles = await tarex.runJavaScriptSast(
+    composition.files.filter(
+      (name) => TarballExtractor.JS_EXTENSIONS.has(path.extname(name))
+    )
+  );
 
-  ref.warnings.push(...scannedFiles.flatMap((row) => row.warnings));
-  if (/^0(\.\d+)*$/.test(version)) {
+  ref.warnings.push(...scannedFiles.warnings);
+  if (mama.hasZeroSemver) {
     ref.warnings.push(warnings.getSemVerWarning(version));
   }
 
-  const dependencies = [...new Set(scannedFiles.flatMap((row) => row.dependencies))];
-  const filesDependencies = [...new Set(scannedFiles.flatMap((row) => row.filesDependencies))];
-  const tryDependencies = new Set(scannedFiles.flatMap((row) => row.tryDependencies));
-  const minifiedFiles = scannedFiles.filter((row) => row.isMinified).flatMap((row) => row.file);
+  const files = new Set<string>();
+  const dependencies = new Set<string>();
+  const dependenciesInTryBlock = new Set<string>();
+
+  for (const [file, fileDeps] of Object.entries(scannedFiles.dependencies)) {
+    const filtered = filterDependencyKind(
+      [...Object.keys(fileDeps)],
+      path.dirname(file)
+    );
+
+    [...Object.entries(fileDeps)]
+      .flatMap(([name, dependency]) => (dependency.inTry ? [name] : []))
+      .forEach((name) => dependenciesInTryBlock.add(name));
+
+    filtered.packages.forEach((name) => dependencies.add(name));
+    filtered.files.forEach((file) => files.add(file));
+  }
 
   const {
     nodeDependencies,
@@ -139,8 +136,8 @@ export async function scanDirOrArchive(
     unusedDependencies,
     flags
   } = analyzeDependencies(
-    dependencies,
-    { mama, tryDependencies }
+    [...dependencies],
+    { mama, tryDependencies: dependenciesInTryBlock }
   );
 
   ref.size = composition.size;
@@ -150,15 +147,15 @@ export async function scanDirOrArchive(
   ref.composition.required_subpath = subpathImportsDependencies;
   ref.composition.unused.push(...unusedDependencies);
   ref.composition.missing.push(...missingDependencies);
-  ref.composition.required_files = filesDependencies;
+  ref.composition.required_files = [...files];
   ref.composition.required_nodejs = nodeDependencies;
-  ref.composition.minified = minifiedFiles;
+  ref.composition.minified = scannedFiles.minified;
 
   ref.flags.push(...booleanToFlags({
     ...flags,
     hasNoLicense: spdx.uniqueLicenseIds.length === 0,
     hasMultipleLicenses: spdx.uniqueLicenseIds.length > 1,
-    hasMinifiedCode: minifiedFiles.length > 0,
+    hasMinifiedCode: scannedFiles.minified.length > 0,
     hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
     hasBannedFile: composition.files.some((path) => isSensitiveFile(path)),
     hasNativeCode: mama.flags.isNative ||
@@ -189,46 +186,24 @@ export interface ScannedPackageResult {
 }
 
 export async function scanPackage(
-  dest: string,
-  packageName?: string
+  dest: string
 ): Promise<ScannedPackageResult> {
-  const [
-    mama,
+  const extractor = await TarballExtractor.fromFileSystem(dest);
+
+  const {
     composition,
     spdx
-  ] = await Promise.all([
-    ManifestManager.fromPackageJSON(dest),
-    getTarballComposition(dest),
-    conformance.extractLicenses(dest)
-  ]);
-  const { type = "script" } = mama.document;
+  } = await extractor.scan();
 
-  // Search for runtime dependencies
-  const dependencies: Record<string, Record<string, Dependency>> = Object.create(null);
-  const minified: string[] = [];
-  const warnings: Warning[] = [];
-
-  const JSFiles = composition.files
-    .filter((name) => kJsExtname.has(path.extname(name)));
-  for (const file of JSFiles) {
-    const result = await new AstAnalyser().analyseFile(
-      path.join(dest, file),
-      {
-        packageName: packageName ?? mama.document.name,
-        module: type === "module"
-      }
-    );
-
-    warnings.push(
-      ...result.warnings.map((curr) => Object.assign({}, curr, { file }))
-    );
-    if (result.ok) {
-      dependencies[file] = Object.fromEntries(result.dependencies);
-      if (result.isMinified) {
-        minified.push(file);
-      }
-    }
-  }
+  const {
+    dependencies,
+    warnings,
+    minified
+  } = await extractor.runJavaScriptSast(
+    composition.files.filter(
+      (name) => TarballExtractor.JS_EXTENSIONS.has(path.extname(name))
+    )
+  );
 
   return {
     files: {
