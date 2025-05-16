@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@nodesecure/js-x-ray": "^8.1.0",
-    "@nodesecure/npm-types": "^1.0.0",
+    "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/vulnera": "^2.0.1",
     "@openally/config": "^1.0.1",
     "@openally/result": "^1.2.1",
