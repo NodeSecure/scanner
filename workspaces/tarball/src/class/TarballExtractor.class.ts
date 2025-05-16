@@ -114,6 +114,22 @@ export class TarballExtractor {
     };
   }
 
+  static async fromGit(
+    location: string,
+    url: string,
+    options: NpmTarballExtractOptions = {}
+  ) {
+    const { registry } = options;
+
+    await pacote.extract(url, location, {
+      ...kNpmToken,
+      registry,
+      cache: `${os.homedir()}/.npm`
+    });
+
+    return this.fromFileSystem(location);
+  }
+
   static async fromNpm(
     location: string,
     spec: string,
