@@ -19,19 +19,64 @@ import {
 const kManifestFileName = "package.json";
 const kInvalidLicense = "invalid license";
 
+export type ManifestManagerLike = string | ManifestManager;
+
+function getManifestManagerAndDirAsync(
+  input: ManifestManagerLike,
+  fsEngine: typeof fs
+): Promise<{ mama: ManifestManager; dir: string }> {
+  if (typeof input === "string") {
+    return ManifestManager.fromPackageJSON(input).then(mama => ({
+      mama,
+      dir: input
+    }));
+  } else if (input instanceof ManifestManager) {
+    const manifestPath = input.manifestLocation;
+    if (!manifestPath) {
+      throw new Error("ManifestManager instance must have a manifestLocation property set.");
+    }
+    const dir = path.dirname(manifestPath);
+    return Promise.resolve({ mama: input, dir });
+  } else {
+    throw new TypeError("Input must be a string or a ManifestManager instance");
+  }
+}
+
+function getManifestManagerAndDirSync(
+  input: ManifestManagerLike,
+  fsEngine: typeof fsSync
+): { mama: ManifestManager; dir: string } {
+  if (typeof input === "string") {
+    const packageStr = fsEngine.readFileSync(
+      path.join(input, kManifestFileName), "utf-8"
+    );
+    const packageJSON = JSON.parse(packageStr);
+    return {
+      mama: new ManifestManager(packageJSON, path.join(input, kManifestFileName)),
+      dir: input
+    };
+  } else if (input instanceof ManifestManager) {
+    const manifestPath = input.manifestLocation;
+    if (!manifestPath) {
+      throw new Error("ManifestManager instance must have a manifestLocation property set.");
+    }
+    const dir = path.dirname(manifestPath);
+    return { mama: input, dir };
+  } else {
+    throw new TypeError("Input must be a string or a ManifestManager instance");
+  }
+}
+
 export interface ExtractAsyncOptions {
   fsEngine?: typeof fs;
 }
 
 export async function extractLicenses(
-  location: string,
+  input: ManifestManagerLike,
   options: ExtractAsyncOptions = {}
 ): Promise<SpdxExtractedResult> {
   const { fsEngine = fs } = options;
-
-  const mama = await ManifestManager.fromPackageJSON(
-    location
-  );
+  const { mama, dir } = await getManifestManagerAndDirAsync(input, fsEngine);
 
   const licenseData = new LicenseResult()
     .addLicenseID(
@@ -39,13 +84,13 @@ export async function extractLicenses(
       kManifestFileName
     );
 
-  const dirents = await fsEngine.readdir(location, {
+  const dirents = await fsEngine.readdir(dir, {
     withFileTypes: true
   });
   await Promise.allSettled(
     utils.extractDirentLicenses(dirents).map(async(file) => {
       const contentStr = await fsEngine.readFile(
-        path.join(location, file),
+        path.join(dir, file),
         "utf-8"
       );
       licenseData.addLicenseIDFromSource(contentStr, file);
@@ -60,16 +105,11 @@ export interface ExtractSyncOptions {
 }
 
 export function extractLicensesSync(
-  location: string,
+  input: ManifestManagerLike,
   options: ExtractSyncOptions = {}
 ): SpdxExtractedResult {
   const { fsEngine = fsSync } = options;
-
-  const packageStr = fsEngine.readFileSync(
-    path.join(location, kManifestFileName), "utf-8"
-  );
-  const packageJSON = JSON.parse(packageStr);
-  const mama = new ManifestManager(packageJSON);
+  const { mama, dir } = getManifestManagerAndDirSync(input, fsEngine);
 
   const licenseData = new LicenseResult();
   licenseData.addLicenseID(
@@ -77,12 +117,12 @@ export function extractLicensesSync(
     kManifestFileName
   );
 
-  const dirents = fsEngine.readdirSync(location, {
+  const dirents = fsEngine.readdirSync(dir, {
     withFileTypes: true
   });
   for (const file of utils.extractDirentLicenses(dirents)) {
     const contentStr = fsEngine.readFileSync(
-      path.join(location, file),
+      path.join(dir, file),
       "utf-8"
     );
     licenseData.addLicenseIDFromSource(contentStr, file);
