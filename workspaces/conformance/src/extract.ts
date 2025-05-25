@@ -22,49 +22,54 @@ const kInvalidLicense = "invalid license";
 export type ManifestManagerLike = string | ManifestManager;
 
 function getManifestManagerAndDirAsync(
-  input: ManifestManagerLike,
-  fsEngine: typeof fs
-): Promise<{ mama: ManifestManager; dir: string }> {
+  input: ManifestManagerLike
+): Promise<{ mama: ManifestManager; dir: string; }> {
   if (typeof input === "string") {
-    return ManifestManager.fromPackageJSON(input).then(mama => ({
-      mama,
-      dir: input
-    }));
-  } else if (input instanceof ManifestManager) {
+    return ManifestManager.fromPackageJSON(input).then((mama) => {
+      return {
+        mama,
+        dir: input
+      };
+    });
+  }
+  else if (input instanceof ManifestManager) {
     const manifestPath = input.manifestLocation;
     if (!manifestPath) {
       throw new Error("ManifestManager instance must have a manifestLocation property set.");
     }
     const dir = path.dirname(manifestPath);
+
     return Promise.resolve({ mama: input, dir });
-  } else {
-    throw new TypeError("Input must be a string or a ManifestManager instance");
   }
+  throw new TypeError("Input must be a string or a ManifestManager instance");
 }
 
 function getManifestManagerAndDirSync(
   input: ManifestManagerLike,
   fsEngine: typeof fsSync
-): { mama: ManifestManager; dir: string } {
+): { mama: ManifestManager; dir: string; } {
   if (typeof input === "string") {
     const packageStr = fsEngine.readFileSync(
       path.join(input, kManifestFileName), "utf-8"
     );
+
     const packageJSON = JSON.parse(packageStr);
+
     return {
       mama: new ManifestManager(packageJSON, path.join(input, kManifestFileName)),
       dir: input
     };
-  } else if (input instanceof ManifestManager) {
+  }
+  else if (input instanceof ManifestManager) {
     const manifestPath = input.manifestLocation;
     if (!manifestPath) {
       throw new Error("ManifestManager instance must have a manifestLocation property set.");
     }
     const dir = path.dirname(manifestPath);
+
     return { mama: input, dir };
-  } else {
-    throw new TypeError("Input must be a string or a ManifestManager instance");
   }
+  throw new TypeError("Input must be a string or a ManifestManager instance");
 }
 
 export interface ExtractAsyncOptions {
@@ -76,7 +81,7 @@ export async function extractLicenses(
   options: ExtractAsyncOptions = {}
 ): Promise<SpdxExtractedResult> {
   const { fsEngine = fs } = options;
-  const { mama, dir } = await getManifestManagerAndDirAsync(input, fsEngine);
+  const { mama, dir } = await getManifestManagerAndDirAsync(input);
 
   const licenseData = new LicenseResult()
     .addLicenseID(
