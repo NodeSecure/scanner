@@ -65,6 +65,7 @@ export class ManifestManager<
     ManifestManagerDocument,
     NonOptionalPackageJSONProperties
   >;
+  public manifestLocation?: string;
 
   public flags = Object.seal({
     hasUnsafeScripts: false,
@@ -72,12 +73,14 @@ export class ManifestManager<
   });
 
   constructor(
-    document: ManifestManagerDocument
+    document: ManifestManagerDocument,
+    manifestLocation?: string
   ) {
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
     );
+    this.manifestLocation = manifestLocation;
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -211,7 +214,8 @@ export class ManifestManager<
       ) as PackageJSON | WorkspacesPackageJSON;
 
       return new ManifestManager(
-        packageJSON
+        packageJSON,
+        packageLocation
       );
     }
     catch (cause) {
