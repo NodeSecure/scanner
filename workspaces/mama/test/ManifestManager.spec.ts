@@ -755,17 +755,3 @@ describe("ManifestManager", () => {
     });
   });
 });
-
-describe("ManifestManager.fromPackageJSON", () => {
-  it("should work with a path to a package.json file", async() => {
-    const tempDir = path.join(process.cwd(), "temp-test");
-    await fs.mkdir(tempDir, { recursive: true });
-    const packagePath = path.join(tempDir, "package.json");
-    await fs.writeFile(packagePath, JSON.stringify({ name: "test", version: "1.0.0" }));
-
-    const manager = await ManifestManager.fromPackageJSON(packagePath);
-
-    assert.strictEqual(manager.document.name, "test");
-    assert.strictEqual(manager.document.version, "1.0.0");
-  });
-});

@@ -52,7 +52,6 @@ export type ManifestManagerDocument =
 
 export interface ManifestManagerOptions {
   location?: string;
-  // D'autres options pourront être ajoutées ici plus tard
 }
 
 export class ManifestManager<
@@ -85,7 +84,12 @@ export class ManifestManager<
       { ...ManifestManager.Default },
       structuredClone(document)
     );
-    this.location = options.location;
+    if (typeof options.location === "string" && options.location.endsWith("package.json")) {
+      this.location = path.dirname(options.location);
+    }
+    else {
+      this.location = options.location;
+    }
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -209,7 +213,7 @@ export class ManifestManager<
     }
 
     const packageLocation = location.endsWith("package.json") ?
-      path.join(path.dirname(location), "package.json") :
+      location :
       path.join(location, "package.json");
     const packageStr = await fs.readFile(packageLocation, "utf-8");
 
@@ -220,7 +224,7 @@ export class ManifestManager<
 
       return new ManifestManager(
         packageJSON,
-        { location }
+        { location: packageLocation }
       );
     }
     catch (cause) {
