@@ -21,7 +21,7 @@ const kInvalidLicense = "invalid license";
 
 export type ManifestManagerLike = string | ManifestManager;
 
-function getManifestManagerAndDirAsync(
+async function getManifestManagerAndDirAsync(
   input: ManifestManagerLike
 ): Promise<{ mama: ManifestManager; dir: string; }> {
   if (typeof input === "string") {
