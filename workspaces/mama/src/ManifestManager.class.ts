@@ -65,7 +65,7 @@ export class ManifestManager<
     ManifestManagerDocument,
     NonOptionalPackageJSONProperties
   >;
-  public manifestLocation?: string;
+  public location?: string;
 
   public flags = Object.seal({
     hasUnsafeScripts: false,
@@ -74,13 +74,13 @@ export class ManifestManager<
 
   constructor(
     document: ManifestManagerDocument,
-    manifestLocation?: string
+    location?: string
   ) {
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
     );
-    this.manifestLocation = manifestLocation;
+    this.location = location;
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -204,7 +204,7 @@ export class ManifestManager<
     }
 
     const packageLocation = location.endsWith("package.json") ?
-      location :
+      path.join(path.dirname(location), "package.json") :
       path.join(location, "package.json");
     const packageStr = await fs.readFile(packageLocation, "utf-8");
 

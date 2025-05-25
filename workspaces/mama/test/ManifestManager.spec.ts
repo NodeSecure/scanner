@@ -80,7 +80,7 @@ describe("ManifestManager", () => {
         `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
       );
       assert.strictEqual(
-        mama.manifestLocation,
+        mama.location,
         location
       );
     });
@@ -141,10 +141,10 @@ describe("ManifestManager", () => {
       );
     });
 
-    it("Should store manifestLocation if provided", () => {
+    it("Should store location if provided", () => {
       const location = "/tmp/fake/path/package.json";
       const mama = new ManifestManager(kMinimalPackageJSON, location);
-      assert.strictEqual(mama.manifestLocation, location);
+      assert.strictEqual(mama.location, location);
     });
   });
 
@@ -748,5 +748,19 @@ describe("ManifestManager", () => {
         ]
       );
     });
+  });
+});
+
+describe("ManifestManager.fromPackageJSON", () => {
+  it("should work with a path to a package.json file", async() => {
+    const tempDir = path.join(process.cwd(), "temp-test");
+    await fs.mkdir(tempDir, { recursive: true });
+    const packagePath = path.join(tempDir, "package.json");
+    await fs.writeFile(packagePath, JSON.stringify({ name: "test", version: "1.0.0" }));
+
+    const manager = await ManifestManager.fromPackageJSON(packagePath);
+
+    assert.strictEqual(manager.document.name, "test");
+    assert.strictEqual(manager.document.version, "1.0.0");
   });
 });
