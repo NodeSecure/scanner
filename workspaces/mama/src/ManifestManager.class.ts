@@ -50,6 +50,11 @@ export type ManifestManagerDocument =
   WorkspacesPackageJSON |
   PackumentVersion;
 
+export interface ManifestManagerOptions {
+  location?: string;
+  // D'autres options pourront être ajoutées ici plus tard
+}
+
 export class ManifestManager<
   MetadataDef extends Record<string, any> = Record<string, any>
 > {
@@ -74,13 +79,13 @@ export class ManifestManager<
 
   constructor(
     document: ManifestManagerDocument,
-    location?: string
+    options: ManifestManagerOptions = {}
   ) {
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
     );
-    this.location = location;
+    this.location = options.location;
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -215,7 +220,7 @@ export class ManifestManager<
 
       return new ManifestManager(
         packageJSON,
-        packageLocation
+        { location }
       );
     }
     catch (cause) {
