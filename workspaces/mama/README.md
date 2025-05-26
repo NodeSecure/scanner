@@ -65,6 +65,14 @@ Default values are injected if they are not present in the document. This behavi
 ### getEntryFiles(): IterableIterator< string >
 Deeply extract entry files from package `main` and Node.js `exports` fields.
 
+### moduleType
+
+Return the type of the module
+
+```ts
+type PackageModuleType = "dts" | "faux" | "dual" | "esm" | "cjs";
+```
+
 ### spec
 Return the NPM specification (which is the combinaison of `name@version`).
 

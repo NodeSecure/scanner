@@ -1,4 +1,6 @@
 export * from "./ManifestManager.class.js";
 export {
-  packageJSONIntegrityHash
+  packageJSONIntegrityHash,
+  inspectModuleType,
+  type PackageModuleType
 } from "./utils/index.js";

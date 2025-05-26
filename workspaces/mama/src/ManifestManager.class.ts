@@ -12,7 +12,10 @@ import type {
 } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { packageJSONIntegrityHash } from "./utils/index.js";
+import {
+  packageJSONIntegrityHash,
+  inspectModuleType
+} from "./utils/index.js";
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 
@@ -86,6 +89,10 @@ export class ManifestManager<
     this.flags.hasUnsafeScripts = Object
       .keys(this.document.scripts)
       .some((script) => kUnsafeNPMScripts.has(script.toLowerCase()));
+  }
+
+  get moduleType() {
+    return inspectModuleType(this.document);
   }
 
   get hasZeroSemver() {

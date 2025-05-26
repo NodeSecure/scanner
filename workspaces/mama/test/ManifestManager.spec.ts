@@ -138,6 +138,15 @@ describe("ManifestManager", () => {
     });
   });
 
+  describe("get moduleType", () => {
+    test("return cjs for a minimal PackageJSON", () => {
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON
+      });
+      assert.deepEqual(mama.moduleType, "cjs");
+    });
+  });
+
   describe("get dependencies", () => {
     test("Given a PackageJSON with no dependencies, it must return an empty Array", () => {
       const packageJSON: PackageJSON = {
