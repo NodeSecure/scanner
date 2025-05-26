@@ -115,7 +115,7 @@ interface BasePackageJSON {
    * Node.js package.json field definitions
    */
   main?: string;
-  type?: "script" | "module";
+  type?: "commonjs" | "module";
   packageManager?: string;
   imports?: Record<`#${string}`, string | NodeImport>;
   exports?: string | NodeExport<NodeExport>;
