@@ -1,12 +1,15 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import { readFileSync, promises as fs } from "node:fs";
+import { readFileSync } from "node:fs";
 import timers from "node:timers/promises";
-import os from "node:os";
 
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
-import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
+import {
+  TarballResolver,
+  type TarballResolutionOptions,
+  scanDirOrArchive
+} from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
@@ -90,11 +93,10 @@ export async function depWalker(
     registry
   } = options;
 
-  // Create TMP directory
-  const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
+  const tarballResolver = await new TarballResolver().initialize();
 
   const payload: Partial<Payload> = {
-    id: tmpLocation.slice(-6),
+    id: tarballResolver.id,
     rootDependencyName: manifest.name,
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
@@ -179,10 +181,12 @@ export async function depWalker(
       const scanDirOptions = {
         ref: dependency.versions[version] as any,
         location,
-        tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
+        isRemote: !(scanRootNode && name === manifest.name),
         registry
       };
-      operationsQueue.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
+      operationsQueue.push(
+        scanDirOrArchiveEx(name, version, locker, tarballResolver, scanDirOptions)
+      );
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
@@ -279,7 +283,7 @@ export async function depWalker(
   }
   finally {
     await timers.setImmediate();
-    await fs.rm(tmpLocation, { recursive: true, force: true });
+    await tarballResolver.clear();
 
     logger.emit(ScannerLoggerEvents.done);
   }
@@ -290,12 +294,27 @@ async function scanDirOrArchiveEx(
   name: string,
   version: string,
   locker: Mutex,
-  options: scanDirOrArchiveOptions
+  tarballResolver: TarballResolver,
+  options: TarballResolutionOptions & {
+    location: string | undefined;
+    ref: any;
+  }
 ) {
   const free = await locker.acquire();
 
   try {
-    await scanDirOrArchive(name, version, options);
+    const { registry, location, isRemote, ref } = options;
+
+    const mama = await tarballResolver.resolve(
+      `${name}@${version}`,
+      location,
+      {
+        registry,
+        isRemote
+      }
+    );
+
+    await scanDirOrArchive(mama, ref);
   }
   catch {
     // ignore

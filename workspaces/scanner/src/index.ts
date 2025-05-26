@@ -97,7 +97,7 @@ export async function verify(
       ...NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
     });
 
-    const scanResult = await tarball.scanPackage(dest, packageName);
+    const scanResult = await tarball.scanPackage(dest);
 
     return scanResult;
   }
