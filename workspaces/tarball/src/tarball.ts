@@ -7,6 +7,7 @@ import {
   type Dependency
 } from "@nodesecure/js-x-ray";
 import * as conformance from "@nodesecure/conformance";
+import { ManifestManager } from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import {
@@ -51,33 +52,15 @@ export interface DependencyRef {
 // CONSTANTS
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 
-export interface scanDirOrArchiveOptions {
-  ref: DependencyRef;
-  location?: string;
-  tmpLocation?: null | string;
-  registry: string;
-}
-
 export async function scanDirOrArchive(
-  name: string,
-  version: string,
-  options: scanDirOrArchiveOptions
+  locationOrManifest: string | ManifestManager,
+  ref: DependencyRef
 ) {
-  const { ref, location = process.cwd(), tmpLocation = null, registry } = options;
-  const spec = `${name}@${version}`;
-
-  let tarex: TarballExtractor;
-  if (typeof tmpLocation === "string") {
-    const location = path.join(tmpLocation, spec);
-
-    tarex = ref.flags.includes("isGit") ?
-      await TarballExtractor.fromGit(location, ref.gitUrl!, { registry }) :
-      await TarballExtractor.fromNpm(location, spec, { registry });
-  }
-  else {
-    tarex = await TarballExtractor.fromFileSystem(location);
-  }
-  const mama = tarex.manifest;
+  const mama = await (typeof locationOrManifest === "string" ?
+    ManifestManager.fromPackageJSON(locationOrManifest) :
+    Promise.resolve(locationOrManifest));
+  // TODO: use mama for location?
+  const tarex = new TarballExtractor("", mama);
 
   const { composition, spdx } = await tarex.scan();
 
@@ -107,7 +90,7 @@ export async function scanDirOrArchive(
 
   ref.warnings.push(...scannedFiles.warnings);
   if (mama.hasZeroSemver) {
-    ref.warnings.push(warnings.getSemVerWarning(version));
+    ref.warnings.push(warnings.getSemVerWarning(mama.document.version!));
   }
 
   const files = new Set<string>();
@@ -188,7 +171,8 @@ export interface ScannedPackageResult {
 export async function scanPackage(
   dest: string
 ): Promise<ScannedPackageResult> {
-  const extractor = await TarballExtractor.fromFileSystem(dest);
+  const mama = await ManifestManager.fromPackageJSON(dest);
+  const extractor = new TarballExtractor(dest, mama);
 
   const {
     composition,

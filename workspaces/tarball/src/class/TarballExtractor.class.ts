@@ -1,9 +1,7 @@
 // Import Node.js Dependencies
-import os from "node:os";
 import path from "node:path";
 
 // Import Third-party Dependencies
-import pacote from "pacote";
 import * as conformance from "@nodesecure/conformance";
 import { ManifestManager } from "@nodesecure/mama";
 import {
@@ -17,11 +15,6 @@ import {
 import {
   getTarballComposition
 } from "../utils/index.js";
-
-// CONSTANTS
-const kNpmToken = typeof process.env.NODE_SECURE_TOKEN === "string" ?
-  { token: process.env.NODE_SECURE_TOKEN } :
-  {};
 
 export interface NpmTarballExtractOptions {
   registry?: string;
@@ -120,45 +113,5 @@ export class TarballExtractor {
       warnings,
       minified
     };
-  }
-
-  static async fromGit(
-    location: string,
-    url: string,
-    options: NpmTarballExtractOptions = {}
-  ) {
-    const { registry } = options;
-
-    await pacote.extract(url, location, {
-      ...kNpmToken,
-      registry,
-      cache: `${os.homedir()}/.npm`
-    });
-
-    return this.fromFileSystem(location);
-  }
-
-  static async fromNpm(
-    location: string,
-    spec: string,
-    options: NpmTarballExtractOptions = {}
-  ) {
-    const { registry } = options;
-
-    await pacote.extract(spec, location, {
-      ...kNpmToken,
-      registry,
-      cache: `${os.homedir()}/.npm`
-    });
-
-    return this.fromFileSystem(location);
-  }
-
-  static async fromFileSystem(
-    location: string
-  ): Promise<TarballExtractor> {
-    const mama = await ManifestManager.fromPackageJSON(location);
-
-    return new TarballExtractor(location, mama);
   }
 }
