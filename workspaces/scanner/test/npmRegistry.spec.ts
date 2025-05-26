@@ -131,4 +131,6 @@ test("registry.packageMetadata should detect a deprecated package", async() => {
     "isOutdated",
     "isDeprecated"
   ]);
+
+  assert.strictEqual(dependency.versions["2.5.9"].deprecated, "express 2.x series is deprecated");
 });

@@ -111,6 +111,7 @@ export interface DependencyVersion {
    */
   integrity?: string;
   links?: DependencyLinks;
+  deprecated?: string;
 }
 
 export interface Dependency {
