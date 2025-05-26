@@ -76,7 +76,8 @@ export async function packageMetadata(
     };
 
     const isOutdated = semver.neq(version, lastVersion);
-    const flags = dependency.versions[version]!.flags;
+    const dependencyVersion = dependency.versions[version];
+    const flags = dependencyVersion!.flags;
     if (isOutdated) {
       flags.push("isOutdated");
     }
@@ -87,6 +88,7 @@ export async function packageMetadata(
       if (spec === `${ver.name}:${ver.version}`) {
         if ("deprecated" in ver && !flags.includes("isDeprecated")) {
           flags.push("isDeprecated");
+          dependencyVersion.deprecated = ver.deprecated;
         }
 
         metadata.integrity[ver.version] = packageJSONIntegrityHash(
