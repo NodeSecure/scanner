@@ -1,6 +1,3 @@
-// Import Node.js Dependencies
-import path from "node:path";
-
 // Import Third-party Dependencies
 import { ManifestManager } from "@nodesecure/mama";
 import type { NodeImport } from "@nodesecure/npm-types";
@@ -56,6 +53,7 @@ export const NODE_BUILTINS = new Set([
   "diagnostics_channel"
 ]);
 
+const kFileExtensions = [".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".node", ".json"];
 const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
 
 export interface analyzeDependenciesOptions {
@@ -114,6 +112,10 @@ export function analyzeDependencies(
     .filter((name: string) => !(name in nodejsImports) && !thirdPartyDependenciesAliased.has(name));
   const nodeDependencies = sourceDependencies.filter((name) => isCoreModule(name));
 
+  const hasMissingOrUnusedDependency =
+    unusedDependencies.length > 0 ||
+    missingDependencies.length > 0;
+
   return {
     nodeDependencies,
     thirdPartyDependencies: [...new Set(thirdPartyDependencies)],
@@ -123,7 +125,7 @@ export function analyzeDependencies(
 
     flags: {
       hasExternalCapacity: nodeDependencies.some((depName) => kExternalModules.has(depName)),
-      hasMissingOrUnusedDependency: unusedDependencies.length > 0 || missingDependencies.length > 0
+      hasMissingOrUnusedDependency
     }
   };
 }
@@ -133,9 +135,10 @@ function difference<T>(arr1: T[], arr2: T[]): T[] {
 }
 
 function isFile(
-  name: string
+  filePath: string
 ) {
-  return name.startsWith(".") || path.extname(name) !== "";
+  return filePath.startsWith(".")
+    || kFileExtensions.some((extension) => filePath.endsWith(extension));
 }
 
 function isCoreModule(

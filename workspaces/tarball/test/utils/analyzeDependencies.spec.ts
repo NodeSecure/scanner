@@ -26,6 +26,27 @@ test("analyzeDependencies should detect Node.js dependencies and also flag hasEx
   });
 });
 
+test("analyzeDependencies should detect no unused or missing dependencies and avoid confusion for package name with dots", () => {
+  const mama = {
+    dependencies: ["lodash.isequal"],
+    devDependencies: []
+  };
+
+  const result = analyzeDependencies(["lodash.isequal"], {
+    mama,
+    tryDependencies: new Set()
+  });
+
+  assert.deepEqual(result, {
+    nodeDependencies: [],
+    thirdPartyDependencies: ["lodash.isequal"],
+    subpathImportsDependencies: {},
+    unusedDependencies: [],
+    missingDependencies: [],
+    flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false }
+  });
+});
+
 test("analyzeDependencies should detect prefixed (namespaced 'node:') core dependencies", () => {
   const mama = {
     dependencies: ["node:foo"],
