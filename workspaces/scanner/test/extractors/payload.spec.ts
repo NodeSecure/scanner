@@ -18,6 +18,10 @@ const expressNodesecurePayload = JSON.parse(fs.readFileSync(
   new URL(path.join("..", kFixturePath, "express.json"), import.meta.url),
   "utf8"
 )) as Payload;
+const strnumNodesecurePayload = JSON.parse(fs.readFileSync(
+  new URL(path.join("..", kFixturePath, "strnum.json"), import.meta.url),
+  "utf8"
+)) as Payload;
 
 describe("Extractors.Probes", () => {
   describe("ContactExtractor", () => {
@@ -122,6 +126,49 @@ describe("Extractors.Probes", () => {
       const mergedResult = extractor.extractAndMerge();
       assert.deepEqual(mergedResult, { size: expectedSize });
       assert.deepEqual(mergedResult, extractResult[0]);
+    });
+  });
+
+  describe("WarningsExtractor", () => {
+    it("should extract strnum warnings", () => {
+      const extractor = new Extractors.Payload(
+        strnumNodesecurePayload,
+        [
+          new Extractors.Probes.WarningsExtractor()
+        ]
+      );
+
+      const {
+        count,
+        warnings
+      } = extractor.extractAndMerge();
+
+      assert.strictEqual(count, 3);
+      const keys = Object.keys(warnings);
+      assert.deepEqual(keys, ["strnum@1.1.2"]);
+
+      const kinds = warnings["strnum@1.1.2"].map((warning) => warning.kind);
+      assert.deepEqual(kinds, ["unsafe-regex", "unsafe-regex", "encoded-literal"]);
+    });
+
+    it("should extract strnum warnings with options useSpecAsKey: false", () => {
+      const extractor = new Extractors.Payload(
+        strnumNodesecurePayload,
+        [
+          new Extractors.Probes.WarningsExtractor({
+            useSpecAsKey: false
+          })
+        ]
+      );
+
+      const {
+        count,
+        warnings
+      } = extractor.extractAndMerge();
+
+      assert.strictEqual(count, 3);
+      const keys = Object.keys(warnings);
+      assert.deepEqual(keys, ["strnum"]);
     });
   });
 

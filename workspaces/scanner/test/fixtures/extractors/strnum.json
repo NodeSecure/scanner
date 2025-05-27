@@ -1,0 +1,204 @@
+{
+  "id": "54mMPc",
+  "rootDependencyName": "strnum",
+  "scannerVersion": "6.4.0",
+  "vulnerabilityStrategy": "none",
+  "warnings": [],
+  "highlighted": {
+    "contacts": []
+  },
+  "dependencies": {
+    "strnum": {
+      "versions": {
+        "1.1.2": {
+          "id": 0,
+          "usedBy": {},
+          "isDevDependency": false,
+          "existOnRemoteRegistry": true,
+          "flags": [
+            "hasWarnings",
+            "isOutdated",
+            "hasManyPublishers"
+          ],
+          "warnings": [
+            {
+              "kind": "unsafe-regex",
+              "location": [
+                [
+                  2,
+                  17
+                ],
+                [
+                  2,
+                  53
+                ]
+              ],
+              "source": "JS-X-Ray",
+              "value": "^([\\-\\+])?(0*)([0-9]*(\\.[0-9]*)?)$",
+              "i18n": "sast_warnings.unsafe_regex",
+              "severity": "Warning",
+              "file": "strnum.js"
+            },
+            {
+              "kind": "unsafe-regex",
+              "location": [
+                [
+                  29,
+                  42
+                ],
+                [
+                  29,
+                  93
+                ]
+              ],
+              "source": "JS-X-Ray",
+              "value": "^([-\\+])?(0*)([0-9]*(\\.[0-9]*)?[eE][-\\+]?[0-9]+)$",
+              "i18n": "sast_warnings.unsafe_regex",
+              "severity": "Warning",
+              "file": "strnum.js"
+            },
+            {
+              "kind": "encoded-literal",
+              "value": "e89794659669cb7bb967db73a7ea6889c3891727",
+              "location": [
+                [
+                  [
+                    9,
+                    24
+                  ],
+                  [
+                    9,
+                    66
+                  ]
+                ],
+                [
+                  [
+                    9,
+                    77
+                  ],
+                  [
+                    9,
+                    119
+                  ]
+                ]
+              ],
+              "source": "JS-X-Ray",
+              "i18n": "sast_warnings.encoded_literal",
+              "severity": "Information",
+              "file": "strnum.test.js"
+            }
+          ],
+          "dependencyCount": 0,
+          "gitUrl": null,
+          "alias": {},
+          "description": "Parse String to Number based on configuration",
+          "size": 18505,
+          "author": {
+            "name": "Amit Gupta",
+            "url": "https://amitkumargupta.work/"
+          },
+          "scripts": {
+            "test": "jasmine strnum.test.js"
+          },
+          "licenses": [
+            {
+              "licenses": {
+                "MIT": "https://spdx.org/licenses/MIT.html#licenseText"
+              },
+              "spdx": {
+                "osi": true,
+                "fsf": true,
+                "fsfAndOsi": true,
+                "includesDeprecated": false
+              },
+              "fileName": "package.json"
+            },
+            {
+              "licenses": {
+                "MIT": "https://spdx.org/licenses/MIT.html#licenseText"
+              },
+              "spdx": {
+                "osi": true,
+                "fsf": true,
+                "fsfAndOsi": true,
+                "includesDeprecated": false
+              },
+              "fileName": "LICENSE"
+            }
+          ],
+          "uniqueLicenseIds": [
+            "MIT"
+          ],
+          "composition": {
+            "extensions": [
+              ".md",
+              "",
+              ".json",
+              ".js"
+            ],
+            "files": [
+              "CHANGELOG.md",
+              "LICENSE",
+              "README.md",
+              "package.json",
+              "strnum.js",
+              "strnum.test.js"
+            ],
+            "minified": [],
+            "unused": [],
+            "missing": [],
+            "required_files": [
+              "strnum.js"
+            ],
+            "required_nodejs": [],
+            "required_thirdparty": [],
+            "required_subpath": {}
+          },
+          "repository": {
+            "type": "git",
+            "url": "https://github.com/NaturalIntelligence/strnum"
+          },
+          "integrity": "c6cfe9d4c17b06667b050142e0bf8b21f21b6104",
+          "links": {
+            "npm": "https://www.npmjs.com/package/strnum/v/1.1.2",
+            "homepage": "https://github.com/NaturalIntelligence/strnum#readme",
+            "repository": "https://github.com/NaturalIntelligence/strnum"
+          }
+        }
+      },
+      "vulnerabilities": [],
+      "metadata": {
+        "author": {
+          "name": "Amit Gupta",
+          "url": "https://amitkumargupta.work/"
+        },
+        "homepage": "https://github.com/NaturalIntelligence/strnum#readme",
+        "publishedCount": 16,
+        "lastVersion": "2.1.1",
+        "lastUpdateAt": "2025-05-15T06:53:57.067Z",
+        "hasReceivedUpdateInOneYear": true,
+        "hasManyPublishers": true,
+        "hasChangedAuthor": false,
+        "maintainers": [
+          {
+            "name": "amitgupta",
+            "email": "amitgupta.gwl@gmail.com",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM"
+          }
+        ],
+        "publishers": [
+          {
+            "name": "amitgupta",
+            "email": "amitgupta.gwl@gmail.com",
+            "version": "2.1.1",
+            "at": "2025-05-15T06:53:57.067Z",
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM"
+          }
+        ],
+        "integrity": {
+          "1.1.2": "c6cfe9d4c17b06667b050142e0bf8b21f21b6104"
+        }
+      }
+    }
+  }
+}
