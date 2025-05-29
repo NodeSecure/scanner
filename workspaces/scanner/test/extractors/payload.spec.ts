@@ -139,16 +139,24 @@ describe("Extractors.Probes", () => {
       );
 
       const {
-        count,
         warnings
       } = extractor.extractAndMerge();
 
-      assert.strictEqual(count, 3);
-      const keys = Object.keys(warnings);
+      assert.strictEqual(warnings.count, 3);
+      const keys = Object.keys(warnings.groups);
       assert.deepEqual(keys, ["strnum@1.1.2"]);
 
-      const kinds = warnings["strnum@1.1.2"].map((warning) => warning.kind);
-      assert.deepEqual(kinds, ["unsafe-regex", "unsafe-regex", "encoded-literal"]);
+      assert.deepEqual(
+        warnings.groups["strnum@1.1.2"].map((warning) => warning.kind),
+        ["unsafe-regex", "unsafe-regex", "encoded-literal"]
+      );
+      assert.deepEqual(
+        warnings.uniqueKinds,
+        {
+          "unsafe-regex": 2,
+          "encoded-literal": 1
+        }
+      );
     });
 
     it("should extract strnum warnings with options useSpecAsKey: false", () => {
@@ -162,12 +170,11 @@ describe("Extractors.Probes", () => {
       );
 
       const {
-        count,
         warnings
       } = extractor.extractAndMerge();
 
-      assert.strictEqual(count, 3);
-      const keys = Object.keys(warnings);
+      assert.strictEqual(warnings.count, 3);
+      const keys = Object.keys(warnings.groups);
       assert.deepEqual(keys, ["strnum"]);
     });
   });
