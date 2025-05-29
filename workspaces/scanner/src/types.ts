@@ -1,6 +1,7 @@
 // Import Third-party Dependencies
 import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
+import type { PackageModuleType } from "@nodesecure/mama";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { IlluminatedContact } from "@nodesecure/contact";
@@ -48,6 +49,7 @@ export interface Repository {
 export interface DependencyVersion {
   /** Id of the package (useful for usedBy relation) */
   id: number;
+  type: PackageModuleType;
   isDevDependency: boolean;
   /**
    * Tell if the given package exist on the configured remote registry (npm by default)

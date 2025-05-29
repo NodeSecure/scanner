@@ -1,10 +1,12 @@
 // Import Third-party Dependencies
 import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
+import type { PackageModuleType } from "@nodesecure/mama";
 
 export type NpmSpec = `${string}@${string}`;
 
 export interface DependencyJSON {
   id: number;
+  type: PackageModuleType;
   name: string;
   version: string;
   usedBy: Record<string, string>;
@@ -99,6 +101,7 @@ export class Dependency {
 
     return {
       id: typeof customId === "number" ? customId : Dependency.currentId++,
+      type: "cjs",
       name: this.name,
       version: this.version,
       usedBy: this.parent,
