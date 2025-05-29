@@ -1,5 +1,10 @@
 // Import Third-party Dependencies
-import type { WarningDefault, Warning } from "@nodesecure/js-x-ray";
+import type {
+  WarningDefault,
+  Warning,
+  WarningName
+} from "@nodesecure/js-x-ray";
+import FrequencySet from "frequency-set";
 
 // Import Internal Dependencies
 import type {
@@ -9,8 +14,11 @@ import type {
 import type { DependencyVersion } from "../../types.js";
 
 export type WarningsExtractorResult = {
-  warnings: Record<string, Warning<WarningDefault>[]>;
-  count: number;
+  warnings: {
+    count: number;
+    groups: Record<string, Warning<WarningDefault>[]>;
+    uniqueKinds: Record<WarningName, number>;
+  };
 };
 
 export interface WarningsExtractorOptions {
@@ -24,6 +32,7 @@ export class WarningsExtractor implements ManifestProbeExtractor<WarningsExtract
   level = "manifest" as const;
 
   #warnings: Record<string, Warning<WarningDefault>[]> = Object.create(null);
+  #uniqueKinds = new FrequencySet<WarningName>();
   #count = 0;
   #useSpecAsKey: boolean;
 
@@ -48,6 +57,10 @@ export class WarningsExtractor implements ManifestProbeExtractor<WarningsExtract
       `${parent.name}@${version}` :
       parent.name;
 
+    warnings
+      .map((warn) => warn.kind)
+      .forEach((kind) => this.#uniqueKinds.add(kind));
+
     if (key in this.#warnings) {
       this.#warnings[key].push(...warnings);
     }
@@ -58,8 +71,11 @@ export class WarningsExtractor implements ManifestProbeExtractor<WarningsExtract
 
   done() {
     return {
-      count: this.#count,
-      warnings: this.#warnings
+      warnings: {
+        count: this.#count,
+        uniqueKinds: Object.fromEntries(this.#uniqueKinds) as any,
+        groups: this.#warnings
+      }
     };
   }
 }
