@@ -130,6 +130,7 @@ export async function scanDirOrArchive(
   const filesDependencies = [...new Set(scannedFiles.flatMap((row) => row.filesDependencies))];
   const tryDependencies = new Set(scannedFiles.flatMap((row) => row.tryDependencies));
   const minifiedFiles = scannedFiles.filter((row) => row.isMinified).flatMap((row) => row.file);
+  const hasExternalCapacity = scannedFiles.some((row) => row.filesFlags.hasExternalCapacity);
 
   const {
     nodeDependencies,
@@ -156,6 +157,7 @@ export async function scanDirOrArchive(
 
   ref.flags.push(...booleanToFlags({
     ...flags,
+    hasExternalCapacity: hasExternalCapacity || flags.hasExternalCapacity,
     hasNoLicense: spdx.uniqueLicenseIds.length === 0,
     hasMultipleLicenses: spdx.uniqueLicenseIds.length > 1,
     hasMinifiedCode: minifiedFiles.length > 0,

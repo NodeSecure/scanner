@@ -19,7 +19,10 @@ test("scanFile (fixture one.js)", async() => {
     isMinified: false,
     tryDependencies: [],
     dependencies: ["http", "mocha"],
-    filesDependencies: ["src\\foo.js", "home\\marco.js"].map((location) => location.replaceAll("\\", path.sep))
+    filesDependencies: ["src\\foo.js", "home\\marco.js"].map((location) => location.replaceAll("\\", path.sep)),
+    filesFlags: {
+      hasExternalCapacity: false
+    }
   });
 });
 
@@ -31,7 +34,10 @@ test("scanFile (fixture two.min.js)", async() => {
     isMinified: true,
     tryDependencies: ["http"],
     dependencies: ["http", "fs"],
-    filesDependencies: []
+    filesDependencies: [],
+    filesFlags: {
+      hasExternalCapacity: false
+    }
   });
 });
 
@@ -43,7 +49,10 @@ test("scanFile (fixture onelineStmt.min.js)", async() => {
     isMinified: false,
     tryDependencies: [],
     dependencies: [],
-    filesDependencies: ["foobar.js"]
+    filesDependencies: ["foobar.js"],
+    filesFlags: {
+      hasExternalCapacity: false
+    }
   });
 });
 
@@ -63,6 +72,24 @@ test("scanFile (fixture parsingError.js)", async() => {
     isMinified: false,
     tryDependencies: [],
     dependencies: [],
-    filesDependencies: []
+    filesDependencies: [],
+    filesFlags: {
+      hasExternalCapacity: false
+    }
+  });
+});
+
+test("scanFile (fixture fetch.js)", async() => {
+  const result = await scanFile(kFixturePath, "fetch.js", "yolo");
+  assert.deepEqual(result, {
+    file: "fetch.js",
+    warnings: [],
+    isMinified: false,
+    tryDependencies: [],
+    dependencies: [],
+    filesDependencies: [],
+    filesFlags: {
+      hasExternalCapacity: true
+    }
   });
 });
