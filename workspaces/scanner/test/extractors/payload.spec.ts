@@ -172,6 +172,37 @@ describe("Extractors.Probes", () => {
     });
   });
 
+  describe("VulnerabilitiesExtractor", () => {
+    it("should extract strnum warnings", () => {
+      const fakePayload: any = {
+        id: "random-id",
+        scannerVersion: "1.0.0",
+        dependencies: {
+          A: {
+            vulnerabilities: ["foo"]
+          },
+          B: {
+            vulnerabilities: ["bar"]
+          }
+        }
+      };
+
+      const extractor = new Extractors.Payload(
+        fakePayload,
+        [
+          new Extractors.Probes.VulnerabilitiesExtractor()
+        ]
+      );
+
+      const {
+        vulnerabilities
+      } = extractor.extractAndMerge();
+
+      assert.strictEqual(vulnerabilities.length, 2);
+      assert.deepEqual(vulnerabilities, ["foo", "bar"]);
+    });
+  });
+
   it("should extract data with multiple extractors in once", () => {
     const extractor = new Extractors.Payload(
       expressNodesecurePayload,
