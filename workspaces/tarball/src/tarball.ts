@@ -10,7 +10,10 @@ import {
 } from "@nodesecure/js-x-ray";
 import pacote from "pacote";
 import * as conformance from "@nodesecure/conformance";
-import { ManifestManager } from "@nodesecure/mama";
+import {
+  ManifestManager,
+  type PackageModuleType
+} from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import {
@@ -24,6 +27,7 @@ import * as sast from "./sast/index.js";
 
 export interface DependencyRef {
   id: number;
+  type: PackageModuleType;
   usedBy: Record<string, string>;
   isDevDependency: boolean;
   existOnRemoteRegistry: boolean;
@@ -144,6 +148,7 @@ export async function scanDirOrArchive(
     { mama, tryDependencies }
   );
 
+  ref.type = mama.moduleType;
   ref.size = composition.size;
   ref.composition.extensions.push(...composition.ext);
   ref.composition.files.push(...composition.files);

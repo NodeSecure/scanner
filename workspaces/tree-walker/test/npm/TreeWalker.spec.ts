@@ -26,6 +26,7 @@ describe("npm.TreeWalker", () => {
         dependency,
         {
           id: 0,
+          type: "cjs",
           name: "@nodesecure/fs-walk",
           version: "2.0.0",
           usedBy: {},
@@ -62,6 +63,7 @@ describe("npm.TreeWalker", () => {
         dependency,
         {
           id: 0,
+          type: "cjs",
           name: "@nodesecure/fs-walk",
           version: "2.0.0",
           usedBy: {},

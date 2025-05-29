@@ -3,6 +3,7 @@
     "versions": {
       "1.5.1": {
         "id": 0,
+        "type": "cjs",
         "usedBy": {},
         "isDevDependency": false,
         "existOnRemoteRegistry": true,
