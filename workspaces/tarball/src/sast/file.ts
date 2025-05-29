@@ -23,6 +23,9 @@ export interface scanFileReport {
   tryDependencies: string[];
   dependencies: string[];
   filesDependencies: string[];
+  filesFlags: {
+    hasExternalCapacity: boolean;
+  };
 }
 
 export async function scanFile(
@@ -53,7 +56,10 @@ export async function scanFile(
       isMinified: result.isMinified,
       tryDependencies,
       dependencies: packages,
-      filesDependencies: files
+      filesDependencies: files,
+      filesFlags: {
+        hasExternalCapacity: result.flags.has("fetch")
+      }
     };
   }
 
@@ -63,7 +69,10 @@ export async function scanFile(
     isMinified: false,
     tryDependencies: [],
     dependencies: [],
-    filesDependencies: []
+    filesDependencies: [],
+    filesFlags: {
+      hasExternalCapacity: false
+    }
   };
 }
 
