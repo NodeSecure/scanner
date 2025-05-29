@@ -34,6 +34,9 @@ Available probes include:
 | ContactExtractor | manifest |
 | LicensesExtractor | manifest |
 | SizeExtractor | manifest |
+| FlagsExtractor | manifest |
+| VulnerabilitiesExtractor | packument |
+| WarningsExtractor | manifest |
 
 All probes follow the same `ProbeExtractor` interface, which acts as an iterator-like contract:
 
