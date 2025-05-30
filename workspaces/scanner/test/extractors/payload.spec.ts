@@ -179,6 +179,30 @@ describe("Extractors.Probes", () => {
     });
   });
 
+  describe("FlagsExtractor", () => {
+    it("should extract strnum flags", () => {
+      const extractor = new Extractors.Payload(
+        strnumNodesecurePayload,
+        [
+          new Extractors.Probes.FlagsExtractor()
+        ]
+      );
+
+      const {
+        flags
+      } = extractor.extractAndMerge();
+
+      assert.deepEqual(
+        flags,
+        {
+          hasWarnings: 1,
+          isOutdated: 1,
+          hasManyPublishers: 1
+        }
+      );
+    });
+  });
+
   describe("VulnerabilitiesExtractor", () => {
     it("should extract strnum warnings", () => {
       const fakePayload: any = {
