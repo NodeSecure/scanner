@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/tarball",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "NodeSecure tarball scanner",
   "type": "module",
   "exports": "./dist/index.js",
@@ -32,7 +32,7 @@
     "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/js-x-ray": "^8.2.0",
-    "@nodesecure/mama": "^1.1.0",
+    "@nodesecure/mama": "^1.2.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.1.0",
     "pacote": "^21.0.0"
