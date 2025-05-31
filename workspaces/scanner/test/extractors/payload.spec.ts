@@ -254,3 +254,45 @@ describe("Extractors.Probes", () => {
     );
   });
 });
+
+describe("Events", () => {
+  it("should emits packument and manifest events", () => {
+    const vulnerabilitiesExtractor = new Extractors.Probes.VulnerabilitiesExtractor();
+    const licensesExtractor = new Extractors.Probes.LicensesExtractor();
+    type ManifestEvent = Parameters<typeof licensesExtractor.next>;
+    type PackumentEvent = Parameters<typeof vulnerabilitiesExtractor.next>;
+
+    const extractor = new Extractors.Payload(
+      expressNodesecurePayload,
+      [
+        licensesExtractor,
+        vulnerabilitiesExtractor
+      ]
+    );
+
+    const manifestEvents: ManifestEvent[] = [];
+    const packumentEvents: PackumentEvent[] = [];
+
+    extractor.on("manifest", (...event: ManifestEvent) => {
+      manifestEvents.push(event);
+    });
+
+    extractor.on("packument", (...event: PackumentEvent) => {
+      packumentEvents.push(event);
+    });
+
+    const dependencies = Object.entries(expressNodesecurePayload.dependencies);
+
+    const expectedPackumentEvents = dependencies;
+    const expectedManifestEvents = dependencies.flatMap(([name, dependency]) => Object
+      .entries(dependency.versions)
+      .map(
+        ([spec, depVersion]) => [spec, depVersion, { name, dependency }]
+      )
+    );
+
+    extractor.extract();
+    assert.deepEqual(packumentEvents, expectedPackumentEvents);
+    assert.deepEqual(manifestEvents, expectedManifestEvents);
+  });
+});
