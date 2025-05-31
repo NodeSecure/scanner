@@ -1,3 +1,6 @@
+// Import Node.js Dependencies
+import { EventEmitter } from "node:events";
+
 // Import Third-party Dependencies
 import type { Simplify } from "type-fest";
 // @ts-ignore
@@ -48,7 +51,7 @@ export interface ManifestProbeExtractor<Defs> extends ProbeExtractor<Defs> {
   ): void;
 }
 
-export class Payload<T extends ProbeExtractor<any>[]> {
+export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
   private dependencies: Scanner.Payload["dependencies"];
   private probes: Record<ProbeExtractorLevel, T>;
   private cachedResult: ExtractProbeResult<T>;
@@ -57,6 +60,7 @@ export class Payload<T extends ProbeExtractor<any>[]> {
     data: Scanner.Payload | Scanner.Payload["dependencies"],
     probes: [...T]
   ) {
+    super();
     this.dependencies = isNodesecurePayload(data) ?
       data.dependencies :
       data;
@@ -75,9 +79,11 @@ export class Payload<T extends ProbeExtractor<any>[]> {
 
     for (const [name, dependency] of Object.entries(this.dependencies)) {
       this.probes.packument.forEach((probe) => probe.next(name, dependency));
+      this.emit("packument", name, dependency);
       if (this.probes.manifest.length > 0) {
         for (const [spec, depVersion] of Object.entries(dependency.versions)) {
           this.probes.manifest.forEach((probe) => probe.next(spec, depVersion, { name, dependency }));
+          this.emit("manifest", spec, depVersion, { name, dependency });
         }
       }
     }
