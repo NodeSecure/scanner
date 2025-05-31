@@ -53,6 +53,10 @@ export type ManifestManagerDocument =
   WorkspacesPackageJSON |
   PackumentVersion;
 
+export interface ManifestManagerOptions {
+  location?: string;
+}
+
 export class ManifestManager<
   MetadataDef extends Record<string, any> = Record<string, any>
 > {
@@ -68,6 +72,7 @@ export class ManifestManager<
     ManifestManagerDocument,
     NonOptionalPackageJSONProperties
   >;
+  public location?: string;
 
   public flags = Object.seal({
     hasUnsafeScripts: false,
@@ -75,12 +80,19 @@ export class ManifestManager<
   });
 
   constructor(
-    document: ManifestManagerDocument
+    document: ManifestManagerDocument,
+    options: ManifestManagerOptions = {}
   ) {
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
     );
+    if (typeof options.location === "string" && options.location.endsWith("package.json")) {
+      this.location = path.dirname(options.location);
+    }
+    else {
+      this.location = options.location;
+    }
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -218,7 +230,8 @@ export class ManifestManager<
       ) as PackageJSON | WorkspacesPackageJSON;
 
       return new ManifestManager(
-        packageJSON
+        packageJSON,
+        { location: packageLocation }
       );
     }
     catch (cause) {
