@@ -41,10 +41,470 @@
     </div>
     <div class="table__wrapper">
       <nav class="table__tabs" role="tablist">
-        <button id="table-depwalker-tab" class="table__tabs-item active" type="button" role="tab" aria-controls="table-depwalker" aria-selected="false">DEPWALKER</button>
+        <button id="table-cli-tab" class="table__tabs-item active" type="button" role="tab" aria-controls="table-cli" aria-selected="false">CLI</button>
+        <button id="table-scanner-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-scanner" aria-selected="false">SCANNER</button>
+        <button id="table-depwalker-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-depwalker" aria-selected="false">DEPWALKER</button>
         <button id="table-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-warnings" aria-selected="false">WARNINGS</button>
         <button id="table-sast-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-sast-warnings" aria-selected="false">SAST_WARNINGS</button>
       </nav>
+      <table id="table-cli" class="table" role="tabpanel" aria-labelledby="table-cli-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          
+            <tr>
+              <td>executing_at</td>
+              <td>Executing node-secure at</td>
+            </tr>
+          
+            <tr>
+              <td>min_nodejs_version</td>
+              <td>node-secure requires at least Node.js {0} to work! Please upgrade your Node.js version.</td>
+            </tr>
+          
+            <tr>
+              <td>no_dep_to_proceed</td>
+              <td>No dependencies to proceed!</td>
+            </tr>
+          
+            <tr>
+              <td>successfully_written_json</td>
+              <td>Successfully written results file at: {0}</td>
+            </tr>
+          
+            <tr>
+              <td>http_server_started</td>
+              <td>HTTP Server started on:</td>
+            </tr>
+          
+            <tr>
+              <td>missingEnv</td>
+              <td>Environment variable {0} is missing!</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_depth</td>
+              <td>Maximum dependencies depth to fetch</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_output</td>
+              <td>Json file output name</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_silent</td>
+              <td>enable silent mode which disable CLI spinners</td>
+            </tr>
+          
+            <tr>
+              <td>commands.strategy</td>
+              <td>Vulnerabilities source to use</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.desc</td>
+              <td>Run security analysis on the current working dir</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.option_nolock</td>
+              <td>Disable usage of package-lock.json</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.option_full</td>
+              <td>Enable full analysis of packages in the package-lock.json file</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.desc</td>
+              <td>Run security analysis on a given package from npm registry</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.searching</td>
+              <td>Searching for '{0}' manifest in the npm registry...</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.fetched</td>
+              <td>Fetched {0} manifest from npm in {1}</td>
+            </tr>
+          
+            <tr>
+              <td>commands.auto.desc</td>
+              <td>Run security analysis on cwd or a given package and automatically open the web interface</td>
+            </tr>
+          
+            <tr>
+              <td>commands.auto.option_keep</td>
+              <td>Keep the nsecure-result.json file on the system after execution</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.desc</td>
+              <td>Run an HTTP Server with a given nsecure JSON file</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_port</td>
+              <td>Define the running port</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_fresh_start</td>
+              <td>Launch the server from scratch, ignoring any existing payload file</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_developer</td>
+              <td>Launch the server in developer mode, enabling automatic HTML component refresh</td>
+            </tr>
+          
+            <tr>
+              <td>commands.verify.desc</td>
+              <td>Run a complete advanced analysis for a given npm package</td>
+            </tr>
+          
+            <tr>
+              <td>commands.verify.option_json</td>
+              <td>Stdout the analysis payload</td>
+            </tr>
+          
+            <tr>
+              <td>commands.summary.desc</td>
+              <td>Display your analysis results</td>
+            </tr>
+          
+            <tr>
+              <td>commands.summary.warnings</td>
+              <td>Warnings</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.desc</td>
+              <td>Configure the CLI default language</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.question_text</td>
+              <td>What language do you want to use?</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.new_selection</td>
+              <td>'{0}' has been selected as the new CLI language!</td>
+            </tr>
+          
+            <tr>
+              <td>commands.scorecard.desc</td>
+              <td>Display the OSSF Scorecard for a given repository or the current working directory (Github only, e.g. fastify/fastify)</td>
+            </tr>
+          
+            <tr>
+              <td>commands.scorecard.option_vcs</td>
+              <td>Version control platform (GitHub, GitLab)</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.desc</td>
+              <td>Generate a report from a package</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_includesAllDeps</td>
+              <td>Include all dependencies</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_theme</td>
+              <td>Report theme ('dark', 'light')</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_title</td>
+              <td>Report title</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_reporters</td>
+              <td>List of reporters to use: 'html', 'pdf'</td>
+            </tr>
+          
+            <tr>
+              <td>commands.config.desc</td>
+              <td>Edit your NodeSecure config file</td>
+            </tr>
+          
+            <tr>
+              <td>commands.configCreate.desc</td>
+              <td>Init your Nodesecure config file</td>
+            </tr>
+          
+            <tr>
+              <td>commands.configCreate.option_cwd</td>
+              <td>Create config file at the cwd</td>
+            </tr>
+          
+            <tr>
+              <td>startHttp.invalidScannerVersion</td>
+              <td>the payload has been scanned with version '{0}' and do not satisfies the required CLI range '{1}'</td>
+            </tr>
+          
+            <tr>
+              <td>startHttp.regenerate</td>
+              <td>please re-generate a new JSON payload using the CLI</td>
+            </tr>
+          
+          </tbody>
+        <tbody class="fr">
+          
+            <tr>
+              <td>executing_at</td>
+              <td>Exécution de node-secure à</td>
+            </tr>
+          
+            <tr>
+              <td>min_nodejs_version</td>
+              <td>node-secure nécessite au moins Node.js {0} pour fonctionner ! Merci de mettre à jour votre version de Node.js.</td>
+            </tr>
+          
+            <tr>
+              <td>no_dep_to_proceed</td>
+              <td>Aucune dépendance pour continuer !</td>
+            </tr>
+          
+            <tr>
+              <td>successfully_written_json</td>
+              <td>Ecriture du fichier de résultats réalisée avec succès ici : {0}</td>
+            </tr>
+          
+            <tr>
+              <td>http_server_started</td>
+              <td>Serveur HTTP démarré sur :</td>
+            </tr>
+          
+            <tr>
+              <td>missingEnv</td>
+              <td>La variable d'environnement {0} est manquante!</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_depth</td>
+              <td>Niveau de profondeur de dépendances maximum à aller chercher</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_output</td>
+              <td>Nom de sortie du fichier json</td>
+            </tr>
+          
+            <tr>
+              <td>commands.option_silent</td>
+              <td>Activer le mode silencieux qui désactive les spinners du CLI</td>
+            </tr>
+          
+            <tr>
+              <td>commands.strategy</td>
+              <td>Source de vulnérabilités à utiliser</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.desc</td>
+              <td>Démarre une analyse de sécurité sur le dossier courant</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.option_nolock</td>
+              <td>Désactive l'utilisation du package-lock.json</td>
+            </tr>
+          
+            <tr>
+              <td>commands.cwd.option_full</td>
+              <td>Active l'analyse complète des packages présents dans le package-lock.json</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.desc</td>
+              <td>Démarre une analyse de sécurité sur un package donné du registre npm</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.searching</td>
+              <td>Recherche du manifest '{0}' dans le registre npm...</td>
+            </tr>
+          
+            <tr>
+              <td>commands.from.fetched</td>
+              <td>Manifest du package {0} importé de npm en {1}</td>
+            </tr>
+          
+            <tr>
+              <td>commands.auto.desc</td>
+              <td>Démarre une analyse de sécurité sur le dossier courant ou sur un package donné et ouvre automatiquement l'interface web</td>
+            </tr>
+          
+            <tr>
+              <td>commands.auto.option_keep</td>
+              <td>Conserve le fichier nsecure-result.json sur le systeme après l'exécution</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.desc</td>
+              <td>Démarre un serveur HTTP avec un fichier .json nsecure donné</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_port</td>
+              <td>Port à utiliser</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_fresh_start</td>
+              <td>Lance le serveur à partir de zéro, en ignorant tout fichier de payload existant</td>
+            </tr>
+          
+            <tr>
+              <td>commands.open.option_developer</td>
+              <td>Lance le serveur en mode développeur, permettant le rafraîchissement automatique des composants HTML</td>
+            </tr>
+          
+            <tr>
+              <td>commands.verify.desc</td>
+              <td>Démarre une analyse AST avancée pour un package npm donné</td>
+            </tr>
+          
+            <tr>
+              <td>commands.verify.option_json</td>
+              <td>Affiche le résultat d'analyse dans la sortie standard</td>
+            </tr>
+          
+            <tr>
+              <td>commands.summary.desc</td>
+              <td>Afficher le résultat de votre analyse</td>
+            </tr>
+          
+            <tr>
+              <td>commands.summary.warnings</td>
+              <td>Menaces</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.desc</td>
+              <td>Configure le langage par défaut du CLI</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.question_text</td>
+              <td>Quel langage souhaitez-vous utiliser ?</td>
+            </tr>
+          
+            <tr>
+              <td>commands.lang.new_selection</td>
+              <td>'{0}' a été selectionné comme étant le nouveau langage du CLI !</td>
+            </tr>
+          
+            <tr>
+              <td>commands.scorecard.desc</td>
+              <td>Afficher la fiche de score OSSF du repo donné ou du repertoire actuel (Github uniquement ex. fastify/fastify)</td>
+            </tr>
+          
+            <tr>
+              <td>commands.scorecard.option_vcs</td>
+              <td>Logiciel de gestion de versions (GitHub, GitLab)</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.desc</td>
+              <td>Générer un rapport à partir d'un package</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_includesAllDeps</td>
+              <td>Inclure toutes les dépendances, true par défaut</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_theme</td>
+              <td>Thème du rapport ('dark', 'light'), 'light' par défaut</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_title</td>
+              <td>Titre du rapport</td>
+            </tr>
+          
+            <tr>
+              <td>commands.report.option_reporters</td>
+              <td>Liste des reporters à utiliser 'html', 'pdf'</td>
+            </tr>
+          
+            <tr>
+              <td>commands.config.desc</td>
+              <td>Modifier le fichier de configuration NodeSecure</td>
+            </tr>
+          
+            <tr>
+              <td>commands.configCreate.desc</td>
+              <td>Initialiser le fichier de configuration Nodesecure</td>
+            </tr>
+          
+            <tr>
+              <td>commands.configCreate.option_cwd</td>
+              <td>Créer le fichier dans le dossier courant</td>
+            </tr>
+          
+            <tr>
+              <td>startHttp.invalidScannerVersion</td>
+              <td>le fichier d'analyse correspond à la version '{0}' du scanner et ne satisfait pas la range '{1}' attendu par la CLI</td>
+            </tr>
+          
+            <tr>
+              <td>startHttp.regenerate</td>
+              <td>veuillez re-générer un nouveau fichier d'analyse JSON en utilisant votre CLI</td>
+            </tr>
+          
+          </tbody>
+      </table>
+      <table id="table-scanner" class="table" role="tabpanel" aria-labelledby="table-scanner-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          
+            <tr>
+              <td>disable_scarf</td>
+              <td>This dependency could collect data against your consent so think to disable it with the env var: SCARF_ANALYTICS</td>
+            </tr>
+          
+            <tr>
+              <td>keylogging</td>
+              <td>This dependency can retrieve your keyboard and mouse inputs. It can be used for 'keylogging' attacks/malwares.</td>
+            </tr>
+          
+          </tbody>
+        <tbody class="fr">
+          
+            <tr>
+              <td>disable_scarf</td>
+              <td>Cette dépendance peut récolter des données contre votre volonté, pensez donc à la désactiver en fournissant la variable d'environnement SCARF_ANALYTICS</td>
+            </tr>
+          
+            <tr>
+              <td>keylogging</td>
+              <td>Cette dépendance peut obtenir vos entrées clavier ou de souris. Cette dépendance peut être utilisée en tant que 'keylogging' attacks/malwares.</td>
+            </tr>
+          
+          </tbody>
+      </table>
       <table id="table-depwalker" class="table" role="tabpanel" aria-labelledby="table-depwalker-tab">
         <thead>
           <tr>

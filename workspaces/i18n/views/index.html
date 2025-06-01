@@ -41,10 +41,60 @@
     </div>
     <div class="table__wrapper">
       <nav class="table__tabs" role="tablist">
-        <button id="table-depwalker-tab" class="table__tabs-item active" type="button" role="tab" aria-controls="table-depwalker" aria-selected="false">DEPWALKER</button>
+        <button id="table-cli-tab" class="table__tabs-item active" type="button" role="tab" aria-controls="table-cli" aria-selected="false">CLI</button>
+        <button id="table-scanner-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-scanner" aria-selected="false">SCANNER</button>
+        <button id="table-depwalker-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-depwalker" aria-selected="false">DEPWALKER</button>
         <button id="table-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-warnings" aria-selected="false">WARNINGS</button>
         <button id="table-sast-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-sast-warnings" aria-selected="false">SAST_WARNINGS</button>
       </nav>
+      <table id="table-cli" class="table" role="tabpanel" aria-labelledby="table-cli-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          [[ for (props in z.template('cli', 'english')) { ]]
+            <tr>
+              <td>[[-z.printKey(props)]]</td>
+              <td>[[-z.printValue(props, z.template('cli', 'english'))]]</td>
+            </tr>
+          [[ } ]]
+          </tbody>
+        <tbody class="fr">
+          [[ for (props in z.template('cli', 'french')) { ]]
+            <tr>
+              <td>[[-z.printKey(props)]]</td>
+              <td>[[-z.printValue(props, z.template('cli', 'french'))]]</td>
+            </tr>
+          [[ } ]]
+          </tbody>
+      </table>
+      <table id="table-scanner" class="table" role="tabpanel" aria-labelledby="table-scanner-tab">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody class="en">
+          [[ for (props in z.template('scanner', 'english')) { ]]
+            <tr>
+              <td>[[-z.printKey(props)]]</td>
+              <td>[[-z.printValue(props, z.template('scanner', 'english'))]]</td>
+            </tr>
+          [[ } ]]
+          </tbody>
+        <tbody class="fr">
+          [[ for (props in z.template('scanner', 'french')) { ]]
+            <tr>
+              <td>[[-z.printKey(props)]]</td>
+              <td>[[-z.printValue(props, z.template('scanner', 'french'))]]</td>
+            </tr>
+          [[ } ]]
+          </tbody>
+      </table>
       <table id="table-depwalker" class="table" role="tabpanel" aria-labelledby="table-depwalker-tab">
         <thead>
           <tr>
