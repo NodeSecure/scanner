@@ -84,7 +84,7 @@ export class ManifestManager<
       { ...ManifestManager.Default },
       structuredClone(document)
     );
-    if (typeof options.location === "string" && options.location.endsWith("package.json")) {
+    if (typeof options.location === "string" && path.extname(options.location)) {
       this.location = path.dirname(options.location);
     }
     else {
