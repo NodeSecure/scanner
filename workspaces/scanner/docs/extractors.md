@@ -75,6 +75,7 @@ export interface ManifestProbeExtractor<Defs> extends ProbeExtractor<Defs> {
 
 > [!NOTE]
 > generic `T` is defined as extending from `ProbeExtractor<any>[]`
+The `Payload` class extends Node.js `EventEmitter`, allowing you to listen for extraction events and implement custom behavior during the extraction process.
 
 ### constructor(data: Scanner.Payload | Scanner.Payload[ "dependencies" ], probes: [ ...T ])
 
@@ -103,4 +104,33 @@ Runs the probes and deeply merges their results into a single record, for exampl
   "probe1": "xxx",
   "probe2": "xxx"
 }
+```
+
+### Events
+
+Since `Payload` extends `EventEmitter`, you can listen for events that are emitted during the extraction process, the parameters signature of each listener is the same as the `next()` method of its corresponding probe.
+
+
+### packument
+
+Emitted for each dependency when processing at the packument level, the event signature is:
+
+```ts
+extractor.on('packument', (name: string, dependency: Scanner.Dependency) => {
+  // Handle packument-level processing
+});
+```
+
+#### manifest
+
+Emitted for each dependency version when processing at the manifest level, the event signature is:
+
+```ts
+extractor.on('manifest', (
+  spec: string, 
+  depVersion: Scanner.DependencyVersion, 
+  parent: { name: string, dependency: Scanner.Dependency }
+) => {
+  // Handle manifest-level processing
+});
 ```
