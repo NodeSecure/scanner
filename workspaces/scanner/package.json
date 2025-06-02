@@ -51,7 +51,7 @@
     "@fastify/deepmerge": "^3.1.0",
     "@nodesecure/conformance": "^1.0.0",
     "@nodesecure/contact": "^1.0.1",
-    "@nodesecure/flags": "^2.4.0",
+    "@nodesecure/flags": "^3.0.3",
     "@nodesecure/i18n": "^4.0.1",
     "@nodesecure/js-x-ray": "^8.1.0",
     "@nodesecure/mama": "^1.1.0",
