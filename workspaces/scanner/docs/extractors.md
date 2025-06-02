@@ -14,7 +14,7 @@ const payload = await from("fastify");
 const extractor = new Extractors.Payload(
   payload,
   [
-    new Extractors.Probes.ContactExtractor()
+    new Extractors.Probes.Contacts()
   ]
 );
 
@@ -31,12 +31,12 @@ Available probes include:
 
 | name | level |
 | --- | --- |
-| ContactExtractor | manifest |
-| LicensesExtractor | manifest |
-| SizeExtractor | manifest |
-| FlagsExtractor | manifest |
-| VulnerabilitiesExtractor | packument |
-| WarningsExtractor | manifest |
+| Contacts | manifest |
+| Licenses | manifest |
+| Size | manifest |
+| Flags | manifest |
+| Vulnerabilities | packument |
+| Warnings | manifest |
 
 All probes follow the same `ProbeExtractor` interface, which acts as an iterator-like contract:
 

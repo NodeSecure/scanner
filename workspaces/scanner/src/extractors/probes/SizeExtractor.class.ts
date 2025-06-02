@@ -8,7 +8,7 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type SizeExtractorResult = {
+export type SizeResult = {
   size: {
     all: string;
     internal: string;
@@ -16,11 +16,11 @@ export type SizeExtractorResult = {
   };
 };
 
-export interface SizeExtractorOptions {
+export interface SizeOptions {
   organizationPrefix?: string;
 }
 
-export class SizeExtractor implements ManifestProbeExtractor<SizeExtractorResult> {
+export class Size implements ManifestProbeExtractor<SizeResult> {
   level = "manifest" as const;
 
   #size = {
@@ -31,7 +31,7 @@ export class SizeExtractor implements ManifestProbeExtractor<SizeExtractorResult
   #organizationPrefix: string | null = null;
 
   constructor(
-    options: SizeExtractorOptions = {}
+    options: SizeOptions = {}
   ) {
     const { organizationPrefix = null } = options;
 

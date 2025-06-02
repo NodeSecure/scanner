@@ -31,6 +31,12 @@ export type ProbeExtractorManifestParent = {
   dependency: Scanner.Dependency;
 };
 
+export type PackumentProbeNextCallback = (name: string, dependency: Scanner.Dependency) => void;
+export type ManifestProbeNextCallback = (
+  spec: string,
+  dependencyVersion: Scanner.DependencyVersion,
+  parent: ProbeExtractorManifestParent) => void;
+
 export interface ProbeExtractor<Defs> {
   level: ProbeExtractorLevel;
   next(...args: any[]): void;
@@ -39,16 +45,12 @@ export interface ProbeExtractor<Defs> {
 
 export interface PackumentProbeExtractor<Defs> extends ProbeExtractor<Defs> {
   level: "packument";
-  next(name: string, dependency: Scanner.Dependency): void;
+  next: PackumentProbeNextCallback;
 }
 
 export interface ManifestProbeExtractor<Defs> extends ProbeExtractor<Defs> {
   level: "manifest";
-  next(
-    spec: string,
-    dependencyVersion: Scanner.DependencyVersion,
-    parent: ProbeExtractorManifestParent
-  ): void;
+  next: ManifestProbeNextCallback;
 }
 
 export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
@@ -101,4 +103,29 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
       ...this.extract()
     ) as unknown as MergedExtractProbeResult<T>;
   }
+}
+
+export const Callbacks = {
+  packument(
+    callback: PackumentProbeNextCallback
+  ): PackumentProbeExtractor<void> {
+    return {
+      level: "packument" as const,
+      next: callback,
+      done: noop
+    };
+  },
+  manifest(
+    callback: ManifestProbeNextCallback
+  ): ManifestProbeExtractor<void> {
+    return {
+      level: "manifest" as const,
+      next: callback,
+      done: noop
+    };
+  }
+} as const;
+
+function noop() {
+  return void 0;
 }

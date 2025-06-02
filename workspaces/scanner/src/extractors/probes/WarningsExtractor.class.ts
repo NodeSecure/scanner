@@ -13,7 +13,7 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type WarningsExtractorResult = {
+export type WarningsResult = {
   warnings: {
     count: number;
     groups: Record<string, Warning<WarningDefault>[]>;
@@ -21,14 +21,14 @@ export type WarningsExtractorResult = {
   };
 };
 
-export interface WarningsExtractorOptions {
+export interface WarningsOptions {
   /**
    * @default true
    */
   useSpecAsKey?: boolean;
 }
 
-export class WarningsExtractor implements ManifestProbeExtractor<WarningsExtractorResult> {
+export class Warnings implements ManifestProbeExtractor<WarningsResult> {
   level = "manifest" as const;
 
   #warnings: Record<string, Warning<WarningDefault>[]> = Object.create(null);
@@ -37,7 +37,7 @@ export class WarningsExtractor implements ManifestProbeExtractor<WarningsExtract
   #useSpecAsKey: boolean;
 
   constructor(
-    options: WarningsExtractorOptions = {}
+    options: WarningsOptions = {}
   ) {
     this.#useSpecAsKey = options.useSpecAsKey ?? true;
   }

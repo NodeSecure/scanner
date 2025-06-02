@@ -8,14 +8,14 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type ContactExtractorResult = {
+export type ContactsResult = {
   contacts: Record<string, number>;
 };
 
-export class ContactExtractor implements ManifestProbeExtractor<ContactExtractorResult> {
+export class Contacts implements ManifestProbeExtractor<ContactsResult> {
   level = "manifest" as const;
 
-  #contacts: ContactExtractorResult["contacts"] = Object.create(null);
+  #contacts: ContactsResult["contacts"] = Object.create(null);
   #packages: Set<string> = new Set();
 
   #addContact(
