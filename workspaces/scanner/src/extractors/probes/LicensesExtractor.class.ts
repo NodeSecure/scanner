@@ -4,14 +4,14 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type LicensesExtractorResult = {
+export type LicensesResult = {
   licenses: Record<string, number>;
 };
 
-export class LicensesExtractor implements ManifestProbeExtractor<LicensesExtractorResult> {
+export class Licenses implements ManifestProbeExtractor<LicensesResult> {
   level = "manifest" as const;
 
-  #licenses: LicensesExtractorResult["licenses"] = Object.create(null);
+  #licenses: LicensesResult["licenses"] = Object.create(null);
 
   next(
     _: string,

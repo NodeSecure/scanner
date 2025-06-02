@@ -7,11 +7,11 @@ import type {
 } from "../payload.js";
 import type { Dependency } from "../../types.js";
 
-export type VulnerabilitiesExtractorResult = {
+export type VulnerabilitiesResult = {
   vulnerabilities: StandardVulnerability[];
 };
 
-export class VulnerabilitiesExtractor implements PackumentProbeExtractor<VulnerabilitiesExtractorResult> {
+export class Vulnerabilities implements PackumentProbeExtractor<VulnerabilitiesResult> {
   level = "packument" as const;
 
   #vulnerabilities: StandardVulnerability[] = [];

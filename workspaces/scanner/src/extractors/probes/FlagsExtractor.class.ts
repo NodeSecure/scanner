@@ -7,11 +7,11 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type FlagsExtractorResult = {
+export type FlagsResult = {
   flags: Record<string, number>;
 };
 
-export class FlagsExtractor implements ManifestProbeExtractor<FlagsExtractorResult> {
+export class Flags implements ManifestProbeExtractor<FlagsResult> {
   level = "manifest" as const;
 
   #flags = new FrequencySet();

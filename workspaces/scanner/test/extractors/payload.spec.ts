@@ -7,6 +7,8 @@ import fs from "node:fs";
 // Import Internal Dependencies
 import {
   Extractors,
+  type ManifestProbeNextCallback,
+  type PackumentProbeNextCallback,
   type Payload
 } from "../../src/index.js";
 
@@ -24,12 +26,12 @@ const strnumNodesecurePayload = JSON.parse(fs.readFileSync(
 )) as Payload;
 
 describe("Extractors.Probes", () => {
-  describe("ContactExtractor", () => {
+  describe("Contacts", () => {
     it("should extract Express.js contacts (Author, Maintainers ...)", () => {
       const extractor = new Extractors.Payload(
         expressNodesecurePayload,
         [
-          new Extractors.Probes.ContactExtractor()
+          new Extractors.Probes.Contacts()
         ]
       );
 
@@ -82,12 +84,12 @@ describe("Extractors.Probes", () => {
     });
   });
 
-  describe("LicensesExtractor", () => {
+  describe("Licenses", () => {
     it("should extract Express.js licenses", () => {
       const extractor = new Extractors.Payload(
         expressNodesecurePayload,
         [
-          new Extractors.Probes.LicensesExtractor()
+          new Extractors.Probes.Licenses()
         ]
       );
 
@@ -106,7 +108,7 @@ describe("Extractors.Probes", () => {
       const extractor = new Extractors.Payload(
         expressNodesecurePayload,
         [
-          new Extractors.Probes.SizeExtractor()
+          new Extractors.Probes.Size()
         ]
       );
 
@@ -129,12 +131,12 @@ describe("Extractors.Probes", () => {
     });
   });
 
-  describe("WarningsExtractor", () => {
+  describe("Warnings", () => {
     it("should extract strnum warnings", () => {
       const extractor = new Extractors.Payload(
         strnumNodesecurePayload,
         [
-          new Extractors.Probes.WarningsExtractor()
+          new Extractors.Probes.Warnings()
         ]
       );
 
@@ -163,7 +165,7 @@ describe("Extractors.Probes", () => {
       const extractor = new Extractors.Payload(
         strnumNodesecurePayload,
         [
-          new Extractors.Probes.WarningsExtractor({
+          new Extractors.Probes.Warnings({
             useSpecAsKey: false
           })
         ]
@@ -179,12 +181,12 @@ describe("Extractors.Probes", () => {
     });
   });
 
-  describe("FlagsExtractor", () => {
+  describe("Flags", () => {
     it("should extract strnum flags", () => {
       const extractor = new Extractors.Payload(
         strnumNodesecurePayload,
         [
-          new Extractors.Probes.FlagsExtractor()
+          new Extractors.Probes.Flags()
         ]
       );
 
@@ -203,7 +205,7 @@ describe("Extractors.Probes", () => {
     });
   });
 
-  describe("VulnerabilitiesExtractor", () => {
+  describe("Vulnerabilities", () => {
     it("should extract strnum warnings", () => {
       const fakePayload: any = {
         id: "random-id",
@@ -221,7 +223,7 @@ describe("Extractors.Probes", () => {
       const extractor = new Extractors.Payload(
         fakePayload,
         [
-          new Extractors.Probes.VulnerabilitiesExtractor()
+          new Extractors.Probes.Vulnerabilities()
         ]
       );
 
@@ -238,9 +240,9 @@ describe("Extractors.Probes", () => {
     const extractor = new Extractors.Payload(
       expressNodesecurePayload,
       [
-        new Extractors.Probes.SizeExtractor(),
-        new Extractors.Probes.ContactExtractor(),
-        new Extractors.Probes.LicensesExtractor()
+        new Extractors.Probes.Size(),
+        new Extractors.Probes.Contacts(),
+        new Extractors.Probes.Licenses()
       ]
     );
 
@@ -255,18 +257,16 @@ describe("Extractors.Probes", () => {
   });
 });
 
-describe("Events", () => {
-  it("should emits packument and manifest events", () => {
-    const vulnerabilitiesExtractor = new Extractors.Probes.VulnerabilitiesExtractor();
-    const licensesExtractor = new Extractors.Probes.LicensesExtractor();
-    type ManifestEvent = Parameters<typeof licensesExtractor.next>;
-    type PackumentEvent = Parameters<typeof vulnerabilitiesExtractor.next>;
+describe("Extractors.Payload events", () => {
+  type ManifestEvent = Parameters<ManifestProbeNextCallback>;
+  type PackumentEvent = Parameters<PackumentProbeNextCallback>;
 
+  it("should emits packument and manifest events", () => {
     const extractor = new Extractors.Payload(
       expressNodesecurePayload,
       [
-        licensesExtractor,
-        vulnerabilitiesExtractor
+        new Extractors.Probes.Licenses(),
+        new Extractors.Probes.Vulnerabilities()
       ]
     );
 
@@ -294,5 +294,102 @@ describe("Events", () => {
     extractor.extract();
     assert.deepEqual(packumentEvents, expectedPackumentEvents);
     assert.deepEqual(manifestEvents, expectedManifestEvents);
+  });
+});
+
+describe("Extractors.Callbacks", () => {
+  it("should extract name and versions for all packages", () => {
+    const packages = new Map<string, string[]>();
+
+    const extractor = new Extractors.Payload(
+      expressNodesecurePayload,
+      [
+        Extractors.Callbacks.packument((name) => {
+          if (!packages.has(name)) {
+            packages.set(name, []);
+          }
+        }),
+        Extractors.Callbacks.manifest((spec, _, parent) => {
+          if (packages.has(parent.name)) {
+            packages.get(parent.name)!.push(spec);
+          }
+        })
+      ]
+    );
+
+    extractor.extract();
+
+    assert.deepEqual(
+      Object.fromEntries(packages),
+      {
+        etag: ["1.8.1"],
+        setprototypeof: ["1.2.0"],
+        methods: ["1.1.2"],
+        depd: ["2.0.0"],
+        fresh: ["0.5.2"],
+        vary: ["1.1.2"],
+        "escape-html": ["1.0.3"],
+        encodeurl: ["2.0.0", "1.0.2"],
+        statuses: ["2.0.1"],
+        "content-type": ["1.0.5"],
+        "safe-buffer": ["5.2.1"],
+        "range-parser": ["1.2.1"],
+        "utils-merge": ["1.0.1"],
+        "array-flatten": ["1.1.1"],
+        cookie: ["0.7.1"],
+        "cookie-signature": ["1.0.6"],
+        parseurl: ["1.3.3"],
+        "merge-descriptors": ["1.0.3"],
+        "path-to-regexp": ["0.1.12"],
+        "content-disposition": ["0.5.4"],
+        "ee-first": ["1.1.1"],
+        "on-finished": ["2.4.1"],
+        negotiator: ["0.6.3"],
+        accepts: ["1.3.8"],
+        forwarded: ["0.2.0"],
+        ms: ["2.1.3", "2.0.0"],
+        inherits: ["2.0.4"],
+        debug: ["2.6.9"],
+        "ipaddr.js": ["1.9.1"],
+        "proxy-addr": ["2.0.7"],
+        qs: ["6.13.0"],
+        mime: ["1.6.0"],
+        "mime-db": ["1.52.0"],
+        "mime-types": ["2.1.35"],
+        bytes: ["3.1.2"],
+        unpipe: ["1.0.0"],
+        toidentifier: ["1.0.1"],
+        "http-errors": ["2.0.0"],
+        destroy: ["1.2.0"],
+        "media-typer": ["0.3.0"],
+        "type-is": ["1.6.18"],
+        "es-errors": ["1.3.0"],
+        send: ["0.19.0"],
+        finalhandler: ["1.3.1"],
+        "object-inspect": ["1.13.3"],
+        "serve-static": ["1.16.2"],
+        "side-channel-list": ["1.0.0"],
+        "safer-buffer": ["2.1.2"],
+        "iconv-lite": ["0.4.24"],
+        "raw-body": ["2.5.2"],
+        "body-parser": ["1.20.3"],
+        "function-bind": ["1.1.2"],
+        "call-bind-apply-helpers": ["1.0.1"],
+        "es-define-property": ["1.0.1"],
+        "es-object-atoms": ["1.1.1"],
+        gopd: ["1.2.0"],
+        "dunder-proto": ["1.0.1"],
+        "get-proto": ["1.0.1"],
+        "has-symbols": ["1.1.0"],
+        hasown: ["2.0.2"],
+        "math-intrinsics": ["1.1.0"],
+        "get-intrinsic": ["1.2.7"],
+        "call-bound": ["1.0.3"],
+        "side-channel-map": ["1.0.1"],
+        "side-channel-weakmap": ["1.0.2"],
+        "side-channel": ["1.1.0"],
+        express: ["4.21.2"]
+      }
+    );
   });
 });
