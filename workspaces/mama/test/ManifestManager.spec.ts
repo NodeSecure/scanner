@@ -142,9 +142,9 @@ describe("ManifestManager", () => {
     });
 
     it("Should store location if provided", () => {
-      const location = "/tmp/fake/path/package.json";
+      const location = "package.json";
       const mama = new ManifestManager(kMinimalPackageJSON, { location });
-      assert.strictEqual(mama.location, location);
+      assert.strictEqual(mama.location, path.dirname(location));
     });
 
     it("Should have location undefined if not provided", () => {
