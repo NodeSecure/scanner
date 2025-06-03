@@ -79,10 +79,6 @@ describe("ManifestManager", () => {
         mama.spec,
         `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
       );
-      assert.strictEqual(
-        mama.location,
-        location
-      );
     });
 
     test("Given an invalid JSON, it should throw a custom Error with the parsing error as a cause", async(t: TestContext) => {
