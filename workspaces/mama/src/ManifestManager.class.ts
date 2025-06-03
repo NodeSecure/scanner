@@ -48,6 +48,13 @@ export type ManifestManagerDefaultProperties = Required<
   Pick<PackumentVersion, NonOptionalPackageJSONProperties>
 >;
 
+export interface ManifestManagerOptions {
+  /**
+   * Optional absolute location (directory) to the manifest
+   */
+  location?: string;
+}
+
 export type ManifestManagerDocument =
   PackageJSON |
   WorkspacesPackageJSON |
@@ -68,19 +75,27 @@ export class ManifestManager<
     ManifestManagerDocument,
     NonOptionalPackageJSONProperties
   >;
-
+  public location: string | undefined;
   public flags = Object.seal({
     hasUnsafeScripts: false,
     isNative: false
   });
 
   constructor(
-    document: ManifestManagerDocument
+    document: ManifestManagerDocument,
+    options: ManifestManagerOptions = {}
   ) {
+    const { location } = options;
+
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
     );
+    if (location) {
+      this.location = path.extname(location) || path.basename(location).startsWith(".") ?
+        path.dirname(location) :
+        location;
+    }
 
     this.flags.isNative = [
       ...this.dependencies,
@@ -218,7 +233,8 @@ export class ManifestManager<
       ) as PackageJSON | WorkspacesPackageJSON;
 
       return new ManifestManager(
-        packageJSON
+        packageJSON,
+        { location }
       );
     }
     catch (cause) {
