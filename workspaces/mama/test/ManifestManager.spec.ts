@@ -79,6 +79,10 @@ describe("ManifestManager", () => {
         mama.spec,
         `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
       );
+      assert.strictEqual(
+        mama.manifestLocation,
+        location
+      );
     });
 
     test("Given an invalid JSON, it should throw a custom Error with the parsing error as a cause", async(t: TestContext) => {
@@ -135,6 +139,12 @@ describe("ManifestManager", () => {
           ...ManifestManager.Default
         }
       );
+    });
+
+    it("Should store manifestLocation if provided", () => {
+      const location = "/tmp/fake/path/package.json";
+      const mama = new ManifestManager(kMinimalPackageJSON, location);
+      assert.strictEqual(mama.manifestLocation, location);
     });
   });
 
