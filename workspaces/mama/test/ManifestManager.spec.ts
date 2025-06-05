@@ -46,6 +46,7 @@ describe("ManifestManager", () => {
         location
       );
 
+      assert.equal(mama.location, location);
       assert.equal(readfile.mock.callCount(), 1);
       assert.ok(mama instanceof ManifestManager);
 
@@ -68,6 +69,7 @@ describe("ManifestManager", () => {
         location
       );
 
+      assert.equal(mama.location, path.dirname(location));
       assert.equal(readFile.mock.callCount(), 1);
       assert.ok(mama instanceof ManifestManager);
 
@@ -135,6 +137,26 @@ describe("ManifestManager", () => {
           ...ManifestManager.Default
         }
       );
+    });
+
+    it("Should store location as it if that's not a file", () => {
+      for (const location of ["/tmp/path", "./tmp/path"]) {
+        const mama = new ManifestManager(kMinimalPackageJSON, { location });
+        assert.strictEqual(mama.location, location);
+      }
+    });
+
+    it("Should store location dirname if provided with a filename", () => {
+      for (const fileName of ["package.json", ".gitignore"]) {
+        const location = `/tmp/path/${fileName}`;
+        const mama = new ManifestManager(kMinimalPackageJSON, { location });
+        assert.strictEqual(mama.location, path.dirname(location));
+      }
+    });
+
+    it("Should have location undefined if not provided", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+      assert.strictEqual(mama.location, undefined);
     });
   });
 

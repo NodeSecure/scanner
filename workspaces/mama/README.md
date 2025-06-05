@@ -39,14 +39,37 @@ Load a new instance using a `package.json` from the filesystem.
 
 The **location** parameter can either be a full path or the path to the directory where the `package.json` is located.
 
-### constructor(document: ManifestManagerDocument)
+> [!NOTE]
+> `location` is automatically dispatched to the ManifestManager constructor options.
 
+### constructor(document: ManifestManagerDocument, options?: ManifestManagerOptions)
+
+document is described by the following type:
 ```ts
+import type {
+  PackumentVersion,
+  PackageJSON,
+  WorkspacesPackageJSON
+} from "@nodesecure/npm-types";
+
 type ManifestManagerDocument =
   PackageJSON |
   WorkspacesPackageJSON |
   PackumentVersion;
 ```
+
+And the `options` interface
+
+```ts
+export interface ManifestManagerOptions {
+  /**
+   * Optional absolute location (directory) to the manifest
+   */
+  location?: string;
+}
+```
+
+---
 
 Default values are injected if they are not present in the document. This behavior is necessary for the correct operation of certain functions, such as integrity recovery.
 
