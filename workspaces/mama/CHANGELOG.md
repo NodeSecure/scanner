@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 1.2.1
+
+### Patch Changes
+
+- [#416](https://github.com/NodeSecure/scanner/pull/416) [`97a36b5`](https://github.com/NodeSecure/scanner/commit/97a36b523aa9b22900cd4ad822aa6a083e254121) Thanks [@fraxken](https://github.com/fraxken)! - Add optional ManifestManager dirname location
+
 ## 1.2.0
 
 ### Minor Changes
