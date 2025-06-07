@@ -27,6 +27,37 @@ const kMinimalPackageJSONIntegrity = hash({
 });
 
 describe("ManifestManager", () => {
+  describe("static isLocated()", () => {
+    it("Should return true for ManifestManager with location", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON, { location: "/tmp/path" });
+      assert.strictEqual(ManifestManager.isLocated(mama), true);
+
+      if (ManifestManager.isLocated(mama)) {
+        const location: string = mama.location;
+        assert.strictEqual(location, "/tmp/path");
+      }
+    });
+
+    it("Should properly narrow type with custom metadata", () => {
+      interface CustomMetadata {
+        customField: string;
+      }
+
+      const mama = new ManifestManager<CustomMetadata>(
+        kMinimalPackageJSON,
+        { location: "/tmp/path" }
+      );
+      mama.metadata.customField = "test";
+
+      if (ManifestManager.isLocated(mama)) {
+        const location: string = mama.location;
+        const metadata: CustomMetadata = mama.metadata;
+        assert.strictEqual(location, "/tmp/path");
+        assert.strictEqual(metadata.customField, "test");
+      }
+    });
+  });
+
   describe("static Default", () => {
     test("Property must be Frozen", () => {
       const isUpdated = Reflect.set(ManifestManager.Default, "foo", "bar");

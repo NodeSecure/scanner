@@ -60,6 +60,10 @@ export type ManifestManagerDocument =
   WorkspacesPackageJSON |
   PackumentVersion;
 
+export type LocatedManifestManager<
+  MetadataDef extends Record<string, any> = Record<string, any>
+> = ManifestManager<MetadataDef> & { location: string; };
+
 export class ManifestManager<
   MetadataDef extends Record<string, any> = Record<string, any>
 > {
@@ -69,6 +73,15 @@ export class ManifestManager<
     scripts: {},
     gypfile: false
   });
+
+  /**
+   * Type guard to check if a ManifestManager instance has a location
+   */
+  static isLocated<T extends Record<string, any>>(
+    mama: ManifestManager<T>
+  ): mama is LocatedManifestManager<T> {
+    return typeof mama.location !== "undefined";
+  }
 
   public metadata: MetadataDef = Object.create(null);
   public document: WithRequired<
