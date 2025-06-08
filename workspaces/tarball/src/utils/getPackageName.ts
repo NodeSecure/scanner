@@ -50,3 +50,22 @@ export function getPackageName(input: string): ParsedPackageSpec {
     spec
   };
 }
+
+/*Return Value
+Input: "@nodesecure/scanner"
+
+{
+  org: "nodesecure",
+    name: "@nodesecure/scanner",
+  semver: null,
+  spec: "@nodesecure/scanner"
+}
+
+Input: "express@5.1.0"
+
+{
+  org: null,
+    name: "express",
+  semver: "5.1.0",
+  spec: "express@5.1.0"
+}*/
