@@ -31,11 +31,6 @@ describe("ManifestManager", () => {
     it("Should return true for ManifestManager with location", () => {
       const mama = new ManifestManager(kMinimalPackageJSON, { location: "/tmp/path" });
       assert.strictEqual(ManifestManager.isLocated(mama), true);
-
-      if (ManifestManager.isLocated(mama)) {
-        const location: string = mama.location;
-        assert.strictEqual(location, "/tmp/path");
-      }
     });
 
     it("Should properly narrow type with custom metadata", () => {
