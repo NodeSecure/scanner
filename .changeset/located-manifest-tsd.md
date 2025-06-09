@@ -1,5 +1,5 @@
 ---
-"@nodesecure/mama": patch
+"@nodesecure/mama": minor
 ---
 
 feat: add LocatedManifestManager type and isLocated type guard
