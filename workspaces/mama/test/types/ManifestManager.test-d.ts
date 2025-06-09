@@ -1,3 +1,6 @@
+// Import Node.js Dependencies
+import assert from "node:assert";
+
 // Import Third-party Dependencies
 import { expectType } from "tsd";
 
@@ -12,9 +15,8 @@ const locatedManifest = new ManifestManager(
   { name: "test", version: "1.0.0" },
   { location: "/tmp/path" }
 );
-if (ManifestManager.isLocated(locatedManifest)) {
-  expectType<string>(locatedManifest.location);
-}
+assert.ok(ManifestManager.isLocated(locatedManifest));
+expectType<string>(locatedManifest.location);
 
 // Test generic type preservation
 interface CustomMetadata {
@@ -26,7 +28,6 @@ const customManifest = new ManifestManager<CustomMetadata>(
 );
 customManifest.metadata.customField = "test";
 
-if (ManifestManager.isLocated(customManifest)) {
-  expectType<LocatedManifestManager<CustomMetadata>>(customManifest);
-}
+assert.ok(ManifestManager.isLocated(customManifest));
+expectType<LocatedManifestManager<CustomMetadata>>(customManifest);
 
