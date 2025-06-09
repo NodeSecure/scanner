@@ -9,7 +9,8 @@
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test ./test/**/*.spec.ts",
-    "test": "c8 -r html npm run test-only"
+    "test:tsd": "npm run build && tsd",
+    "test": "c8 -r html npm run test-only && npm run test:tsd"
   },
   "files": [
     "dist"
@@ -35,6 +36,10 @@
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "@types/object-hash": "^3.0.6"
+    "@types/object-hash": "^3.0.6",
+    "tsd": "^0.32.0"
+  },
+  "tsd": {
+    "directory": "test/types"
   }
 }
