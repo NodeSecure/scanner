@@ -44,12 +44,11 @@ describe("ManifestManager", () => {
       );
       mama.metadata.customField = "test";
 
-      if (ManifestManager.isLocated(mama)) {
-        const location: string = mama.location;
-        const metadata: CustomMetadata = mama.metadata;
-        assert.strictEqual(location, "/tmp/path");
-        assert.strictEqual(metadata.customField, "test");
-      }
+      assert.ok(ManifestManager.isLocated(mama));
+      const location: string = mama.location;
+      const metadata: CustomMetadata = mama.metadata;
+      assert.strictEqual(location, "/tmp/path");
+      assert.strictEqual(metadata.customField, "test");
     });
   });
 
