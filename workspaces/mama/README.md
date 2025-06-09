@@ -42,6 +42,27 @@ The **location** parameter can either be a full path or the path to the director
 > [!NOTE]
 > `location` is automatically dispatched to the ManifestManager constructor options.
 
+### (static) isLocated<T>(mama: ManifestManager<T>): mama is LocatedManifestManager<T>
+
+A TypeScript type guard to check if a `ManifestManager` instance has a location. This is particularly useful when working with manifests that may or may not have been loaded from the filesystem.
+
+When the type guard is successful, the `location` property is available on the instance.
+
+```ts
+import { ManifestManager, type LocatedManifestManager } from "@nodesecure/mama";
+import { expectType } from "tsd";
+
+const locatedManifest = new ManifestManager(
+  { name: "test", version: "1.0.0" },
+  { location: "/tmp/path" }
+);
+
+if (ManifestManager.isLocated(locatedManifest)) {
+  // locatedManifest is now of type LocatedManifestManager
+  expectType<string>(locatedManifest.location);
+}
+```
+
 ### constructor(document: ManifestManagerDocument, options?: ManifestManagerOptions)
 
 document is described by the following type:
@@ -149,6 +170,19 @@ Return true if `workspaces` property is present
 
 > [!NOTE]
 > Workspace are described by the interface `WorkspacesPackageJSON` (from @nodesecure/npm-types)
+
+### location
+
+A string representing the absolute path to the manifest file's directory, if it was provided in the constructor options. Otherwise, it is `undefined`.
+
+```ts
+const mama = new ManifestManager(
+  { name: "test", version: "1.0.0" },
+  { location: "/home/user/my-project/package.json" }
+);
+
+console.log(mama.location); //-> /home/user/my-project
+```
 
 ### hasZeroSemver
 Return true if `version` is starting with `0.x`
