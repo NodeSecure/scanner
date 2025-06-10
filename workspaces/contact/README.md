@@ -59,7 +59,7 @@ Contact is defined by the following TypeScript interface:
 interface Contact {
   email?: string;
   url?: string;
-  name: string;
+  name?: string;
 }
 ```
 

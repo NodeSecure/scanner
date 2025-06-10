@@ -148,7 +148,7 @@ Return the author parsed as a **Contact** (or `null` if the property is missing)
 interface Contact {
   email?: string;
   url?: string;
-  name: string;
+  name?: string;
 }
 ```
 
@@ -212,4 +212,3 @@ The flags property is sealed (It is not possible to extend the list of flags)
 
 > [!IMPORTANT]
 > Read more about unsafe scripts [here](https://www.nerdycode.com/prevent-npm-executing-scripts-security/)
-

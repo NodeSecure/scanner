@@ -30,7 +30,7 @@ export class UnlitContact {
       return utils.compareContact(this.illuminated, contact);
     }
 
-    if (this.extendedName.test(contact.name)) {
+    if (contact.name && this.extendedName.test(contact.name)) {
       return true;
     }
 

@@ -157,6 +157,10 @@ async function addNpmAvatar(
       return Promise.resolve();
     }
 
+    if (!contributor.name) {
+      return Promise.resolve();
+    }
+
     return npmRegistrySDK.user(contributor.name, { perPage: 1 })
       .then((profile) => {
         contributor.npmAvatar = profile.avatars.small;

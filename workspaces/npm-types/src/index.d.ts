@@ -7,7 +7,7 @@ export type Spec = `${string}@${string}`;
 export interface Contact {
   email?: string;
   url?: string;
-  name: string;
+  name?: string;
 }
 
 export interface Signature {
