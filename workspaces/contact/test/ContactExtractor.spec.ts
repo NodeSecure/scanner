@@ -13,6 +13,21 @@ import {
 } from "../src/index.js";
 
 describe("ContactExtractor", () => {
+  test("Given a contact with no name, it should not throw an Error", () => {
+    const highlighted: any = {
+      email: "foobar@gmail.com"
+    };
+    const extractor = new ContactExtractor({
+      highlight: [highlighted]
+    });
+
+    const dependencies: Record<string, ContactExtractorPackageMetadata> = {
+      random: fakePackageMetadata()
+    };
+
+    extractor.fromDependencies(dependencies);
+  });
+
   describe("fromDependencies", () => {
     test(`Given three dependencies where the Highlighted Contact appears two times,
       it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`, () => {

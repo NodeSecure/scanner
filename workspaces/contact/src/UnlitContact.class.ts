@@ -14,9 +14,13 @@ export class UnlitContact {
 
   public dependencies = new Set<string>();
 
-  constructor(contact: Contact) {
+  constructor(
+    contact: Contact
+  ) {
     this.illuminated = structuredClone(contact);
-    this.extendedName = utils.parseRegExp(contact.name);
+    this.extendedName = typeof contact.name === "string" ?
+      utils.parseRegExp(contact.name) :
+      null;
   }
 
   compareTo(
