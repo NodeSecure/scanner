@@ -134,12 +134,19 @@ describe("ManifestManager", () => {
       t.assert.equal(readFile.mock.callCount(), 1);
     });
 
-    test("Given the location argument is not a string, it must throw a TypeError", async() => {
+    test("Given a ManifestManager instance, it should return it directly", async() => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+      const result = await ManifestManager.fromPackageJSON(mama);
+
+      assert.strictEqual(result, mama);
+    });
+
+    test("Given an argument that is not a string or a ManifestManager, it must throw a TypeError", async() => {
       await assert.rejects(
         () => ManifestManager.fromPackageJSON({} as any),
         {
           name: "TypeError",
-          message: "location must be a string primitive"
+          message: "locationOrManifest must be a string or a ManifestManager instance"
         }
       );
     });
