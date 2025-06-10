@@ -229,12 +229,17 @@ export class ManifestManager<
   }
 
   static async fromPackageJSON(
-    location: string
+    locationOrManifest: string | ManifestManager
   ): Promise<ManifestManager> {
-    if (typeof location !== "string") {
-      throw new TypeError("location must be a string primitive");
+    if (locationOrManifest instanceof ManifestManager) {
+      return locationOrManifest;
     }
 
+    if (typeof locationOrManifest !== "string") {
+      throw new TypeError("locationOrManifest must be a string or a ManifestManager instance");
+    }
+
+    const location = locationOrManifest;
     const packageLocation = location.endsWith("package.json") ?
       location :
       path.join(location, "package.json");

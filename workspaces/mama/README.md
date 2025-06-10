@@ -33,14 +33,17 @@ console.log(mama.integrity);
 
 ## API
 
-### (static) fromPackageJSON(location: string): Promise< ManifestManager >
+### (static) fromPackageJSON(locationOrManifest: string | ManifestManager): Promise< ManifestManager >
 
-Load a new instance using a `package.json` from the filesystem.
+Load a `ManifestManager` from a given location or return the instance if one is provided.
 
-The **location** parameter can either be a full path or the path to the directory where the `package.json` is located.
+The **locationOrManifest** parameter can either be a `string` (representing a path) or a `ManifestManager` instance.
+
+- If it is a `string`, it can either be a full path to a `package.json` or the path to the directory where one is located.
+- If it is a `ManifestManager` instance, the method will return the instance directly.
 
 > [!NOTE]
-> `location` is automatically dispatched to the ManifestManager constructor options.
+> When a `location` string is provided, it is automatically dispatched to the ManifestManager constructor options.
 
 ### (static) isLocated<T>(mama: ManifestManager<T>): mama is LocatedManifestManager<T>
 
