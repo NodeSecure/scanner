@@ -2,7 +2,7 @@
 import path from "node:path";
 import url from "node:url";
 import { readFileSync } from "node:fs";
-import { test } from "node:test";
+import { test, describe } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
@@ -196,31 +196,39 @@ test("highlight contacts from a remote package", async() => {
   );
 });
 
-test("should parse author, homepage and links for non-npm package", async() => {
-  const result = await cwd(path.join(kFixturePath, "non-npm-package"));
+describe("scanner.cwd()", () => {
+  test("should parse author, homepage and links for a local package who doesn't exist on the remote registry", async() => {
+    const result = await cwd(path.join(kFixturePath, "non-npm-package"));
 
-  const dep = result.dependencies["non-npm-package"];
-  const v1 = dep.versions["1.0.0"];
+    const dep = result.dependencies["non-npm-package"];
+    const v1 = dep.versions["1.0.0"];
 
-  assert.deepEqual(v1.author, {
-    email: void 0,
-    name: "NodeSecure",
-    url: void 0
-  });
-  assert.deepStrictEqual(v1.links, {
-    npm: null,
-    homepage: "https://nodesecure.com",
-    repository: "https://github.com/NodeSecure/non-npm-package"
-  });
-  assert.deepStrictEqual(v1.repository, {
-    type: "git",
-    url: "https://github.com/NodeSecure/non-npm-package.git"
+    assert.deepEqual(v1.author, {
+      name: "NodeSecure"
+    });
+    assert.deepStrictEqual(v1.links, {
+      npm: null,
+      homepage: "https://nodesecure.com",
+      repository: "https://github.com/NodeSecure/non-npm-package"
+    });
+    assert.deepStrictEqual(v1.repository, {
+      type: "git",
+      url: "https://github.com/NodeSecure/non-npm-package.git"
+    });
+
+    assert.deepStrictEqual(dep.metadata.author, {
+      name: "NodeSecure"
+    });
+    assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
   });
 
-  assert.deepStrictEqual(dep.metadata.author, {
-    email: void 0,
-    name: "NodeSecure",
-    url: void 0
+  test("should parse local manifest author field without throwing when attempting to highlight contacts", async() => {
+    const { dependencies } = await cwd(
+      path.join(kFixturePath, "non-valid-authors")
+    );
+    const pkg = dependencies["random-package"];
+
+    assert.strictEqual(pkg.metadata.author, null);
   });
-  assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
 });
+

@@ -9,6 +9,7 @@ import { Mutex, MutexRelease } from "@openally/mutex";
 import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
+import { parseAuthor } from "@nodesecure/utils";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
@@ -16,7 +17,6 @@ import {
   getDependenciesWarnings,
   addMissingVersionFlags,
   getUsedDeps,
-  manifestAuthor,
   getManifestLinks
 } from "./utils/index.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
@@ -240,12 +240,12 @@ export async function depWalker(
 
       if (isLocalManifest(verDescriptor, manifest, packageName)) {
         Object.assign(dependency.metadata, {
-          author: manifestAuthor(manifest.author),
+          author: parseAuthor(manifest.author),
           homepage: manifest.homepage
         });
 
         Object.assign(verDescriptor, {
-          author: manifestAuthor(manifest.author),
+          author: parseAuthor(manifest.author),
           links: getManifestLinks(manifest),
           repository: manifest.repository
         });
