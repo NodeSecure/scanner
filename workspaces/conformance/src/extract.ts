@@ -4,7 +4,10 @@ import * as fsSync from "node:fs";
 import * as fs from "node:fs/promises";
 
 // Import Third-party Dependencies
-import { ManifestManager } from "@nodesecure/mama";
+import {
+  ManifestManager,
+  type LocatedManifestManager
+} from "@nodesecure/mama";
 
 // Import Internal Dependencies
 import * as utils from "./utils/index.js";
@@ -24,14 +27,15 @@ export interface ExtractAsyncOptions {
 }
 
 export async function extractLicenses(
-  location: string,
+  manifestOrLocation: string | LocatedManifestManager,
   options: ExtractAsyncOptions = {}
 ): Promise<SpdxExtractedResult> {
   const { fsEngine = fs } = options;
 
   const mama = await ManifestManager.fromPackageJSON(
-    location
+    manifestOrLocation
   );
+  const location = mama.location!;
 
   const licenseData = new LicenseResult()
     .addLicenseID(
@@ -60,16 +64,15 @@ export interface ExtractSyncOptions {
 }
 
 export function extractLicensesSync(
-  location: string,
+  manifestOrLocation: string | LocatedManifestManager,
   options: ExtractSyncOptions = {}
 ): SpdxExtractedResult {
   const { fsEngine = fsSync } = options;
 
-  const packageStr = fsEngine.readFileSync(
-    path.join(location, kManifestFileName), "utf-8"
+  const mama = ManifestManager.fromPackageJSONSync(
+    manifestOrLocation
   );
-  const packageJSON = JSON.parse(packageStr);
-  const mama = new ManifestManager(packageJSON);
+  const location = mama.location!;
 
   const licenseData = new LicenseResult();
   licenseData.addLicenseID(
