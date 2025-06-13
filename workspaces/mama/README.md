@@ -45,6 +45,10 @@ The **locationOrManifest** parameter can either be a `string` (representing a pa
 > [!NOTE]
 > When a `location` string is provided, it is automatically dispatched to the ManifestManager constructor options.
 
+### (static) fromPackageJSONSync(locationOrManifest: string | ManifestManager): ManifestManager
+
+Same as `fromPackageJSON` but using synchronous FS API.
+
 ### (static) isLocated<T>(mama: ManifestManager<T>): mama is LocatedManifestManager<T>
 
 A TypeScript type guard to check if a `ManifestManager` instance has a location. This is particularly useful when working with manifests that may or may not have been loaded from the filesystem.

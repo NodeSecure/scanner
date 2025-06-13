@@ -1,5 +1,7 @@
+/* eslint-disable max-lines */
 // Import Node.js Dependencies
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import path from "node:path";
 import assert from "node:assert";
 import { describe, it, test, type TestContext } from "node:test";
@@ -144,6 +146,109 @@ describe("ManifestManager", () => {
     test("Given an argument that is not a string or a ManifestManager, it must throw a TypeError", async() => {
       await assert.rejects(
         () => ManifestManager.fromPackageJSON({} as any),
+        {
+          name: "TypeError",
+          message: "locationOrManifest must be a string or a ManifestManager instance"
+        }
+      );
+    });
+  });
+
+  describe("static fromPackageJSONSync()", () => {
+    test(`Given a location equal to process.cwd(),
+      it should read and parse the JSON from filesystem`, (t) => {
+      const readfile = t.mock.method(
+        fsSync,
+        "readFileSync",
+        () => JSON.stringify(kMinimalPackageJSON)
+      );
+
+      const location = process.cwd();
+      const mama = ManifestManager.fromPackageJSONSync(
+        location
+      );
+
+      assert.equal(mama.location, location);
+      assert.equal(readfile.mock.callCount(), 1);
+      assert.ok(mama instanceof ManifestManager);
+
+      assert.strictEqual(
+        mama.isWorkspace,
+        false
+      );
+      assert.strictEqual(
+        mama.spec,
+        `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
+      );
+    });
+
+    test(`Given a location equal to process.cwd() + package.json,
+      it should read and parse the JSON from filesystem`, (t) => {
+      const readFile = t.mock.method(
+        fsSync,
+        "readFileSync",
+        () => JSON.stringify(kMinimalPackageJSON)
+      );
+
+      const location = path.join(process.cwd(), "package.json");
+      const mama = ManifestManager.fromPackageJSONSync(
+        location
+      );
+
+      assert.equal(mama.location, path.dirname(location));
+      assert.equal(readFile.mock.callCount(), 1);
+      assert.ok(mama instanceof ManifestManager);
+
+      assert.strictEqual(
+        mama.isWorkspace,
+        false
+      );
+      assert.strictEqual(
+        mama.spec,
+        `${kMinimalPackageJSON.name}@${kMinimalPackageJSON.version}`
+      );
+    });
+
+    test("Given an invalid JSON, it should throw a custom Error with the parsing error as a cause", (t: TestContext) => {
+      const location = process.cwd();
+      const expectedLocation = path.join(location, "package.json");
+
+      const readFile = t.mock.method(
+        fsSync,
+        "readFileSync",
+        () => "{ foo: NaN }"
+      );
+      t.plan(5);
+
+      try {
+        ManifestManager.fromPackageJSONSync(
+          process.cwd()
+        );
+      }
+      catch (error) {
+        t.assert.strictEqual(error.name, "Error");
+        t.assert.strictEqual(
+          error.message,
+          `Failed to parse package.json located at: ${expectedLocation}`
+        );
+
+        t.assert.ok("cause" in error);
+        t.assert.strictEqual(error.cause.name, "SyntaxError");
+      }
+
+      t.assert.equal(readFile.mock.callCount(), 1);
+    });
+
+    test("Given a ManifestManager instance, it should return it directly", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+      const result = ManifestManager.fromPackageJSONSync(mama);
+
+      assert.strictEqual(result, mama);
+    });
+
+    test("Given an argument that is not a string or a ManifestManager, it must throw a TypeError", () => {
+      assert.throws(
+        () => ManifestManager.fromPackageJSONSync({} as any),
         {
           name: "TypeError",
           message: "locationOrManifest must be a string or a ManifestManager instance"
