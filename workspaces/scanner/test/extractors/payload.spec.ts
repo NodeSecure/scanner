@@ -182,7 +182,7 @@ describe("Extractors.Probes", () => {
   });
 
   describe("Flags", () => {
-    it("should extract strnum flags", () => {
+    it("should extract strnum known flags", () => {
       const extractor = new Extractors.Payload(
         strnumNodesecurePayload,
         [

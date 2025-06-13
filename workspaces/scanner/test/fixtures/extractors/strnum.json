@@ -18,7 +18,8 @@
           "flags": [
             "hasWarnings",
             "isOutdated",
-            "hasManyPublishers"
+            "hasManyPublishers",
+            "hasDependencies"
           ],
           "warnings": [
             {
