@@ -7,14 +7,14 @@ import type {
 } from "../payload.js";
 import type { DependencyVersion } from "../../types.js";
 
-export type ExtentionsResult = {
-  extentions: Record<string, number>;
+export type ExtensionsResult = {
+  extensions: Record<string, number>;
 };
 
-export class Extentions implements ManifestProbeExtractor<ExtentionsResult> {
+export class Extensions implements ManifestProbeExtractor<ExtensionsResult> {
   level = "manifest" as const;
 
-  #extentions = new FrequencySet();
+  #extensions = new FrequencySet();
 
   next(
     _: string,
@@ -24,14 +24,14 @@ export class Extentions implements ManifestProbeExtractor<ExtentionsResult> {
 
     composition.extensions.forEach((extension) => {
       if (extension !== "") {
-        this.#extentions.add(extension);
+        this.#extensions.add(extension);
       }
     });
   }
 
   done() {
     return {
-      extentions: Object.fromEntries(this.#extentions)
+      extensions: Object.fromEntries(this.#extensions)
     };
   }
 }

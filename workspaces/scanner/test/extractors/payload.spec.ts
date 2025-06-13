@@ -393,20 +393,20 @@ describe("Extractors.Callbacks", () => {
     );
   });
 
-  describe("Extentions", () => {
-    it("should extract  extentions", () => {
+  describe("Extensions", () => {
+    it("should extract extensions", () => {
       const extractor = new Extractors.Payload(
         expressNodesecurePayload,
         [
-          new Extractors.Probes.Extentions()
+          new Extractors.Probes.Extensions()
         ]
       );
 
       const {
-        extentions
+        extensions
       } = extractor.extractAndMerge();
 
-      assert.deepEqual(extentions, {
+      assert.deepEqual(extensions, {
         ".js": 69,
         ".json": 69,
         ".md": 69,
