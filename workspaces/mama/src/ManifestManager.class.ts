@@ -1,5 +1,6 @@
 // Import Node.js Dependencies
 import fs from "node:fs/promises";
+import fsSync from "node:fs";
 import path from "node:path";
 
 // Import Third-party Dependencies
@@ -244,6 +245,41 @@ export class ManifestManager<
       location :
       path.join(location, "package.json");
     const packageStr = await fs.readFile(packageLocation, "utf-8");
+
+    try {
+      const packageJSON = JSON.parse(
+        packageStr
+      ) as PackageJSON | WorkspacesPackageJSON;
+
+      return new ManifestManager(
+        packageJSON,
+        { location }
+      );
+    }
+    catch (cause) {
+      throw new Error(
+        `Failed to parse package.json located at: ${packageLocation}`,
+        { cause }
+      );
+    }
+  }
+
+  static fromPackageJSONSync(
+    locationOrManifest: string | ManifestManager
+  ): ManifestManager {
+    if (locationOrManifest instanceof ManifestManager) {
+      return locationOrManifest;
+    }
+
+    if (typeof locationOrManifest !== "string") {
+      throw new TypeError("locationOrManifest must be a string or a ManifestManager instance");
+    }
+
+    const location = locationOrManifest;
+    const packageLocation = location.endsWith("package.json") ?
+      location :
+      path.join(location, "package.json");
+    const packageStr = fsSync.readFileSync(packageLocation, "utf-8");
 
     try {
       const packageJSON = JSON.parse(
