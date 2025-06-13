@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/scanner",
-  "version": "6.5.0",
+  "version": "6.6.0",
   "description": "A package API to run a static analysis of your module's dependencies.",
   "type": "module",
   "exports": "./dist/index.js",
@@ -50,11 +50,11 @@
   "dependencies": {
     "@fastify/deepmerge": "^3.1.0",
     "@nodesecure/conformance": "^1.0.0",
-    "@nodesecure/contact": "^1.0.1",
+    "@nodesecure/contact": "^1.0.2",
     "@nodesecure/flags": "^3.0.3",
     "@nodesecure/i18n": "^4.0.1",
     "@nodesecure/js-x-ray": "^8.1.0",
-    "@nodesecure/mama": "^1.2.0",
+    "@nodesecure/mama": "^1.3.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/rc": "^4.1.0",
