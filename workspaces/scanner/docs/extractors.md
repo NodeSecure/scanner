@@ -37,6 +37,7 @@ Available probes include:
 | Flags | manifest |
 | Vulnerabilities | packument |
 | Warnings | manifest |
+| Extentions | manifest |
 
 All probes follow the same `ProbeExtractor` interface, which acts as an iterator-like contract:
 

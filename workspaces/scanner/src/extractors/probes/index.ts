@@ -4,3 +4,4 @@ export * from "./ContactExtractor.class.js";
 export * from "./WarningsExtractor.class.js";
 export * from "./VulnerabilitiesExtractor.class.js";
 export * from "./FlagsExtractor.class.js";
+export * from "./ExtensionsExtractor.class.js";

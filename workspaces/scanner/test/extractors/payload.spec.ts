@@ -392,4 +392,28 @@ describe("Extractors.Callbacks", () => {
       }
     );
   });
+
+  describe("Extensions", () => {
+    it("should extract extensions", () => {
+      const extractor = new Extractors.Payload(
+        expressNodesecurePayload,
+        [
+          new Extractors.Probes.Extensions()
+        ]
+      );
+
+      const {
+        extensions
+      } = extractor.extractAndMerge();
+
+      assert.deepEqual(extensions, {
+        ".js": 69,
+        ".json": 69,
+        ".md": 69,
+        ".ts": 20,
+        ".yml": 20,
+        ".markdown": 1
+      });
+    });
+  });
 });
