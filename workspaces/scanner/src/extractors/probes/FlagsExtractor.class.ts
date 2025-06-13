@@ -1,5 +1,6 @@
 // Import Third-party Dependencies
 import FrequencySet from "frequency-set";
+import { getFlags } from "@nodesecure/flags";
 
 // Import Internal Dependencies
 import type {
@@ -10,6 +11,9 @@ import type { DependencyVersion } from "../../types.js";
 export type FlagsResult = {
   flags: Record<string, number>;
 };
+
+// CONSTANTS
+const kWantedFlags = getFlags();
 
 export class Flags implements ManifestProbeExtractor<FlagsResult> {
   level = "manifest" as const;
@@ -22,7 +26,11 @@ export class Flags implements ManifestProbeExtractor<FlagsResult> {
   ) {
     const { flags } = version;
 
-    flags.forEach((flagName) => this.#flags.add(flagName));
+    flags.forEach((flagName) => {
+      if (kWantedFlags.has(flagName)) {
+        this.#flags.add(flagName);
+      }
+    });
   }
 
   done() {
