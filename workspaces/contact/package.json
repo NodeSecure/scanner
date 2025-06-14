@@ -12,7 +12,8 @@
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test ./test/**/*.spec.ts",
-    "test": "c8 -r html npm run test-only"
+    "test": "c8 -r html npm run test-only",
+    "test:tsd": "npm run build && tsd"
   },
   "files": [
     "dist"
@@ -36,6 +37,10 @@
     "@faker-js/faker": "^9.7.0"
   },
   "dependencies": {
-    "@nodesecure/npm-types": "^1.2.0"
+    "@nodesecure/npm-types": "^1.2.0",
+    "type-fest": "^4.41.0"
+  },
+  "tsd": {
+    "directory": "test/types"
   }
 }

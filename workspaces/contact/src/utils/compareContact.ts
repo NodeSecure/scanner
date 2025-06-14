@@ -18,8 +18,8 @@ export interface CompareOptions {
  * - add options for custom/advanced comparaison
  */
 export function compareContact(
-  contactA: Contact,
-  contactB: Contact,
+  contactA: Partial<Contact>,
+  contactB: Partial<Contact>,
   options: CompareOptions = Object.create(null)
 ): boolean {
   const { compareName = true } = options;
