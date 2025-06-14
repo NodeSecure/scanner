@@ -89,9 +89,9 @@ export interface SpdxLicenseConformance {
 
 Extract License name from a given file content. Return `null` if it failed to detect the license.
 
-### extractLicenses(location: string, options?: extractAsyncOptions): Promise< SpdxExtractedResult >
+### extractLicenses(manifestOrLocation: string | LocatedManifestManager, options?: extractAsyncOptions): Promise< SpdxExtractedResult >
 
-Search and parse all licenses at the given location.
+Search and parse all licenses at the given string `location` or `LocatedManifestManager`.
 
 Return all licenses with their SPDX conformance.
 
@@ -127,7 +127,7 @@ interface SpdxExtractedResult {
 }
 ```
 
-### extractLicensesSync(location: string, options?: ExtractSyncOptions): SpdxExtractedResult
+### extractLicensesSync(manifestOrLocation: string | LocatedManifestManager, options?: ExtractSyncOptions): SpdxExtractedResult
 Same as `extractLicenses` but use synchronous FS API.
 
 ## Scripts
