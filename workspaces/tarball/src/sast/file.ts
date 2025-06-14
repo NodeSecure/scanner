@@ -53,7 +53,7 @@ export async function scanFile(
     return {
       file,
       warnings,
-      isMinified: result.isMinified,
+      isMinified: result.flags.has("is-minified"),
       tryDependencies,
       dependencies: packages,
       filesDependencies: files,
