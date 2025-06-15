@@ -36,8 +36,7 @@
     "object-hash": "^3.0.0"
   },
   "devDependencies": {
-    "@types/object-hash": "^3.0.6",
-    "tsd": "^0.32.0"
+    "@types/object-hash": "^3.0.6"
   },
   "tsd": {
     "directory": "test/types"

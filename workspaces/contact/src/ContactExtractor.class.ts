@@ -4,10 +4,14 @@ import type { Contact } from "@nodesecure/npm-types";
 // Import Internal Dependencies
 import {
   UnlitContact,
+  type EnforcedContact,
   type IlluminatedContact
 } from "./UnlitContact.class.js";
 
-export type { IlluminatedContact };
+export type {
+  IlluminatedContact,
+  EnforcedContact
+};
 
 export interface ContactExtractorPackageMetadata {
   author?: Contact;
@@ -15,11 +19,11 @@ export interface ContactExtractorPackageMetadata {
 }
 
 export interface ContactExtractorOptions {
-  highlight: Contact[];
+  highlight: EnforcedContact[];
 }
 
 export class ContactExtractor {
-  private highlighted: Contact[] = [];
+  private highlighted: EnforcedContact[] = [];
 
   constructor(
     options: ContactExtractorOptions
