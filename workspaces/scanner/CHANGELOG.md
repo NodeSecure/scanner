@@ -1,5 +1,18 @@
 # @nodesecure/scanner
 
+## 6.7.0
+
+### Minor Changes
+
+- [#435](https://github.com/NodeSecure/scanner/pull/435) [`fb5494f`](https://github.com/NodeSecure/scanner/commit/fb5494f669029772d6bea9b86074634e0692ca9d) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(extractors) added extenstions extractor
+
+### Patch Changes
+
+- Updated dependencies [[`9eb15e2`](https://github.com/NodeSecure/scanner/commit/9eb15e233b85546b06bbcb10d66f98a71deba7eb), [`39cf2a9`](https://github.com/NodeSecure/scanner/commit/39cf2a92568aff3cbb44ba3dccf44c323f971119), [`f362a3b`](https://github.com/NodeSecure/scanner/commit/f362a3b75db69e961d85758b9ca7c56849ceaf4a)]:
+  - @nodesecure/conformance@1.1.0
+  - @nodesecure/contact@2.0.0
+  - @nodesecure/mama@1.4.0
+
 ## 6.6.0
 
 ### Minor Changes

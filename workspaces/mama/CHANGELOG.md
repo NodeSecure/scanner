@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 1.4.0
+
+### Minor Changes
+
+- [#436](https://github.com/NodeSecure/scanner/pull/436) [`f362a3b`](https://github.com/NodeSecure/scanner/commit/f362a3b75db69e961d85758b9ca7c56849ceaf4a) Thanks [@fraxken](https://github.com/fraxken)! - Implement new static method fromPackageJSONSync
+
 ## 1.3.0
 
 ### Minor Changes
