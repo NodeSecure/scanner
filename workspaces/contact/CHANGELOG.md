@@ -1,5 +1,11 @@
 # @nodesecure/contact
 
+## 2.0.0
+
+### Major Changes
+
+- [#439](https://github.com/NodeSecure/scanner/pull/439) [`39cf2a9`](https://github.com/NodeSecure/scanner/commit/39cf2a92568aff3cbb44ba3dccf44c323f971119) Thanks [@fraxken](https://github.com/fraxken)! - Add new EnforcedContact type that allow either name or email to be highlighted
+
 ## 1.0.2
 
 ### Patch Changes
