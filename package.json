@@ -8,7 +8,8 @@
     "workspaces/contact",
     "workspaces/npm-types",
     "workspaces/i18n",
-    "workspaces/rc"
+    "workspaces/rc",
+    "workspaces/utils"
   ],
   "scripts": {
     "build": "tsc --build",

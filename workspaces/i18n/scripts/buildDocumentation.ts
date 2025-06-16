@@ -2,8 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
-import url from "node:url";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 // Import Third-party Dependencies
 import zup from "zup";
@@ -23,7 +22,7 @@ const kExternalI18nRepos = {
   scanner: "workspaces/scanner/src/i18n",
   cli: "i18n"
 };
-const kTaggedStringPath = url.pathToFileURL(path.join(import.meta.dirname, "../src/utils.js"));
+const kTaggedStringPath = pathToFileURL(path.join(import.meta.dirname, "../src/utils.js"));
 
 function flatten(
   obj: any,
@@ -61,11 +60,11 @@ for (const [repo, i18nPath] of Object.entries(kExternalI18nRepos)) {
 
   const tmpPathFr = path.join(os.tmpdir(), `fr-${repo}`);
   const tmpPathEn = path.join(os.tmpdir(), `en-${repo}`);
-  fs.writeFileSync(tmpPathFr, frRaw.replace(`from "@nodesecure/i18n";`, `from "${kTaggedStringPath}"`));
-  fs.writeFileSync(tmpPathEn, enRaw.replace(`from "@nodesecure/i18n";`, `from "${kTaggedStringPath}"`));
+  fs.writeFileSync(tmpPathFr, frRaw.replace("from \"@nodesecure/i18n\";", `from "${kTaggedStringPath}"`));
+  fs.writeFileSync(tmpPathEn, enRaw.replace("from \"@nodesecure/i18n\";", `from "${kTaggedStringPath}"`));
 
-  const { default: fr } = await import(url.pathToFileURL(tmpPathFr).href);
-  const { default: en } = await import(url.pathToFileURL(tmpPathEn).href);
+  const { default: fr } = await import(pathToFileURL(tmpPathFr).href);
+  const { default: en } = await import(pathToFileURL(tmpPathEn).href);
 
   Object.assign(kTokens.french, { [repo]: fr[repo] });
   Object.assign(kTokens.english, { [repo]: en[repo] });
