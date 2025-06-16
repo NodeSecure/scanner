@@ -8,6 +8,9 @@
   "references": [
     {
       "path": "../npm-types"
+    },
+    {
+      "path": "../utils"
     }
   ]
 }

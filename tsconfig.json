@@ -27,6 +27,9 @@
     },
     {
       "path": "./workspaces/i18n"
+    },
+    {
+      "path": "./workspaces/utils"
     }
   ]
 }
