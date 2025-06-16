@@ -1,0 +1,52 @@
+{
+  "name": "@nodesecure/flags",
+  "version": "3.0.3",
+  "description": "NodeSecure security flags",
+  "scripts": {
+    "build": "tsc & cp -R ./src/flags ./dist/flags",
+    "prepublishOnly": "npm run build",
+    "test-only": "tsx --test \"./test/**/*.spec.ts\"",
+    "test": "c8 -r html npm run test-only",
+    "generateFlags": "tsx scripts/generateFlags.js"
+  },
+  "keywords": [
+    "nodesecure",
+    "flags",
+    "documentation"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./web": {
+      "types": "./dist/web.d.ts",
+      "import": "./dist/web.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "./dist/index.d.ts",
+  "modes": {
+    "web": "dist/web.js"
+  },
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/flags#readme",
+  "devDependencies": {
+    "@types/turndown": "^5.0.5",
+    "turndown": "^7.1.2"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}

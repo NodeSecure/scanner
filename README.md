@@ -141,6 +141,7 @@ Click on one of the links to access the documentation of the workspace:
 | --- | --- |
 | tarball | [@nodesecure/tarball](./workspaces/tarball) |
 | tree-walker | [@nodesecure/tree-walker](./workspaces/tree-walker) |
+| flags | [@nodesecure/flags](./workspaces/flags) |
 | mama | [@nodesecure/mama](./workspaces/mama) |
 | contact | [@nodesecure/contact](./workspaces/contact) |
 | conformance | [@nodesecure/conformance](./workspaces/conformance) |

@@ -9,7 +9,8 @@
     "workspaces/npm-types",
     "workspaces/i18n",
     "workspaces/rc",
-    "workspaces/utils"
+    "workspaces/utils",
+    "workspaces/flags"
   ],
   "scripts": {
     "build": "tsc --build",

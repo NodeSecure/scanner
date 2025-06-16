@@ -1,0 +1,48 @@
+<div>
+    <h1>🌲 hasIndirectDependencies</h1>
+    <p>
+        The package has indirect (or also called transitive) dependencies. This
+        means that the child dependencies of the package also have dependencies.
+    </p>
+    <br />
+      <img
+        src="https://github.com/NodeSecure/flags/blob/main/images/hasIndirectDependencies.png?raw=true"
+        width="300"
+        style="max-width:100%;"
+      />
+    <br /><br />
+    <p>
+        In the following example <b>accepts</b> is flagged 🌲 because
+        <b>mime-types</b> has a <b>mime-db</b> dependency which
+        mean that the package is an indirect dependency of <b>accepts</b>.
+    </p>
+    <br />
+    <p>
+        Indirect dependencies are dangerous for many reasons and you may found
+        useful informations in these articles / study:
+    </p>
+    <br />
+    <ul>
+        <li>
+            <a
+                href="https://snyk.io/blog/78-of-vulnerabilities-are-found-in-indirect-dependencies-making-remediation-complex/"
+                rel="nofollow"
+                >78% of vulnerabilities are found in indirect dependencies, making
+                remediation complex</a
+            >
+        </li>
+        <li>
+            <a href="https://arxiv.org/pdf/1902.09217.pdf" rel="nofollow"
+                >Small World with High Risks: A Study of Security Threats in the npm
+                Ecosystem</a
+            >
+        </li>
+        <li>
+            <a
+                href="https://snyk.io/blog/angular-vs-react-the-security-risk-of-indirect-dependencies/"
+                rel="nofollow"
+                >Angular vs React: the security risk of indirect dependencies</a
+            >
+        </li>
+    </ul>
+</div>
