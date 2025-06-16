@@ -87,7 +87,7 @@ assert.deepEqual(configurationPayload, memoizedPayload);
 ### read(location?: string, options?: readOptions): Promise< Result< RC, NodeJS.ErrnoException > >
 
 ```ts
-interface createReadOptions {
+interface CreateReadOptions {
   /**
    * If enabled, the file will be created if it does not exist on disk.
    *
@@ -109,7 +109,7 @@ interface createReadOptions {
 }
 
 export type readOptions = RequireAtLeastOne<
-  createReadOptions,
+  CreateReadOptions,
   "createIfDoesNotExist" | "createMode"
 >;
 ```
@@ -125,7 +125,7 @@ const configurationPayload = (
 console.log(configurationPayload);
 ```
 
-### write(location?: string, options: writeOptions): Promise< Result< void, NodeJS.ErrnoException > >
+### write(location?: string, options: WriteOptions): Promise< Result< void, NodeJS.ErrnoException > >
 
 By default the write API will overwrite the current payload with the provided one. When the `partialUpdate` option is enabled it will merge the new properties with the existing one.
 
@@ -133,7 +133,7 @@ By default the write API will overwrite the current payload with the provided on
 /**
  * Overwrite the complete payload. partialUpdate property is mandatory.
  */
-export interface writeCompletePayload {
+export interface WriteCompletePayload {
   payload: RC;
   partialUpdate?: false;
 }
@@ -141,28 +141,28 @@ export interface writeCompletePayload {
 /**
  * Partially update the payload. This implies not to rewrite the content of the file when enabled.
  **/
-export interface writePartialPayload {
+export interface WritePartialPayload {
   payload: Partial<RC>;
   partialUpdate: true;
 }
 
-export type writeOptions = writeCompletePayload | writePartialPayload;
+export type WriteOptions = WriteCompletePayload | WritePartialPayload;
 ```
-### memoize(payload: Partial< RC >, options: memoizeOptions = {}): void
+### memoize(payload: Partial< RC >, options: MemoizeOptions = {}): void
 By default, the memory API overwrites the previous stored payload. When the `OVERWRITE` option is `false`, it merges new properties with existing properties.
 
 ```ts
-export interface memoizeOptions {
+export interface MemoizeOptions {
   overwrite?: boolean;
 }
 ```
 The `overwrite` option is used to specify whether data should be overwritten or merged.
 
-### memoized(options: memoizedOptions): Partial< RC > | null
+### memoized(options: MemoizedOptions): Partial< RC > | null
 This method returns null, when the default value is null, otherwise, it returns the current value of `memoizedValue`.
 
 ```ts
-export interface memoizedOptions {
+export interface MemoizedOptions {
   defaultValue: Partial<RC>;
 }
 ```

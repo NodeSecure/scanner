@@ -16,7 +16,7 @@ import {
 // CONSTANTS
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
-export interface scanFileReport {
+export interface ScanFileReport {
   file: string;
   warnings: (Omit<WarningDefault<WarningName>, "value"> & { file: string; })[];
   isMinified: boolean;
@@ -32,7 +32,7 @@ export async function scanFile(
   destination: string,
   file: string,
   packageName: string
-): Promise<scanFileReport> {
+): Promise<ScanFileReport> {
   const result = await new AstAnalyser().analyseFile(
     path.join(destination, file),
     {
@@ -80,7 +80,7 @@ export async function scanManyFiles(
   files: string[],
   destination: string,
   packageName: string
-): Promise<scanFileReport[]> {
+): Promise<ScanFileReport[]> {
   const scannedFiles = await Promise.allSettled(
     files
       .filter((fileName) => kJsExtname.has(path.extname(fileName)))

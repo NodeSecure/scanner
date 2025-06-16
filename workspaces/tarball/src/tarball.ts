@@ -64,7 +64,7 @@ const NPM_TOKEN = typeof process.env.NODE_SECURE_TOKEN === "string" ?
 const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
 const kJsExtname = new Set([".js", ".mjs", ".cjs"]);
 
-export interface scanDirOrArchiveOptions {
+export interface ScanDirOrArchiveOptions {
   ref: DependencyRef;
   location?: string;
   tmpLocation?: null | string;
@@ -74,7 +74,7 @@ export interface scanDirOrArchiveOptions {
 export async function scanDirOrArchive(
   name: string,
   version: string,
-  options: scanDirOrArchiveOptions
+  options: ScanDirOrArchiveOptions
 ) {
   const { ref, location = process.cwd(), tmpLocation = null, registry } = options;
 
