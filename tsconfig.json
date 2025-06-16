@@ -30,6 +30,9 @@
     },
     {
       "path": "./workspaces/utils"
+    },
+    {
+      "path": "./workspaces/flags"
     }
   ]
 }

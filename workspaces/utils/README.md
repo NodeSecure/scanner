@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://github.com/NodeSecure/blob/master/workspaces/utils">
-      <img src="https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/utils/master/package.json&query=$.version&label=Version" alt="npm version">
+      <img src="https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/refs/heads/master/workspaces/utils/package.json&query=$.version&label=Version" alt="npm version">
     </a>
     <a href="https://github.com/NodeSecure/blob/master/workspaces/utils/graphs/commit-activity">
       <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge" alt="maintenance">

@@ -1,0 +1,28 @@
+<div>
+    <h1>☁️ isGit</h1>
+    <p>
+        The project has been detected as a GIT repository. Sometimes a dependency on
+        the package.json link to a GIT repository, example:
+    </p>
+    <br/>
+    <pre>
+      <code class="language-json">
+        {
+          "dependencies": {
+            "zen-observable": "^0.8.15",
+            "nanoid": "github:ai/nanoid",
+            "js-x-ray": "git://github.com/NodeSecure/js-x-ray.git",
+            "nanodelay": "git+ssh://git@github.com:ai/nanodelay.git",
+            "nanoevents": "git+https://github.com/ai/nanoevents.git"
+          }
+        }
+      </code>
+    </pre>
+    <img src="https://github.com/NodeSecure/flags/blob/main/images/isGit.png?raw=true">
+    <br/>
+    <p>
+        Because under the hood we use
+        <a href="https://github.com/npm/pacote#readme">pacote</a> to fetch and
+        extract packages we are supporting this given pattern.
+    </p>
+</div>
