@@ -17,7 +17,7 @@ import {
 import * as CONSTANTS from "../constants.js";
 import { memoize } from "./memoize.js";
 
-interface createReadOptions {
+interface CreateReadOptions {
   /**
    * If enabled the file will be created if it does not exist on the disk.
    *
@@ -39,7 +39,7 @@ interface createReadOptions {
   memoize?: boolean;
 }
 
-export type readOptions = RequireAtLeastOne<createReadOptions, "createIfDoesNotExist" | "createMode">;
+export type readOptions = RequireAtLeastOne<CreateReadOptions, "createIfDoesNotExist" | "createMode">;
 
 export async function read(
   location = process.cwd(),

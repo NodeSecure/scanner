@@ -56,14 +56,14 @@ export const NODE_BUILTINS = new Set([
 const kFileExtensions = [".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".node", ".json"];
 const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
 
-export interface analyzeDependenciesOptions {
+export interface AnalyzeDependenciesOptions {
   mama:
     Pick<ManifestManager, "dependencies" | "devDependencies"> &
     Partial<Pick<ManifestManager, "nodejsImports">>;
   tryDependencies: Set<string>;
 }
 
-export interface analyzeDependenciesResult {
+export interface AnalyzeDependenciesResult {
   nodeDependencies: string[];
   thirdPartyDependencies: string[];
   subpathImportsDependencies: Record<string, string>;
@@ -77,8 +77,8 @@ export interface analyzeDependenciesResult {
 
 export function analyzeDependencies(
   sourceDependencies: string[],
-  options: analyzeDependenciesOptions
-): analyzeDependenciesResult {
+  options: AnalyzeDependenciesOptions
+): AnalyzeDependenciesResult {
   const { mama, tryDependencies } = options;
   const { dependencies, devDependencies, nodejsImports = {} } = mama;
 

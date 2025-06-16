@@ -40,7 +40,7 @@ console.log(scanResult);
 Method created for Scanner (to be refactored soon)
 
 ```ts
-export interface scanDirOrArchiveOptions {
+export interface ScanDirOrArchiveOptions {
   ref: DependencyRef;
   location?: string;
   tmpLocation?: null | string;

@@ -4,7 +4,7 @@ import type {
   PackumentVersion, PackageJSON, WorkspacesPackageJSON
 } from "@nodesecure/npm-types";
 
-export interface packageJSONIntegrityHashOptions {
+export interface PackageJSONIntegrityHashOptions {
   /**
    * Know whether the document comes from the NPM registry or a local tarball/project
    *
@@ -15,7 +15,7 @@ export interface packageJSONIntegrityHashOptions {
 
 export function packageJSONIntegrityHash(
   document: PackumentVersion | PackageJSON | WorkspacesPackageJSON,
-  options: packageJSONIntegrityHashOptions = {}
+  options: PackageJSONIntegrityHashOptions = {}
 ) {
   const { isFromRemoteRegistry = false } = options;
   const { dependencies = {}, license = "NONE", scripts = {} } = document;

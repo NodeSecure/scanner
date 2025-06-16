@@ -6,7 +6,7 @@ import os from "node:os";
 
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
-import { scanDirOrArchive, type scanDirOrArchiveOptions } from "@nodesecure/tarball";
+import { scanDirOrArchive, type ScanDirOrArchiveOptions } from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
@@ -290,7 +290,7 @@ async function scanDirOrArchiveEx(
   name: string,
   version: string,
   locker: Mutex,
-  options: scanDirOrArchiveOptions
+  options: ScanDirOrArchiveOptions
 ) {
   const free = await locker.acquire();
 
