@@ -106,7 +106,7 @@ export class ManifestManager<
       structuredClone(document)
     );
     if (location) {
-      this.location = path.extname(location) || path.basename(location).startsWith(".") ?
+      this.location = location.endsWith("package.json") ?
         path.dirname(location) :
         location;
     }
