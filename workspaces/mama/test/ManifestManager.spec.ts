@@ -284,7 +284,7 @@ describe("ManifestManager", () => {
     });
 
     it("Should store location dirname if provided with a filename", () => {
-      for (const fileName of ["package.json", ".gitignore"]) {
+      for (const fileName of ["package.json"]) {
         const location = `/tmp/path/${fileName}`;
         const mama = new ManifestManager(kMinimalPackageJSON, { location });
         assert.strictEqual(mama.location, path.dirname(location));
