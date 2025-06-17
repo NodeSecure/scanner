@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
-  "homepage": "https://github.com/NodeSecure/tree/master/workspaces/fs-walk#readme",
+  "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/fs-walk#readme",
   "keywords": [
     "fs",
     "file",
