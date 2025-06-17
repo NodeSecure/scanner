@@ -149,6 +149,7 @@ Click on one of the links to access the documentation of the workspace:
 | i18n | [@nodesecure/i18n](./workspaces/i18n) |
 | rc | [@nodesecure/rc](./workspaces/rc) |
 | utils | [@nodesecure/utils](./workspaces/utils) |
+| fs-walk | [@nodesecure/fs-walk](./workspaces/fs-walk) |
 
 ## Contributors ✨
 

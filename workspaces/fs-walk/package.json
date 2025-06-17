@@ -1,0 +1,40 @@
+{
+  "name": "@nodesecure/fs-walk",
+  "version": "2.0.0",
+  "description": "Modern FileSystem (fs) utilities to lazy walk directories Asynchronously (but also Synchronously)",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test-only": "tsx --test \"./test/**/*.spec.ts\"",
+    "test": "npm run test-only",
+    "coverage": "c8 -r html npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NodeSecure/scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/fs-walk#readme",
+  "keywords": [
+    "fs",
+    "file",
+    "filesystem",
+    "lazy",
+    "walk",
+    "utility",
+    "recursive"
+  ],
+  "author": "GENTILHOMME Thomas <gentilhomme.thomas@gmail.com>",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT"
+}
