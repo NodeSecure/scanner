@@ -33,6 +33,9 @@
     },
     {
       "path": "./workspaces/flags"
+    },
+    {
+      "path": "./workspaces/fs-walk"
     }
   ]
 }

@@ -10,7 +10,8 @@
     "workspaces/i18n",
     "workspaces/rc",
     "workspaces/utils",
-    "workspaces/flags"
+    "workspaces/flags",
+    "workspaces/fs-walk"
   ],
   "scripts": {
     "build": "tsc --build",
