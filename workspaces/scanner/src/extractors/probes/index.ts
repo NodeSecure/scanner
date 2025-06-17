@@ -5,3 +5,4 @@ export * from "./WarningsExtractor.class.js";
 export * from "./VulnerabilitiesExtractor.class.js";
 export * from "./FlagsExtractor.class.js";
 export * from "./ExtensionsExtractor.class.js";
+export * from "./NodeDependenciesExtractor.class.js";

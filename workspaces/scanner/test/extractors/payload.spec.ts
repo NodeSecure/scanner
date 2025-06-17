@@ -416,4 +416,34 @@ describe("Extractors.Callbacks", () => {
       });
     });
   });
+
+  describe("NodeDependencies", () => {
+    const extractor = new Extractors.Payload(
+      expressNodesecurePayload,
+      [
+        new Extractors.Probes.NodeDependencies()
+      ]
+    );
+
+    const { nodeDeps } = extractor.extractAndMerge();
+
+    assert.deepEqual(nodeDeps.sort(), [
+      "stream",
+      "tty",
+      "util",
+      "fs",
+      "net",
+      "crypto",
+      "assert",
+      "http",
+      "path",
+      "buffer",
+      "url",
+      "async_hooks",
+      "events",
+      "zlib",
+      "string_decoder",
+      "querystring"
+    ].sort());
+  });
 });

@@ -38,6 +38,7 @@ Available probes include:
 | Vulnerabilities | packument |
 | Warnings | manifest |
 | Extentions | manifest |
+| NodeDependencies | manifest |
 
 All probes follow the same `ProbeExtractor` interface, which acts as an iterator-like contract:
 
