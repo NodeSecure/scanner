@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/utils",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "NodeSecure utilities",
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",

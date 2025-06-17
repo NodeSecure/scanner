@@ -1,5 +1,23 @@
 # @nodesecure/scanner
 
+## 6.8.0
+
+### Minor Changes
+
+- [#446](https://github.com/NodeSecure/scanner/pull/446) [`08fa158`](https://github.com/NodeSecure/scanner/commit/08fa1586b0cc42aad0a6116cfb1e07edd75f73c3) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(extractors): add node dependencies extractor
+
+- [#442](https://github.com/NodeSecure/scanner/pull/442) [`41b1de2`](https://github.com/NodeSecure/scanner/commit/41b1de2641581d90aac21743733d6d5c6ffe2d31) Thanks [@fraxken](https://github.com/fraxken)! - Update all interfaces to start with a Maj
+
+### Patch Changes
+
+- [#449](https://github.com/NodeSecure/scanner/pull/449) [`a233dfd`](https://github.com/NodeSecure/scanner/commit/a233dfd8f0ad0a3bd82592181bfee4a59414a380) Thanks [@fraxken](https://github.com/fraxken)! - Only assert for package.json in ManifestManager
+
+- Updated dependencies [[`53df5b6`](https://github.com/NodeSecure/scanner/commit/53df5b6840a20b9dc8379ba44ffb5c9e4816d535), [`a233dfd`](https://github.com/NodeSecure/scanner/commit/a233dfd8f0ad0a3bd82592181bfee4a59414a380), [`41b1de2`](https://github.com/NodeSecure/scanner/commit/41b1de2641581d90aac21743733d6d5c6ffe2d31)]:
+  - @nodesecure/utils@2.3.0
+  - @nodesecure/mama@1.5.0
+  - @nodesecure/rc@5.0.0
+  - @nodesecure/tarball@1.3.0
+
 ## 6.7.0
 
 ### Minor Changes
