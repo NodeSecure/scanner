@@ -103,4 +103,30 @@ describe("parseManifestAuthor", () => {
       assert.strictEqual(error.message, "expected manifestAuthorField to be a string");
     }
   });
+
+  it("should be able to parse a name with a comma in it", () => {
+    const result = utils.parseManifestAuthor("aaa,bbb");
+    assert.deepEqual(result, {
+      name: "aaa,bbb"
+    });
+  });
+
+  describe("multiple authors seperated by comma", () => {
+    it("should be able to parse the first author when there is mutliple authors separated by comma", () => {
+      const result = utils.parseManifestAuthor("John Doe <john.doe@gmail.com>, Alicia B <alicia@gmail.com>");
+      assert.deepEqual(result, {
+        name: "John Doe",
+        email: "john.doe@gmail.com"
+      });
+    });
+
+    it("should be able to parse the first author author field with name and URL", () => {
+      const result = utils.parseManifestAuthor("John-David Dalton (http://allyoucanleet.com/), Alicia B (http://a.com/)");
+      assert.deepEqual(result, {
+        name: "John-David Dalton",
+        url: "http://allyoucanleet.com/"
+      });
+    });
+  });
 });
+

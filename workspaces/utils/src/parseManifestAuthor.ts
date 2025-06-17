@@ -22,7 +22,7 @@ export function parseManifestAuthor(
     return null;
   }
 
-  const match = manifestAuthorRegex().exec(manifestAuthorField);
+  const match = matchManifestAuthor(manifestAuthorField);
   if (!match) {
     return null;
   }
@@ -42,6 +42,15 @@ export function parseManifestAuthor(
   }
 
   return author;
+}
+
+function matchManifestAuthor(manifestAuthorField: string) {
+  const match = manifestAuthorRegex().exec(manifestAuthorField);
+  if (match) {
+    return match;
+  }
+
+  return manifestAuthorRegex().exec(manifestAuthorField.split(",")[0]);
 }
 
 export function parseAuthor(author: any): ParsedMaintainer | null {
