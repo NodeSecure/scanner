@@ -1,9 +1,6 @@
 // Import Third-party Dependencies
-import { ManifestManager } from "@nodesecure/mama";
+import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
 import type { NodeImport } from "@nodesecure/npm-types";
-
-// Import Internal Dependencies
-import { getPackageName } from "./getPackageName.js";
 
 // CONSTANTS
 export const NODE_BUILTINS = new Set([
@@ -93,7 +90,9 @@ export function analyzeDependencies(
   );
 
   const thirdPartyDependencies = sourceDependencies.flatMap((sourceName) => {
-    const name = dependencies.includes(sourceName) ? sourceName : getPackageName(sourceName);
+    const name = dependencies.includes(sourceName) ?
+      sourceName :
+      parseNpmSpec(sourceName)?.name ?? sourceName;
 
     return isFile(name) ||
       isCoreModule(name) ||
