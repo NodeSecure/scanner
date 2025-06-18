@@ -3,26 +3,8 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/NodeSecure/blob/master/workspaces/i18n">
-      <img src="https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/refs/heads/master/workspaces/i18n/package.json&query=$.version&label=Version" alt="npm version">
-    </a>
-    <a href="https://github.com/NodeSecure/scanner/graphs/commit-activity">
-      <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge" alt="maintenance">
-    </a>
-    <a href="https://github.com/NodeSecure/scanner/blob/master/workspaces/i18n/blob/master/LICENSE">
-      <img src="https://img.shields.io/github/license/NodeSecure/scanner.svg?style=for-the-badge" alt="license">
-    </a>
-    <a href="https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner">
-      <img src="https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge?style=for-the-badge" alt="OpenSSF Scorecard">
-    </a>
-      <img src="https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml?style=for-the-badge" alt="build">
+  Internationalization (**i18n**) utilities for NodeSecure tools like [CLI](https://github.com/NodeSecure/cli). 
 </p>
-
-Internationalization (**i18n**) utilities for NodeSecure tools like [CLI](https://github.com/NodeSecure/cli). 
-
-Supported languages:
-- french
-- english
 
 ## Requirements
 - [Node.js](https://nodejs.org/en/) v20 or higher
@@ -51,6 +33,14 @@ console.log(i18n.getToken("depWalker.success_tarball", "14", "15ms"));
 ```
 
 You can consult the real use case of the API in the following codes: [here](https://github.com/NodeSecure/cli/blob/master/src/commands/lang.js) and [here](https://github.com/NodeSecure/cli/blob/master/src/commands/vulnerability.js).
+
+## Supported languages
+
+- french
+- english
+
+> [!NOTE]
+> Feel free to open a PR to push a new language
 
 ## API
 
