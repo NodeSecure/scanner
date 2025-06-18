@@ -57,11 +57,16 @@ test("scanPackage (caseone)", async() => {
   ]);
 
   assert.ok(result.ast.warnings.length === 0);
-  assert.deepEqual(Object.keys(result.ast.dependencies), [
-    "index.js",
-    "src\\deps.js",
-    "src\\other.min.js"
-  ].map((location) => location.replace(/\\/g, path.sep)));
+  assert.deepEqual(
+    Object.keys(result.ast.dependencies).sort(),
+    [
+      "index.js",
+      "src\\deps.js",
+      "src\\other.min.js"
+    ]
+      .map((location) => location.replace(/\\/g, path.sep))
+      .sort()
+  );
   assert.deepEqual(Object.keys(result.ast.dependencies["index.js"]), [
     "./src/deps.js",
     "fs",

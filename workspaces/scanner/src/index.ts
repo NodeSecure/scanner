@@ -14,6 +14,7 @@ import type { PackageJSON } from "@nodesecure/npm-types";
 import { depWalker } from "./depWalker.js";
 import { NPM_TOKEN, urlToString } from "./utils/index.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
+import { TempDirectory } from "./class/TempDirectory.class.js";
 import { comparePayloads } from "./comparePayloads.js";
 import type { Options } from "./types.js";
 
@@ -87,23 +88,20 @@ export async function verify(
     return tarball.scanPackage(process.cwd());
   }
 
-  const tmpLocation = await fs.mkdtemp(
-    path.join(os.tmpdir(), "nsecure-")
-  );
-  const dest = path.join(tmpLocation, packageName);
+  const tempDir = await TempDirectory.create();
 
   try {
-    await pacote.extract(packageName, dest, {
-      ...NPM_TOKEN, registry: getLocalRegistryURL(), cache: `${os.homedir()}/.npm`
+    const mama = await tarball.extractAndResolve(tempDir.location, {
+      spec: packageName,
+      registry: getLocalRegistryURL()
     });
-
-    const scanResult = await tarball.scanPackage(dest, packageName);
+    const scanResult = await tarball.scanPackage(mama);
 
     return scanResult;
   }
   finally {
     await timers.setImmediate();
-    await fs.rm(tmpLocation, { recursive: true, force: true });
+    await tempDir.clear();
   }
 }
 

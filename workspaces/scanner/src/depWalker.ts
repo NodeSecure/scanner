@@ -1,15 +1,18 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import { readFileSync, promises as fs } from "node:fs";
+import { readFileSync } from "node:fs";
 import timers from "node:timers/promises";
-import os from "node:os";
 
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
-import { scanDirOrArchive, type ScanDirOrArchiveOptions } from "@nodesecure/tarball";
+import {
+  extractAndResolve,
+  scanDirOrArchive
+} from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
+import { ManifestManager } from "@nodesecure/mama";
 import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
@@ -20,6 +23,7 @@ import {
   getManifestLinks
 } from "./utils/index.js";
 import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
+import { TempDirectory } from "./class/TempDirectory.class.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
 import type {
   Dependency,
@@ -90,11 +94,10 @@ export async function depWalker(
     registry
   } = options;
 
-  // Create TMP directory
-  const tmpLocation = await fs.mkdtemp(path.join(os.tmpdir(), "/"));
+  const tempDir = await TempDirectory.create();
 
   const payload: Partial<Payload> = {
-    id: tmpLocation.slice(-6),
+    id: tempDir.id,
     rootDependencyName: manifest.name,
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
@@ -179,10 +182,12 @@ export async function depWalker(
       const scanDirOptions = {
         ref: dependency.versions[version] as any,
         location,
-        tmpLocation: scanRootNode && name === manifest.name ? null : tmpLocation,
+        isRootNode: scanRootNode && name === manifest.name,
         registry
       };
-      operationsQueue.push(scanDirOrArchiveEx(name, version, locker, scanDirOptions));
+      operationsQueue.push(
+        scanDirOrArchiveEx(name, version, locker, tempDir, scanDirOptions)
+      );
     }
 
     logger.end(ScannerLoggerEvents.analysis.tree);
@@ -279,7 +284,7 @@ export async function depWalker(
   }
   finally {
     await timers.setImmediate();
-    await fs.rm(tmpLocation, { recursive: true, force: true });
+    await tempDir.clear();
 
     logger.emit(ScannerLoggerEvents.done);
   }
@@ -290,12 +295,33 @@ async function scanDirOrArchiveEx(
   name: string,
   version: string,
   locker: Mutex,
-  options: ScanDirOrArchiveOptions
+  tempDir: TempDirectory,
+  options: {
+    registry?: string;
+    isRootNode: boolean;
+    location: string | undefined;
+    ref: any;
+  }
 ) {
   const free = await locker.acquire();
 
   try {
-    await scanDirOrArchive(name, version, options);
+    const {
+      registry,
+      location = process.cwd(),
+      isRootNode,
+      ref
+    } = options;
+
+    const mama = await (isRootNode ?
+      ManifestManager.fromPackageJSON(location) :
+      extractAndResolve(tempDir.location, {
+        spec: `${name}@${version}`,
+        registry
+      })
+    );
+
+    await scanDirOrArchive(mama, ref);
   }
   catch {
     // ignore

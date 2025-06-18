@@ -229,7 +229,10 @@ describe("scanner.cwd()", () => {
     );
     const pkg = dependencies["random-package"];
 
-    assert.strictEqual(pkg.metadata.author, null);
+    assert.deepEqual(pkg.metadata.author, {
+      email: "john.doe@gmail.com",
+      name: "John Doe"
+    });
   });
 });
 
