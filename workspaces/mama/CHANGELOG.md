@@ -1,5 +1,15 @@
 # @nodesecure/mama
 
+## 1.6.0
+
+### Minor Changes
+
+- [#451](https://github.com/NodeSecure/scanner/pull/451) [`713263f`](https://github.com/NodeSecure/scanner/commit/713263f185e53edd819fd939f2a76731a918e499) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(mama): implemented parse npm spec
+
+### Patch Changes
+
+- [#456](https://github.com/NodeSecure/scanner/pull/456) [`fba460a`](https://github.com/NodeSecure/scanner/commit/fba460ad264a2775aad6b198c5434e5ebd207641) Thanks [@fraxken](https://github.com/fraxken)! - Remove getPackageName and use parseNpmSpec from mama
+
 ## 1.5.0
 
 ### Minor Changes
