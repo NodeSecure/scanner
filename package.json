@@ -12,7 +12,8 @@
     "workspaces/utils",
     "workspaces/flags",
     "workspaces/fs-walk",
-    "workspaces/github"
+    "workspaces/github",
+    "workspaces/gitlab"
   ],
   "scripts": {
     "build": "tsc --build",
