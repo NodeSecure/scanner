@@ -1,9 +1,9 @@
 <p align="center"><h1 align="center">
-  @nodesecure/github
+  @nodesecure/gitlab
 </h1>
 
 <p align="center">
-  Download and (optionaly) extract GitHub repository archive.
+  Download and (optionaly) extract GitLab repository archive.
 </p>
 
 ## Requirements
@@ -15,21 +15,21 @@
 This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
 
 ```bash
-$ npm i @nodesecure/github
+$ npm i @nodesecure/gitlab
 # or
-$ yarn add @nodesecure/github
+$ yarn add @nodesecure/gitlab
 ```
 
 ## Usage example
 
 ```js
-import * as github from "@nodesecure/github";
+import * as gitlab from "@nodesecure/gitlab";
 
-const utils = await github.download("NodeSecure.utils");
-console.log(utils.location);
-
-const scanner = await github.downloadAndExtract("NodeSecure.scanner");
-console.log(scanner.location);
+// Note: repository can be either namespace path or repository ID
+const result = await gitlab.download(
+  "NodeSecure.utils"
+);
+console.log(result);
 ```
 
 ## API
@@ -45,17 +45,22 @@ interface DownloadOptions {
    */
   dest?: string;
   /**
-   * The default github branch name (master, main ...)
+   * The default gitlab branch name (master, main ...).
+   * By default it fetch the "default" gitlab branch.
    *
-   * @default main
+   * @default null
    */
-  branch?: string;
+  branch?: string | null;
   /**
    * Authentication token for private repositories
    *
-   * @default process.env.GITHUB_TOKEN
+   * @default process.env.GITLAB_TOKEN
    */
   token?: string;
+  /**
+   * @default https://gitlab.com/api/v4/projects/
+   */
+  gitlab?: string;
 }
 ```
 
@@ -66,11 +71,11 @@ Download the tar.gz archive of the GIT repository.
 interface DownloadResult {
   /** Archive or repository location on disk */
   location: string;
-  /** Github repository name */
+  /** Gitlab repository name */
   repository: string;
-  /** Github organization name */
+  /** Gitlab organization name */
   organization: string;
-    /** Github branch name */
+  /** Gitlab branch name */
   branch: string;
 }
 ```

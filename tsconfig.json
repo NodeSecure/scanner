@@ -36,6 +36,12 @@
     },
     {
       "path": "./workspaces/fs-walk"
+    },
+    {
+      "path": "./workspaces/github"
+    },
+    {
+      "path": "./workspaces/gitlab"
     }
   ]
 }
