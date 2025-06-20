@@ -1,5 +1,17 @@
 # @nodesecure/scanner
 
+## 6.9.0
+
+### Minor Changes
+
+- [#379](https://github.com/NodeSecure/scanner/pull/379) [`de110df`](https://github.com/NodeSecure/scanner/commit/de110df63090296a45ef89b290c73bd58c69c0be) Thanks [@fraxken](https://github.com/fraxken)! - Implement new major JS-X-Ray API and completely refactor tarball package
+
+### Patch Changes
+
+- Updated dependencies [[`713263f`](https://github.com/NodeSecure/scanner/commit/713263f185e53edd819fd939f2a76731a918e499), [`fba460a`](https://github.com/NodeSecure/scanner/commit/fba460ad264a2775aad6b198c5434e5ebd207641), [`de110df`](https://github.com/NodeSecure/scanner/commit/de110df63090296a45ef89b290c73bd58c69c0be)]:
+  - @nodesecure/mama@1.6.0
+  - @nodesecure/tarball@2.0.0
+
 ## 6.8.0
 
 ### Minor Changes
