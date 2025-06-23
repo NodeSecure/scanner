@@ -1,5 +1,13 @@
 # @nodesecure/scanner
 
+## 6.10.0
+
+### Minor Changes
+
+- [#461](https://github.com/NodeSecure/scanner/pull/461) [`c94285f`](https://github.com/NodeSecure/scanner/commit/c94285f5b28d5b0d71398617d90578d547831ec7) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(TempDirectory): use Symbol.asyncDispose for automatic async cleanup
+
+- [#464](https://github.com/NodeSecure/scanner/pull/464) [`ec55ce9`](https://github.com/NodeSecure/scanner/commit/ec55ce9ff4263c3b2e41b11af6f5c84461ac8631) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(scanner): remove useless try finally surrounding extractAndResolve in verify
+
 ## 6.9.0
 
 ### Minor Changes
