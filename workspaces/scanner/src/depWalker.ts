@@ -94,7 +94,7 @@ export async function depWalker(
     registry
   } = options;
 
-  const tempDir = await TempDirectory.create();
+  await using tempDir = await TempDirectory.create();
 
   const payload: Partial<Payload> = {
     id: tempDir.id,
@@ -284,7 +284,6 @@ export async function depWalker(
   }
   finally {
     await timers.setImmediate();
-    await tempDir.clear();
 
     logger.emit(ScannerLoggerEvents.done);
   }
