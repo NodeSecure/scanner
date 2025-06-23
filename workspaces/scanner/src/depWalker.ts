@@ -1,7 +1,6 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import { readFileSync } from "node:fs";
-import timers from "node:timers/promises";
 
 // Import Third-party Dependencies
 import { Mutex, MutexRelease } from "@openally/mutex";
@@ -192,7 +191,6 @@ export async function depWalker(
 
     logger.end(ScannerLoggerEvents.analysis.tree);
     await Promise.allSettled(operationsQueue);
-    await timers.setImmediate();
 
     logger
       .end(ScannerLoggerEvents.analysis.tarball)
@@ -283,8 +281,6 @@ export async function depWalker(
     return payload as Payload;
   }
   finally {
-    await timers.setImmediate();
-
     logger.emit(ScannerLoggerEvents.done);
   }
 }
