@@ -34,4 +34,8 @@ export class TempDirectory {
 
     return this;
   }
+
+  async [Symbol.asyncDispose]() {
+    await this.clear();
+  }
 }

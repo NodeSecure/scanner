@@ -88,7 +88,7 @@ export async function verify(
     return tarball.scanPackage(process.cwd());
   }
 
-  const tempDir = await TempDirectory.create();
+  await using tempDir = await TempDirectory.create();
 
   try {
     const mama = await tarball.extractAndResolve(tempDir.location, {
@@ -101,7 +101,6 @@ export async function verify(
   }
   finally {
     await timers.setImmediate();
-    await tempDir.clear();
   }
 }
 
