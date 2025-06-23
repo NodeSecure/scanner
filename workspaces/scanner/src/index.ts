@@ -1,7 +1,6 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import fs from "node:fs/promises";
-import timers from "node:timers/promises";
 import os from "node:os";
 
 // Import Third-party Dependencies
@@ -90,18 +89,14 @@ export async function verify(
 
   await using tempDir = await TempDirectory.create();
 
-  try {
-    const mama = await tarball.extractAndResolve(tempDir.location, {
-      spec: packageName,
-      registry: getLocalRegistryURL()
-    });
-    const scanResult = await tarball.scanPackage(mama);
+  const mama = await tarball.extractAndResolve(tempDir.location, {
+    spec: packageName,
+    registry: getLocalRegistryURL()
+  });
 
-    return scanResult;
-  }
-  finally {
-    await timers.setImmediate();
-  }
+  const scanResult = await tarball.scanPackage(mama);
+
+  return scanResult;
 }
 
 export {
