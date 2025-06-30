@@ -64,9 +64,11 @@ console.log(
 
 TemplateStringsArray being the following interface:
 
-`interface TemplateStringsArray extends ReadonlyArray<string> {
-    readonly raw: readonly string[];
-}`
+```ts
+interface TemplateStringsArray extends ReadonlyArray<string> {
+  readonly raw: readonly string[];
+}
+```
 
 This function allows you to create a string template with placeholders that can be replaced by values later.
 
@@ -81,11 +83,13 @@ console.log(myStrClojure("Thomas")); // Hello Thomas!
 
 ParsedMaintainer being the following type:
 
-`type ParsedMaintainer = {
-    name: string;
-    email?: string;
-    url?: string;
-};`
+```ts
+type ParsedMaintainer = {
+  name: string;
+  email?: string;
+  url?: string;
+};
+```
 
 Parses an author string into a structured object.
 
@@ -112,10 +116,10 @@ console.log(utils.parseManifestAuthor("John-David Dalton <john.david.dalton@gmai
 
 Returns the color for a given score.
 
-Score between 0 and 3.9: red
-Score between 4 and 6.4: orange
-Score between 6.5 and 8.4: blue
-Score between 8.5 and 10: green
+- Score between 0 and 3.9: red
+- Score between 4 and 6.4: orange
+- Score between 6.5 and 8.4: blue
+- Score between 8.5 and 10: green
 
 ```js
 import * as utils from "@nodesecure/utils";
@@ -126,8 +130,7 @@ console.log(utils.getScoreColor(9.1)); // green
 
 ### `getVCSRepositoryPathAndPlatform(url: string | URL): [path: string, platform: string] | null`
 
-Returns an array with the repository path and platform from a VCS URL.
-VCS means Version Control System, like Git.
+Parses a VCS (Version Control System) URL and returns a tuple containing the repository path and the platform name.
 
 ```js
 import * as utils from "@nodesecure/utils";
