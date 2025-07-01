@@ -14,7 +14,7 @@
   "dependencies": {
     "zen-observable": "^0.8.15",
     "nanoid": "github:ai/nanoid",
-    "js-x-ray": "git://github.com/NodeSecure/js-x-ray.git",
+    "npm-registry-sdk": "git://github.com/NodeSecure/npm-registry-sdk.git",
     "nanodelay": "git+ssh://git@github.com:ai/nanodelay.git",
     "nanoevents": "git+https://github.com/ai/nanoevents.git"
   }

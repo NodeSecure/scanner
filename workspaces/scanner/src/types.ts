@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
+import type { Warning } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 import type { PackageModuleType } from "@nodesecure/mama";
 
@@ -74,7 +74,7 @@ export interface DependencyVersion {
    *
    * @see https://github.com/NodeSecure/js-x-ray/blob/master/WARNINGS.md
    */
-  warnings: Warning<WarningDefault>[];
+  warnings: Warning[];
   alias: Record<string, string>;
   /** Tarball composition (files and dependencies) */
   composition: {

@@ -112,10 +112,13 @@ test("should catch the invalid syntax and report a ParsingError warning", async(
 
   assert.deepEqual(report.warnings, [
     {
+      file: "parsingError.js",
+      i18n: "sast_warnings.parsing_error",
       kind: "parsing-error",
-      value: "[1:4-1:5]: Unexpected token: ';'",
       location: [[0, 0], [0, 0]],
-      file: "parsingError.js"
+      severity: "Information",
+      source: "JS-X-Ray",
+      value: "[1:4-1:5]: Unexpected token: ';'"
     }
   ]);
 });
