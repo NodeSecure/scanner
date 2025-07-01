@@ -29,7 +29,7 @@ parseNpmSpec("lodash@^4.17.0");
 parseNpmSpec("@nestjs/core@8.0.0");
 // {
 //   org: "nestjs",
-//   name: "core",
+//   name: "@nestjs/core",
 //   semver: "8.0.0",
 //   spec: "@nestjs/core@8.0.0"
 // }
