@@ -1,6 +1,5 @@
 // Import Third-party Dependencies
 import type {
-  WarningDefault,
   Warning,
   WarningName
 } from "@nodesecure/js-x-ray";
@@ -16,7 +15,7 @@ import type { DependencyVersion } from "../../types.js";
 export type WarningsResult = {
   warnings: {
     count: number;
-    groups: Record<string, Warning<WarningDefault>[]>;
+    groups: Record<string, Warning[]>;
     uniqueKinds: Record<WarningName, number>;
   };
 };
@@ -31,8 +30,8 @@ export interface WarningsOptions {
 export class Warnings implements ManifestProbeExtractor<WarningsResult> {
   level = "manifest" as const;
 
-  #warnings: Record<string, Warning<WarningDefault>[]> = Object.create(null);
-  #uniqueKinds = new FrequencySet<WarningName>();
+  #warnings: Record<string, Warning[]> = Object.create(null);
+  #uniqueKinds = new FrequencySet<WarningName | (string & {})>();
   #count = 0;
   #useSpecAsKey: boolean;
 

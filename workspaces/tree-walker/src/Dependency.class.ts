@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { Warning, WarningDefault } from "@nodesecure/js-x-ray";
+import type { Warning } from "@nodesecure/js-x-ray";
 import type { PackageModuleType } from "@nodesecure/mama";
 
 export type NpmSpec = `${string}@${string}`;
@@ -13,7 +13,7 @@ export interface DependencyJSON {
   isDevDependency: boolean;
   existOnRemoteRegistry: boolean;
   flags: string[];
-  warnings: Warning<WarningDefault>[];
+  warnings: Warning[];
   alias: Record<string, string>;
   dependencyCount: number;
   gitUrl: string | null;
@@ -32,7 +32,7 @@ export class Dependency {
   public existOnRemoteRegistry = true;
   public dependencyCount = 0;
   public gitUrl: null | string = null;
-  public warnings: Warning<WarningDefault>[] = [];
+  public warnings: Warning[] = [];
   public alias: Record<string, string> = {};
 
   #flags = new Set<string>();

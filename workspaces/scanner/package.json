@@ -53,7 +53,7 @@
     "@nodesecure/contact": "^2.0.0",
     "@nodesecure/flags": "^3.0.3",
     "@nodesecure/i18n": "^4.0.1",
-    "@nodesecure/js-x-ray": "^9.0.0",
+    "@nodesecure/js-x-ray": "^9.2.0",
     "@nodesecure/mama": "^1.6.0",
     "@nodesecure/npm-registry-sdk": "^3.0.0",
     "@nodesecure/npm-types": "^1.2.0",

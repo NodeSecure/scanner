@@ -1,9 +1,9 @@
 // Import Third-party Dependencies
-import type { WarningDefault } from "@nodesecure/js-x-ray";
+import type { Warning } from "@nodesecure/js-x-ray";
 
 export function getSemVerWarning(
   value: string
-): WarningDefault<"zero-semver"> {
+): Warning {
   return {
     kind: "zero-semver",
     file: "package.json",
@@ -16,7 +16,7 @@ export function getSemVerWarning(
   };
 }
 
-export function getEmptyPackageWarning(): WarningDefault<"empty-package"> {
+export function getEmptyPackageWarning(): Warning {
   return {
     kind: "empty-package",
     file: "package.json",
