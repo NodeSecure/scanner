@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/tarball",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "NodeSecure tarball scanner",
   "type": "module",
   "exports": "./dist/index.js",
