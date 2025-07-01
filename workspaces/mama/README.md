@@ -31,7 +31,15 @@ console.log(mama.document);
 console.log(mama.integrity);
 ```
 
-## API
+## Utils
+
+This package exports a set of standalone utilities that are internally used by the ManifestManager class, but may also be useful independently for various tasks:
+
+- [packageJSONIntegrityHash](./docs/packageJSONIntegrityHash.md)
+- [parseNpmSpec](./docs/parseNpmSpec.md)
+- [inspectModuleType](./docs/inspectModuleType.md)
+
+## ManifestManager API
 
 ### (static) fromPackageJSON(locationOrManifest: string | ManifestManager): Promise< ManifestManager >
 

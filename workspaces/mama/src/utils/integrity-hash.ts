@@ -6,7 +6,7 @@ import type {
 
 export interface PackageJSONIntegrityHashOptions {
   /**
-   * Know whether the document comes from the NPM registry or a local tarball/project
+   * Indicates whether the document originates from the NPM registry.
    *
    * @default false
    */
