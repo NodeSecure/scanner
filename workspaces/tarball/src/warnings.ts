@@ -16,7 +16,7 @@ export function getSemVerWarning(
   };
 }
 
-export function getEmptyPackagWarning(): Warning {
+export function getEmptyPackageWarning(): Warning {
   return {
     kind: "empty-package",
     file: "package.json",
