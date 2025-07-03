@@ -9,20 +9,20 @@ export function getSemVerWarning(
     file: "package.json",
     value,
     location: null,
-    i18n: "sast_warnings.zeroSemVer",
+    i18n: "sast_warnings.zero_semver",
     severity: "Information",
     source: "Scanner",
     experimental: false
   };
 }
 
-export function getEmptyPackageWarning(): Warning {
+export function getEmptyPackagWarning(): Warning {
   return {
     kind: "empty-package",
     file: "package.json",
     value: "package.json",
     location: null,
-    i18n: "sast_warnings.emptyPackage",
+    i18n: "sast_warnings.empty_package",
     severity: "Critical",
     source: "Scanner",
     experimental: false
