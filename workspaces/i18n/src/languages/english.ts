@@ -38,7 +38,7 @@ const sast_warnings = {
   empty_package: "The package tarball only contains a package.json file.",
   unsafe_command: "Usage of suspicious child_process command such as spawn() or exec()",
   serialize_environment: "The code attempts to serialize process.env which could lead to environment variable exfiltration",
-  synchronous_io: "The code contain synchronous I/O operations, which can block the event loop and degrade performance.",
+  synchronous_io: "The code contains synchronous I/O operations, which can block the event loop and degrade performance.",
 };
 
 export const english = { lang, depWalker, warnings, sast_warnings };
