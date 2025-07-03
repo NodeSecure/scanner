@@ -221,7 +221,6 @@ export async function depWalker(
     for (const [version, integrity] of Object.entries(metadataIntegrities)) {
       const dependencyVer = dependency.versions[version] as DependencyVersion;
 
-      // @ts-ignore
       const isEmptyPackage = dependencyVer.warnings.some((warning) => warning.kind === "empty-package");
       if (isEmptyPackage) {
         globalWarnings.push(`${packageName}@${version} only contain a package.json file!`);
