@@ -21,6 +21,7 @@ import {
 } from "./utils/index.js";
 import { NpmTarball } from "./class/NpmTarball.class.js";
 import * as warnings from "./warnings.js";
+import { getEmptyPackageWarning } from "./warnings.js";
 
 export interface DependencyRef {
   id: number;
@@ -164,6 +165,12 @@ export async function scanPackage(
     code
   } = await extractor.scanFiles();
 
+  // Check for empty package
+  const warnings = [...code.warnings];
+  if (composition.files.length === 1 && composition.files.includes("package.json")) {
+    warnings.push(getEmptyPackageWarning());
+  }
+
   return {
     files: {
       list: composition.files,
@@ -175,7 +182,7 @@ export async function scanPackage(
     licenses: conformance.licenses,
     ast: {
       dependencies: code.dependencies,
-      warnings: code.warnings
+      warnings
     }
   };
 }

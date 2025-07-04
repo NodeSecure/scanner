@@ -6,6 +6,7 @@ import assert from "node:assert";
 
 // Import Internal Dependencies
 import { scanPackage } from "../../src/index.js";
+import { getEmptyPackageWarning } from "../../src/warnings.js";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,4 +74,18 @@ test("scanPackage (caseone)", async() => {
     "kleur"
   ]);
   assert.ok(result.ast.dependencies["index.js"].fs.inTry);
+});
+
+test("scanPackage should detect empty packages (only package.json)", async() => {
+  const result = await scanPackage(
+    path.join(kFixturePath, "emptypackage")
+  );
+
+  const emptyPackageWarning = getEmptyPackageWarning();
+  const hasEmptyPackageWarning = result.ast.warnings.some(
+    (warning) => (warning.kind === emptyPackageWarning.kind)
+  );
+  assert.ok(hasEmptyPackageWarning, "Should contain empty-package warning");
+  assert.strictEqual(result.files.list.length, 1, "Should only have one file (package.json)");
+  assert.strictEqual(result.files.list[0], "package.json", "The only file should be package.json");
 });

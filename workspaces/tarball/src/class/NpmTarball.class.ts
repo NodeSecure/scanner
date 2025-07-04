@@ -49,12 +49,18 @@ export class NpmTarball {
       conformance.extractLicenses(location)
     ]);
 
-    const code = await new SourceCodeScanner(this.manifest).iterate({
-      manifest: [...this.manifest.getEntryFiles()]
-        .flatMap(filterJavaScriptFiles()),
-      javascript: composition.files
-        .flatMap(filterJavaScriptFiles())
-    });
+    let code: SourceCodeReport;
+    if (composition.files.length === 1 && composition.files.includes("package.json")) {
+      code = new SourceCodeReport();
+    }
+    else {
+      code = await new SourceCodeScanner(this.manifest).iterate({
+        manifest: [...this.manifest.getEntryFiles()]
+          .flatMap(filterJavaScriptFiles()),
+        javascript: composition.files
+          .flatMap(filterJavaScriptFiles())
+      });
+    }
 
     return {
       conformance: spdx,
