@@ -297,7 +297,7 @@ async function scanDirOrArchiveEx(
     ref: any;
   }
 ) {
-  const free = await locker.acquire();
+  using _ = await locker.acquire();
 
   try {
     const {
@@ -319,9 +319,6 @@ async function scanDirOrArchiveEx(
   }
   catch {
     // ignore
-  }
-  finally {
-    free();
   }
 }
 
