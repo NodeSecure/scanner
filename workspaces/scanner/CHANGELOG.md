@@ -1,5 +1,19 @@
 # @nodesecure/scanner
 
+## 6.11.0
+
+### Minor Changes
+
+- [#476](https://github.com/NodeSecure/scanner/pull/476) [`cf6498d`](https://github.com/NodeSecure/scanner/commit/cf6498deb9a4d83d6fce3ff10af4df1c98999a6f) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(depWalker): use using to auto free lock
+
+### Patch Changes
+
+- [#473](https://github.com/NodeSecure/scanner/pull/473) [`ad9ec3a`](https://github.com/NodeSecure/scanner/commit/ad9ec3aa9914d825f1b66aef2e1279c2e3497bcb) Thanks [@fraxken](https://github.com/fraxken)! - Add missing i18n warnings and fix the case for others
+
+- Updated dependencies [[`ad9ec3a`](https://github.com/NodeSecure/scanner/commit/ad9ec3aa9914d825f1b66aef2e1279c2e3497bcb), [`a4ab3f7`](https://github.com/NodeSecure/scanner/commit/a4ab3f72c161db1ee0e188eaea8073fcc513c825)]:
+  - @nodesecure/tarball@2.1.0
+  - @nodesecure/i18n@4.0.2
+
 ## 6.10.0
 
 ### Minor Changes

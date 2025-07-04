@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/i18n",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "description": "NodeSecure Internationalization",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
