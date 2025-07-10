@@ -52,6 +52,19 @@ export const NODE_BUILTINS = new Set([
 
 const kFileExtensions = [".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs", ".node", ".json"];
 const kExternalModules = new Set(["http", "https", "net", "http2", "dgram", "child_process"]);
+const kExternalThirdPartyDeps = new Set([
+  "undici",
+  "node-fetch",
+  "execa",
+  "cross-spawn",
+  "got",
+  "axios",
+  "axios",
+  "ky",
+  "superagent",
+  "cross-fetch"
+
+]);
 
 export interface AnalyzeDependenciesOptions {
   mama:
@@ -115,15 +128,18 @@ export function analyzeDependencies(
     unusedDependencies.length > 0 ||
     missingDependencies.length > 0;
 
+  const thirdPartyDependenciesWithoutDuplicate = [...new Set(thirdPartyDependencies)];
+
   return {
     nodeDependencies,
-    thirdPartyDependencies: [...new Set(thirdPartyDependencies)],
+    thirdPartyDependencies: thirdPartyDependenciesWithoutDuplicate,
     subpathImportsDependencies,
     unusedDependencies,
     missingDependencies,
 
     flags: {
-      hasExternalCapacity: nodeDependencies.some((depName) => kExternalModules.has(depName)),
+      hasExternalCapacity: nodeDependencies.some((depName) => kExternalModules.has(depName)) ||
+        thirdPartyDependenciesWithoutDuplicate.some((depName) => kExternalThirdPartyDeps.has(depName)),
       hasMissingOrUnusedDependency
     }
   };

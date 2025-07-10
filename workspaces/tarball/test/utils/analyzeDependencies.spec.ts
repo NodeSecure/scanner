@@ -26,6 +26,40 @@ test("analyzeDependencies should detect Node.js dependencies and also flag hasEx
   });
 });
 
+test("analyzeDependencies should flag third parties dependencies with hasExternalCapacity", () => {
+  const externalThridPartyDeps = ["undici",
+    "node-fetch",
+    "execa",
+    "cross-spawn",
+    "got",
+    "axios",
+    "axios",
+    "ky",
+    "superagent",
+    "cross-fetch"
+  ];
+
+  for (const externalThridPartyDep of externalThridPartyDeps) {
+    const mama = {
+      dependencies: [externalThridPartyDep],
+      devDependencies: []
+    };
+
+    const result = analyzeDependencies([
+      externalThridPartyDep
+    ], { mama, tryDependencies: new Set() });
+
+    assert.deepEqual(result, {
+      nodeDependencies: [],
+      thirdPartyDependencies: [externalThridPartyDep],
+      subpathImportsDependencies: {},
+      unusedDependencies: [],
+      missingDependencies: [],
+      flags: { hasExternalCapacity: true, hasMissingOrUnusedDependency: false }
+    });
+  }
+});
+
 test("analyzeDependencies should detect no unused or missing dependencies and avoid confusion for package name with dots", () => {
   const mama = {
     dependencies: ["lodash.isequal"],
