@@ -59,11 +59,9 @@ const kExternalThirdPartyDeps = new Set([
   "cross-spawn",
   "got",
   "axios",
-  "axios",
   "ky",
   "superagent",
   "cross-fetch"
-
 ]);
 
 export interface AnalyzeDependenciesOptions {
