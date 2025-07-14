@@ -36,10 +36,10 @@ const manifest = await NpmRegistrySDK.packumentVersion(
   "latest"
 );
 
-const integrity = await packageJSONIntegrityHash(manifest, {
+const { integrity, object } = await packageJSONIntegrityHash(manifest, {
   isFromRemoteRegistry: true
 });
-console.log(integrity);
+console.log({ integrity, object, });
 ```
 
 ## How It Works

@@ -23,7 +23,7 @@ export async function manifestMetadata(
       version
     );
 
-    const integrity = packageJSONIntegrityHash(pkgVersion, {
+    const { integrity } = packageJSONIntegrityHash(pkgVersion, {
       isFromRemoteRegistry: true
     });
     Object.assign(
@@ -93,7 +93,7 @@ export async function packageMetadata(
 
         metadata.integrity[ver.version] = packageJSONIntegrityHash(
           ver, { isFromRemoteRegistry: true }
-        );
+        ).integrity;
       }
 
       const { _npmUser = null, version, maintainers = [] } = ver;
