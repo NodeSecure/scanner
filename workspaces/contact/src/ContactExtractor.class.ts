@@ -7,6 +7,7 @@ import {
   type EnforcedContact,
   type IlluminatedContact
 } from "./UnlitContact.class.js";
+import { NsResolver } from "./NsResolver.class.js";
 
 export type {
   IlluminatedContact,
@@ -16,6 +17,14 @@ export type {
 export interface ContactExtractorPackageMetadata {
   author?: Contact;
   maintainers: Contact[];
+}
+
+export interface ContactExtractorFromDependenciesResult {
+  illuminated: IlluminatedContact[];
+  /**
+   * List of email domains that are expired
+   */
+  expired: string[];
 }
 
 export interface ContactExtractorOptions {
@@ -28,20 +37,26 @@ export class ContactExtractor {
   constructor(
     options: ContactExtractorOptions
   ) {
-    const { highlight } = options;
+    const {
+      highlight
+    } = options;
 
     this.highlighted = structuredClone(highlight);
   }
 
-  fromDependencies(
+  async fromDependencies(
     dependencies: Record<string, ContactExtractorPackageMetadata>
-  ): IlluminatedContact[] {
+  ): Promise<ContactExtractorFromDependenciesResult> {
     const unlitContacts = this.highlighted
       .map((contact) => new UnlitContact(contact));
+    const resolver = new NsResolver();
 
     for (const [packageName, metadata] of Object.entries(dependencies)) {
+      const extractedContacts = extractMetadataContacts(metadata);
+      extractedContacts.forEach((contact) => resolver.registerEmail(contact.email));
+
       for (const unlit of unlitContacts) {
-        const isMaintainer = extractMetadataContacts(metadata)
+        const isMaintainer = extractedContacts
           .some((contact) => unlit.compareTo(contact));
         if (isMaintainer) {
           unlit.dependencies.add(packageName);
@@ -49,9 +64,16 @@ export class ContactExtractor {
       }
     }
 
-    return unlitContacts.flatMap(
+    const expired = await resolver.getExpired();
+
+    const illuminated = unlitContacts.flatMap(
       (unlit) => (unlit.dependencies.size > 0 ? [unlit.illuminate()] : [])
     );
+
+    return {
+      expired,
+      illuminated
+    };
   }
 }
 
