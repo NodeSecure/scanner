@@ -13,8 +13,7 @@
     "workspaces/flags",
     "workspaces/fs-walk",
     "workspaces/github",
-    "workspaces/gitlab",
-    "workspaces/gh-scanner"
+    "workspaces/gitlab"
   ],
   "scripts": {
     "build": "tsc --build",
