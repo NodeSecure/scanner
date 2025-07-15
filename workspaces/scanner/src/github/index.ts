@@ -2,7 +2,7 @@
 import { fetchLazy } from "@dashlog/fetch-github-repositories";
 import pacote from "pacote";
 
-interface Repository {
+export interface GitHubRepository {
   name: string;
   url: string;
   dependencies: Record<string, string>;
@@ -11,16 +11,16 @@ interface Repository {
   peerDependencies: Record<string, string>;
 }
 
-interface ScanOrganizationOptions {
+export interface ScanOrganizationOptions {
   orgName: string;
   githubToken?: string;
   onProgress?: (repo: { name: string; url: string; }) => void;
 }
 
-async function scanOrganization(options: ScanOrganizationOptions): Promise<Repository[]> {
+export async function scanOrganization(options: ScanOrganizationOptions): Promise<GitHubRepository[]> {
   const { orgName, githubToken, onProgress } = options;
 
-  const results: Repository[] = [];
+  const results: GitHubRepository[] = [];
   const lazyRepos = fetchLazy(orgName, {
     kind: "orgs",
     token: githubToken
@@ -49,7 +49,3 @@ async function scanOrganization(options: ScanOrganizationOptions): Promise<Repos
 
   return results;
 }
-
-export {
-  scanOrganization
-};

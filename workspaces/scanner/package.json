@@ -48,6 +48,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/scanner#readme",
   "dependencies": {
+    "@dashlog/fetch-github-repositories": "^3.0.2",
     "@fastify/deepmerge": "^3.1.0",
     "@nodesecure/conformance": "^1.1.0",
     "@nodesecure/contact": "^2.0.0",

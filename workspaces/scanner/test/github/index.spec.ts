@@ -2,7 +2,7 @@
 import test from "tape";
 
 // Import Internal Dependencies
-import { scanOrganization } from "../src/index";
+import { scanOrganization } from "../../src/github/index.js";
 
 const githubToken = process.env.GITHUB_TOKEN;
 
