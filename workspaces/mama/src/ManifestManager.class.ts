@@ -168,7 +168,7 @@ export class ManifestManager<
       throw new Error("integrity is not available for workspaces");
     }
 
-    return packageJSONIntegrityHash(this.document);
+    return packageJSONIntegrityHash(this.document).integrity;
   }
 
   get license(): string | null {

@@ -22,7 +22,7 @@ const kMinimalPackageJSONIntegrity = hash({
 
 describe("packageJSONIntegrityHash", () => {
   test("Given isFromRemoteRegistry: true then it should remove install script if it contains 'node-gyp rebuild'", () => {
-    const integrityHash = packageJSONIntegrityHash({
+    const { integrity } = packageJSONIntegrityHash({
       ...kMinimalPackageJSON,
       dependencies: {
         install: "node-gyp rebuild"
@@ -30,13 +30,13 @@ describe("packageJSONIntegrityHash", () => {
     }, { isFromRemoteRegistry: true });
 
     assert.strictEqual(
-      integrityHash,
+      integrity,
       kMinimalPackageJSONIntegrity
     );
   });
 
   test("Given isFromRemoteRegistry: false then the integrity should not match", () => {
-    const integrityHash = packageJSONIntegrityHash({
+    const { integrity } = packageJSONIntegrityHash({
       ...kMinimalPackageJSON,
       dependencies: {
         install: "node-gyp rebuild"
@@ -44,7 +44,7 @@ describe("packageJSONIntegrityHash", () => {
     });
 
     assert.notStrictEqual(
-      integrityHash,
+      integrity,
       kMinimalPackageJSONIntegrity
     );
   });
