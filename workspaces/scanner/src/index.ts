@@ -106,3 +106,5 @@ export {
   Logger,
   ScannerLoggerEvents
 };
+
+export * from "./github/index.js";
