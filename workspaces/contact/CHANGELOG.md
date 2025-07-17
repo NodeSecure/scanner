@@ -1,5 +1,11 @@
 # @nodesecure/contact
 
+## 3.0.0
+
+### Major Changes
+
+- [#487](https://github.com/NodeSecure/scanner/pull/487) [`c0feea6`](https://github.com/NodeSecure/scanner/commit/c0feea60818a783750b088909c7d0283beb8ecda) Thanks [@fraxken](https://github.com/fraxken)! - Extract expired email domains
+
 ## 2.0.0
 
 ### Major Changes
