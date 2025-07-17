@@ -46,10 +46,10 @@ const extractor = new ContactExtractor({
     }
   ]
 });
-const contacts = extractor.fromDependencies(
+const { illuminated, expired } = extractor.fromDependencies(
   dependencies
 );
-console.log(contacts);
+console.log({ illuminated, expired });
 ```
 
 ## API
@@ -63,28 +63,41 @@ interface Contact {
 }
 ```
 
-> [!NOTE]
-> This package authorizes literal RegExp in the name property
-
 ### ContactExtractor
 
 The constructor take a list of contacts you want to find/extract.
 
 ```ts
 interface ContactExtractorOptions {
-  highlight: Contact[];
+  highlight: EnforcedContact[];
 }
+
+type EnforcedContact = RequireAtLeastOne<
+  Contact,
+  "name" | "email"
+>;
 ```
 
-The method **fromDependencies** will return an array of IlluminatedContact objects if any are found in the provided dependencies.
+> [!TIP]
+> This package authorizes literal RegExp in the name property of `highlight` contacts
+
+The method **fromDependencies** will return an Array of IlluminatedContact objects if any are found in the provided dependencies and the list of expired email domains.
 
 ```ts
+interface ContactExtractorFromDependenciesResult {
+  illuminated: IlluminatedContact[];
+  /**
+   * List of email domains that are expired
+   */
+  expired: string[];
+}
+
 type IlluminatedContact = Contact & {
   dependencies: string[];
 }
 ```
 
-### compareContact(contactA: Contact, contactB: Contact, options?: CompareOptions): boolean
+### compareContact(contactA: Partial< Contact >, contactB: Partial< Contact >, options?: CompareOptions): boolean
 
 Compare two contacts and return `true` if they are the same person
 

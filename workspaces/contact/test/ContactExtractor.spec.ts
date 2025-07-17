@@ -13,8 +13,8 @@ import {
 } from "../src/index.js";
 
 describe("ContactExtractor", () => {
-  test("Given a contact with no name, it should not throw an Error", () => {
-    const highlighted: any = {
+  test("Given a contact with no name, it should not throw an Error", async() => {
+    const highlighted = {
       email: "foobar@gmail.com"
     };
     const extractor = new ContactExtractor({
@@ -25,12 +25,13 @@ describe("ContactExtractor", () => {
       random: fakePackageMetadata()
     };
 
-    extractor.fromDependencies(dependencies);
+    await extractor.fromDependencies(dependencies);
   });
 
   describe("fromDependencies", () => {
     test(`Given three dependencies where the Highlighted Contact appears two times,
-      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`, () => {
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`
+    , async() => {
       const highlighted: Contact = {
         name: "john doe"
       };
@@ -44,9 +45,9 @@ describe("ContactExtractor", () => {
         random: fakePackageMetadata()
       };
 
-      const illuminateds = extractor.fromDependencies(dependencies);
+      const { illuminated } = await extractor.fromDependencies(dependencies);
       assert.deepEqual(
-        illuminateds,
+        illuminated,
         [
           { ...highlighted, dependencies: ["kleur", "mocha"] }
         ]
@@ -54,7 +55,8 @@ describe("ContactExtractor", () => {
     });
 
     test(`Given a Contact with a RegExp name and three dependencies where the name appears two times,
-      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`, () => {
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.`
+    , async() => {
       const highlighted: Contact = {
         name: "/.*xxaaahelllowwworld.*/i"
       };
@@ -68,9 +70,9 @@ describe("ContactExtractor", () => {
         random: fakePackageMetadata()
       };
 
-      const illuminateds = extractor.fromDependencies(dependencies);
+      const { illuminated } = await extractor.fromDependencies(dependencies);
       assert.deepEqual(
-        illuminateds,
+        illuminated,
         [
           {
             ...highlighted,
@@ -81,7 +83,7 @@ describe("ContactExtractor", () => {
     });
 
     test(`Given dependencies where the Highlighted Contact doesn't appears,
-      it must return an empty Array`, () => {
+      it must return an empty Array`, async() => {
       const highlighted: Contact = {
         name: "john doe"
       };
@@ -95,8 +97,28 @@ describe("ContactExtractor", () => {
         random: fakePackageMetadata()
       };
 
-      const illuminateds = extractor.fromDependencies(dependencies);
-      assert.strictEqual(illuminateds.length, 0);
+      const { illuminated } = await extractor.fromDependencies(dependencies);
+      assert.strictEqual(illuminated.length, 0);
+    });
+
+    test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
+      const extractor = new ContactExtractor({
+        highlight: []
+      });
+      const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+
+      const dependencies: Record<string, ContactExtractorPackageMetadata> = {
+        kleur: {
+          author: {
+            name: "john doe",
+            email: expiredEmail
+          },
+          maintainers: []
+        }
+      };
+
+      const { expired } = await extractor.fromDependencies(dependencies);
+      assert.deepEqual(expired, [expiredEmail]);
     });
   });
 });

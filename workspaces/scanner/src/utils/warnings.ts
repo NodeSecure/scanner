@@ -69,7 +69,7 @@ export async function getDependenciesWarnings(
       ...kDefaultIlluminatedContacts
     ]
   });
-  const illuminated = extractor.fromDependencies(
+  const { illuminated } = await extractor.fromDependencies(
     dependencies
   );
 
