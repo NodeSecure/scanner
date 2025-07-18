@@ -33,6 +33,11 @@ const pkgGitdeps = JSON.parse(readFileSync(
   "utf8"
 ));
 
+const pkgTypoSquatting = JSON.parse(readFileSync(
+  path.join(kFixturePath, "typo-squatting.json"),
+  "utf8"
+));
+
 function cleanupPayload(payload: Payload) {
   for (const pkg of Object.values(payload)) {
     const versions = Object.values(
@@ -125,6 +130,18 @@ test("execute depWalker on pkg.gitdeps", async() => {
     "undici",
     "zen-observable"
   ].sort());
+});
+
+test("execute depWalker on typo-squatting", async() => {
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+
+  const result = await depWalker(pkgTypoSquatting, {
+    registry: getLocalRegistryURL()
+  });
+
+  assert.deepEqual(result.warnings, [
+    "The package 'mecha' is similar to the following popular packages: fecha, mocha"
+  ]);
 });
 
 test("fetch payload of pacote on the npm registry", async() => {

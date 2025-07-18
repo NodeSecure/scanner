@@ -20,7 +20,8 @@
     "test": "npm run test --ws --if-present",
     "lint": "npx eslint workspaces",
     "ci:publish": "changeset publish",
-    "ci:version": "changeset version"
+    "ci:version": "changeset version",
+    "clean": "node scripts/clean.mjs"
   },
   "author": "NodeSecure",
   "license": "MIT",

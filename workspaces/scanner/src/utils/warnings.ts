@@ -13,6 +13,7 @@ import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { getDirNameFromUrl } from "./dirname.js";
+import { TopPackages } from "../class/TopPackages.class.js";
 import type { Dependency } from "../types.js";
 
 await i18n.extendFromSystemPath(
@@ -45,6 +46,8 @@ export async function getDependenciesWarnings(
   const vulnerableDependencyNames = Object.keys(
     kDependencyWarnMessage
   ) as unknown as (keyof typeof kDependencyWarnMessage)[];
+  const topPackages = new TopPackages();
+  await topPackages.loadJSON();
 
   const warnings = vulnerableDependencyNames
     .flatMap((name) => (dependenciesMap.has(name) ? `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}` : []));
@@ -52,6 +55,12 @@ export async function getDependenciesWarnings(
   const dependencies: Record<string, ContactExtractorPackageMetadata> = Object.create(null);
   for (const [packageName, dependency] of dependenciesMap) {
     const { author, maintainers } = dependency.metadata;
+    const similarPackages = topPackages.getSimilarPackages(packageName);
+    if (similarPackages.length > 0) {
+      warnings.push(
+        `The package '${packageName}' is similar to the following popular packages: ${similarPackages.join(", ")}`
+      );
+    }
 
     dependencies[packageName] = {
       maintainers,
@@ -78,3 +87,4 @@ export async function getDependenciesWarnings(
     illuminated
   };
 }
+
