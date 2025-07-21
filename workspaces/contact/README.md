@@ -81,7 +81,7 @@ type EnforcedContact = RequireAtLeastOne<
 > [!TIP]
 > This package authorizes literal RegExp in the name property of `highlight` contacts
 
-The method **fromDependencies** will return an Array of IlluminatedContact objects if any are found in the provided dependencies and the list of expired email domains.
+The methods **fromDependencies and fromManifest** will return an Array of IlluminatedContact objects if any are found in the provided dependencies and the list of expired email domains.
 
 ```ts
 interface ContactExtractorFromDependenciesResult {

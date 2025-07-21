@@ -1,9 +1,12 @@
 // Import Node.js Dependencies
 import assert from "node:assert";
 import { describe, test } from "node:test";
+import { join, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+import { readFileSync } from "node:fs";
 
 // Import Third-party Dependencies
-import type { Contact } from "@nodesecure/npm-types";
+import type { Contact, PackumentVersion } from "@nodesecure/npm-types";
 import { faker } from "@faker-js/faker";
 
 // Import Internal Dependencies
@@ -11,6 +14,11 @@ import {
   ContactExtractor,
   type ContactExtractorPackageMetadata
 } from "../src/index.js";
+
+// CONSTANTS
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const kFixturePath = join(__dirname, "fixtures", "manifest");
+const kManifest: PackumentVersion = JSON.parse(readFileSync(join(kFixturePath, "/manifest.json"), "utf8"));
 
 describe("ContactExtractor", () => {
   test("Given a contact with no name, it should not throw an Error", async() => {
@@ -118,6 +126,80 @@ describe("ContactExtractor", () => {
       };
 
       const { expired } = await extractor.fromDependencies(dependencies);
+      assert.deepEqual(expired, [expiredEmail]);
+    });
+  });
+
+  describe("fromManifiest", () => {
+    test(`Given dependencies where the Highlighted Contact doesn't appears,
+      it must return an empty Array`, async() => {
+      const highlighted: Contact = {
+        name: "Ciaran Jessup"
+      };
+      const extractor = new ContactExtractor({
+        highlight: [highlighted]
+      });
+
+      const { illuminated } = await extractor.fromManifest(kManifest);
+      assert.strictEqual(illuminated.length, 0);
+    });
+
+    test(`Given dependencies where the Highlighted Contact is the author of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, async() => {
+      const highlighted: Contact = {
+        name: "TJ Holowaychuk"
+      };
+      const extractor = new ContactExtractor({
+        highlight: [highlighted]
+      });
+
+      const { illuminated } = await extractor.fromManifest(kManifest);
+      assert.deepEqual(
+        illuminated,
+        [
+          { name: "TJ Holowaychuk", dependencies: ["express"] }
+        ]
+      );
+    });
+
+    test(`Given dependencies where the Highlighted Contact are maintainers of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, async() => {
+      const extractor = new ContactExtractor({
+        highlight: [{
+          name: "/.*church/", email: "npm@jonchurch.com"
+        },
+        { email: "c@labsector.com" }
+        ]
+      });
+
+      const { illuminated } = await extractor.fromManifest(kManifest);
+      assert.deepEqual(
+        illuminated,
+        [
+          { name: "/.*church/", email: "npm@jonchurch.com", dependencies: ["express"] },
+          { email: "c@labsector.com", dependencies: ["express"] }
+        ]
+      );
+    });
+
+    test("Given a manifest with only active emails it should'n have any expired email", async() => {
+      const extractor = new ContactExtractor({
+        highlight: []
+      });
+
+      const { expired } = await extractor.fromManifest(kManifest);
+      assert.deepEqual(expired, []);
+    });
+
+    test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
+      const extractor = new ContactExtractor({
+        highlight: []
+      });
+      const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+
+      const { expired } = await extractor.fromManifest({ ...kManifest, author: { ...kManifest.author!, email: expiredEmail } });
       assert.deepEqual(expired, [expiredEmail]);
     });
   });
