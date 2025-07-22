@@ -184,7 +184,7 @@ describe("ContactExtractor", () => {
       );
     });
 
-    test("Given a manifest with only active emails it should'n have any expired email", async() => {
+    test("Given a manifest with only active emails it shouldn't have any expired email", async() => {
       const extractor = new ContactExtractor({
         highlight: []
       });
