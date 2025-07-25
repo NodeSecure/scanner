@@ -20,7 +20,8 @@
     "test": "npm run test --ws --if-present",
     "lint": "npx eslint workspaces",
     "ci:publish": "changeset publish",
-    "ci:version": "changeset version"
+    "ci:version": "changeset version",
+    "clean": "clear-ts-build"
   },
   "author": "NodeSecure",
   "license": "MIT",
@@ -28,7 +29,7 @@
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.4",
     "@openally/config.eslint": "^2.1.0",
-    "@openally/config.typescript": "^1.0.3",
+    "@openally/config.typescript": "^1.1.0",
     "@slimio/is": "^2.0.0",
     "@types/node": "^24.0.2",
     "@types/pacote": "^11.1.8",
