@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { Contact, PackumentVersion } from "@nodesecure/npm-types";
+import type { Contact, PackumentVersion, Packument } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
@@ -71,6 +71,29 @@ export class ContactExtractor {
 
     extractedContacts.forEach((contact) => resolver.registerEmail(contact.email));
     this.addDependencyToUnlitContacts(unlitContacts, extractedContacts, manifest.name);
+
+    return this.processIlluminatedAndExpired(unlitContacts, resolver);
+  }
+
+  async fromPackument(packument: Packument) {
+    const resolver = new NsResolver();
+    const unlitContacts = this.highlighted
+      .map((contact) => new UnlitContact(contact));
+    const emails = new Set<string>();
+
+    for (const packumentVersion of Object.values(packument.versions)) {
+      const extractedContacts = extractMetadataContacts(packumentVersion);
+      extractedContacts.forEach(({ email }) => {
+        if (email) {
+          emails.add(email);
+        }
+      });
+      this.addDependencyToUnlitContacts(unlitContacts, extractedContacts, packumentVersion.name);
+    }
+
+    for (const email of emails) {
+      resolver.registerEmail(email);
+    }
 
     return this.processIlluminatedAndExpired(unlitContacts, resolver);
   }

@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { readFileSync } from "node:fs";
 
 // Import Third-party Dependencies
-import type { Contact, PackumentVersion } from "@nodesecure/npm-types";
+import type { Contact, PackumentVersion, Packument } from "@nodesecure/npm-types";
 import { faker } from "@faker-js/faker";
 
 // Import Internal Dependencies
@@ -17,8 +17,10 @@ import {
 
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const kFixturePath = join(__dirname, "fixtures", "manifest");
-const kManifest: PackumentVersion = JSON.parse(readFileSync(join(kFixturePath, "/manifest.json"), "utf8"));
+const kManifestFixturePath = join(__dirname, "fixtures", "manifest");
+const kPackumentFixturePath = join(__dirname, "fixtures", "packument");
+const kManifest: PackumentVersion = JSON.parse(readFileSync(join(kManifestFixturePath, "/manifest.json"), "utf8"));
+const kPackument: Packument = JSON.parse(readFileSync(join(kPackumentFixturePath, "/packument.json"), "utf8"));
 
 describe("ContactExtractor", () => {
   test("Given a contact with no name, it should not throw an Error", async() => {
@@ -200,6 +202,101 @@ describe("ContactExtractor", () => {
       const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
 
       const { expired } = await extractor.fromManifest({ ...kManifest, author: { ...kManifest.author!, email: expiredEmail } });
+      assert.deepEqual(expired, [expiredEmail]);
+    });
+  });
+
+  describe("fromPackument", () => {
+    test(`Given a packument where the Highlighted Contact doesn't appears,
+      it must return an empty Array`, async() => {
+      const highlighted: Contact = {
+        name: "John Doe"
+      };
+      const extractor = new ContactExtractor({
+        highlight: [highlighted]
+      });
+
+      const { illuminated } = await extractor.fromPackument(kPackument);
+      assert.strictEqual(illuminated.length, 0);
+    });
+
+    test(`Given a packument where the Highlighted Contact is the author of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, async() => {
+      const highlighted: Contact = {
+        name: "TJ Holowaychuk"
+      };
+      const extractor = new ContactExtractor({
+        highlight: [highlighted]
+      });
+
+      const { illuminated } = await extractor.fromPackument(kPackument);
+      assert.deepEqual(
+        illuminated,
+        [
+          { name: "TJ Holowaychuk", dependencies: ["express"] }
+        ]
+      );
+    });
+
+    test(`Given a packument where the Highlighted Contact are maintainers of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, async() => {
+      const extractor = new ContactExtractor({
+        highlight: [
+          {
+            name: "/.*ylman/",
+            email: "shtylman@gmail.com"
+          },
+          {
+            email: "doug@somethingdoug.com"
+          }
+        ]
+      });
+
+      const { illuminated } = await extractor.fromPackument(kPackument);
+      assert.deepEqual(
+        illuminated,
+        [
+          {
+            name: "/.*ylman/",
+            email: "shtylman@gmail.com",
+            dependencies: ["express"]
+          },
+          {
+            email: "doug@somethingdoug.com",
+            dependencies: ["express"]
+          }
+        ]
+      );
+    });
+
+    test("Given a packument with only active emails it shouldn't have any expired email", async() => {
+      const extractor = new ContactExtractor({
+        highlight: []
+      });
+
+      const { expired } = await extractor.fromPackument(kPackument);
+      assert.deepEqual(expired, []);
+    });
+
+    test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
+      const extractor = new ContactExtractor({
+        highlight: []
+      });
+      const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+      const versions = Object.entries(kPackument.versions)
+        .reduce((acc: Record<string, PackumentVersion>, [version, value]) => {
+          return {
+            ...acc,
+            [version]: {
+              ...value,
+              author: { name: value.author!.name, email: expiredEmail }
+            }
+          };
+        }, {});
+
+      const { expired } = await extractor.fromPackument({ ...kPackument, versions });
       assert.deepEqual(expired, [expiredEmail]);
     });
   });
