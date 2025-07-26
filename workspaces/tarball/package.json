@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/tarball",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "NodeSecure tarball scanner",
   "type": "module",
   "exports": "./dist/index.js",
@@ -29,10 +29,10 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tarball#readme",
   "dependencies": {
-    "@nodesecure/conformance": "^1.0.0",
+    "@nodesecure/conformance": "^1.1.1",
     "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/js-x-ray": "^9.2.0",
-    "@nodesecure/mama": "^1.6.0",
+    "@nodesecure/mama": "^2.0.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
     "pacote": "^21.0.0"

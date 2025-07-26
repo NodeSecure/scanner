@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 2.0.0
+
+### Major Changes
+
+- [#486](https://github.com/NodeSecure/scanner/pull/486) [`26a1a4b`](https://github.com/NodeSecure/scanner/commit/26a1a4b49a701f2709309472a21f5c37bdc81e60) Thanks [@fraxken](https://github.com/fraxken)! - Update mama packageJSONIntegrityHash response to include both object and integrity hash
+
 ## 1.6.0
 
 ### Minor Changes
