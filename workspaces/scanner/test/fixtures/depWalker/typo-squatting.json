@@ -1,0 +1,8 @@
+{
+  "name": "mecha",
+  "version": "1.0.0",
+  "description": "Mocha",
+  "main": "index.js",
+  "devDependencies": {},
+  "dependencies": {}
+}
