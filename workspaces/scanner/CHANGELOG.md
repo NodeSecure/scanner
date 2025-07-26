@@ -1,5 +1,28 @@
 # @nodesecure/scanner
 
+## 6.11.0
+
+### Minor Changes
+
+- [#486](https://github.com/NodeSecure/scanner/pull/486) [`26a1a4b`](https://github.com/NodeSecure/scanner/commit/26a1a4b49a701f2709309472a21f5c37bdc81e60) Thanks [@fraxken](https://github.com/fraxken)! - Update mama packageJSONIntegrityHash response to include both object and integrity hash
+
+- [#490](https://github.com/NodeSecure/scanner/pull/490) [`86cbf14`](https://github.com/NodeSecure/scanner/commit/86cbf147562429ac1e196146854b9cfd88d1fde2) Thanks [@fraxken](https://github.com/fraxken)! - Throw a global warning when a potential typo-squatting is found
+
+- [#476](https://github.com/NodeSecure/scanner/pull/476) [`cf6498d`](https://github.com/NodeSecure/scanner/commit/cf6498deb9a4d83d6fce3ff10af4df1c98999a6f) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(depWalker): use using to auto free lock
+
+- [#487](https://github.com/NodeSecure/scanner/pull/487) [`c0feea6`](https://github.com/NodeSecure/scanner/commit/c0feea60818a783750b088909c7d0283beb8ecda) Thanks [@fraxken](https://github.com/fraxken)! - Extract expired email domains
+
+### Patch Changes
+
+- [#473](https://github.com/NodeSecure/scanner/pull/473) [`ad9ec3a`](https://github.com/NodeSecure/scanner/commit/ad9ec3aa9914d825f1b66aef2e1279c2e3497bcb) Thanks [@fraxken](https://github.com/fraxken)! - Add missing i18n warnings and fix the case for others
+
+- Updated dependencies [[`7217289`](https://github.com/NodeSecure/scanner/commit/72172897bb1b75d98d2c8797e077d20f7e15ab4d), [`26a1a4b`](https://github.com/NodeSecure/scanner/commit/26a1a4b49a701f2709309472a21f5c37bdc81e60), [`0dc170f`](https://github.com/NodeSecure/scanner/commit/0dc170f2641bcce18499f0ba38a019768ef4e4a3), [`6db7b28`](https://github.com/NodeSecure/scanner/commit/6db7b28412a024d67281f16ddd7922fd032d192a), [`ad9ec3a`](https://github.com/NodeSecure/scanner/commit/ad9ec3aa9914d825f1b66aef2e1279c2e3497bcb), [`c0feea6`](https://github.com/NodeSecure/scanner/commit/c0feea60818a783750b088909c7d0283beb8ecda), [`a4ab3f7`](https://github.com/NodeSecure/scanner/commit/a4ab3f72c161db1ee0e188eaea8073fcc513c825)]:
+  - @nodesecure/contact@3.0.0
+  - @nodesecure/mama@2.0.0
+  - @nodesecure/tarball@2.1.0
+  - @nodesecure/i18n@4.0.2
+  - @nodesecure/conformance@1.1.1
+
 ## 6.10.0
 
 ### Minor Changes
