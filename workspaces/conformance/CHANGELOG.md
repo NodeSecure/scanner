@@ -1,5 +1,12 @@
 # @nodesecure/conformance
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [[`26a1a4b`](https://github.com/NodeSecure/scanner/commit/26a1a4b49a701f2709309472a21f5c37bdc81e60)]:
+  - @nodesecure/mama@2.0.0
+
 ## 1.1.0
 
 ### Minor Changes
