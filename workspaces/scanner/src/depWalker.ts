@@ -21,7 +21,7 @@ import {
   getUsedDeps,
   getManifestLinks
 } from "./utils/index.js";
-import { packageMetadata, manifestMetadata } from "./npmRegistry.js";
+import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.js";
 import { TempDirectory } from "./class/TempDirectory.class.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
 import type {
@@ -143,7 +143,7 @@ export async function depWalker(
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
         operationsQueue.push(
-          manifestMetadata(name, version, dep)
+          new NpmRegistryProvider(name, version).enrichDependencyVersion(dep)
         );
 
         if (version in dep.versions) {
@@ -172,10 +172,9 @@ export async function depWalker(
       }
       else {
         fetchedMetadataPackages.add(name);
-        operationsQueue.push(packageMetadata(name, version, {
-          dependency,
-          logger
-        }));
+        const provider = new NpmRegistryProvider(name, version);
+
+        operationsQueue.push(provider.enrichDependency(logger, dependency));
       }
 
       const scanDirOptions = {
