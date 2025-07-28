@@ -1,5 +1,11 @@
 # @nodesecure/i18n
 
+## 4.0.3
+
+### Patch Changes
+
+- [#499](https://github.com/NodeSecure/scanner/pull/499) [`b9f037d`](https://github.com/NodeSecure/scanner/commit/b9f037dcbf09ba419c5d2a15ddd3726e8c8f9c94) Thanks [@fraxken](https://github.com/fraxken)! - Whitelist files compiled in ./dist when publishing package
+
 ## 4.0.2
 
 ### Patch Changes
