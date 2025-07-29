@@ -52,11 +52,28 @@ export function packageJSONIntegrityHash(
     version,
     dependencies,
     license,
-    scripts
+    /**
+     * Note: NPM registry automatically add `./node_modules/.bin/` to scripts
+     * This artifact do not concern raw scripts in the tarball package.json.
+     */
+    scripts: isFromRemoteRegistry ?
+      removeNodeModulesBin(scripts) :
+      scripts
   };
 
   return {
     object,
     integrity: hash(object)
   };
+}
+
+function removeNodeModulesBin(
+  scripts: Record<string, string>
+) {
+  return Object.fromEntries(
+    Object.entries(scripts).map(([key, value]) => [
+      key,
+      value.replaceAll("./node_modules/.bin/", "")
+    ])
+  );
 }

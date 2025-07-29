@@ -48,4 +48,18 @@ describe("packageJSONIntegrityHash", () => {
       kMinimalPackageJSONIntegrity
     );
   });
+
+  test("Given a script with an instance of './node_modules/.bin/'", () => {
+    const { object } = packageJSONIntegrityHash({
+      ...kMinimalPackageJSON,
+      scripts: {
+        test: "./node_modules/.bin/istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js"
+      }
+    }, { isFromRemoteRegistry: true });
+
+    assert.strictEqual(
+      object.scripts.test,
+      "istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js"
+    );
+  });
 });
