@@ -1,5 +1,18 @@
 # @nodesecure/scanner
 
+## 6.12.0
+
+### Minor Changes
+
+- [#498](https://github.com/NodeSecure/scanner/pull/498) [`f305271`](https://github.com/NodeSecure/scanner/commit/f30527190375c00665d66992606b561add3fc527) Thanks [@fraxken](https://github.com/fraxken)! - Revamp NPM registry metadata fetching and extraction
+
+### Patch Changes
+
+- [#503](https://github.com/NodeSecure/scanner/pull/503) [`81772da`](https://github.com/NodeSecure/scanner/commit/81772da75fc4682da0528333e523a68379cf754a) Thanks [@fraxken](https://github.com/fraxken)! - Add missing ./src/data when building TypeScript source
+
+- Updated dependencies [[`eb751d8`](https://github.com/NodeSecure/scanner/commit/eb751d83df84d69d7229116a7409bc80896bc78c)]:
+  - @nodesecure/mama@2.0.1
+
 ## 6.11.0
 
 ### Minor Changes
