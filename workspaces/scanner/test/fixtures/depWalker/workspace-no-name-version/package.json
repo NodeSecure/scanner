@@ -1,0 +1,11 @@
+{
+  "workspaces": [
+    "workspaces/xxx"
+  ],
+  "scripts": {},
+  "author": "NodeSecure",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}
