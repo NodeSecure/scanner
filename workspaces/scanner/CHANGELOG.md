@@ -1,5 +1,11 @@
 # @nodesecure/scanner
 
+## 6.12.1
+
+### Patch Changes
+
+- [#510](https://github.com/NodeSecure/scanner/pull/510) [`fc0b91f`](https://github.com/NodeSecure/scanner/commit/fc0b91fd7916d4a8bbc3f190c0d5e870e76e34a1) Thanks [@fraxken](https://github.com/fraxken)! - Assign 'workspace' as default name if name is missing in package.json
+
 ## 6.12.0
 
 ### Minor Changes
