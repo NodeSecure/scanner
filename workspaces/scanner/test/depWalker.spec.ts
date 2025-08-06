@@ -235,5 +235,13 @@ describe("scanner.cwd()", () => {
       name: "John Doe"
     });
   });
+
+  test("should scan a workspace package.json and assign 'workspace' as the package name", async() => {
+    const result = await cwd(
+      path.join(kFixturePath, "workspace-no-name-version")
+    );
+
+    assert.strictEqual(result.rootDependencyName, "workspace");
+  });
 });
 

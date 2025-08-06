@@ -12,7 +12,7 @@ import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
 import { ManifestManager } from "@nodesecure/mama";
-import type { ManifestVersion, PackageJSON } from "@nodesecure/npm-types";
+import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
@@ -79,7 +79,7 @@ type WalkerOptions = Omit<Options, "registry"> & {
 };
 
 export async function depWalker(
-  manifest: PackageJSON | ManifestVersion,
+  manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
   options: WalkerOptions,
   logger = new Logger()
 ): Promise<Payload> {
@@ -97,7 +97,7 @@ export async function depWalker(
 
   const payload: Partial<Payload> = {
     id: tempDir.id,
-    rootDependencyName: manifest.name,
+    rootDependencyName: manifest.name ?? "workspace",
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
     warnings: []
@@ -323,8 +323,10 @@ async function scanDirOrArchiveEx(
 
 function isLocalManifest(
   verDescriptor: DependencyVersion,
-  manifest: PackageJSON | ManifestVersion,
+  manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
   packageName: string
-): manifest is PackageJSON {
-  return verDescriptor.existOnRemoteRegistry === false && packageName === manifest.name;
+): manifest is PackageJSON | WorkspacesPackageJSON {
+  return verDescriptor.existOnRemoteRegistry === false && (
+    packageName === manifest.name || manifest.name === undefined
+  );
 }

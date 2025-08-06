@@ -1,5 +1,9 @@
 // Import Third-party Dependencies
-import type { PackageJSON, PackumentVersion } from "@nodesecure/npm-types";
+import type {
+  PackageJSON,
+  WorkspacesPackageJSON,
+  PackumentVersion
+} from "@nodesecure/npm-types";
 
 // CONSTANTS
 const kVCSHosts = new Set(["github.com", "gitlab.com"]);
@@ -45,7 +49,9 @@ export function getLinks(
   };
 }
 
-export function getManifestLinks(manifest: PackageJSON) {
+export function getManifestLinks(
+  manifest: PackageJSON | WorkspacesPackageJSON
+) {
   const homepage = manifest.homepage ?? null;
   const repositoryUrl = typeof manifest.repository === "string" ?
     manifest.repository :
