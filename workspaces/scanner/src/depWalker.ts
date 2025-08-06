@@ -27,6 +27,7 @@ import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
 import type {
   Dependency,
   DependencyVersion,
+  GlobalWarning,
   Options,
   Payload
 } from "./types.js";
@@ -213,7 +214,7 @@ export async function depWalker(
 
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.
-  const globalWarnings: string[] = [];
+  const globalWarnings: GlobalWarning[] = [];
   for (const [packageName, dependency] of dependencies) {
     const metadataIntegrities = dependency.metadata?.integrity ?? {};
 
@@ -222,7 +223,10 @@ export async function depWalker(
 
       const isEmptyPackage = dependencyVer.warnings.some((warning) => warning.kind === "empty-package");
       if (isEmptyPackage) {
-        globalWarnings.push(`${packageName}@${version} only contain a package.json file!`);
+        globalWarnings.push({
+          type: "empty-package",
+          message: `${packageName}@${version} only contain a package.json file!`
+        });
       }
 
       if (!("integrity" in dependencyVer) || dependencyVer.flags.includes("isGit")) {
@@ -230,7 +234,10 @@ export async function depWalker(
       }
 
       if (dependencyVer.integrity !== integrity) {
-        globalWarnings.push(`${packageName}@${version} manifest & tarball integrity doesn't match!`);
+        globalWarnings.push({
+          type: "integrity-mismatch",
+          message: `${packageName}@${version} manifest & tarball integrity doesn't match!`
+        });
       }
     }
     for (const version of Object.entries(dependency.versions)) {
