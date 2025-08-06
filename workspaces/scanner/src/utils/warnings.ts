@@ -14,7 +14,7 @@ import type { Contact } from "@nodesecure/npm-types";
 // Import Internal Dependencies
 import { getDirNameFromUrl } from "./dirname.js";
 import { TopPackages } from "../class/TopPackages.class.js";
-import type { Dependency } from "../types.js";
+import type { Dependency, GlobalWarning } from "../types.js";
 
 await i18n.extendFromSystemPath(
   path.join(getDirNameFromUrl(import.meta.url), "..", "i18n")
@@ -35,7 +35,7 @@ const kDependencyWarnMessage = {
 } as const;
 
 export interface GetWarningsResult {
-  warnings: string[];
+  warnings: GlobalWarning[];
   illuminated: IlluminatedContact[];
 }
 
@@ -49,8 +49,17 @@ export async function getDependenciesWarnings(
   const topPackages = new TopPackages();
   await topPackages.loadJSON();
 
-  const warnings = vulnerableDependencyNames
-    .flatMap((name) => (dependenciesMap.has(name) ? `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}` : []));
+  const warnings: GlobalWarning[] = vulnerableDependencyNames
+    .flatMap((name) => {
+      if (!dependenciesMap.has(name)) {
+        return [];
+      }
+
+      return {
+        type: "dangerous-dependency",
+        message: `${kDetectedDep(name)} ${kDependencyWarnMessage[name]}`
+      };
+    });
 
   const dependencies: Record<string, ContactExtractorPackageMetadata> = Object.create(null);
   for (const [packageName, dependency] of dependenciesMap) {
@@ -62,7 +71,14 @@ export async function getDependenciesWarnings(
         packageName,
         similarPackages.join(", ")
       );
-      warnings.push(warningMessage);
+      warnings.push({
+        type: "typo-squatting",
+        message: warningMessage,
+        metadata: {
+          name: packageName,
+          similar: similarPackages
+        }
+      });
     }
 
     dependencies[packageName] = {

@@ -11,5 +11,8 @@ test("expect one warning from 'darcyclarke-manifest-pkg' with an integrity issue
   });
 
   assert.equal(result.warnings.length, 1);
-  assert.match(result.warnings[0], /manifest & tarball integrity doesn't match/g);
+
+  const warning = result.warnings[0];
+  assert.equal(warning.type, "integrity-mismatch");
+  assert.match(warning.message, /manifest & tarball integrity doesn't match/g);
 });
