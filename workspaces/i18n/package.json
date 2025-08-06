@@ -37,7 +37,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "cacache": "^19.0.1",
+    "cacache": "^20.0.0",
     "deepmerge": "^4.3.1",
     "lodash.get": "^4.4.2"
   }
