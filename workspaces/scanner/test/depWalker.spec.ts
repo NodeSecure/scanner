@@ -139,9 +139,14 @@ test("execute depWalker on typo-squatting", async() => {
     registry: getLocalRegistryURL()
   });
 
-  assert.deepEqual(result.warnings, [
+  assert.ok(result.warnings.length > 0);
+  const warning = result.warnings[0];
+
+  assert.equal(warning.type, "typo-squatting");
+  assert.strictEqual(
+    result.warnings[0].message,
     "The package 'mecha' is similar to the following popular packages: fecha, mocha"
-  ]);
+  );
 });
 
 test("fetch payload of pacote on the npm registry", async() => {
