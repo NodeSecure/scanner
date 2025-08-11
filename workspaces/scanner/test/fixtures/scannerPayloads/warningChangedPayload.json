@@ -2,8 +2,10 @@
   "id": "hbefDHkf",
   "rootDependencyName": "foo",
   "warnings": [
-    "unsafe-import",
-    "encoded-literal"
+    {
+      "type": "empty-package",
+      "message": "..."
+    }
   ],
   "dependencies": {
     "foo": {

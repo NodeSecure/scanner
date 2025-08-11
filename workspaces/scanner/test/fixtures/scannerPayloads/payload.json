@@ -2,8 +2,10 @@
   "id": "YuK0CL",
   "rootDependencyName": "foo",
   "warnings": [
-    "unsafe-import",
-    "unsafe-regex"
+    {
+      "type": "dangerous-dependency",
+      "message": "..."
+    }
   ],
   "highlighted": {
     "contacts": [

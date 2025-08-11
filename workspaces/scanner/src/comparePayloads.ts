@@ -11,12 +11,13 @@ import type {
   Publisher,
   Maintainer,
   Repository,
-  DependencyLinks
+  DependencyLinks,
+  GlobalWarning
 } from "./types.js";
 
 export interface PayloadComparison {
   title: string;
-  warnings: ArrayDiff<string>;
+  warnings: ArrayDiff<GlobalWarning>;
   scannerVersion: ValueComparison<string>;
   vulnerabilityStrategy: ValueComparison<string>;
   dependencies: DependenciesComparison;

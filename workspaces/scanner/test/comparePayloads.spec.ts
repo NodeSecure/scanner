@@ -28,13 +28,23 @@ it("should throw an error if compared payloads are not from the same package", (
 });
 
 it("should detect warnings diff", () => {
-  const { warnings: { added, removed }, dependencies: { compared } } = compareTo("warningChangedPayload");
+  const {
+    warnings: { added, removed },
+    dependencies: { compared }
+  } = compareTo("warningChangedPayload");
 
-  assert.strictEqual(added.length, 1);
-  assert.deepStrictEqual(added[0], "encoded-literal");
-
-  assert.strictEqual(removed.length, 1);
-  assert.deepStrictEqual(removed[0], "unsafe-regex");
+  assert.deepEqual(added, [
+    {
+      type: "empty-package",
+      message: "..."
+    }
+  ]);
+  assert.deepEqual(removed, [
+    {
+      type: "dangerous-dependency",
+      message: "..."
+    }
+  ]);
 
   const deepWarnings = compared.get("foo")!.versions.compared.get("2.0.0")!.warnings;
   assert.strictEqual(deepWarnings.added.length, 1);

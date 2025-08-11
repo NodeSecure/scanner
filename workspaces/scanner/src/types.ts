@@ -157,13 +157,30 @@ export interface Dependency {
 
 export type Dependencies = Record<string, Dependency>;
 
+export type GlobalWarning = { message: string; } & (
+  {
+    type:
+      | "dangerous-dependency"
+      | "integrity-mismatch"
+      | "empty-package";
+    metadata?: Record<string, unknown>;
+  } |
+  {
+    type: "typo-squatting";
+    metadata: {
+      name: string;
+      similar: string[];
+    };
+  }
+);
+
 export interface Payload {
   /** Payload unique id */
   id: string;
   /** Name of the analyzed package */
   rootDependencyName: string;
   /** Global warnings list */
-  warnings: string[];
+  warnings: GlobalWarning[];
   highlighted: {
     contacts: IlluminatedContact[];
   };
