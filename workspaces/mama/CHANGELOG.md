@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 2.0.2
+
+### Patch Changes
+
+- [#513](https://github.com/NodeSecure/scanner/pull/513) [`045c378`](https://github.com/NodeSecure/scanner/commit/045c378a801c62c0a1cde3d0b7d05128bdd71acf) Thanks [@fraxken](https://github.com/fraxken)! - Always remove ./bin/node_modules from hash integrity
+
 ## 2.0.1
 
 ### Patch Changes
