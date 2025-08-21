@@ -12,8 +12,8 @@
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test ./test/**/*.spec.ts",
-    "test": "c8 -r html npm run test-only",
-    "test:tsd": "npm run build && tsd"
+    "test-types": "npm run build && tsd && attw --pack . --profile esm-only",
+    "test": "c8 -r html npm run test-only && npm run test-types"
   },
   "files": [
     "dist"

@@ -18,7 +18,8 @@
   "scripts": {
     "build": "tsc --build",
     "test": "npm run test --ws --if-present",
-    "lint": "npx eslint workspaces",
+    "test-types": "npm run test-types --ws --if-present",
+    "lint": "eslint workspaces",
     "ci:publish": "changeset publish",
     "ci:version": "changeset version",
     "clean": "clear-ts-build"
@@ -26,6 +27,7 @@
   "author": "NodeSecure",
   "license": "MIT",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.4",
     "@openally/config.eslint": "^2.1.0",
