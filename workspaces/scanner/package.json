@@ -12,9 +12,9 @@
     "build": "tsc -b & cp -R ./src/data ./dist/data",
     "lint": "eslint src test",
     "prepublishOnly": "npm run build && pkg-ok",
-    "test": "npm run test-only",
+    "test": "c8 -r html npm run test-only && npm run test-types",
     "test-only": "tsx --test ./test/**/*.spec.ts",
-    "coverage": "c8 -r html npm run test-only"
+    "test-types": "attw --pack . --profile esm-only"
   },
   "files": [
     "dist"

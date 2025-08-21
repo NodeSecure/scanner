@@ -12,8 +12,8 @@
     "build": "tsc",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test \"./test/**/*.spec.ts\"",
-    "test": "npm run test-only",
-    "coverage": "c8 -r html npm test"
+    "test-types": "attw --pack . --profile esm-only",
+    "test": "c8 -r html npm run test-only && npm run test-types"
   },
   "repository": {
     "type": "git",

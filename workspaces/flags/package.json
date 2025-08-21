@@ -6,7 +6,8 @@
     "build": "tsc & cp -R ./src/flags ./dist/flags",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test \"./test/**/*.spec.ts\"",
-    "test": "c8 -r html npm run test-only",
+    "test-types": "attw --pack . --profile esm-only",
+    "test": "c8 -r html npm run test-only && npm run test-types",
     "generateFlags": "tsx scripts/generateFlags.js"
   },
   "keywords": [
