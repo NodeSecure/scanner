@@ -1,5 +1,16 @@
 # @nodesecure/scanner
 
+## 7.0.0
+
+### Major Changes
+
+- [#509](https://github.com/NodeSecure/scanner/pull/509) [`979c469`](https://github.com/NodeSecure/scanner/commit/979c469fbb51846da7b7fe0d7ab2ce149ce6759b) Thanks [@fraxken](https://github.com/fraxken)! - Extend global warning with multi-properties objects
+
+### Patch Changes
+
+- Updated dependencies [[`045c378`](https://github.com/NodeSecure/scanner/commit/045c378a801c62c0a1cde3d0b7d05128bdd71acf)]:
+  - @nodesecure/mama@2.0.2
+
 ## 6.12.1
 
 ### Patch Changes
