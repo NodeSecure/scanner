@@ -1,3 +1,5 @@
+type ObjectOfStrings = Record<string, string>;
+
 /**
  * @see https://github.com/npm/types/blob/main/types/index.d.ts
  */
@@ -20,6 +22,16 @@ export interface Repository {
   type?: string;
   url: string;
 }
+
+export type DistTags = {
+  latest: string;
+  next?: string;
+  canary?: string;
+  rc?: string;
+  beta?: string;
+  alpha?: string;
+  experimental?: string;
+} & ObjectOfStrings;
 
 export interface Dist {
   /**
@@ -170,13 +182,11 @@ export type Packument = {
   _cached?: boolean;
   _id: string;
   _rev: string;
-  "dist-tags": {
-    latest?: string
-  } & Record<string, string>;
+  "dist-tags": DistTags;
   time: {
     modified: string;
     created: string;
-  } & Record<string, string>;
+  } & ObjectOfStrings;
   users?: Record<string, true>;
   versions: Record<string, PackumentVersion>;
 } & Pick<
