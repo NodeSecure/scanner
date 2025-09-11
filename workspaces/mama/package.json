@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/mama",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Manifest Manager",
   "type": "module",
   "exports": "./dist/index.js",
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/mama#readme",
   "dependencies": {
-    "@nodesecure/npm-types": "^1.2.0",
+    "@nodesecure/npm-types": "^1.3.0",
     "@nodesecure/utils": "^2.3.0",
     "object-hash": "^3.0.0"
   },
