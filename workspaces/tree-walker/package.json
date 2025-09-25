@@ -37,7 +37,7 @@
     "@npmcli/arborist": "^9.0.2",
     "combine-async-iterators": "^3.0.0",
     "itertools": "^2.3.1",
-    "npm-pick-manifest": "^10.0.0",
+    "npm-pick-manifest": "^11.0.1",
     "pacote": "^21.0.0",
     "semver": "^7.6.0"
   },

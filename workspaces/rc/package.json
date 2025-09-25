@@ -45,7 +45,7 @@
     "@openally/config": "^1.0.1",
     "@openally/result": "^1.2.1",
     "lodash.merge": "^4.6.2",
-    "type-fest": "^4.41.0"
+    "type-fest": "^5.0.1"
   },
   "tsd": {
     "directory": "test/types"
