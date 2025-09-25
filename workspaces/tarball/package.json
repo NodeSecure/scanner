@@ -3,8 +3,17 @@
   "version": "2.1.0",
   "description": "NodeSecure tarball scanner",
   "type": "module",
-  "exports": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./warnings": {
+      "import": "./dist/warnings.js",
+      "types": "./dist/warnings.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
