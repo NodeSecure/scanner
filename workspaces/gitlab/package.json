@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/gitlab#readme",
   "dependencies": {
-    "@myunisoft/httpie": "^5.0.0",
+    "@openally/httpie": "^1.0.0",
     "tar-fs": "^3.0.6"
   },
   "devDependencies": {

@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/conformance#readme",
   "devDependencies": {
-    "@myunisoft/httpie": "^5.0.1",
+    "@openally/httpie": "^1.0.0",
     "@types/spdx-expression-parse": "^3.0.5",
     "node-estree": "^4.0.0"
   },

@@ -2,7 +2,7 @@
 import fs from "node:fs";
 
 // Import Third-party Dependencies
-import httpie from "@myunisoft/httpie";
+import * as httpie from "@openally/httpie";
 import * as astring from "astring";
 import { ESTree, Helpers, VarDeclaration } from "node-estree";
 

@@ -5,7 +5,7 @@ import {
 } from "node:fs";
 
 // Import Third-party Dependencies
-import httpie from "@myunisoft/httpie";
+import * as httpie from "@openally/httpie";
 
 // Import Internal Dependencies
 import * as utils from "../utils.js";
@@ -51,6 +51,8 @@ export interface DownloadResult {
   branch: string;
 }
 
+const agent = new httpie.Agent().compose(httpie.interceptors.redirect({ maxRedirections: 1 }));
+
 export async function download(
   repository: string,
   options: DownloadOptions = Object.create(null)
@@ -73,7 +75,7 @@ export async function download(
   const repositoryURL = new URL(utils.getRepositoryPath(repository), gitlab);
   const { data: gitlabManifest } = await httpie.get<gitlab.Project>(repositoryURL, {
     headers,
-    maxRedirections: 1
+    agent
   });
 
   const wantedBranch = typeof branch === "string" ? branch : gitlabManifest.default_branch;
@@ -86,7 +88,7 @@ export async function download(
   );
   const writableCallback = httpie.stream("GET", archiveURL, {
     headers: { ...headers, "Accept-Encoding": "gzip, deflate" },
-    maxRedirections: 1
+    agent
   });
   await writableCallback(() => createWriteStream(location));
 
