@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/github#readme",
   "dependencies": {
-    "@myunisoft/httpie": "^5.0.0",
+    "@openally/httpie": "^1.0.0",
     "tar-fs": "^3.0.5"
   },
   "devDependencies": {

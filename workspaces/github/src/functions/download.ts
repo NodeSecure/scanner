@@ -3,11 +3,13 @@ import * as path from "node:path";
 import { createWriteStream } from "node:fs";
 
 // Import Third-party Dependencies
-import httpie from "@myunisoft/httpie";
+import * as httpie from "@openally/httpie";
 
 // CONSTANTS
 const kGithubURL = new URL("https://github.com/");
 const kDefaultBranch = "main";
+
+const agent = new httpie.Agent().compose(httpie.interceptors.redirect({ maxRedirections: 1 }));
 
 export interface DownloadOptions {
   /**
@@ -71,7 +73,7 @@ export async function download(
       "Accept-Encoding": "gzip, deflate",
       Authorization: typeof token === "string" ? `token ${token}` : void 0
     },
-    maxRedirections: 1
+    agent
   });
   await writableCallback(() => createWriteStream(location));
 
