@@ -11,8 +11,9 @@ import {
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
-import { ManifestManager } from "@nodesecure/mama";
+import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
 import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
+import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import {
@@ -28,6 +29,7 @@ import type {
   Dependency,
   DependencyVersion,
   GlobalWarning,
+  DependencyConfusionWarning,
   Options,
   Payload
 } from "./types.js";
@@ -96,6 +98,8 @@ export async function depWalker(
 
   await using tempDir = await TempDirectory.create();
 
+  const dependencyConfusionWarnings: DependencyConfusionWarning[] = [];
+
   const payload: Partial<Payload> = {
     id: tempDir.id,
     rootDependencyName: manifest.name ?? "workspace",
@@ -144,7 +148,9 @@ export async function depWalker(
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
         operationsQueue.push(
-          new NpmRegistryProvider(name, version).enrichDependencyVersion(dep)
+          new NpmRegistryProvider(name, version, {
+            registry
+          }).enrichDependencyVersion(dep, dependencyConfusionWarnings)
         );
 
         if (version in dep.versions) {
@@ -176,6 +182,14 @@ export async function depWalker(
         const provider = new NpmRegistryProvider(name, version);
 
         operationsQueue.push(provider.enrichDependency(logger, dependency));
+        const org = parseNpmSpec(name)?.org;
+        if (registry !== getNpmRegistryURL() && org) {
+          operationsQueue.push(
+            new NpmRegistryProvider(name, version, {
+              registry
+            }).enrichScopedDependencyConfusionWarnings(dependencyConfusionWarnings, org)
+          );
+        }
       }
 
       const scanDirOptions = {
@@ -277,7 +291,7 @@ export async function depWalker(
       dependencies,
       options.highlight?.contacts
     );
-    payload.warnings = globalWarnings.concat(warnings);
+    payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
     payload.highlighted = {
       contacts: illuminated
     };
