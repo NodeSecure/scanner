@@ -145,12 +145,13 @@ export async function depWalker(
       };
 
       let proceedDependencyScan = true;
+      const org = parseNpmSpec(name)?.org;
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
         operationsQueue.push(
           new NpmRegistryProvider(name, version, {
             registry
-          }).enrichDependencyVersion(dep, dependencyConfusionWarnings)
+          }).enrichDependencyVersion(dep, dependencyConfusionWarnings, org)
         );
 
         if (version in dep.versions) {
@@ -182,7 +183,6 @@ export async function depWalker(
         const provider = new NpmRegistryProvider(name, version);
 
         operationsQueue.push(provider.enrichDependency(logger, dependency));
-        const org = parseNpmSpec(name)?.org;
         if (registry !== getNpmRegistryURL() && org) {
           operationsQueue.push(
             new NpmRegistryProvider(name, version, {

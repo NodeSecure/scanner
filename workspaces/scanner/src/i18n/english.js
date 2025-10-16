@@ -6,6 +6,7 @@ const scanner = {
   keylogging: "This dependency can retrieve your keyboard and mouse inputs. It can be used for 'keylogging' attacks/malwares.",
   typo_squatting: tS`The package '${0}' is similar to the following popular packages: ${1}`,
   dependency_confusion: "This dependency was found on both a public and private registry but its signature does not match",
+  dependency_confusion_missing: "This dependency was found on the private but not on the public registry, this dependency is vulnerable to dependency confusion attacks.",
   dependency_confusion_missing_org: tS`The org '${0}' is not claimed on the public registry`
 };
 

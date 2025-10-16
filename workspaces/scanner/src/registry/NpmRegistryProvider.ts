@@ -139,7 +139,8 @@ export class NpmRegistryProvider {
 
   async enrichDependencyVersion(
     dependency: Dependency,
-    warnings: DependencyConfusionWarning[]
+    warnings: DependencyConfusionWarning[],
+    org: string | null | undefined
   ) {
     try {
       const { integrity, deprecated, links, signatures } = await this.collectPackageVersionData();
@@ -155,11 +156,19 @@ export class NpmRegistryProvider {
       if (this.#registry === getNpmRegistryURL()) {
         return;
       }
-      const packumentVersionFromPublicRegistry = await this.#npmApiClient.packumentVersion(this.name, this.version, {
-        registry: getNpmRegistryURL()
-      });
-      if (!this.#hasSameSignatures(signatures, packumentVersionFromPublicRegistry.dist.signatures)) {
-        this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion"));
+      try {
+        const packumentVersionFromPublicRegistry = await this.#npmApiClient.packumentVersion(this.name, this.version, {
+          registry: getNpmRegistryURL()
+        });
+        if (!this.#hasSameSignatures(signatures, packumentVersionFromPublicRegistry.dist.signatures)) {
+          this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion"));
+        }
+      }
+      catch {
+        const isScoped = Boolean(org);
+        if (!isScoped) {
+          this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion_missing"));
+        }
       }
     }
     catch {

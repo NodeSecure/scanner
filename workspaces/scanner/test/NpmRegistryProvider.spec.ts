@@ -25,10 +25,11 @@ describe("NpmRegistryProvider", () => {
 
   describe("enrichDependencyVersion", async() => {
     const message = await i18n.getToken("scanner.dependency_confusion");
+    const messageMissing = await i18n.getToken("scanner.dependency_confusion_missing");
     test("should not throw error when package does not exist", async() => {
       const provider = new NpmRegistryProvider("foobarrxldkedeoxcjek", "1.5.0");
 
-      await provider.enrichDependencyVersion({} as any, []);
+      await provider.enrichDependencyVersion({} as any, [], null);
     });
 
     test("should enrich dependency with manifest metadata and links for valid package", async() => {
@@ -42,7 +43,7 @@ describe("NpmRegistryProvider", () => {
       };
       const provider = new NpmRegistryProvider("@slimio/is", "1.5.0");
 
-      await provider.enrichDependencyVersion(dep as any, []);
+      await provider.enrichDependencyVersion(dep as any, [], "slimio");
 
       assert.equal(Object.keys(dep.metadata).length, 1);
       assert.deepEqual(dep.metadata, {
@@ -70,7 +71,7 @@ describe("NpmRegistryProvider", () => {
         }
       });
 
-      await provider.enrichDependencyVersion({} as any, []);
+      await provider.enrichDependencyVersion({} as any, [], null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foobarrxldkedeoxcjek", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
       }]);
@@ -118,7 +119,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
       }]);
@@ -183,7 +184,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
@@ -235,7 +236,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
       }]);
@@ -282,7 +283,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
 
       assert.strictEqual(packumentVersionMock.mock.callCount(), 1);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
@@ -327,7 +328,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
@@ -380,7 +381,7 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
@@ -427,12 +428,108 @@ describe("NpmRegistryProvider", () => {
           "1.5.0": {}
         }
       } as unknown as Dependency;
-      await provider.enrichDependencyVersion(dep, warnings);
+      await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private"
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
+        registry: getNpmRegistryURL()
+      }]);
+      assert.deepEqual(warnings, []);
+    });
+
+    test("should add a warning when the dependency is not scoped and not on the public npm package", async(t) => {
+      const packumentVersionMock = t.mock.fn<(name: string, version: string) => Promise<PackumentVersion>>();
+
+      packumentVersionMock.mock.mockImplementationOnce(async() => ({
+        dist: {
+          signatures: [
+            {
+              keyid: "SHA256:kl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              sig: "MEUCIQCX/49atNLSDYZP8betYWEqB0G8zZnIyB7ibC7nRNyMiQIgHosOKHhVTVNBI/6iUNSpDokOc44zsZ7TfybMKj8YdfY="
+            }
+          ]
+        }
+      } as unknown as PackumentVersion));
+
+      packumentVersionMock.mock.mockImplementation(async() => {
+        throw new Error();
+      });
+
+      const provider = new NpmRegistryProvider("foo", "1.5.0", {
+        registry: "https://registry.npmjs.org/private",
+        npmApiClient: {
+          ...defaultNpmApiClient,
+          packumentVersion: packumentVersionMock
+        }
+      });
+      const warnings = [];
+      const dep = {
+        metadata: {
+          integrity: {}
+        },
+        versions: {
+          "1.5.0": {}
+        }
+      } as unknown as Dependency;
+      await provider.enrichDependencyVersion(dep, warnings, null);
+      assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
+      assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
+        registry: "https://registry.npmjs.org/private"
+      }]);
+      assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
+        registry: getNpmRegistryURL()
+      }]);
+      assert.deepEqual(warnings, [{
+        type: "dependency-confusion",
+        message: messageMissing,
+        metadata: {
+          name: "foo"
+        }
+      }]);
+    });
+
+    test("should not add a warning when the dependency is a scoped and not on the public npm package", async(t) => {
+      const packumentVersionMock = t.mock.fn<(name: string, version: string) => Promise<PackumentVersion>>();
+
+      packumentVersionMock.mock.mockImplementationOnce(async() => ({
+        dist: {
+          signatures: [
+            {
+              keyid: "SHA256:kl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              sig: "MEUCIQCX/49atNLSDYZP8betYWEqB0G8zZnIyB7ibC7nRNyMiQIgHosOKHhVTVNBI/6iUNSpDokOc44zsZ7TfybMKj8YdfY="
+            }
+          ]
+        }
+      } as unknown as PackumentVersion));
+
+      packumentVersionMock.mock.mockImplementation(async() => {
+        throw new Error();
+      });
+
+      const provider = new NpmRegistryProvider("@foo/utils", "1.5.0", {
+        registry: "https://registry.npmjs.org/private",
+        npmApiClient: {
+          ...defaultNpmApiClient,
+          packumentVersion: packumentVersionMock
+        }
+      });
+      const warnings = [];
+      const dep = {
+        metadata: {
+          integrity: {}
+        },
+        versions: {
+          "1.5.0": {}
+        }
+      } as unknown as Dependency;
+      await provider.enrichDependencyVersion(dep, warnings, "foo");
+      assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
+      assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["@foo/utils", "1.5.0", {
+        registry: "https://registry.npmjs.org/private"
+      }]);
+      assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["@foo/utils", "1.5.0", {
         registry: getNpmRegistryURL()
       }]);
       assert.deepEqual(warnings, []);
