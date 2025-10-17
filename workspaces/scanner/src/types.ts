@@ -157,6 +157,14 @@ export interface Dependency {
 
 export type Dependencies = Record<string, Dependency>;
 
+export type DependencyConfusionWarning = {
+  type: "dependency-confusion";
+  message: string;
+  metadata: {
+    name: string;
+  };
+};
+
 export type GlobalWarning = { message: string; } & (
   {
     type:
@@ -172,7 +180,8 @@ export type GlobalWarning = { message: string; } & (
       similar: string[];
     };
   }
-);
+  |
+  DependencyConfusionWarning);
 
 export interface Payload {
   /** Payload unique id */
