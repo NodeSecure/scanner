@@ -64,7 +64,7 @@
     "@nodesecure/vulnera": "^2.0.1",
     "@openally/mutex": "^2.0.0",
     "fastest-levenshtein": "^1.0.16",
-    "frequency-set": "^1.0.2",
+    "frequency-set": "^2.1.0",
     "pacote": "^21.0.0",
     "semver": "^7.5.4",
     "type-fest": "^5.0.1"
