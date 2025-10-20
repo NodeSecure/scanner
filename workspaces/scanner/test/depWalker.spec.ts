@@ -116,9 +116,9 @@ test("execute depWalker on pkg.gitdeps", async() => {
 
   const packages = Object.keys(resultAsJSON).sort();
   assert.deepEqual(packages, [
-    "@myunisoft/httpie",
     "@nodesecure/npm-registry-sdk",
     "@nodesecure/npm-types",
+    "@openally/httpie",
     "@openally/result",
     "content-type",
     "lru-cache",
