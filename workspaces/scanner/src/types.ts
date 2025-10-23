@@ -5,7 +5,7 @@ import type { PackageModuleType } from "@nodesecure/mama";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { IlluminatedContact } from "@nodesecure/contact";
-import type { Contact } from "@nodesecure/npm-types";
+import type { Contact, Dist } from "@nodesecure/npm-types";
 
 export type Maintainer = Contact & {
   /**
@@ -114,6 +114,7 @@ export interface DependencyVersion {
   integrity?: string;
   links?: DependencyLinks;
   deprecated?: string;
+  attestations?: Dist["attestations"];
 }
 
 export interface Dependency {
