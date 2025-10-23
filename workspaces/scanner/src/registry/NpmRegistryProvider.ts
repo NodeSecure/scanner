@@ -88,7 +88,8 @@ export class NpmRegistryProvider {
       links: getLinks(packumentVersion),
       integrity,
       deprecated: packumentVersion.deprecated,
-      signatures: packumentVersion.dist.signatures
+      signatures: packumentVersion.dist.signatures,
+      attestations: packumentVersion.dist.attestations
     };
   }
 
@@ -147,13 +148,17 @@ export class NpmRegistryProvider {
     org: string | null | undefined
   ) {
     try {
-      const { integrity, deprecated, links, signatures } = await this.collectPackageVersionData();
+      const {
+        integrity, deprecated, links,
+        signatures, attestations
+      } = await this.collectPackageVersionData();
 
       Object.assign(
         dependency.versions[this.version],
         {
           links,
-          deprecated
+          deprecated,
+          attestations
         }
       );
       dependency.metadata.integrity[this.version] = integrity;

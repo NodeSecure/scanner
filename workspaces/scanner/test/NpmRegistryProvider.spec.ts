@@ -12,7 +12,7 @@ import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import { HttpieOnHttpError } from "@openally/httpie";
 
 // Import Internal Dependencies
-import { Logger, type Dependency } from "../src/index.js";
+import { Logger, type Dependency, type DependencyConfusionWarning } from "../src/index.js";
 import { NpmRegistryProvider } from "../src/registry/NpmRegistryProvider.js";
 
 describe("NpmRegistryProvider", () => {
@@ -59,11 +59,40 @@ describe("NpmRegistryProvider", () => {
         }
       });
       assert.deepEqual(dep.versions["1.5.0"], {
+        attestations: undefined,
         deprecated: undefined,
         links: {
           npm: "https://www.npmjs.com/package/@slimio/is/v/1.5.0",
           homepage: "https://github.com/SlimIO/is#readme",
           repository: "https://github.com/SlimIO/is"
+        }
+      });
+    });
+
+    test("should enrich dependency with a valid NPM attestations (provenance)", async() => {
+      const dep = {
+        metadata: {
+          integrity: {}
+        },
+        versions: {
+          "3.1.0": {}
+        }
+      };
+      const provider = new NpmRegistryProvider("@nodesecure/cli", "3.1.0");
+
+      await provider.enrichDependencyVersion(dep as any, [], "nodesecure");
+      assert.deepEqual(dep.versions["3.1.0"], {
+        attestations: {
+          provenance: {
+            predicateType: "https://slsa.dev/provenance/v1"
+          },
+          url: "https://registry.npmjs.org/-/npm/v1/attestations/@nodesecure%2fcli@3.1.0"
+        },
+        deprecated: undefined,
+        links: {
+          homepage: "https://github.com/NodeSecure/cli#readme",
+          npm: "https://www.npmjs.com/package/@nodesecure/cli/v/3.1.0",
+          repository: "https://github.com/NodeSecure/cli"
         }
       });
     });
@@ -117,7 +146,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -182,7 +211,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -234,7 +263,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -281,7 +310,7 @@ describe("NpmRegistryProvider", () => {
         }
       });
 
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -326,7 +355,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -379,7 +408,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -426,7 +455,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -476,7 +505,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -532,7 +561,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -582,7 +611,7 @@ describe("NpmRegistryProvider", () => {
           packumentVersion: packumentVersionMock
         }
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       const dep = {
         metadata: {
           integrity: {}
@@ -608,7 +637,7 @@ describe("NpmRegistryProvider", () => {
       const logger = new Logger().start("registry");
       const provider = new NpmRegistryProvider("foobarrxldkedeoxcjek", "1.5.0");
 
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
 
       await provider.enrichDependency(logger, {} as any);
       assert.deepEqual(warnings, []);
@@ -727,7 +756,7 @@ describe("NpmRegistryProvider", () => {
         },
         registry: privateRegistry
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
       assert.deepEqual(warnings, [{
         type: "dependency-confusion",
@@ -754,7 +783,7 @@ describe("NpmRegistryProvider", () => {
         },
         registry: privateRegistry
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
       assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
@@ -770,7 +799,7 @@ describe("NpmRegistryProvider", () => {
         },
         registry: privateRegistry
       });
-      const warnings = [];
+      const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
       assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
