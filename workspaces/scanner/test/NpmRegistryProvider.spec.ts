@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 // Import Node.js Dependencies
 import { test, describe } from "node:test";
 import assert from "node:assert";
@@ -8,6 +9,7 @@ import is from "@slimio/is";
 import * as i18n from "@nodesecure/i18n";
 import { PackumentVersion, Packument } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
+import { HttpieOnHttpError } from "@openally/httpie";
 
 // Import Internal Dependencies
 import { Logger, type Dependency } from "../src/index.js";
@@ -15,7 +17,12 @@ import { NpmRegistryProvider } from "../src/registry/NpmRegistryProvider.js";
 
 describe("NpmRegistryProvider", () => {
   async function dummyThrow(): Promise<any> {
-    throw new Error();
+    throw new HttpieOnHttpError({
+      data: null,
+      headers: {},
+      statusMessage: "Not found",
+      statusCode: 404
+    });
   }
   const defaultNpmApiClient = {
     packument: dummyThrow,
@@ -454,7 +461,12 @@ describe("NpmRegistryProvider", () => {
       } as unknown as PackumentVersion));
 
       packumentVersionMock.mock.mockImplementation(async() => {
-        throw new Error();
+        throw new HttpieOnHttpError({
+          data: null,
+          headers: {},
+          statusMessage: "Not found",
+          statusCode: 404
+        });
       });
 
       const provider = new NpmRegistryProvider("foo", "1.5.0", {
@@ -490,6 +502,56 @@ describe("NpmRegistryProvider", () => {
       }]);
     });
 
+    test("should not add a warning when the error is not a 404", async(t) => {
+      const packumentVersionMock = t.mock.fn<(name: string, version: string) => Promise<PackumentVersion>>();
+
+      packumentVersionMock.mock.mockImplementationOnce(async() => ({
+        dist: {
+          signatures: [
+            {
+              keyid: "SHA256:kl3bwswu80PjjokCgh0o2w5c2U4LhQAE57gj9cz1kzA",
+              sig: "MEUCIQCX/49atNLSDYZP8betYWEqB0G8zZnIyB7ibC7nRNyMiQIgHosOKHhVTVNBI/6iUNSpDokOc44zsZ7TfybMKj8YdfY="
+            }
+          ]
+        }
+      } as unknown as PackumentVersion));
+
+      packumentVersionMock.mock.mockImplementation(async() => {
+        throw new HttpieOnHttpError({
+          data: null,
+          headers: {},
+          statusMessage: "Internal server error",
+          statusCode: 500
+        });
+      });
+
+      const provider = new NpmRegistryProvider("foo", "1.5.0", {
+        registry: "https://registry.npmjs.org/private",
+        npmApiClient: {
+          ...defaultNpmApiClient,
+          packumentVersion: packumentVersionMock
+        }
+      });
+      const warnings = [];
+      const dep = {
+        metadata: {
+          integrity: {}
+        },
+        versions: {
+          "1.5.0": {}
+        }
+      } as unknown as Dependency;
+      await provider.enrichDependencyVersion(dep, warnings, null);
+      assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
+      assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
+        registry: "https://registry.npmjs.org/private"
+      }]);
+      assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
+        registry: getNpmRegistryURL()
+      }]);
+      assert.deepEqual(warnings, []);
+    });
+
     test("should not add a warning when the dependency is a scoped and not on the public npm package", async(t) => {
       const packumentVersionMock = t.mock.fn<(name: string, version: string) => Promise<PackumentVersion>>();
 
@@ -505,7 +567,12 @@ describe("NpmRegistryProvider", () => {
       } as unknown as PackumentVersion));
 
       packumentVersionMock.mock.mockImplementation(async() => {
-        throw new Error();
+        throw new HttpieOnHttpError({
+          data: null,
+          headers: {},
+          statusMessage: "Not found",
+          statusCode: 404
+        });
       });
 
       const provider = new NpmRegistryProvider("@foo/utils", "1.5.0", {
@@ -585,20 +652,16 @@ describe("NpmRegistryProvider", () => {
 
       assert.deepEqual(dependency.versions["1.5.0"]!.flags, ["isOutdated"]);
       assert.strictEqual(logger.count("registry"), 1);
-
       assert.strictEqual(dependency.metadata.author!.name, "SlimIO");
       assert.strictEqual(dependency.metadata.homepage, "https://github.com/SlimIO/is#readme");
       assert.ok(semver.gt(dependency.metadata.lastVersion, "1.5.0"));
-
       assert.ok(Array.isArray(dependency.metadata.publishers));
       assert.ok(Array.isArray(dependency.metadata.maintainers));
       assert.ok(dependency.metadata.publishers.length > 0);
       assert.ok(dependency.metadata.maintainers.length > 0);
-
       assert.ok(dependency.metadata.hasManyPublishers);
       assert.ok(typeof dependency.metadata.publishedCount === "number");
       assert.ok(is.date(new Date(dependency.metadata.lastUpdateAt)));
-
       assert.deepEqual(dependency.versions["1.5.0"]!.links, {
         npm: "https://www.npmjs.com/package/@slimio/is/v/1.5.0",
         homepage: "https://github.com/SlimIO/is#readme",
@@ -673,6 +736,27 @@ describe("NpmRegistryProvider", () => {
           name: "@foo/utils"
         }
       }]);
+      assert.strictEqual(mockOrg.mock.callCount(), 1);
+    });
+    test("should not add a warning when the error is not a 404", async(t) => {
+      const mockOrg = t.mock.fn(() => {
+        throw new HttpieOnHttpError({
+          data: null,
+          headers: {},
+          statusMessage: "Internal server error",
+          statusCode: 500
+        });
+      });
+      const provider = new NpmRegistryProvider("@foo/utils", "2.5.9", {
+        npmApiClient: {
+          ...defaultNpmApiClient,
+          org: mockOrg
+        },
+        registry: privateRegistry
+      });
+      const warnings = [];
+      await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
+      assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
     });
     test("should not not add a dependency confusion warning when the org exist on the public registry", async(t) => {
