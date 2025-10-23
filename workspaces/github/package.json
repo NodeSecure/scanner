@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/github",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Download repository from github",
   "type": "module",
   "exports": "./dist/index.js",
