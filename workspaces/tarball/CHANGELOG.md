@@ -1,5 +1,16 @@
 # @nodesecure/tarball
 
+## 2.2.0
+
+### Minor Changes
+
+- [#526](https://github.com/NodeSecure/scanner/pull/526) [`02f111e`](https://github.com/NodeSecure/scanner/commit/02f111e1feaca4233f3b631f79688e4fda0eafe1) Thanks [@fraxken](https://github.com/fraxken)! - Export custom warnings for the web platform
+
+### Patch Changes
+
+- Updated dependencies [[`b989ceb`](https://github.com/NodeSecure/scanner/commit/b989ceb68774afc63bcc61c3f08cf109e30f5b1e)]:
+  - @nodesecure/conformance@1.2.0
+
 ## 2.1.0
 
 ### Minor Changes

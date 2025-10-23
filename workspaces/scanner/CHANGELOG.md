@@ -1,5 +1,21 @@
 # @nodesecure/scanner
 
+## 7.1.0
+
+### Minor Changes
+
+- [#535](https://github.com/NodeSecure/scanner/pull/535) [`746c0fd`](https://github.com/NodeSecure/scanner/commit/746c0fdfda787d8927537b78945388484dc95b94) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): implement dependency confusion detection
+
+- [#540](https://github.com/NodeSecure/scanner/pull/540) [`6105c7f`](https://github.com/NodeSecure/scanner/commit/6105c7fe735483208d45fd58667fa63d4c4fcf58) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add dependency warning only when getting a 404 from the public npm registry
+
+- [#541](https://github.com/NodeSecure/scanner/pull/541) [`dadb7fb`](https://github.com/NodeSecure/scanner/commit/dadb7fb2de82dd856b254e23774888bd96b589da) Thanks [@fraxken](https://github.com/fraxken)! - Keep NPM provenance (attestations) in Dependency version
+
+### Patch Changes
+
+- Updated dependencies [[`02f111e`](https://github.com/NodeSecure/scanner/commit/02f111e1feaca4233f3b631f79688e4fda0eafe1), [`b989ceb`](https://github.com/NodeSecure/scanner/commit/b989ceb68774afc63bcc61c3f08cf109e30f5b1e)]:
+  - @nodesecure/tarball@2.2.0
+  - @nodesecure/conformance@1.2.0
+
 ## 7.0.0
 
 ### Major Changes
