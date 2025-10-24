@@ -14,15 +14,18 @@ import { parseAuthor } from "@nodesecure/utils";
 import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
 import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
+import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
 import {
   getDependenciesWarnings,
   addMissingVersionFlags,
   getUsedDeps,
-  getManifestLinks
+  getManifestLinks,
+  NPM_TOKEN
 } from "./utils/index.js";
 import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.js";
+import { RegistryTokenStore } from "./registry/RegistryTokenStore.js";
 import { TempDirectory } from "./class/TempDirectory.class.js";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
 import type {
@@ -79,6 +82,7 @@ const { version: packageVersion } = JSON.parse(
 type WalkerOptions = Omit<Options, "registry"> & {
   registry: string;
   location?: string;
+  npmRcConfig?: Config;
 };
 
 export async function depWalker(
@@ -93,8 +97,11 @@ export async function depWalker(
     maxDepth,
     location,
     vulnerabilityStrategy = Vulnera.strategies.NONE,
-    registry
+    registry,
+    npmRcConfig
   } = options;
+
+  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
   await using tempDir = await TempDirectory.create();
 
@@ -150,7 +157,8 @@ export async function depWalker(
         const dep = dependencies.get(name)!;
         operationsQueue.push(
           new NpmRegistryProvider(name, version, {
-            registry
+            registry,
+            tokenStore
           }).enrichDependencyVersion(dep, dependencyConfusionWarnings, org)
         );
 
@@ -180,13 +188,17 @@ export async function depWalker(
       }
       else {
         fetchedMetadataPackages.add(name);
-        const provider = new NpmRegistryProvider(name, version);
+        const provider = new NpmRegistryProvider(name, version, {
+          registry,
+          tokenStore
+        });
 
         operationsQueue.push(provider.enrichDependency(logger, dependency));
         if (registry !== getNpmRegistryURL() && org) {
           operationsQueue.push(
             new NpmRegistryProvider(name, version, {
-              registry
+              registry,
+              tokenStore
             }).enrichScopedDependencyConfusionWarnings(dependencyConfusionWarnings, org)
           );
         }

@@ -15,7 +15,8 @@ import { PackumentExtractor, type DateProvider } from "./PackumentExtractor.js";
 import { fetchNpmAvatars } from "./fetchNpmAvatars.js";
 import type {
   Dependency,
-  DependencyConfusionWarning
+  DependencyConfusionWarning,
+  TokenStore
 } from "../types.js";
 import { Logger } from "../class/logger.class.js";
 import { getLinks } from "../utils/getLinks.js";
@@ -30,6 +31,7 @@ await i18n.extendFromSystemPath(
 
 type PackumentNpmApiOptions = {
   registry: string;
+  token?: string;
 };
 
 export interface NpmApiClient {
@@ -42,12 +44,14 @@ export interface NpmRegistryProviderOptions {
   dateProvider?: DateProvider;
   npmApiClient?: NpmApiClient;
   registry?: string;
+  tokenStore?: TokenStore;
 }
 
 export class NpmRegistryProvider {
   #date: DateProvider | undefined;
   #npmApiClient: NpmApiClient;
   #registry: string;
+  #tokenStore: TokenStore | undefined;
 
   name: string;
   version: string;
@@ -60,7 +64,8 @@ export class NpmRegistryProvider {
     const {
       dateProvider = undefined,
       npmApiClient = npmRegistrySDK,
-      registry = npmRegistrySDK.getLocalRegistryURL()
+      registry = npmRegistrySDK.getLocalRegistryURL(),
+      tokenStore = undefined
     } = options;
 
     this.name = name;
@@ -69,6 +74,7 @@ export class NpmRegistryProvider {
     this.#date = dateProvider;
     this.#npmApiClient = npmApiClient;
     this.#registry = registry;
+    this.#tokenStore = tokenStore;
   }
 
   async collectPackageVersionData() {
@@ -76,7 +82,8 @@ export class NpmRegistryProvider {
       this.name,
       this.version,
       {
-        registry: this.#registry
+        registry: this.#registry,
+        token: this.#tokenStore?.get(this.#registry)
       }
     );
 
@@ -95,7 +102,8 @@ export class NpmRegistryProvider {
 
   async collectPackageData() {
     const packument = await this.#npmApiClient.packument(this.name, {
-      registry: this.#registry
+      registry: this.#registry,
+      token: this.#tokenStore?.get(this.#registry)
     });
     const packumentVersion = packument.versions[this.version];
 
@@ -167,7 +175,8 @@ export class NpmRegistryProvider {
       }
       try {
         const packumentVersionFromPublicRegistry = await this.#npmApiClient.packumentVersion(this.name, this.version, {
-          registry: getNpmRegistryURL()
+          registry: getNpmRegistryURL(),
+          token: this.#tokenStore?.get(getNpmRegistryURL())
         });
         if (!this.#hasSameSignatures(signatures, packumentVersionFromPublicRegistry.dist.signatures)) {
           this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion"));
