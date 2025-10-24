@@ -289,7 +289,8 @@ export async function depWalker(
   try {
     const { warnings, illuminated } = await getDependenciesWarnings(
       dependencies,
-      options.highlight?.contacts
+      options.highlight?.contacts,
+      typeof location === "undefined"
     );
     payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
     payload.highlighted = {
