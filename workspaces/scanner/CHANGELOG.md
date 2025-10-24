@@ -1,5 +1,11 @@
 # @nodesecure/scanner
 
+## 7.2.0
+
+### Minor Changes
+
+- [#542](https://github.com/NodeSecure/scanner/pull/542) [`49c5bbb`](https://github.com/NodeSecure/scanner/commit/49c5bbb71fc3cf2cc15f48856e67ec901ba31eb8) Thanks [@fraxken](https://github.com/fraxken)! - Improve type-squatting global-warning by removing it on remote scan and also when there is to much similar packages
+
 ## 7.1.0
 
 ### Minor Changes
