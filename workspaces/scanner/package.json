@@ -70,7 +70,9 @@
     "type-fest": "^5.0.1"
   },
   "devDependencies": {
+    "@npmcli/config": "^10.4.2",
     "@types/node": "^24.0.2",
+    "@types/npmcli__config": "^6.0.3",
     "c8": "^10.1.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3"
