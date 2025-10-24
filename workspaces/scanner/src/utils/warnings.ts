@@ -41,7 +41,8 @@ export interface GetWarningsResult {
 
 export async function getDependenciesWarnings(
   dependenciesMap: Map<string, Dependency>,
-  highlightContacts: Contact[] = []
+  highlightContacts: Contact[] = [],
+  isLocalScan = false
 ): Promise<GetWarningsResult> {
   const vulnerableDependencyNames = Object.keys(
     kDependencyWarnMessage
@@ -64,21 +65,14 @@ export async function getDependenciesWarnings(
   const dependencies: Record<string, ContactExtractorPackageMetadata> = Object.create(null);
   for (const [packageName, dependency] of dependenciesMap) {
     const { author, maintainers } = dependency.metadata;
-    const similarPackages = topPackages.getSimilarPackages(packageName);
-    if (similarPackages.length > 0) {
-      const warningMessage = await i18n.getToken(
-        "scanner.typo_squatting",
-        packageName,
-        similarPackages.join(", ")
-      );
-      warnings.push({
-        type: "typo-squatting",
-        message: warningMessage,
-        metadata: {
-          name: packageName,
-          similar: similarPackages
-        }
-      });
+
+    const warning = await (
+      isLocalScan ?
+        Promise.resolve(null) :
+        searchTypoSquattingByName(topPackages, packageName)
+    );
+    if (warning !== null) {
+      warnings.push(warning);
     }
 
     dependencies[packageName] = {
@@ -107,3 +101,30 @@ export async function getDependenciesWarnings(
   };
 }
 
+async function searchTypoSquattingByName(
+  topPackages: TopPackages,
+  packageName: string
+): Promise<GlobalWarning | null> {
+  const similarPackages = topPackages.getSimilarPackages(packageName);
+  if (
+    similarPackages.length > 0 &&
+    similarPackages.length <= 3
+  ) {
+    const warningMessage = await i18n.getToken(
+      "scanner.typo_squatting",
+      packageName,
+      similarPackages.join(", ")
+    );
+
+    return {
+      type: "typo-squatting",
+      message: warningMessage,
+      metadata: {
+        name: packageName,
+        similar: similarPackages
+      }
+    };
+  }
+
+  return null;
+}

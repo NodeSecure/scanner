@@ -132,11 +132,12 @@ test("execute depWalker on pkg.gitdeps", async() => {
   ].sort());
 });
 
-test("execute depWalker on typo-squatting", async() => {
+test("execute depWalker on typo-squatting (with location)", async() => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
 
   const result = await depWalker(pkgTypoSquatting, {
-    registry: getLocalRegistryURL()
+    registry: getLocalRegistryURL(),
+    location: ""
   });
 
   assert.ok(result.warnings.length > 0);
@@ -145,8 +146,18 @@ test("execute depWalker on typo-squatting", async() => {
   assert.equal(warning.type, "typo-squatting");
   assert.strictEqual(
     result.warnings[0].message,
-    "The package 'mecha' is similar to the following popular packages: fecha, mocha"
+    "Dependency 'mecha' is similar to the following popular packages: fecha, mocha"
   );
+});
+
+test("execute depWalker on typo-squatting (with no location)", async() => {
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+
+  const result = await depWalker(pkgTypoSquatting, {
+    registry: getLocalRegistryURL()
+  });
+
+  assert.ok(result.warnings.length === 0);
 });
 
 test("fetch payload of pacote on the npm registry", async() => {
