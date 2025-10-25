@@ -14,6 +14,18 @@ import { HttpieOnHttpError } from "@openally/httpie";
 // Import Internal Dependencies
 import { Logger, type Dependency, type DependencyConfusionWarning } from "../src/index.js";
 import { NpmRegistryProvider } from "../src/registry/NpmRegistryProvider.js";
+import { type TokenStore } from "../src/types.js";
+
+class FakeTokenStore implements TokenStore {
+  #store: Record<string, string> = {
+    "https://registry.npmjs.org/private": "private-token",
+    "https://registry.npmjs.org/": "public-token"
+
+  };
+  get(registry: string): string | undefined {
+    return this.#store[registry];
+  }
+}
 
 describe("NpmRegistryProvider", () => {
   async function dummyThrow(): Promise<any> {
@@ -109,7 +121,8 @@ describe("NpmRegistryProvider", () => {
 
       await provider.enrichDependencyVersion({} as any, [], null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foobarrxldkedeoxcjek", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
     });
 
@@ -157,10 +170,12 @@ describe("NpmRegistryProvider", () => {
       } as unknown as Dependency;
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, [{
         type: "dependency-confusion",
@@ -223,10 +238,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, []);
     });
@@ -274,10 +291,12 @@ describe("NpmRegistryProvider", () => {
       } as unknown as Dependency;
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(warnings, [{
@@ -323,7 +342,8 @@ describe("NpmRegistryProvider", () => {
 
       assert.strictEqual(packumentVersionMock.mock.callCount(), 1);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, []);
     });
@@ -367,10 +387,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, [{
         type: "dependency-confusion",
@@ -420,10 +442,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, [{
         type: "dependency-confusion",
@@ -467,10 +491,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, []);
     });
@@ -500,6 +526,7 @@ describe("NpmRegistryProvider", () => {
 
       const provider = new NpmRegistryProvider("foo", "1.5.0", {
         registry: "https://registry.npmjs.org/private",
+        tokenStore: new FakeTokenStore(),
         npmApiClient: {
           ...defaultNpmApiClient,
           packumentVersion: packumentVersionMock
@@ -517,10 +544,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: "private-token"
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: "public-token"
       }]);
       assert.deepEqual(warnings, [{
         type: "dependency-confusion",
@@ -573,10 +602,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, null);
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["foo", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["foo", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, []);
     });
@@ -623,10 +654,12 @@ describe("NpmRegistryProvider", () => {
       await provider.enrichDependencyVersion(dep, warnings, "foo");
       assert.strictEqual(packumentVersionMock.mock.callCount(), 2);
       assert.deepEqual(packumentVersionMock.mock.calls[0].arguments, ["@foo/utils", "1.5.0", {
-        registry: "https://registry.npmjs.org/private"
+        registry: "https://registry.npmjs.org/private",
+        token: undefined
       }]);
       assert.deepEqual(packumentVersionMock.mock.calls[1].arguments, ["@foo/utils", "1.5.0", {
-        registry: getNpmRegistryURL()
+        registry: getNpmRegistryURL(),
+        token: undefined
       }]);
       assert.deepEqual(warnings, []);
     });
@@ -649,6 +682,7 @@ describe("NpmRegistryProvider", () => {
       const packumentMock = t.mock.fn<(name: string) => Promise<Packument>>();
       const provider = new NpmRegistryProvider("foobarrxldkedeoxcjek", "1.5.0", {
         registry: "https://registry.npmjs.org/private",
+        tokenStore: new FakeTokenStore(),
         npmApiClient: {
           ...defaultNpmApiClient,
           packument: packumentMock
@@ -660,7 +694,8 @@ describe("NpmRegistryProvider", () => {
       assert.deepEqual(packumentMock.mock.calls[0].arguments, [
         "foobarrxldkedeoxcjek",
         {
-          registry: "https://registry.npmjs.org/private"
+          registry: "https://registry.npmjs.org/private",
+          token: "private-token"
         }
       ]);
     });
