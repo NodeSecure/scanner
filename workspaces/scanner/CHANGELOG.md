@@ -1,5 +1,13 @@
 # @nodesecure/scanner
 
+## 7.2.0
+
+### Minor Changes
+
+- [#544](https://github.com/NodeSecure/scanner/pull/544) [`281c720`](https://github.com/NodeSecure/scanner/commit/281c72081f9ce767cf6cfc4e3ff0faca9c5bcb53) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add npm token based on registry for sdk calls
+
+- [#542](https://github.com/NodeSecure/scanner/pull/542) [`49c5bbb`](https://github.com/NodeSecure/scanner/commit/49c5bbb71fc3cf2cc15f48856e67ec901ba31eb8) Thanks [@fraxken](https://github.com/fraxken)! - Improve type-squatting global-warning by removing it on remote scan and also when there is to much similar packages
+
 ## 7.1.0
 
 ### Minor Changes
