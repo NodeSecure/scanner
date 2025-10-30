@@ -262,3 +262,10 @@ export interface Options {
    */
   readonly scanRootNode?: boolean;
 }
+
+export interface TokenStore {
+  /**
+   * Get the token for the given registry
+   */
+  get(registry: string): string | undefined;
+}

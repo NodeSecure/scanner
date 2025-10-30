@@ -8,6 +8,7 @@ import pacote from "pacote";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as tarball from "@nodesecure/tarball";
 import type { PackageJSON } from "@nodesecure/npm-types";
+import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
 import { depWalker } from "./depWalker.js";
@@ -27,9 +28,13 @@ const kDefaultCwdOptions = {
 export * from "./types.js";
 export * from "./extractors/index.js";
 
+export type CwdOptions = Options & {
+  npmRcConfig?: Config;
+};
+
 export async function cwd(
   location = process.cwd(),
-  options: Options = {},
+  options: CwdOptions = {},
   logger = new Logger()
 ) {
   const registry = options.registry ?
