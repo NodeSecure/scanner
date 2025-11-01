@@ -8,7 +8,7 @@ import { describe, test } from "node:test";
 import {
   ManifestManager
 } from "@nodesecure/mama";
-import type { ReportOnFile } from "@nodesecure/js-x-ray";
+import { type ReportOnFile, AstAnalyser } from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
 import {
@@ -102,6 +102,42 @@ describe("SourceCodeScanner", () => {
         "index.js",
         "src\\deps.js"
       ].sort()
+    );
+  });
+
+  test("iterate() should report optional warning for synchronous I/O", async() => {
+    const mama = loadFixtureManifest("synchronous-io");
+    const astAnalyser = new AstAnalyser({
+      optionalWarnings: true
+    });
+    const aggregator = createAggregator();
+
+    const scanner = new SourceCodeScanner(mama, {
+      reportInitiator: () => aggregator,
+      astAnalyser
+    });
+    await scanner.iterate({
+      manifest: [],
+      javascript: [
+        "index.js"
+      ]
+    });
+
+    const { reports } = aggregator;
+
+    assert.strictEqual(reports.length, 1);
+    const { warnings } = reports[0];
+    assert.partialDeepStrictEqual(warnings,
+      [
+        {
+          kind: "synchronous-io",
+          source: "JS-X-Ray",
+          i18n: "sast_warnings.synchronous_io",
+          severity: "Warning",
+          experimental: true,
+          value: "appendFileSync"
+        }
+      ]
     );
   });
 });

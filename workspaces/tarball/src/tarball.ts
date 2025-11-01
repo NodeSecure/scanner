@@ -5,7 +5,8 @@ import os from "node:os";
 // Import Third-party Dependencies
 import {
   type Warning,
-  type Dependency
+  type Dependency,
+  type AstAnalyserOptions
 } from "@nodesecure/js-x-ray";
 import * as conformance from "@nodesecure/conformance";
 import {
@@ -60,10 +61,17 @@ const kNpmToken = typeof process.env.NODE_SECURE_TOKEN === "string" ?
   { token: process.env.NODE_SECURE_TOKEN } :
   {};
 
+export interface ScanOptions {
+  astAnalyserOptions?: AstAnalyserOptions;
+}
+
 export async function scanDirOrArchive(
   locationOrManifest: string | ManifestManager,
-  ref: DependencyRef
+  ref: DependencyRef,
+  options: ScanOptions = {}
 ): Promise<void> {
+  const { astAnalyserOptions } = options;
+
   const mama = await ManifestManager.fromPackageJSON(
     locationOrManifest
   );
@@ -73,7 +81,7 @@ export async function scanDirOrArchive(
     composition,
     conformance,
     code
-  } = await tarex.scanFiles();
+  } = await tarex.scanFiles(astAnalyserOptions);
 
   {
     const { description, engines, repository, scripts } = mama.document;
@@ -152,8 +160,11 @@ export interface ScannedPackageResult {
 }
 
 export async function scanPackage(
-  manifestOrLocation: string | ManifestManager
+  manifestOrLocation: string | ManifestManager,
+  options: ScanOptions = {}
 ): Promise<ScannedPackageResult> {
+  const { astAnalyserOptions } = options;
+
   const mama = await ManifestManager.fromPackageJSON(
     manifestOrLocation
   );
@@ -163,7 +174,7 @@ export async function scanPackage(
     composition,
     conformance,
     code
-  } = await extractor.scanFiles();
+  } = await extractor.scanFiles(astAnalyserOptions);
 
   // Check for empty package
   const warnings = [...code.warnings];

@@ -101,6 +101,7 @@ export async function depWalker(
     npmRcConfig
   } = options;
 
+  const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
   await using tempDir = await TempDirectory.create();
@@ -228,7 +229,7 @@ export async function depWalker(
   );
 
   const isVulnHydratable = (strategy === "github-advisory" || strategy === "snyk")
-    && typeof location === "undefined";
+    && isRemoteScanning;
   if (!isVulnHydratable) {
     await hydratePayloadDependencies(dependencies as any, {
       useStandardFormat: true,
@@ -302,7 +303,7 @@ export async function depWalker(
     const { warnings, illuminated } = await getDependenciesWarnings(
       dependencies,
       options.highlight?.contacts,
-      typeof location === "undefined"
+      isRemoteScanning
     );
     payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
     payload.highlighted = {
@@ -348,7 +349,11 @@ async function scanDirOrArchiveEx(
       })
     );
 
-    await scanDirOrArchive(mama, ref);
+    await scanDirOrArchive(mama, ref, {
+      astAnalyserOptions: {
+        optionalWarnings: typeof location !== "undefined"
+      }
+    });
   }
   catch {
     // ignore
