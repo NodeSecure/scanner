@@ -7,6 +7,10 @@ import {
   ManifestManager,
   type LocatedManifestManager
 } from "@nodesecure/mama";
+import {
+  AstAnalyser,
+  type AstAnalyserOptions
+} from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
 import {
@@ -39,7 +43,9 @@ export class NpmTarball {
     this.manifest = mama;
   }
 
-  async scanFiles(): Promise<ScannedFilesResult> {
+  async scanFiles(
+    astAnalyserOptions?: AstAnalyserOptions
+  ): Promise<ScannedFilesResult> {
     const location = this.manifest.location;
     const [
       composition,
@@ -54,7 +60,9 @@ export class NpmTarball {
       code = new SourceCodeReport();
     }
     else {
-      code = await new SourceCodeScanner(this.manifest).iterate({
+      const astAnalyser = new AstAnalyser(astAnalyserOptions);
+
+      code = await new SourceCodeScanner(this.manifest, { astAnalyser }).iterate({
         manifest: [...this.manifest.getEntryFiles()]
           .flatMap(filterJavaScriptFiles()),
         javascript: composition.files

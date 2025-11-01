@@ -43,11 +43,19 @@ console.log(scanResult);
 > [!CAUTION]
 > The following APIs are considered legacy and are waiting for deprecation in future releases.
 
-### scanDirOrArchive(locationOrManifest: string | ManifestManager, ref: DependencyRef): Promise< void >
+### scanDirOrArchive(locationOrManifest: string | ManifestManager, ref: DependencyRef, options?: ScanOptions): Promise< void >
 
 Scan a given local project or tarball (by providing the path or directly the ManifestManager instance).
 
-### scanPackage(manifestOrLocation: string | ManifestManager): Promise< ScannedPackageResult > 
+`options` allow to customize the behavior of JS-X-Ray
+
+```ts
+export interface ScanOptions {
+  astAnalyserOptions?: AstAnalyserOptions;
+}
+```
+
+### scanPackage(manifestOrLocation: string | ManifestManager, options?: ScanOptions): Promise< ScannedPackageResult > 
 
 Scan a given local project containing a Manifest (package.json).
 

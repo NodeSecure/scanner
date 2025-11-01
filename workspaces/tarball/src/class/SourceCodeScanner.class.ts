@@ -125,12 +125,13 @@ export class SourceCodeReport implements SourceCodeAggregator {
 
 export interface SourceCodeScannerOptions<T> {
   reportInitiator?: () => T;
+  astAnalyser?: AstAnalyser;
 }
 
 export class SourceCodeScanner<
   T extends SourceCodeAggregator = SourceCodeReport
 > {
-  #astAnalyser = new AstAnalyser();
+  #astAnalyser: AstAnalyser;
   #initNewReport: () => T;
 
   manifest: LocatedManifestManager;
@@ -140,10 +141,12 @@ export class SourceCodeScanner<
     options: SourceCodeScannerOptions<T> = {}
   ) {
     const {
-      reportInitiator = () => new SourceCodeReport()
+      reportInitiator = () => new SourceCodeReport(),
+      astAnalyser = new AstAnalyser()
     } = options;
 
     this.manifest = manifest;
+    this.#astAnalyser = astAnalyser;
     this.#initNewReport = reportInitiator as () => T;
   }
 
