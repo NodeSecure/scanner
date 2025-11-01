@@ -1,5 +1,11 @@
 # @nodesecure/tarball
 
+## 2.3.0
+
+### Minor Changes
+
+- [#548](https://github.com/NodeSecure/scanner/pull/548) [`d555469`](https://github.com/NodeSecure/scanner/commit/d555469e7bbc2818d6069eef51cd2494303b5703) Thanks [@fraxken](https://github.com/fraxken)! - Customize JS-X-Ray behavior/options when running the scan. Use it to enable optionalWarnings when the scan run localy.
+
 ## 2.2.0
 
 ### Minor Changes
