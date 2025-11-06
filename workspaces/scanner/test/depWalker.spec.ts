@@ -11,11 +11,20 @@ import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { depWalker } from "../src/depWalker.js";
-import { from, type Payload, type DependencyVersion, cwd } from "../src/index.js";
+import {
+  Logger,
+  from,
+  cwd,
+  type Payload,
+  type DependencyVersion
+} from "../src/index.js";
 
 // CONSTANTS
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const kFixturePath = path.join(__dirname, "fixtures", "depWalker");
+const kDefaultWalkerOptions = {
+  registry: getLocalRegistryURL()
+};
 
 // JSON PAYLOADS
 const is = JSON.parse(readFileSync(
@@ -60,25 +69,34 @@ function cleanupPayload(payload: Payload) {
   }
 }
 
-test("execute depWalker on @slimio/is", async() => {
+test("execute depWalker on @slimio/is", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger, errorCount } = errorLogger();
+  test.after(() => logger.removeAllListeners());
 
-  const result = await depWalker(is, {
-    registry: getLocalRegistryURL()
-  });
+  const result = await depWalker(
+    is,
+    structuredClone(kDefaultWalkerOptions),
+    logger
+  );
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
   cleanupPayload(resultAsJSON);
 
   const expectedResult = JSON.parse(readFileSync(path.join(kFixturePath, "slimio.is-result.json"), "utf-8"));
   assert.deepEqual(resultAsJSON, expectedResult);
+  assert.strictEqual(errorCount(), 0);
 });
 
-test("execute depWalker on @slimio/config", async() => {
+test("execute depWalker on @slimio/config", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger, errorCount } = errorLogger();
+  test.after(() => logger.removeAllListeners());
 
-  const result = await depWalker(config, {
-    registry: getLocalRegistryURL()
-  });
+  const result = await depWalker(
+    config,
+    structuredClone(kDefaultWalkerOptions),
+    logger
+  );
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
   const packages = Object.keys(resultAsJSON).sort();
@@ -104,14 +122,19 @@ test("execute depWalker on @slimio/config", async() => {
   assert.deepEqual(ajvUsedBy, [
     "@slimio/config"
   ]);
+  assert.strictEqual(errorCount(), 0);
 });
 
-test("execute depWalker on pkg.gitdeps", async() => {
+test("execute depWalker on pkg.gitdeps", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger, errors } = errorLogger();
+  test.after(() => logger.removeAllListeners());
 
-  const result = await depWalker(pkgGitdeps, {
-    registry: getLocalRegistryURL()
-  });
+  const result = await depWalker(
+    pkgGitdeps,
+    structuredClone(kDefaultWalkerOptions),
+    logger
+  );
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
 
   const packages = Object.keys(resultAsJSON).sort();
@@ -130,15 +153,34 @@ test("execute depWalker on pkg.gitdeps", async() => {
     "undici",
     "zen-observable"
   ].sort());
+
+  const walkErrors = errors();
+
+  assert.deepStrictEqual(walkErrors, [
+    {
+      error: "You must provide at least one file either in manifest or javascript",
+      phase: "tarball-scan"
+    },
+    {
+      error: "404 Not Found - GET https://registry.npmjs.org/pkg.gitdeps - Not found",
+      phase: "tarball-scan"
+    }
+  ]);
 });
 
-test("execute depWalker on typo-squatting (with location)", async() => {
+test("execute depWalker on typo-squatting (with location)", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger, errors } = errorLogger();
+  test.after(() => logger.removeAllListeners());
 
-  const result = await depWalker(pkgTypoSquatting, {
-    registry: getLocalRegistryURL(),
-    location: ""
-  });
+  const result = await depWalker(
+    pkgTypoSquatting,
+    {
+      ...structuredClone(kDefaultWalkerOptions),
+      location: ""
+    },
+    logger
+  );
 
   assert.ok(result.warnings.length > 0);
   const warning = result.warnings[0];
@@ -148,23 +190,45 @@ test("execute depWalker on typo-squatting (with location)", async() => {
     result.warnings[0].message,
     "Dependency 'mecha' is similar to the following popular packages: fecha, mocha"
   );
+
+  const walkErrors = errors();
+  assert.deepStrictEqual(walkErrors, [
+    {
+      error: "No matching version found for mecha@1.0.0.",
+      phase: "tarball-scan"
+    }
+  ]);
 });
 
-test("execute depWalker on typo-squatting (with no location)", async() => {
+test("execute depWalker on typo-squatting (with no location)", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger, errors } = errorLogger();
+  test.after(() => logger.removeAllListeners());
 
-  const result = await depWalker(pkgTypoSquatting, {
-    registry: getLocalRegistryURL()
-  });
+  const result = await depWalker(
+    pkgTypoSquatting,
+    structuredClone(kDefaultWalkerOptions),
+    logger
+  );
 
   assert.ok(result.warnings.length === 0);
+  const walkErrors = errors();
+  assert.deepStrictEqual(walkErrors, [
+    {
+      error: "No matching version found for mecha@1.0.0.",
+      phase: "tarball-scan"
+    }
+  ]);
 });
 
 test("fetch payload of pacote on the npm registry", async() => {
-  const result = await from("pacote", {
-    maxDepth: 10,
-    vulnerabilityStrategy: Vulnera.strategies.GITHUB_ADVISORY
-  });
+  const result = await from(
+    "pacote",
+    {
+      maxDepth: 10,
+      vulnerabilityStrategy: Vulnera.strategies.GITHUB_ADVISORY
+    }
+  );
 
   assert.deepEqual(Object.keys(result), [
     "id",
@@ -270,3 +334,17 @@ describe("scanner.cwd()", () => {
   });
 });
 
+function errorLogger() {
+  const errors: ({ error: string; phase: string | undefined; })[] = [];
+
+  const logger = new Logger();
+  logger.on("error", (error, phase) => {
+    errors.push({ error: error.message, phase });
+  });
+
+  return {
+    logger,
+    errorCount: () => errors.length,
+    errors: () => errors
+  };
+}

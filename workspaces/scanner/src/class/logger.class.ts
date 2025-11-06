@@ -3,6 +3,7 @@ import { EventEmitter } from "node:events";
 import { performance } from "node:perf_hooks";
 
 export const ScannerLoggerEvents = {
+  error: "error",
   done: "depWalkerFinished",
   analysis: {
     tree: "walkTree",
@@ -22,7 +23,15 @@ export interface LoggerEventData {
   count: number;
 }
 
-export class Logger extends EventEmitter {
+export type LoggerEventsMap = {
+  start: [eventName: string];
+  tick: [eventName: string];
+  end: [eventName: string, data: LoggerEventData & { executionTime: number; }];
+  depWalkerFinished: [];
+  error: [error: Error, phase?: string];
+};
+
+export class Logger extends EventEmitter<LoggerEventsMap> {
   public events: Map<string, LoggerEventData> = new Map();
 
   start(eventName: string): this {
