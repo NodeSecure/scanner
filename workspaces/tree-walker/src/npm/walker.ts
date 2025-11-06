@@ -323,10 +323,11 @@ export class TreeWalker {
     );
 
     try {
-      await this.providers.pacote.manifest(
+      const { _integrity: integrity } = await this.providers.pacote.manifest(
         `${manifest.name}@${manifest.version}`,
         this.registryOptions
       );
+      rootDependency.integrity = integrity;
     }
     catch {
       rootDependency.existOnRemoteRegistry = false;

@@ -173,8 +173,10 @@ test("fetch payload of pacote on the npm registry", async() => {
     "vulnerabilityStrategy",
     "warnings",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "integrity"
   ]);
+  assert.strictEqual(typeof result.integrity, "string");
 });
 
 test("fetch payload of pacote on the gitlab registry", async() => {
@@ -191,8 +193,10 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "vulnerabilityStrategy",
     "warnings",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "integrity"
   ]);
+  assert.strictEqual(typeof result.integrity, "string");
 });
 
 test("highlight contacts from a remote package", async() => {
@@ -238,6 +242,7 @@ describe("scanner.cwd()", () => {
       name: "NodeSecure"
     });
     assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
+    assert.strictEqual(typeof result.integrity, "string");
   });
 
   test("should parse local manifest author field without throwing when attempting to highlight contacts", async() => {

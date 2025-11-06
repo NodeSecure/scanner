@@ -15,6 +15,7 @@ import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
 import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
+import { fromData } from "ssri";
 
 // Import Internal Dependencies
 import {
@@ -71,6 +72,8 @@ const kDefaultDependencyMetadata: Dependency["metadata"] = {
   maintainers: [],
   integrity: {}
 };
+
+const kRootDependencyId = 0;
 
 const { version: packageVersion } = JSON.parse(
   readFileSync(
@@ -140,7 +143,7 @@ export async function depWalker(
       packageLock
     };
     for await (const current of npmTreeWalker.walk(manifest, rootDepsOptions)) {
-      const { name, version, ...currentVersion } = current;
+      const { name, version, integrity, ...currentVersion } = current;
       const dependency: Dependency = {
         versions: {
           [version]: {
@@ -174,6 +177,10 @@ export async function depWalker(
       }
       else {
         dependencies.set(name, dependency);
+      }
+
+      if (current.id === kRootDependencyId) {
+        payload.integrity = integrity ?? fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
       }
 
       // If the dependency is a DevDependencies we ignore it.
