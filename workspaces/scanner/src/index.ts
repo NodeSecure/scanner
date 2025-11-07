@@ -21,7 +21,6 @@ import type { Options } from "./types.js";
 // CONSTANTS
 const kDefaultCwdOptions = {
   forceRootAnalysis: true,
-  usePackageLock: true,
   includeDevDeps: false
 };
 
@@ -41,11 +40,16 @@ export async function cwd(
     urlToString(options.registry) :
     getLocalRegistryURL();
 
+  const packageLock = options.packageLock ?? {
+    location
+  };
+
   const finalizedOptions = Object.assign(
     { location },
     kDefaultCwdOptions,
     {
       ...options,
+      packageLock,
       registry
     }
   );

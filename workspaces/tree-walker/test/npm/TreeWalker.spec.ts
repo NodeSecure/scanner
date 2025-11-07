@@ -6,13 +6,14 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import pacote from "pacote";
-import type { WorkspacesPackageJSON } from "@nodesecure/npm-types";
+import type { PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import { npm, type DependencyJSON } from "../../src/index.js";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const kFixturesDir = path.join(__dirname, "..", "fixtures");
 
 describe("npm.TreeWalker", () => {
   test("Given a fixed '@nodesecure/fs-walk' manifest then it must extract one root dependency", async() => {
@@ -133,7 +134,7 @@ describe("npm.TreeWalker", () => {
     );
   });
 
-  test(`Given a the local scanner workspace as Manifest with maxDepth: 1
+  test(`Given the local scanner workspace as Manifest with maxDepth: 1
     it must return all workspaces as Dependency and complete the manifest name and version with default values`, async() => {
     const manifestLocation = path.join(__dirname, "..", "..", "..", "..", "package.json");
 
@@ -182,6 +183,40 @@ describe("npm.TreeWalker", () => {
         "workspace"
       ].sort(sortByName)
     );
+  });
+
+  test(`Given a directory with only package.json wihout package-lock.json or node_modules
+    it must not throw an error and fallback as a remote scanning`, async() => {
+    const manifestLocation = path.join(kFixturesDir, "no-local-virtual", "package.json");
+
+    const manifest = (
+      await import(pathToFileURL(manifestLocation).href, { with: { type: "json" } })
+    ).default as PackageJSON;
+
+    const walker = new npm.TreeWalker();
+    const walkOptions: npm.WalkOptions = {
+      maxDepth: 1,
+      packageLock: {
+        location: path.dirname(manifestLocation),
+        fetchManifest: false
+      }
+    };
+
+    const dependencies: DependencyJSON[] = [];
+    for await (const dependency of walker.walk(manifest, walkOptions)) {
+      dependencies.push(dependency);
+    }
+
+    const rootDependency = dependencies.at(-1)!;
+    assert.strictEqual(
+      rootDependency.name,
+      "non-npm-package"
+    );
+    assert.strictEqual(
+      rootDependency.version,
+      "1.0.0"
+    );
+    assert.strictEqual(dependencies.length, 1);
   });
 
   describe("relationsMaps", () => {

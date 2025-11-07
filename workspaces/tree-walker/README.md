@@ -109,7 +109,6 @@ interface WalkOptions {
   packageLock?: {
     /**
      * Fetches all manifests for additional metadata.
-     * This option is useful only when `usePackageLock` is enabled.
      *
      * @default false
      */

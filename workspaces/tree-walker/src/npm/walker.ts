@@ -85,7 +85,6 @@ export interface WalkOptions {
   packageLock?: {
     /**
      * Fetches all manifests for additional metadata.
-     * This option is useful only when `usePackageLock` is enabled.
      *
      * @default false
      */
@@ -334,41 +333,20 @@ export class TreeWalker {
     rootDependency.addFlag("hasCustomResolver", customResolvers.size > 0);
     rootDependency.addFlag("hasDependencies", dependencies.size > 0);
 
-    if (packageLock === null) {
-      const walkRemoteOptions = { maxDepth, parent: rootDependency };
-      const iterators = [
-        ...iter
-          .filter(customResolvers.entries(), ([, version]) => utils.isGitDependency(version))
-          .map(([name, gitURL]) => this.walkRemoteDependency(name, { ...walkRemoteOptions, gitURL })),
-        ...iter
-          .map(dependencies.entries(), ([name, ver]) => this.walkRemoteDependency(`${name}@${ver}`, walkRemoteOptions))
-      ];
-
-      for await (const dep of combineAsyncIterators({}, ...iterators)) {
-        yield dep.exportAsPlainObject();
-      }
-
-      /**
-       * Add root dependencies to the relations Map because the parent is not handled by walkRemoteDependency.
-       * If we skip this step, the code will fail to properly re-link dependencies in the subsequent steps.
-       */
-      const resolvedDependencies = await Promise.all(
-        iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
-      );
-      for (const { spec, isLatest } of resolvedDependencies) {
-        if (!isLatest) {
-          rootDependency.addFlag("hasOutdatedDependency");
-        }
-        this.addTreeRelation(spec, rootDependency.spec);
-      }
-    }
-    else {
+    scanWithArborist: if (packageLock !== null) {
       const { location, ...packageLockOptions } = packageLock;
 
-      const { edgesOut } = await this.providers.localTreeLoader.load(
-        location,
-        this.registry
-      );
+      let arboristNode: Arborist.Node;
+      try {
+        arboristNode = await this.providers.localTreeLoader.load(
+          location,
+          this.registry
+        );
+      }
+      catch {
+        break scanWithArborist;
+      }
+      const { edgesOut } = arboristNode;
 
       const iterators = [
         ...iter
@@ -396,6 +374,37 @@ export class TreeWalker {
           rootDependency.spec
         );
       }
+
+      yield rootDependency.exportAsPlainObject(0);
+
+      return;
+    }
+
+    const walkRemoteOptions = { maxDepth, parent: rootDependency };
+    const iterators = [
+      ...iter
+        .filter(customResolvers.entries(), ([, version]) => utils.isGitDependency(version))
+        .map(([name, gitURL]) => this.walkRemoteDependency(name, { ...walkRemoteOptions, gitURL })),
+      ...iter
+        .map(dependencies.entries(), ([name, ver]) => this.walkRemoteDependency(`${name}@${ver}`, walkRemoteOptions))
+    ];
+
+    for await (const dep of combineAsyncIterators({}, ...iterators)) {
+      yield dep.exportAsPlainObject();
+    }
+
+    /**
+     * Add root dependencies to the relations Map because the parent is not handled by walkRemoteDependency.
+     * If we skip this step, the code will fail to properly re-link dependencies in the subsequent steps.
+     */
+    const resolvedDependencies = await Promise.all(
+      iter.map(dependencies.entries(), this.resolveDependencyVersion.bind(this))
+    );
+    for (const { spec, isLatest } of resolvedDependencies) {
+      if (!isLatest) {
+        rootDependency.addFlag("hasOutdatedDependency");
+      }
+      this.addTreeRelation(spec, rootDependency.spec);
     }
 
     yield rootDependency.exportAsPlainObject(0);
