@@ -28,6 +28,10 @@ export * from "./types.js";
 export * from "./extractors/index.js";
 
 export type CwdOptions = Options & {
+  /**
+   * NPM runtime configuration (such as local .npmrc file)
+   * It is optionally used to fetch registry authentication tokens
+   */
   npmRcConfig?: Config;
 };
 
@@ -66,9 +70,11 @@ export async function cwd(
   );
 }
 
+export type FromOptions = Omit<Options, "includeDevDeps">;
+
 export async function from(
   packageName: string,
-  options: Omit<Options, "includeDevDeps"> = {},
+  options: FromOptions = {},
   logger = new Logger()
 ) {
   const registry = options.registry ?

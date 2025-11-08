@@ -11,7 +11,7 @@ Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/sca
 
 ## Requirements
 
-- [Node.js](https://nodejs.org/en/) version 20 or higher
+- [Node.js](https://nodejs.org/en/) version 22 or higher
 
 ## Getting Started
 
@@ -47,32 +47,54 @@ await Promise.allSettled(promises);
 
 ## API
 
-See `types/api.d.ts` for a complete TypeScript definition.
+See [types.ts](https://github.com/NodeSecure/scanner/blob/master/workspaces/scanner/src/types.ts) for a complete TypeScript definition.
 
 ```ts
 function cwd(
   location: string,
-  options?: Scanner.Options
+  options?: Scanner.CwdOptions,
+  logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function from(
   packageName: string,
-  options?: Omit<Scanner.Options, "includeDevDeps">
+  options?: Scanner.FromOptions,
+  logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function verify(
-  packageName?: string | null
+  packageName?: string
 ): Promise<tarball.ScannedPackageResult>;
 ```
 
-`Options` is described with the following TypeScript interface:
+`CwdOptions` and `FromOptions` are described with the following TypeScript interfaces:
 
 ```ts
+
+type CwdOptions = Options & {
+  /**
+   * NPM runtime configuration (such as local .npmrc file)
+   * It is optionally used to fetch registry authentication tokens
+   */
+  npmRcConfig?: Config;
+};
+
+type FromOptions = Omit<Options, "includeDevDeps">;
+
 interface Options {
   /**
-   * Maximum tree depth
+   * Specifies the maximum depth to traverse for each root dependency.
+   * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
    *
    * @default Infinity
    */
-  readonly maxDepth?: number;
+  maxDepth?: number;
+
+  /**
+   * Includes development dependencies in the walk.
+   * Note that enabling this option can significantly increase I/O and processing time.
+   *
+   * @default false
+   */
+  includeDevDeps?: boolean;
 
   readonly registry?: string | URL;
 
@@ -102,13 +124,6 @@ interface Options {
   highlight?: {
     contacts: Contact[];
   };
-
-  /**
-   * Include project devDependencies (only available for cwd command)
-   *
-   * @default false
-   */
-  readonly includeDevDeps?: boolean;
 
   /**
    * Vulnerability strategy name (npm, snyk, node)
