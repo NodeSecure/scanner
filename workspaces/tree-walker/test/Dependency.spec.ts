@@ -22,7 +22,8 @@ test("Dependency class should act as expected by assertions", () => {
   assert.deepEqual(dep.warnings, []);
   assert.deepEqual(dep.alias, {});
   assert.strictEqual(dep.gitUrl, null);
-  assert.strictEqual(Reflect.ownKeys(dep).length, 8);
+  assert.strictEqual(dep.integrity, null);
+  assert.strictEqual(Reflect.ownKeys(dep).length, 9);
 
   const flagOne = dep.flags;
   const flagTwo = dep.flags;

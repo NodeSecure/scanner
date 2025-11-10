@@ -200,6 +200,9 @@ export interface Payload {
   scannerVersion: string;
   /** Vulnerability strategy name (npm, snyk, node) */
   vulnerabilityStrategy: Vulnera.Kind;
+
+  /** The integrity of the scanned package */
+  integrity: string | null;
 }
 
 export interface Options {

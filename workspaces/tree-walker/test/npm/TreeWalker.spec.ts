@@ -18,11 +18,12 @@ const kFixturesDir = path.join(__dirname, "..", "fixtures");
 describe("npm.TreeWalker", () => {
   test("Given a fixed '@nodesecure/fs-walk' manifest then it must extract one root dependency", async() => {
     const spec = "@nodesecure/fs-walk@2.0.0";
-    const manifest = await pacote.manifest(spec) as pacote.AbbreviatedManifest;
+    const manifest = await pacote.manifest(spec);
+    const expectedIntegrity = manifest._integrity;
 
     const walker = new npm.TreeWalker();
 
-    for await (const dependency of walker.walk(manifest)) {
+    for await (const dependency of walker.walk(manifest as pacote.AbbreviatedManifest)) {
       assert.deepEqual(
         dependency,
         {
@@ -37,7 +38,8 @@ describe("npm.TreeWalker", () => {
           warnings: [],
           dependencyCount: 0,
           gitUrl: null,
-          alias: {}
+          alias: {},
+          integrity: expectedIntegrity
         }
       );
     }
@@ -74,7 +76,8 @@ describe("npm.TreeWalker", () => {
           warnings: [],
           dependencyCount: 0,
           gitUrl: null,
-          alias: {}
+          alias: {},
+          integrity: null
         }
       );
     }

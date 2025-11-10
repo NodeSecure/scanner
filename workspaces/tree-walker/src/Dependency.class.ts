@@ -17,6 +17,7 @@ export interface DependencyJSON {
   alias: Record<string, string>;
   dependencyCount: number;
   gitUrl: string | null;
+  integrity: string | null;
 }
 
 export type DependencyOptions = {
@@ -34,6 +35,7 @@ export class Dependency {
   public gitUrl: null | string = null;
   public warnings: Warning[] = [];
   public alias: Record<string, string> = {};
+  public integrity: string | null = null;
 
   #flags = new Set<string>();
   #parent: null | Dependency = null;
@@ -111,7 +113,8 @@ export class Dependency {
       warnings: this.warnings,
       dependencyCount: this.dependencyCount,
       gitUrl: this.gitUrl,
-      alias: this.alias
+      alias: this.alias,
+      integrity: this.integrity
     };
   }
 }
