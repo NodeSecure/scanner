@@ -263,6 +263,7 @@ describe("scanner.cwd()", () => {
     );
 
     assert.strictEqual(result.rootDependencyName, "workspace");
+    assert.strictEqual(result.integrity, null);
   });
 });
 
