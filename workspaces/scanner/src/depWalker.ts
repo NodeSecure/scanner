@@ -179,8 +179,14 @@ export async function depWalker(
         dependencies.set(name, dependency);
       }
 
-      if (current.id === kRootDependencyId) {
-        payload.integrity = integrity ?? fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
+      const isRoot = current.id === kRootDependencyId;
+
+      if (isRoot && payload.integrity) {
+        payload.integrity = integrity;
+      }
+      else if (isRoot) {
+        const isWorkspace = options.location && "workspaces" in manifest;
+        payload.integrity = isWorkspace ? null : fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
       }
 
       // If the dependency is a DevDependencies we ignore it.
