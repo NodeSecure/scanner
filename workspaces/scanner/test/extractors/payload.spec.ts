@@ -1,16 +1,12 @@
 // Import Node.js Dependencies
-import { describe, it } from "node:test";
 import assert from "node:assert";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import { describe, it } from "node:test";
 
 // Import Internal Dependencies
-import {
-  Extractors,
-  type ManifestProbeNextCallback,
-  type PackumentProbeNextCallback,
-  type Payload
-} from "../../src/index.js";
+import { type ExtractorCallbackParams } from "../../src/extractors/payload.js";
+import { Extractors, type Payload } from "../../src/index.js";
 
 // CONSTANTS
 const kFixturePath = path.join("fixtures", "extractors");
@@ -220,16 +216,11 @@ describe("Extractors.Probes", () => {
         }
       };
 
-      const extractor = new Extractors.Payload(
-        fakePayload,
-        [
-          new Extractors.Probes.Vulnerabilities()
-        ]
-      );
+      const extractor = new Extractors.Payload(fakePayload, [
+        new Extractors.Probes.Vulnerabilities()
+      ]);
 
-      const {
-        vulnerabilities
-      } = extractor.extractAndMerge();
+      const { vulnerabilities } = extractor.extractAndMerge();
 
       assert.strictEqual(vulnerabilities.length, 2);
       assert.deepEqual(vulnerabilities, ["foo", "bar"]);
@@ -237,13 +228,11 @@ describe("Extractors.Probes", () => {
   });
 
   it("should extract data with multiple extractors in once", () => {
-    const extractor = new Extractors.Payload(
-      expressNodesecurePayload,
-      [
-        new Extractors.Probes.Size(),
-        new Extractors.Probes.Contacts(),
-        new Extractors.Probes.Licenses()
-      ]
+    const extractor = new Extractors.Payload(expressNodesecurePayload, [
+      new Extractors.Probes.Size(),
+      new Extractors.Probes.Contacts(),
+      new Extractors.Probes.Licenses()
+    ]
     );
 
     const arrResult = extractor.extract();
@@ -258,9 +247,6 @@ describe("Extractors.Probes", () => {
 });
 
 describe("Extractors.Payload events", () => {
-  type ManifestEvent = Parameters<ManifestProbeNextCallback>;
-  type PackumentEvent = Parameters<PackumentProbeNextCallback>;
-
   it("should emits packument and manifest events", () => {
     const extractor = new Extractors.Payload(
       expressNodesecurePayload,
@@ -270,14 +256,14 @@ describe("Extractors.Payload events", () => {
       ]
     );
 
-    const manifestEvents: ManifestEvent[] = [];
-    const packumentEvents: PackumentEvent[] = [];
+    const manifestEvents: ExtractorCallbackParams<"manifest">[] = [];
+    const packumentEvents: ExtractorCallbackParams<"packument">[] = [];
 
-    extractor.on("manifest", (...event: ManifestEvent) => {
+    extractor.on("manifest", (...event) => {
       manifestEvents.push(event);
     });
 
-    extractor.on("packument", (...event: PackumentEvent) => {
+    extractor.on("packument", (...event) => {
       packumentEvents.push(event);
     });
 
@@ -301,20 +287,18 @@ describe("Extractors.Callbacks", () => {
   it("should extract name and versions for all packages", () => {
     const packages = new Map<string, string[]>();
 
-    const extractor = new Extractors.Payload(
-      expressNodesecurePayload,
-      [
-        Extractors.Callbacks.packument((name) => {
-          if (!packages.has(name)) {
-            packages.set(name, []);
-          }
-        }),
-        Extractors.Callbacks.manifest((spec, _, parent) => {
-          if (packages.has(parent.name)) {
-            packages.get(parent.name)!.push(spec);
-          }
-        })
-      ]
+    const extractor = new Extractors.Payload(expressNodesecurePayload, [
+      Extractors.Callbacks.packument((name) => {
+        if (!packages.has(name)) {
+          packages.set(name, []);
+        }
+      }),
+      Extractors.Callbacks.manifest((spec, _, parent) => {
+        if (packages.has(parent.name)) {
+          packages.get(parent.name)!.push(spec);
+        }
+      })
+    ]
     );
 
     extractor.extract();
