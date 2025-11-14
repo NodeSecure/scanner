@@ -1,6 +1,3 @@
-// Import Node.js Dependencies
-import { EventEmitter } from "node:events";
-
 // Import Third-party Dependencies
 import type { Simplify } from "type-fest";
 // @ts-ignore
@@ -53,7 +50,7 @@ export interface ManifestProbeExtractor<Defs> extends ProbeExtractor<Defs> {
   next: ManifestProbeNextCallback;
 }
 
-export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
+export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
   private dependencies: Scanner.Payload["dependencies"];
   private probes: Record<ProbeExtractorLevel, T>;
   private cachedResult: ExtractProbeResult<T>;
@@ -82,6 +79,7 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
     for (const [name, dependency] of Object.entries(this.dependencies)) {
       this.probes.packument.forEach((probe) => probe.next(name, dependency));
       this.emit("packument", name, dependency);
+
       if (this.probes.manifest.length > 0) {
         for (const [spec, depVersion] of Object.entries(dependency.versions)) {
           this.probes.manifest.forEach((probe) => probe.next(spec, depVersion, { name, dependency }));
@@ -102,6 +100,29 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventEmitter {
     return kFastMerge(
       ...this.extract()
     ) as unknown as MergedExtractProbeResult<T>;
+  }
+
+  emit<T extends ProbeExtractorLevel>(
+    event: T,
+    ...extractionDetails: unknown[]
+  ) {
+    const customEvent = new CustomEvent(event, {
+      detail: extractionDetails
+    });
+    this.dispatchEvent(customEvent);
+  }
+
+  on<T extends ProbeExtractorLevel>(
+    e: T,
+    listener: ExtractorListener<T>
+  ): this {
+    function wrappedListener(event: Event) {
+      const customEvent = event as CustomEvent<ExtractorCallbackParams<T>>;
+      listener(...customEvent.detail);
+    }
+    this.addEventListener(e, wrappedListener);
+
+    return this;
   }
 }
 
@@ -125,6 +146,18 @@ export const Callbacks = {
     };
   }
 } as const;
+
+type ExtractorCallback<T extends ProbeExtractorLevel> = Parameters<
+  (typeof Callbacks)[T]
+>[0];
+
+export type ExtractorCallbackParams<T extends ProbeExtractorLevel> = Parameters<
+  ExtractorCallback<T>
+>;
+
+export type ExtractorListener<T extends ProbeExtractorLevel> = (
+  ...events: CustomEvent<ExtractorCallbackParams<T>>["detail"]
+) => void;
 
 function noop() {
   return void 0;
