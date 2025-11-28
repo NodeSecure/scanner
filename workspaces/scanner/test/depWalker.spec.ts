@@ -173,11 +173,10 @@ test("fetch payload of pacote on the npm registry", async() => {
     "vulnerabilityStrategy",
     "warnings",
     "metadata",
-    "integrity",
     "highlighted",
     "dependencies"
   ]);
-  assert.strictEqual(typeof result.integrity, "string");
+  assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
 
 test("fetch payload of pacote on the gitlab registry", async() => {
@@ -194,11 +193,10 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "vulnerabilityStrategy",
     "warnings",
     "metadata",
-    "integrity",
     "highlighted",
     "dependencies"
   ]);
-  assert.strictEqual(typeof result.integrity, "string");
+  assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
 
 test("highlight contacts from a remote package", async() => {
@@ -244,7 +242,7 @@ describe("scanner.cwd()", () => {
       name: "NodeSecure"
     });
     assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
-    assert.strictEqual(typeof result.integrity, "string");
+    assert.strictEqual(typeof result.rootDependency.integrity, "string");
   });
 
   test("should parse local manifest author field without throwing when attempting to highlight contacts", async() => {
@@ -266,9 +264,9 @@ describe("scanner.cwd()", () => {
 
     assert.deepStrictEqual(result.rootDependency, {
       name: "workspace",
-      version: "0.0.0"
+      version: "0.0.0",
+      integrity: null
     });
-    assert.strictEqual(result.integrity, null);
   });
 });
 
