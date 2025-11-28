@@ -104,6 +104,7 @@ export async function depWalker(
     npmRcConfig
   } = options;
 
+  const startedAt = Date.now();
   const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
@@ -119,7 +120,11 @@ export async function depWalker(
     },
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
-    warnings: []
+    warnings: [],
+    metadata: {
+      startedAt,
+      executionTime: 0
+    }
   };
 
   const dependencies: Map<string, Dependency> = new Map();
@@ -326,6 +331,9 @@ export async function depWalker(
       contacts: illuminated
     };
     payload.dependencies = Object.fromEntries(dependencies);
+
+    const metadata = payload.metadata!;
+    metadata.executionTime = Date.now() - startedAt;
 
     return payload as Payload;
   }
