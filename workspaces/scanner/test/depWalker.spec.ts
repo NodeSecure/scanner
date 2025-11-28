@@ -168,13 +168,13 @@ test("fetch payload of pacote on the npm registry", async() => {
 
   assert.deepEqual(Object.keys(result), [
     "id",
-    "rootDependencyName",
+    "rootDependency",
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
+    "integrity",
     "highlighted",
-    "dependencies",
-    "integrity"
+    "dependencies"
   ]);
   assert.strictEqual(typeof result.integrity, "string");
 });
@@ -188,13 +188,13 @@ test("fetch payload of pacote on the gitlab registry", async() => {
 
   assert.deepEqual(Object.keys(result), [
     "id",
-    "rootDependencyName",
+    "rootDependency",
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
+    "integrity",
     "highlighted",
-    "dependencies",
-    "integrity"
+    "dependencies"
   ]);
   assert.strictEqual(typeof result.integrity, "string");
 });
@@ -262,7 +262,10 @@ describe("scanner.cwd()", () => {
       path.join(kFixturePath, "workspace-no-name-version")
     );
 
-    assert.strictEqual(result.rootDependencyName, "workspace");
+    assert.deepStrictEqual(result.rootDependency, {
+      name: "workspace",
+      version: "0.0.0"
+    });
     assert.strictEqual(result.integrity, null);
   });
 });

@@ -1,6 +1,9 @@
 {
   "id": "54mMPc",
-  "rootDependencyName": "strnum",
+  "rootDependency": {
+    "name": "strnum",
+    "version": "1.1.2"
+  },
   "scannerVersion": "6.4.0",
   "vulnerabilityStrategy": "none",
   "warnings": [],

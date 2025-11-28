@@ -188,7 +188,10 @@ export interface Payload {
   /** Payload unique id */
   id: string;
   /** Name of the analyzed package */
-  rootDependencyName: string;
+  rootDependency: {
+    name: string;
+    version: string;
+  };
   /** Global warnings list */
   warnings: GlobalWarning[];
   highlighted: {

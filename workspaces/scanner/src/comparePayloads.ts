@@ -94,17 +94,17 @@ export function comparePayloads(
     );
   }
 
-  if (payload.rootDependencyName !== comparedPayload.rootDependencyName) {
+  if (payload.rootDependency.name !== comparedPayload.rootDependency.name) {
     throw new Error(
-      `You can't compare different package payloads '${payload.rootDependencyName}' and '${comparedPayload.rootDependencyName}'`
+      `You can't compare different package payloads '${payload.rootDependency.name}' and '${comparedPayload.rootDependency.name}'`
     );
   }
 
-  const givenVersion = Object.keys(payload.dependencies[payload.rootDependencyName].versions)[0];
-  const comparedVersion = Object.keys(comparedPayload.dependencies[comparedPayload.rootDependencyName].versions)[0];
+  const givenVersion = payload.rootDependency.version;
+  const comparedVersion = comparedPayload.rootDependency.version;
 
   return {
-    title: `'${payload.rootDependencyName}@${givenVersion}' -> '${comparedPayload.rootDependencyName}@${comparedVersion}'`,
+    title: `'${payload.rootDependency.name}@${givenVersion}' -> '${comparedPayload.rootDependency.name}@${comparedVersion}'`,
     warnings: arrayDiff(
       payload.warnings,
       comparedPayload.warnings
