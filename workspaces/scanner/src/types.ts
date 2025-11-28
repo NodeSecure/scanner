@@ -191,6 +191,8 @@ export interface Payload {
   rootDependency: {
     name: string;
     version: string;
+    /** The integrity of the scanned package */
+    integrity: string | null;
   };
   /** Global warnings list */
   warnings: GlobalWarning[];
@@ -203,9 +205,6 @@ export interface Payload {
   scannerVersion: string;
   /** Vulnerability strategy name (npm, snyk, node) */
   vulnerabilityStrategy: Vulnera.Kind;
-
-  /** The integrity of the scanned package */
-  integrity: string | null;
 
   metadata: {
     /**

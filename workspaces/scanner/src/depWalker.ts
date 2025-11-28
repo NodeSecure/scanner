@@ -88,6 +88,13 @@ type WalkerOptions = Omit<Options, "registry"> & {
   npmRcConfig?: Config;
 };
 
+type InitialPayload =
+  Partial<Payload> &
+  {
+    rootDependency: Payload["rootDependency"];
+    metadata: Payload["metadata"];
+  };
+
 export async function depWalker(
   manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
   options: WalkerOptions,
@@ -112,11 +119,12 @@ export async function depWalker(
 
   const dependencyConfusionWarnings: DependencyConfusionWarning[] = [];
 
-  const payload: Partial<Payload> = {
+  const payload: InitialPayload = {
     id: tempDir.id,
     rootDependency: {
       name: manifest.name ?? "workspace",
-      version: manifest.version ?? "0.0.0"
+      version: manifest.version ?? "0.0.0",
+      integrity: null
     },
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
@@ -189,12 +197,14 @@ export async function depWalker(
 
       const isRoot = current.id === kRootDependencyId;
 
-      if (isRoot && payload.integrity) {
-        payload.integrity = integrity;
+      if (isRoot && payload.rootDependency.integrity) {
+        payload.rootDependency.integrity = integrity;
       }
       else if (isRoot) {
         const isWorkspace = options.location && "workspaces" in manifest;
-        payload.integrity = isWorkspace ? null : fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
+        payload.rootDependency.integrity = isWorkspace ?
+          null :
+          fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
       }
 
       // If the dependency is a DevDependencies we ignore it.
@@ -331,9 +341,7 @@ export async function depWalker(
       contacts: illuminated
     };
     payload.dependencies = Object.fromEntries(dependencies);
-
-    const metadata = payload.metadata!;
-    metadata.executionTime = Date.now() - startedAt;
+    payload.metadata.executionTime = Date.now() - startedAt;
 
     return payload as Payload;
   }
