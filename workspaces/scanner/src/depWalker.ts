@@ -113,7 +113,10 @@ export async function depWalker(
 
   const payload: Partial<Payload> = {
     id: tempDir.id,
-    rootDependencyName: manifest.name ?? "workspace",
+    rootDependency: {
+      name: manifest.name ?? "workspace",
+      version: manifest.version ?? "0.0.0"
+    },
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
     warnings: []

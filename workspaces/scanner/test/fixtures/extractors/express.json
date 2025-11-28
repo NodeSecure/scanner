@@ -1,6 +1,9 @@
 {
   "id": "XcwpAJ",
-  "rootDependencyName": "express",
+  "rootDependency": {
+    "name": "express",
+    "version": "4.21.2"
+  },
   "scannerVersion": "6.1.0",
   "vulnerabilityStrategy": "none",
   "warnings": [

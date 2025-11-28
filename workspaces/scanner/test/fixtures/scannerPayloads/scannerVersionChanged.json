@@ -1,6 +1,9 @@
 {
   "id": "dhfnczisk",
-  "rootDependencyName": "foo",
+  "rootDependency": {
+    "name": "foo",
+    "version": "2.0.0"
+  },
   "warnings": [],
   "highlighted": {},
   "vulnerabilityStrategy": "npm",
