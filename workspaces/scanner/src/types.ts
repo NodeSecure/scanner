@@ -206,6 +206,17 @@ export interface Payload {
 
   /** The integrity of the scanned package */
   integrity: string | null;
+
+  metadata: {
+    /**
+     * UNIX Timestamp when the scan started
+     */
+    startedAt: number;
+    /**
+     * Execution time in milliseconds
+     */
+    executionTime: number;
+  };
 }
 
 export interface Options {

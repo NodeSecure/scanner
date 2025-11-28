@@ -172,6 +172,7 @@ test("fetch payload of pacote on the npm registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
+    "metadata",
     "integrity",
     "highlighted",
     "dependencies"
@@ -192,6 +193,7 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
+    "metadata",
     "integrity",
     "highlighted",
     "dependencies"
