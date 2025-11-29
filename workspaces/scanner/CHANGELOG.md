@@ -1,5 +1,15 @@
 # @nodesecure/scanner
 
+## 8.1.0
+
+### Minor Changes
+
+- [#569](https://github.com/NodeSecure/scanner/pull/569) [`1e2d654`](https://github.com/NodeSecure/scanner/commit/1e2d65444ee29436051e3543e258b8f335361e66) Thanks [@fraxken](https://github.com/fraxken)! - Add a standalone export for extractors (for usage such as web imports)
+
+### Patch Changes
+
+- [#567](https://github.com/NodeSecure/scanner/pull/567) [`8a7d42b`](https://github.com/NodeSecure/scanner/commit/8a7d42bd8132e4922d7743677591c1ac13e22c7a) Thanks [@fraxken](https://github.com/fraxken)! - Fix an issue with the monorepo build command. Now each workspace build script is executed in CI and before publishing.
+
 ## 8.0.0
 
 ### Major Changes
