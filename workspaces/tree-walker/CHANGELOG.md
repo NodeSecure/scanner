@@ -1,5 +1,19 @@
 # @nodesecure/tree-walker
 
+## 2.0.0
+
+### Major Changes
+
+- [#554](https://github.com/NodeSecure/scanner/pull/554) [`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add manifest integrity of root dependency in payload
+
+### Minor Changes
+
+- [#554](https://github.com/NodeSecure/scanner/pull/554) [`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add manifest integrity of root dependency in payload
+
+### Patch Changes
+
+- [#555](https://github.com/NodeSecure/scanner/pull/555) [`1ecbe92`](https://github.com/NodeSecure/scanner/commit/1ecbe92b53008c0bb63376344f99a42e899f86e6) Thanks [@fraxken](https://github.com/fraxken)! - Properly walk NPM tree using arborist with package-lock.json or node_modules when using the CWD().
+
 ## 1.3.1
 
 ### Patch Changes

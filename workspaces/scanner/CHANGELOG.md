@@ -1,5 +1,37 @@
 # @nodesecure/scanner
 
+## 8.0.0
+
+### Major Changes
+
+- [#554](https://github.com/NodeSecure/scanner/pull/554) [`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add manifest integrity of root dependency in payload
+
+- [#565](https://github.com/NodeSecure/scanner/pull/565) [`62464a4`](https://github.com/NodeSecure/scanner/commit/62464a47fa2951ff50767e0faad414b5874deaf5) Thanks [@fraxken](https://github.com/fraxken)! - Move payload integrity into rootDependency
+
+- [#563](https://github.com/NodeSecure/scanner/pull/563) [`c009145`](https://github.com/NodeSecure/scanner/commit/c00914597430f956b57ae1381e1f07d984fb528d) Thanks [@fraxken](https://github.com/fraxken)! - Refactor payload rootDependency to include name and version
+
+### Minor Changes
+
+- [#564](https://github.com/NodeSecure/scanner/pull/564) [`c91b2c6`](https://github.com/NodeSecure/scanner/commit/c91b2c698fe31147e9de6ad7b1d5fca5104a29f3) Thanks [@fraxken](https://github.com/fraxken)! - Add a new metadata property in the scanner payload
+
+- [#554](https://github.com/NodeSecure/scanner/pull/554) [`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add manifest integrity of root dependency in payload
+
+- [#556](https://github.com/NodeSecure/scanner/pull/556) [`14cc3cd`](https://github.com/NodeSecure/scanner/commit/14cc3cd5c065c09055754ad967802da963b6dc0e) Thanks [@fraxken](https://github.com/fraxken)! - Update scanner API documentation & add FromOptions interface to match CwdOptions
+
+- [#562](https://github.com/NodeSecure/scanner/pull/562) [`dbc2562`](https://github.com/NodeSecure/scanner/commit/dbc256229e37471cea7a8905a4f728f8995786e9) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - feat(extractor): Extends eventTarget instead of eventEmitter for browser compatibility
+
+- [#548](https://github.com/NodeSecure/scanner/pull/548) [`d555469`](https://github.com/NodeSecure/scanner/commit/d555469e7bbc2818d6069eef51cd2494303b5703) Thanks [@fraxken](https://github.com/fraxken)! - Customize JS-X-Ray behavior/options when running the scan. Use it to enable optionalWarnings when the scan run localy.
+
+- [#560](https://github.com/NodeSecure/scanner/pull/560) [`3b653ee`](https://github.com/NodeSecure/scanner/commit/3b653ee08be8a2625e943db51a8ae04db80af684) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(depWalker): do not add integrity to payload in cwd for workspace
+
+### Patch Changes
+
+- [#555](https://github.com/NodeSecure/scanner/pull/555) [`1ecbe92`](https://github.com/NodeSecure/scanner/commit/1ecbe92b53008c0bb63376344f99a42e899f86e6) Thanks [@fraxken](https://github.com/fraxken)! - Properly walk NPM tree using arborist with package-lock.json or node_modules when using the CWD().
+
+- Updated dependencies [[`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061), [`3c32fb6`](https://github.com/NodeSecure/scanner/commit/3c32fb6fdc43e2bc0af508737047a6a23f170061), [`d555469`](https://github.com/NodeSecure/scanner/commit/d555469e7bbc2818d6069eef51cd2494303b5703), [`914132b`](https://github.com/NodeSecure/scanner/commit/914132bb423ab2e2f85b7a84a39c79bc58a54255), [`1ecbe92`](https://github.com/NodeSecure/scanner/commit/1ecbe92b53008c0bb63376344f99a42e899f86e6)]:
+  - @nodesecure/tree-walker@2.0.0
+  - @nodesecure/tarball@2.3.0
+
 ## 7.2.0
 
 ### Minor Changes
