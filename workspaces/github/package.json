@@ -6,7 +6,7 @@
   "exports": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test \"./test/**/*.spec.ts\"",
     "test-types": "attw --pack . --profile esm-only",

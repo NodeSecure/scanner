@@ -9,7 +9,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test ./test/**/*.spec.ts",
     "test-types": "npm run build && tsd && attw --pack . --profile esm-only",

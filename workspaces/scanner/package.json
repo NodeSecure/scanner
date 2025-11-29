@@ -9,7 +9,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc -b & cp -R ./src/data ./dist/data",
+    "build": "tsc -b && cp -R ./src/data ./dist/data",
     "lint": "eslint src test",
     "prepublishOnly": "npm run build && pkg-ok",
     "test": "c8 -r html npm run test-only && npm run test-types",

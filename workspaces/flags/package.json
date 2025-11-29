@@ -3,7 +3,7 @@
   "version": "3.0.3",
   "description": "NodeSecure security flags",
   "scripts": {
-    "build": "tsc & cp -R ./src/flags ./dist/flags",
+    "build": "tsc -b & cp -R ./src/flags ./dist/flags",
     "prepublishOnly": "npm run build",
     "test-only": "tsx --test \"./test/**/*.spec.ts\"",
     "test-types": "attw --pack . --profile esm-only",
