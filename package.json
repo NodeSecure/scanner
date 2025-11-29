@@ -1,11 +1,11 @@
 {
   "workspaces": [
+    "workspaces/contact",
     "workspaces/scanner",
     "workspaces/tarball",
     "workspaces/mama",
     "workspaces/tree-walker",
     "workspaces/conformance",
-    "workspaces/contact",
     "workspaces/npm-types",
     "workspaces/i18n",
     "workspaces/rc",
@@ -16,7 +16,7 @@
     "workspaces/gitlab"
   ],
   "scripts": {
-    "build": "tsc --build",
+    "build": "npm run build --ws --if-present",
     "test": "npm run test --ws --if-present",
     "test-types": "npm run test-types --ws --if-present",
     "lint": "eslint workspaces",
