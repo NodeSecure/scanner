@@ -6,20 +6,30 @@ import fs from "node:fs/promises";
 import Arborist from "@npmcli/arborist";
 
 // Import Internal Dependencies
+import {
+  TreeDependencies,
+  type TreeDependenciesOptions
+} from "./TreeDependencies.js";
 import * as utils from "../utils/index.js";
 
 export interface LocalDependencyTreeLoaderProvider {
   load(
     location: string,
-    registry?: string
-  ): Promise<Arborist.Node>;
+    options?: LocalDependencyTreeLoaderOptions
+  ): Promise<TreeDependencies>;
+}
+
+export interface LocalDependencyTreeLoaderOptions extends TreeDependenciesOptions {
+  registry?: string;
 }
 
 export class LocalDependencyTreeLoader implements LocalDependencyTreeLoaderProvider {
   async load(
     location: string,
-    registry?: string
-  ): Promise<Arborist.Node> {
+    options: LocalDependencyTreeLoaderOptions = {}
+  ): Promise<TreeDependencies> {
+    const { registry, ...treeDepOptions } = options;
+
     const arb = new Arborist({
       ...utils.NPM_TOKEN,
       path: location,
@@ -33,10 +43,14 @@ export class LocalDependencyTreeLoader implements LocalDependencyTreeLoaderProvi
 
       await arb.loadActual();
 
-      return arb.buildIdealTree();
+      const treeNode = await arb.buildIdealTree();
+
+      return TreeDependencies.fromArboristNode(treeNode, treeDepOptions);
     }
     catch {
-      return arb.loadVirtual();
+      const treeNode = await arb.loadVirtual();
+
+      return TreeDependencies.fromArboristNode(treeNode, treeDepOptions);
     }
   }
 }

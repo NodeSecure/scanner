@@ -22,6 +22,9 @@ import {
   type DependencyJSON,
   type NpmSpec
 } from "../Dependency.class.js";
+import {
+  TreeDependencies
+} from "./TreeDependencies.js";
 
 interface BaseWalkOptions {
   parent: Dependency;
@@ -337,39 +340,33 @@ export class TreeWalker {
     scanWithArborist: if (packageLock !== null) {
       const { location, ...packageLockOptions } = packageLock;
 
-      let arboristNode: Arborist.Node;
+      let tree: TreeDependencies;
       try {
-        arboristNode = await this.providers.localTreeLoader.load(
+        tree = await this.providers.localTreeLoader.load(
           location,
-          this.registry
+          {
+            includeDevDeps,
+            registry: this.registry
+          }
         );
       }
       catch {
         break scanWithArborist;
       }
-      const { edgesOut } = arboristNode;
 
-      const iterators = [
-        ...iter
-          .filter(edgesOut.entries(), ([, { to }]) => to !== null && (includeDevDeps ? true : (!to.dev || to.isWorkspace)))
-          .map(([packageName, { to }]) => [packageName, to!.isWorkspace ? to!.target : to] as const)
-          .map(([packageName, to]) => this.walkLocalDependency(packageName, to!, {
-            maxDepth,
-            parent: rootDependency,
-            includeDevDeps,
-            ...packageLockOptions
-          }))
-      ];
+      const iterators = iter
+        .map(tree.dependencies.entries(), ([packageName, to]) => this.walkLocalDependency(packageName, to, {
+          maxDepth,
+          parent: rootDependency,
+          includeDevDeps,
+          ...packageLockOptions
+        }));
 
       for await (const dep of combineAsyncIterators({}, ...iterators)) {
         yield dep.exportAsPlainObject();
       }
 
-      for (const [packageName, { to: toNode }] of edgesOut) {
-        if (toNode === null || (!includeDevDeps && toNode.dev)) {
-          continue;
-        }
-
+      for (const [packageName, toNode] of tree.dependencies) {
         this.addTreeRelation(
           `${packageName}@${toNode.package.version}`,
           rootDependency.spec
