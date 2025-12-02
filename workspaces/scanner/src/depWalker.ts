@@ -243,7 +243,7 @@ export async function depWalker(
         registry
       };
       operationsQueue.push(
-        scanDirOrArchiveEx(name, version, locker, tempDir, scanDirOptions)
+        scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
       );
     }
 
@@ -356,6 +356,7 @@ async function scanDirOrArchiveEx(
   version: string,
   locker: Mutex,
   tempDir: TempDirectory,
+  logger: Logger,
   options: {
     registry?: string;
     isRootNode: boolean;
@@ -387,8 +388,8 @@ async function scanDirOrArchiveEx(
       }
     });
   }
-  catch {
-    // ignore
+  catch (error: any) {
+    logger.emit(ScannerLoggerEvents.error, error, "tarball-scan");
   }
 }
 
