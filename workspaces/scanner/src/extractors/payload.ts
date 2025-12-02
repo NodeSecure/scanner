@@ -4,8 +4,12 @@ import type { Simplify } from "type-fest";
 import deepmerge from "@fastify/deepmerge";
 
 // Import Internal Dependencies
-import * as Scanner from "../types.js";
-import { isNodesecurePayload } from "../utils/index.js";
+import type {
+  Dependency,
+  DependencyVersion,
+  Payload as NodesecurePayload
+} from "../types.js";
+import { isNodesecurePayload } from "../utils/isNodesecurePayload.js";
 
 // CONSTANTS
 const kFastMerge = deepmerge({ all: true });
@@ -25,13 +29,13 @@ export type MergedExtractProbeResult<
 export type ProbeExtractorLevel = "packument" | "manifest";
 export type ProbeExtractorManifestParent = {
   name: string;
-  dependency: Scanner.Dependency;
+  dependency: Dependency;
 };
 
-export type PackumentProbeNextCallback = (name: string, dependency: Scanner.Dependency) => void;
+export type PackumentProbeNextCallback = (name: string, dependency: Dependency) => void;
 export type ManifestProbeNextCallback = (
   spec: string,
-  dependencyVersion: Scanner.DependencyVersion,
+  dependencyVersion: DependencyVersion,
   parent: ProbeExtractorManifestParent) => void;
 
 export interface ProbeExtractor<Defs> {
@@ -51,12 +55,12 @@ export interface ManifestProbeExtractor<Defs> extends ProbeExtractor<Defs> {
 }
 
 export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
-  private dependencies: Scanner.Payload["dependencies"];
+  private dependencies: NodesecurePayload["dependencies"];
   private probes: Record<ProbeExtractorLevel, T>;
   private cachedResult: ExtractProbeResult<T>;
 
   constructor(
-    data: Scanner.Payload | Scanner.Payload["dependencies"],
+    data: NodesecurePayload | NodesecurePayload["dependencies"],
     probes: [...T]
   ) {
     super();
