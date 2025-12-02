@@ -1,6 +1,6 @@
 // Import Third-party Dependencies
 import FrequencySet from "frequency-set";
-import { getFlags } from "@nodesecure/flags";
+import { getFlags } from "@nodesecure/flags/web";
 
 // Import Internal Dependencies
 import type {
