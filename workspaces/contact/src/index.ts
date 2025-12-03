@@ -1,4 +1,4 @@
-export * from "./ContactExtractor.class.js";
+export * from "./ContactExtractor.class.ts";
 export {
   compareContact
-} from "./utils/index.js";
+} from "./utils/index.ts";

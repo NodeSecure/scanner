@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { getFlags, lazyFetchFlagFile } from "../src/index.js";
+import { getFlags, lazyFetchFlagFile } from "../src/index.ts";
 
 describe("lazyFetchFlagFile()", () => {
   it("should throw an Error if no flag name is provided", () => {

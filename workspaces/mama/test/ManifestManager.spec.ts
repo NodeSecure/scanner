@@ -14,7 +14,7 @@ import type {
 import hash from "object-hash";
 
 // Import Internal Dependencies
-import { ManifestManager } from "../src/index.js";
+import { ManifestManager } from "../src/index.ts";
 
 // CONSTANTS
 const kMinimalPackageJSON = {
@@ -122,7 +122,7 @@ describe("ManifestManager", () => {
           process.cwd()
         );
       }
-      catch (error) {
+      catch (error: any) {
         t.assert.strictEqual(error.name, "Error");
         t.assert.strictEqual(
           error.message,
@@ -225,7 +225,7 @@ describe("ManifestManager", () => {
           process.cwd()
         );
       }
-      catch (error) {
+      catch (error: any) {
         t.assert.strictEqual(error.name, "Error");
         t.assert.strictEqual(
           error.message,

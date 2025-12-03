@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 // Import Internal Dependencies
-import { verify } from "../src/index.js";
+import { verify } from "../src/index.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,8 +1,8 @@
 // Import Internal Dependencies
 import type {
   ManifestProbeExtractor
-} from "../payload.js";
-import type { DependencyVersion } from "../../types.js";
+} from "../payload.ts";
+import type { DependencyVersion } from "../../types.ts";
 
 export type LicensesResult = {
   licenses: Record<string, number>;

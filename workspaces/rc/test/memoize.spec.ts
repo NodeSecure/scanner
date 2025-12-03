@@ -3,8 +3,13 @@ import assert from "node:assert";
 import { describe, beforeEach, it } from "node:test";
 
 // Import Internal Dependencies
-import { generateDefaultRC, RC } from "../src/rc.js";
-import { memoize, memoized, maybeMemoized, clearMemoized } from "../src/index.js";
+import { generateDefaultRC, type RC } from "../src/rc.ts";
+import {
+  memoize,
+  memoized,
+  maybeMemoized,
+  clearMemoized
+} from "../src/index.ts";
 
 describe("memoize", () => {
   beforeEach(() => {

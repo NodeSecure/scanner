@@ -3,7 +3,7 @@ import { readdirSync } from "node:fs";
 import path from "node:path";
 
 // Import Internal Dependencies
-import { readJSONSync } from "../utils/index.js";
+import { readJSONSync } from "../utils/index.ts";
 
 // CONSTANTS
 const kDefsDirectory = new URL("./defs", import.meta.url);

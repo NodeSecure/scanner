@@ -3,7 +3,12 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { getManifest, getEmojiFromTitle, getManifestEmoji, FlagDescriptor } from "../src/index.js";
+import {
+  getManifest,
+  getEmojiFromTitle,
+  getManifestEmoji,
+  type FlagDescriptor
+} from "../src/index.ts";
 
 describe("getManifest()", () => {
   it("should return a Record<string, flagObject>", () => {

@@ -4,8 +4,8 @@ import FrequencySet from "frequency-set";
 // Import Internal Dependencies
 import type {
   ManifestProbeExtractor
-} from "../payload.js";
-import type { DependencyVersion } from "../../types.js";
+} from "../payload.ts";
+import type { DependencyVersion } from "../../types.ts";
 
 export type ExtensionsResult = {
   extensions: Record<string, number>;

@@ -22,7 +22,7 @@
     "lint": "eslint src test",
     "prepublishOnly": "npm run build && pkg-ok",
     "test": "c8 -r html npm run test-only && npm run test-types",
-    "test-only": "tsx --test ./test/**/*.spec.ts",
+    "test-only": "node --test ./test/**/*.spec.ts",
     "test-types": "attw --pack . --profile esm-only"
   },
   "files": [
@@ -84,7 +84,6 @@
     "@types/node": "^24.0.2",
     "@types/npmcli__config": "^6.0.3",
     "c8": "^10.1.3",
-    "tsx": "^4.19.4",
     "typescript": "^5.8.3"
   }
 }

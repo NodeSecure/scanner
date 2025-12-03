@@ -6,8 +6,8 @@ import assert from "node:assert";
 import * as i18n from "@nodesecure/i18n";
 
 // Import Internal Dependencies
-import { getDependenciesWarnings } from "../../src/utils/index.js";
-import type { Dependency } from "../../src/types.js";
+import { getDependenciesWarnings } from "../../src/utils/index.ts";
+import type { Dependency } from "../../src/types.ts";
 
 function createDependency(maintainers = [], publishers = []) {
   return {

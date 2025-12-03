@@ -1,2 +1,2 @@
-export * from "./extractDirentLicenses.js";
-export * from "./spdx.js";
+export * from "./extractDirentLicenses.ts";
+export * from "./spdx.ts";

@@ -10,13 +10,13 @@ import {
 } from "@nodesecure/mama";
 
 // Import Internal Dependencies
-import * as utils from "./utils/index.js";
+import * as utils from "./utils/index.ts";
 import {
   LicenseResult,
   type SpdxUnidentifiedLicense,
   type SpdxFileLicenseConformance,
   type SpdxExtractedResult
-} from "./class/LicenseResult.class.js";
+} from "./class/LicenseResult.class.ts";
 
 // CONSTANTS
 const kManifestFileName = "package.json";

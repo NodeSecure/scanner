@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { SourceCodeScanner } from "../src/class/SourceCodeScanner.class.js";
+import { SourceCodeScanner } from "../src/class/SourceCodeScanner.class.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -112,6 +112,7 @@ test("should catch the invalid syntax and report a ParsingError warning", async(
 
   assert.deepEqual(report.warnings, [
     {
+      experimental: false,
       file: "parsingError.js",
       i18n: "sast_warnings.parsing_error",
       kind: "parsing-error",

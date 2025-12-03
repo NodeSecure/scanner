@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { taggedString } from "../src/utils.js";
+import { taggedString } from "../src/utils.ts";
 
 test("taggedString", () => {
   const clojureHello = taggedString`Hello ${0}`;

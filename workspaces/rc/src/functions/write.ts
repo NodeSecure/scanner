@@ -6,8 +6,8 @@ import { AsynchronousConfig } from "@openally/config";
 import { Ok, Err, Result } from "@openally/result";
 
 // Import Internal Dependencies
-import { JSONSchema, type RC } from "../rc.js";
-import * as CONSTANTS from "../constants.js";
+import { JSONSchema, type RC } from "../rc.ts";
+import * as CONSTANTS from "../constants.ts";
 /**
  * Overwrite the complete payload. partialUpdate property is mandatory.
  */

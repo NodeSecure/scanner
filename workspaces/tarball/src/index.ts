@@ -1,2 +1,2 @@
-export * from "./tarball.js";
-export * from "./class/NpmTarball.class.js";
+export * from "./tarball.ts";
+export * from "./class/NpmTarball.class.ts";

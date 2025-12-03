@@ -3,7 +3,7 @@ import type { Contact } from "@nodesecure/npm-types";
 import type { RequireAtLeastOne } from "type-fest";
 
 // Import Internal Dependencies
-import * as utils from "./utils/index.js";
+import * as utils from "./utils/index.ts";
 
 export type EnforcedContact = RequireAtLeastOne<
   Contact,

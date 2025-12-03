@@ -8,8 +8,8 @@ import {
 import * as httpie from "@openally/httpie";
 
 // Import Internal Dependencies
-import * as utils from "../utils.js";
-import * as gitlab from "../gitlab/types.js";
+import * as utils from "../utils.ts";
+import type { Project } from "../gitlab/types.ts";
 
 // CONSTANTS
 export const GITLAB_DEFAULT_URL = new URL("https://gitlab.com/api/v4/projects/");
@@ -73,7 +73,7 @@ export async function download(
   };
 
   const repositoryURL = new URL(utils.getRepositoryPath(repository), gitlab);
-  const { data: gitlabManifest } = await httpie.get<gitlab.Project>(repositoryURL, {
+  const { data: gitlabManifest } = await httpie.get<Project>(repositoryURL, {
     headers,
     agent
   });

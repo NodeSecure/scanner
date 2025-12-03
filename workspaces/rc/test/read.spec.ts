@@ -13,8 +13,8 @@ import {
   memoized,
   memoize,
   clearMemoized
-} from "../src/index.js";
-import { generateDefaultRC } from "../src/rc.js";
+} from "../src/index.ts";
+import { generateDefaultRC } from "../src/rc.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

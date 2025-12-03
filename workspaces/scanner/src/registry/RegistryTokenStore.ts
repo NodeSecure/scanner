@@ -2,7 +2,7 @@
 import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
-import { type TokenStore } from "../types.js";
+import { type TokenStore } from "../types.ts";
 
 export class RegistryTokenStore implements TokenStore {
   #memo: Map<string, string | undefined> = new Map();

@@ -6,7 +6,7 @@ import {
 // Import Internal Dependencies
 import {
   ContactExtractor
-} from "../../dist/index.js";
+} from "../../dist/index.ts";
 
 expectType<ContactExtractor>(new ContactExtractor({
   highlight: [

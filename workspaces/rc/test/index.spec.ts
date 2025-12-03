@@ -10,9 +10,9 @@ import Ajv from "ajv";
 import merge from "lodash.merge";
 
 // Import Internal Dependencies
-import * as RC from "../src/index.js";
-import { readJSONSync } from "../src/utils/readJSON.js";
-import { generateDefaultRC } from "../src/rc.js";
+import * as RC from "../src/index.ts";
+import { readJSONSync } from "../src/utils/readJSON.ts";
+import { generateDefaultRC } from "../src/rc.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

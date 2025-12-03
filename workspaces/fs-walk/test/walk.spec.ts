@@ -5,7 +5,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Import Internal Dependencies
-import { walk, walkSync } from "../src/index.js";
+import { walk, walkSync } from "../src/index.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

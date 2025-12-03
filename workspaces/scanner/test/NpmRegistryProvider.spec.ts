@@ -7,14 +7,18 @@ import assert from "node:assert";
 import semver from "semver";
 import is from "@slimio/is";
 import * as i18n from "@nodesecure/i18n";
-import { PackumentVersion, Packument } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import { HttpieOnHttpError } from "@openally/httpie";
+import type { PackumentVersion, Packument } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { Logger, type Dependency, type DependencyConfusionWarning } from "../src/index.js";
-import { NpmRegistryProvider } from "../src/registry/NpmRegistryProvider.js";
-import { type TokenStore } from "../src/types.js";
+import {
+  Logger,
+  type Dependency,
+  type DependencyConfusionWarning
+} from "../src/index.ts";
+import { NpmRegistryProvider } from "../src/registry/NpmRegistryProvider.ts";
+import { type TokenStore } from "../src/types.ts";
 
 class FakeTokenStore implements TokenStore {
   #store: Record<string, string> = {

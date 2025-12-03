@@ -6,8 +6,8 @@ import {
   UnlitContact,
   type EnforcedContact,
   type IlluminatedContact
-} from "./UnlitContact.class.js";
-import { NsResolver } from "./NsResolver.class.js";
+} from "./UnlitContact.class.ts";
+import { NsResolver } from "./NsResolver.class.ts";
 
 export type {
   IlluminatedContact,

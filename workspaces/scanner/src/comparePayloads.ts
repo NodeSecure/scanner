@@ -13,7 +13,7 @@ import type {
   Repository,
   DependencyLinks,
   GlobalWarning
-} from "./types.js";
+} from "./types.ts";
 
 export interface PayloadComparison {
   title: string;

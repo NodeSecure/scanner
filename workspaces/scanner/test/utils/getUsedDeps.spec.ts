@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { getUsedDeps } from "../../src/utils/index.js";
+import { getUsedDeps } from "../../src/utils/index.ts";
 
 test("getUsedDeps should handle scoped packages", () => {
   const deps = getUsedDeps(new Set([

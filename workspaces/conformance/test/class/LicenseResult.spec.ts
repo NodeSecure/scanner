@@ -6,7 +6,7 @@ import assert from "node:assert";
 import {
   LicenseResult,
   type SpdxExtractedResult
-} from "../../src/class/LicenseResult.class.js";
+} from "../../src/class/LicenseResult.class.ts";
 
 const kMITSpdxConformance: SpdxExtractedResult = {
   uniqueLicenseIds: ["MIT"],

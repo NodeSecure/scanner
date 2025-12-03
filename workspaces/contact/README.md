@@ -7,7 +7,7 @@
 </p>
 
 ## Requirements
-- [Node.js](https://nodejs.org/en/) v20 or higher
+- [Node.js](https://nodejs.org/en/) v24 or higher
 
 ## Getting Started
 

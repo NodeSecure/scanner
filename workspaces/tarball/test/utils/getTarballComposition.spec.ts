@@ -8,7 +8,7 @@ import { test } from "node:test";
 import getSize from "get-folder-size";
 
 // Import Internal Dependencies
-import { getTarballComposition } from "../../src/utils/index.js";
+import { getTarballComposition } from "../../src/utils/index.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -9,8 +9,8 @@ import Arborist from "@npmcli/arborist";
 import {
   TreeDependencies,
   type TreeDependenciesOptions
-} from "./TreeDependencies.js";
-import * as utils from "../utils/index.js";
+} from "./TreeDependencies.ts";
+import * as utils from "../utils/index.ts";
 
 export interface LocalDependencyTreeLoaderProvider {
   load(

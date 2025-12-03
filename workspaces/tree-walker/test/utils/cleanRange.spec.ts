@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { cleanRange } from "../../src/utils/index.js";
+import { cleanRange } from "../../src/utils/index.ts";
 
 describe("cleanRange", () => {
   it("should return cleaned SemVer range", () => {

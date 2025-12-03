@@ -7,7 +7,7 @@ import assert from "node:assert";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import { Logger } from "../src/index.js";
+import { Logger } from "../src/index.ts";
 
 test("Logger: Creating a new class instance and assert all properties", () => {
   assert.ok(is.classObject(Logger));

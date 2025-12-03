@@ -24,11 +24,11 @@ import {
   getUsedDeps,
   getManifestLinks,
   NPM_TOKEN
-} from "./utils/index.js";
-import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.js";
-import { RegistryTokenStore } from "./registry/RegistryTokenStore.js";
-import { TempDirectory } from "./class/TempDirectory.class.js";
-import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
+} from "./utils/index.ts";
+import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.ts";
+import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
+import { TempDirectory } from "./class/TempDirectory.class.ts";
+import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
 import type {
   Dependency,
   DependencyVersion,
@@ -36,7 +36,7 @@ import type {
   DependencyConfusionWarning,
   Options,
   Payload
-} from "./types.js";
+} from "./types.ts";
 
 // CONSTANTS
 const kDefaultDependencyVersionFields = {

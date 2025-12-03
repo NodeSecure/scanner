@@ -8,7 +8,7 @@ import {
   generateCIConfiguration,
   generateReportConfiguration,
   generateScannerConfiguration
-} from "../src/rc.js";
+} from "../src/rc.ts";
 
 describe("generateDefaultRC (internals)", () => {
   it(`should generate a RC with argument 'mode' equal 'ci' and

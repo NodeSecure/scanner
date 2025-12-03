@@ -1,3 +1,3 @@
-export * from "./integrity-hash.js";
-export * from "./inspectModuleType.js";
-export * from "./parseNpmSpec.js";
+export * from "./integrity-hash.ts";
+export * from "./inspectModuleType.ts";
+export * from "./parseNpmSpec.ts";

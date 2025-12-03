@@ -9,8 +9,8 @@ import path from "node:path";
 import Config from "@npmcli/config";
 
 // Import Internal Dependencies
-import { RegistryTokenStore } from "../src/registry/RegistryTokenStore.js";
-import { TempDirectory } from "../src/class/TempDirectory.class.js";
+import { RegistryTokenStore } from "../src/registry/RegistryTokenStore.ts";
+import { TempDirectory } from "../src/class/TempDirectory.class.ts";
 
 const require = createRequire(import.meta.url);
 

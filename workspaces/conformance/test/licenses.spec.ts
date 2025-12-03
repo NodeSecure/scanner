@@ -3,7 +3,10 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { closestSpdxLicenseID, checkSpdx } from "../src/licenses.js";
+import {
+  closestSpdxLicenseID,
+  checkSpdx
+} from "../src/licenses.ts";
 
 describe("closestSpdxLicenseID", () => {
   test("it should return the given LicenseID if no record match", () => {

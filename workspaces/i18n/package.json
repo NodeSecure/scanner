@@ -7,10 +7,10 @@
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
-    "test-only": "tsx --test ./test/**/*.spec.ts",
+    "test-only": "node --test ./test/**/*.spec.ts",
     "test-types": "attw --pack . --profile esm-only",
     "test": "c8 -r html npm run test-only && npm run test-types",
-    "build:documentation": "tsx ./scripts/buildDocumentation.ts"
+    "build:documentation": "node ./scripts/buildDocumentation.ts"
   },
   "repository": {
     "type": "git",

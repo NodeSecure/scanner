@@ -16,11 +16,11 @@ import {
 import {
   SourceCodeReport,
   SourceCodeScanner
-} from "./SourceCodeScanner.class.js";
+} from "./SourceCodeScanner.class.ts";
 import {
   getTarballComposition,
   type TarballComposition
-} from "../utils/index.js";
+} from "../utils/index.ts";
 
 export interface ScannedFilesResult {
   composition: TarballComposition;

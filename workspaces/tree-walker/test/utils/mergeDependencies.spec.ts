@@ -9,7 +9,7 @@ import assert from "node:assert";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import { mergeDependencies } from "../../src/utils/index.js";
+import { mergeDependencies } from "../../src/utils/index.ts";
 
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));

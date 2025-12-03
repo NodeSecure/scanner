@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { test } from "node:test";
 
 // Import Internal Dependencies
-import { getSemVerWarning } from "../src/warnings.js";
+import { getSemVerWarning } from "../src/warnings.ts";
 
 // CONSTANTS
 const kDefaultWarning = {

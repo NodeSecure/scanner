@@ -1,2 +1,2 @@
-export * as npm from "./npm/walker.js";
-export * from "./Dependency.class.js";
+export * as npm from "./npm/walker.ts";
+export * from "./Dependency.class.ts";

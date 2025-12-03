@@ -16,7 +16,7 @@ import type {
 import {
   packageJSONIntegrityHash,
   inspectModuleType
-} from "./utils/index.js";
+} from "./utils/index.ts";
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
 

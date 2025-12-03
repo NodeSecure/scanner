@@ -4,7 +4,7 @@ import { Dirent } from "node:fs";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import * as utils from "../src/utils/index.js";
+import * as utils from "../src/utils/index.ts";
 
 describe("checkEveryTruthy", () => {
   test("check a single true is true", () => {

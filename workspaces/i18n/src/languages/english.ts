@@ -1,5 +1,5 @@
 // Require Internal Dependencies
-import { taggedString as tS } from "../utils.js";
+import { taggedString as tS } from "../utils.ts";
 
 const lang = "en";
 

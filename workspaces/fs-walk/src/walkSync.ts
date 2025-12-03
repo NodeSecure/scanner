@@ -3,8 +3,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 
 // Import Internal Dependencies
-import { EXCLUDED_DIRECTORY } from "./constants.js";
-import type { WalkOptions, WalkEntry } from "./types.js";
+import { EXCLUDED_DIRECTORY } from "./constants.ts";
+import type { WalkOptions, WalkEntry } from "./types.ts";
 
 /**
  * @example

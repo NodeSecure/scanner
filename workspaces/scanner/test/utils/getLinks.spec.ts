@@ -6,7 +6,7 @@ import { describe, it } from "node:test";
 import { type PackumentVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import * as utils from "../../src/utils/index.js";
+import * as utils from "../../src/utils/index.ts";
 
 describe("utils.getLinks", () => {
   it("should return all links", () => {

@@ -1,2 +1,2 @@
-export * from "./compareContact.js";
-export * from "./parseRegexp.js";
+export * from "./compareContact.ts";
+export * from "./parseRegexp.ts";

@@ -13,7 +13,7 @@ import { faker } from "@faker-js/faker";
 import {
   ContactExtractor,
   type ContactExtractorPackageMetadata
-} from "../src/index.js";
+} from "../src/index.ts";
 
 // CONSTANTS
 const __dirname = dirname(fileURLToPath(import.meta.url));

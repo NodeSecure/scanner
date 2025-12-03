@@ -18,7 +18,7 @@ import {
 import {
   filterDependencyKind,
   analyzeDependencies
-} from "../utils/index.js";
+} from "../utils/index.ts";
 
 export interface SourceCodeAggregator {
   readonly consumed: boolean;

@@ -1,5 +1,5 @@
 // Import Internal Dependencies
-import type { Dependency } from "../types.js";
+import type { Dependency } from "../types.ts";
 
 // TODO: add strict flags type
 export function* addMissingVersionFlags(

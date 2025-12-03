@@ -8,8 +8,8 @@ import type {
   Dependency,
   DependencyVersion,
   Payload as NodesecurePayload
-} from "../types.js";
-import { isNodesecurePayload } from "../utils/isNodesecurePayload.js";
+} from "../types.ts";
+import { isNodesecurePayload } from "../utils/isNodesecurePayload.ts";
 
 // CONSTANTS
 const kFastMerge = deepmerge({ all: true });

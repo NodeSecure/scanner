@@ -6,7 +6,7 @@ import fs from "node:fs/promises";
 import { distance } from "fastest-levenshtein";
 
 // Import Internal Dependencies
-import { getDirNameFromUrl } from "../utils/index.js";
+import { getDirNameFromUrl } from "../utils/index.ts";
 
 // CONSTANTS
 const __dirname = getDirNameFromUrl(import.meta.url);

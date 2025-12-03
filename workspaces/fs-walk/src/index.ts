@@ -1,3 +1,3 @@
-export * from "./walk.js";
-export * from "./walkSync.js";
-export * from "./types.js";
+export * from "./walk.ts";
+export * from "./walkSync.ts";
+export * from "./types.ts";
