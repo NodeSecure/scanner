@@ -1,5 +1,18 @@
 # @nodesecure/scanner
 
+## 8.2.0
+
+### Minor Changes
+
+- [#575](https://github.com/NodeSecure/scanner/pull/575) [`7e266b5`](https://github.com/NodeSecure/scanner/commit/7e266b537f88f208bf53784fbc1b92a1ebb0c7fa) Thanks [@fraxken](https://github.com/fraxken)! - Refactor extractors imports to ensure web compatibility
+
+- [#571](https://github.com/NodeSecure/scanner/pull/571) [`a06ba7c`](https://github.com/NodeSecure/scanner/commit/a06ba7c2fef96141642094476ddf2bcac48c5db3) Thanks [@fraxken](https://github.com/fraxken)! - Implement a new error event in the logger
+
+### Patch Changes
+
+- Updated dependencies [[`d280c39`](https://github.com/NodeSecure/scanner/commit/d280c39c61cfe4cd6559d894524c54dd0431584c)]:
+  - @nodesecure/tree-walker@2.1.0
+
 ## 8.1.0
 
 ### Minor Changes
