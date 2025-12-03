@@ -8,8 +8,8 @@ import assert from "node:assert";
 import cacache from "cacache";
 
 // Import Internal Dependencies
-import * as i18n from "../src/index.js";
-import { CACHE_PATH } from "../src/constants.js";
+import * as i18n from "../src/index.ts";
+import { CACHE_PATH } from "../src/constants.ts";
 
 const kI18nDir = "./i18n";
 

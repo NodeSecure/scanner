@@ -1,5 +1,5 @@
 // Import Internal Dependencies
-import type { Payload } from "../types.js";
+import type { Payload } from "../types.ts";
 
 export function isNodesecurePayload(
   data: Payload | Payload["dependencies"]

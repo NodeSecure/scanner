@@ -7,9 +7,9 @@ import {
   type ManifestProbeExtractor,
   type PackumentProbeNextCallback,
   type ManifestProbeNextCallback
-} from "./payload.js";
+} from "./payload.ts";
 
-import * as Probes from "./probes/index.js";
+import * as Probes from "./probes/index.ts";
 
 export const Extractors = {
   Payload,

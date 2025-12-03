@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { describe, test } from "node:test";
 
 // Import Internal Dependencies
-import { parseRegExp } from "../../src/utils/index.js";
+import { parseRegExp } from "../../src/utils/index.ts";
 
 describe("parseRegExp", () => {
   test("Given a literal with no slash then it must return null", () => {

@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { addMissingVersionFlags } from "../../src/utils/index.js";
+import { addMissingVersionFlags } from "../../src/utils/index.ts";
 
 test("addMissingVersionFlags should return all missing flags", () => {
   const flags = new Set([

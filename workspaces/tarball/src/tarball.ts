@@ -19,10 +19,12 @@ import pacote from "pacote";
 import {
   isSensitiveFile,
   booleanToFlags
-} from "./utils/index.js";
-import { NpmTarball } from "./class/NpmTarball.class.js";
-import * as warnings from "./warnings.js";
-import { getEmptyPackageWarning } from "./warnings.js";
+} from "./utils/index.ts";
+import { NpmTarball } from "./class/NpmTarball.class.ts";
+import {
+  getEmptyPackageWarning,
+  getSemVerWarning
+} from "./warnings.ts";
 
 export interface DependencyRef {
   id: number;
@@ -96,11 +98,11 @@ export async function scanDirOrArchive(
     composition.files.length === 1 &&
     composition.files.includes("package.json")
   ) {
-    ref.warnings.push(warnings.getEmptyPackageWarning());
+    ref.warnings.push(getEmptyPackageWarning());
   }
 
   if (mama.hasZeroSemver) {
-    ref.warnings.push(warnings.getSemVerWarning(mama.document.version!));
+    ref.warnings.push(getSemVerWarning(mama.document.version!));
   }
   ref.warnings.push(...code.warnings);
 

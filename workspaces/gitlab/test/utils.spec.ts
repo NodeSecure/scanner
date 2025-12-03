@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { getRepositoryPath } from "../src/utils.js";
+import { getRepositoryPath } from "../src/utils.ts";
 
 describe("getRepositoryPath", () => {
   test("must return id", () => {

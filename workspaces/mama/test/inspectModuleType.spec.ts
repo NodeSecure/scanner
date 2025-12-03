@@ -8,7 +8,7 @@ import type {
 } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { inspectModuleType } from "../src/utils/index.js";
+import { inspectModuleType } from "../src/utils/index.ts";
 
 // CONSTANTS
 const kMinimalPackageJSON = {

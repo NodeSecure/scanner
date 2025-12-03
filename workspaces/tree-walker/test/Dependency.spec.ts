@@ -6,7 +6,7 @@ import assert from "node:assert";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import { Dependency } from "../src/Dependency.class.js";
+import { Dependency } from "../src/Dependency.class.ts";
 
 test("Dependency class should act as expected by assertions", () => {
   assert.ok(is.classObject(Dependency));

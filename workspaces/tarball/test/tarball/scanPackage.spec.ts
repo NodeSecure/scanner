@@ -5,8 +5,8 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { scanPackage } from "../../src/index.js";
-import { getEmptyPackageWarning } from "../../src/warnings.js";
+import { scanPackage } from "../../src/index.ts";
+import { getEmptyPackageWarning } from "../../src/warnings.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

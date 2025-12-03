@@ -5,8 +5,8 @@ import type { Contact } from "@nodesecure/npm-types";
 import type {
   ManifestProbeExtractor,
   ProbeExtractorManifestParent
-} from "../payload.js";
-import type { DependencyVersion } from "../../types.js";
+} from "../payload.ts";
+import type { DependencyVersion } from "../../types.ts";
 
 export type ContactsResult = {
   contacts: Record<string, number>;

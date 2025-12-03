@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { booleanToFlags } from "../../src/utils/index.js";
+import { booleanToFlags } from "../../src/utils/index.ts";
 
 test("booleanToFlags should transform the Record in flag list where value are true", () => {
   const flags = booleanToFlags({ hasScript: true, foo: false, bar: true });

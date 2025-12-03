@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { getFlags, getManifest } from "../src/index.js";
+import { getFlags, getManifest } from "../src/index.ts";
 
 describe("getFlags()", () => {
   it("should return a Set with multiple flags", () => {

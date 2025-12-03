@@ -4,8 +4,8 @@ import type { StandardVulnerability } from "@nodesecure/vulnera";
 // Import Internal Dependencies
 import type {
   PackumentProbeExtractor
-} from "../payload.js";
-import type { Dependency } from "../../types.js";
+} from "../payload.ts";
+import type { Dependency } from "../../types.ts";
 
 export type VulnerabilitiesResult = {
   vulnerabilities: StandardVulnerability[];

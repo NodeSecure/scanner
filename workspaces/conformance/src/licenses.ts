@@ -2,7 +2,7 @@
 import * as levenshtein from "fastest-levenshtein";
 
 // Import Internal Dependencies
-import { spdx } from "./data/spdx.js";
+import { spdx } from "./data/spdx.ts";
 
 export interface SpdxConformance {
   name: string;

@@ -5,7 +5,7 @@ import { packageJSONIntegrityHash } from "@nodesecure/mama";
 // Import Internal Dependencies
 import type {
   Dependency
-} from "../types.js";
+} from "../types.ts";
 
 export interface DateProvider {
   oneYearAgo(): Date;

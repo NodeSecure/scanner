@@ -11,8 +11,8 @@ import { ManifestManager } from "@nodesecure/mama";
 import {
   extractLicenses,
   extractLicensesSync
-} from "../src/index.js";
-import expectedParsedLicense from "./fixtures/parseLicense.snap.js";
+} from "../src/index.ts";
+import expectedParsedLicense from "./fixtures/parseLicense.snap.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -11,16 +11,16 @@ import * as i18n from "@nodesecure/i18n";
 import { isHTTPError } from "@openally/httpie";
 
 // Import Internal Dependencies
-import { PackumentExtractor, type DateProvider } from "./PackumentExtractor.js";
-import { fetchNpmAvatars } from "./fetchNpmAvatars.js";
+import { PackumentExtractor, type DateProvider } from "./PackumentExtractor.ts";
+import { fetchNpmAvatars } from "./fetchNpmAvatars.ts";
 import type {
   Dependency,
   DependencyConfusionWarning,
   TokenStore
-} from "../types.js";
-import { Logger } from "../class/logger.class.js";
-import { getLinks } from "../utils/getLinks.js";
-import { getDirNameFromUrl } from "../utils/dirname.js";
+} from "../types.ts";
+import { Logger } from "../class/logger.class.ts";
+import { getLinks } from "../utils/getLinks.ts";
+import { getDirNameFromUrl } from "../utils/dirname.ts";
 
 // CONSTANTS
 const kNotFoundStatusCode = 404;

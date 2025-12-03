@@ -8,8 +8,8 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import zup from "zup";
 
 // Import Internal Dependencies
-import { english } from "../src/languages/english.js";
-import { french } from "../src/languages/french.js";
+import { english } from "../src/languages/english.ts";
+import { french } from "../src/languages/french.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

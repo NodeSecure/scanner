@@ -12,19 +12,19 @@ import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type { PackageJSON, WorkspacesPackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import * as utils from "../utils/index.js";
+import * as utils from "../utils/index.ts";
 import {
   LocalDependencyTreeLoader,
   type LocalDependencyTreeLoaderProvider
-} from "./LocalDependencyTreeLoader.js";
+} from "./LocalDependencyTreeLoader.ts";
 import {
   Dependency,
   type DependencyJSON,
   type NpmSpec
-} from "../Dependency.class.js";
+} from "../Dependency.class.ts";
 import {
   TreeDependencies
-} from "./TreeDependencies.js";
+} from "./TreeDependencies.ts";
 
 interface BaseWalkOptions {
   parent: Dependency;

@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { analyzeDependencies } from "../../src/utils/index.js";
+import { analyzeDependencies } from "../../src/utils/index.ts";
 
 test("analyzeDependencies should detect Node.js dependencies and also flag hasExternalCapacity", () => {
   const mama = {

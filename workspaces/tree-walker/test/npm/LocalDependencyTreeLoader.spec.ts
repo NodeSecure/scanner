@@ -10,7 +10,7 @@ import { fileURLToPath } from "node:url";
 // Import Internal Dependencies
 import {
   LocalDependencyTreeLoader
-} from "../../src/npm/LocalDependencyTreeLoader.js";
+} from "../../src/npm/LocalDependencyTreeLoader.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

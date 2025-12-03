@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import * as utils from "../src/formatBytes";
+import * as utils from "../src/formatBytes.ts";
 
 describe("formatBytes", () => {
   it("should return '0 B' if bytes argument is equal zero", () => {

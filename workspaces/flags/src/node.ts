@@ -6,7 +6,7 @@ import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 
 // Import Internal Dependencies
-import { getFlags } from "./web.js";
+import { getFlags } from "./web.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

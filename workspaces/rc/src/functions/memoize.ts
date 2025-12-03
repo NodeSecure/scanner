@@ -3,7 +3,7 @@ import merge from "lodash.merge";
 import { Some, None, type Option } from "@openally/result";
 
 // Import Internal Dependencies
-import type { RC } from "../rc.js";
+import type { RC } from "../rc.ts";
 
 let memoizedValue: Partial<RC> | null = null;
 

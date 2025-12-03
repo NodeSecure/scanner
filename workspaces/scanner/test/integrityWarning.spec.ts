@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { from } from "../src/index.js";
+import { from } from "../src/index.ts";
 
 test("expect one warning from 'darcyclarke-manifest-pkg' with an integrity issue", async() => {
   const result = await from("darcyclarke-manifest-pkg", {

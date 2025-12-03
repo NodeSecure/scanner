@@ -9,7 +9,7 @@ import { describe, after, test, before } from "node:test";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import * as github from "../src/index.js";
+import * as github from "../src/index.ts";
 
 describe("download", () => {
   let tempDownloadDir: string;

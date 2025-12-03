@@ -13,9 +13,9 @@ import {
   generateDefaultRC,
   type RCGenerationMode,
   type RC
-} from "../rc.js";
-import * as CONSTANTS from "../constants.js";
-import { memoize } from "./memoize.js";
+} from "../rc.ts";
+import * as CONSTANTS from "../constants.ts";
+import { memoize } from "./memoize.ts";
 
 interface CreateReadOptions {
   /**

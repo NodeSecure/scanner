@@ -9,9 +9,9 @@ import lodashGet from "lodash.get";
 import deepmerge from "deepmerge";
 
 // Import Internal Dependencies
-import { CACHE_PATH, CURRENT_LANG, type Languages } from "./constants.js";
-import { languages } from "./languages/index.js";
-import { taggedString } from "./utils.js";
+import { CACHE_PATH, CURRENT_LANG, type Languages } from "./constants.ts";
+import { languages } from "./languages/index.ts";
+import { taggedString } from "./utils.ts";
 
 export const CONSTANTS = Object.seal({
   CACHE_PATH,

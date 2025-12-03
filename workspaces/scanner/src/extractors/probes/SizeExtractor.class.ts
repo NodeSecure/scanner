@@ -5,8 +5,8 @@ import { formatBytes } from "@nodesecure/utils";
 import type {
   ManifestProbeExtractor,
   ProbeExtractorManifestParent
-} from "../payload.js";
-import type { DependencyVersion } from "../../types.js";
+} from "../payload.ts";
+import type { DependencyVersion } from "../../types.ts";
 
 export type SizeResult = {
   size: {

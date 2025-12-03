@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import * as utils from "../src/scorecard.js";
+import * as utils from "../src/scorecard.ts";
 
 describe("getScoreColor", () => {
   it("should return red", () => {

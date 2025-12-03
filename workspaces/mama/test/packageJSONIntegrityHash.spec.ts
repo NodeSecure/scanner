@@ -6,7 +6,7 @@ import { describe, test } from "node:test";
 import hash from "object-hash";
 
 // Import Internal Dependencies
-import { packageJSONIntegrityHash } from "../src/utils/index.js";
+import { packageJSONIntegrityHash } from "../src/utils/index.ts";
 
 // CONSTANTS
 const kMinimalPackageJSON = {

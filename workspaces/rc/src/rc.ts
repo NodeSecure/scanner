@@ -6,23 +6,23 @@ import path from "node:path";
 import * as vulnera from "@nodesecure/vulnera";
 
 // Import Internal Dependencies
-import { GLOBAL_CONFIGURATION_DIRECTORY } from "./constants.js";
-import { loadJSONSchemaSync } from "./schema/loader.js";
+import { GLOBAL_CONFIGURATION_DIRECTORY } from "./constants.ts";
+import { loadJSONSchemaSync } from "./schema/loader.ts";
 
 import {
   generateCIConfiguration,
   type CiConfiguration,
   type CiWarnings
-} from "./projects/ci.js";
+} from "./projects/ci.ts";
 import {
   generateReportConfiguration,
   type ReportConfiguration,
   type ReportChart
-} from "./projects/report.js";
+} from "./projects/report.ts";
 import {
   generateScannerConfiguration,
   type ScannerConfiguration
-} from "./projects/scanner.js";
+} from "./projects/scanner.ts";
 
 // CONSTANTS
 // eslint-disable-next-line @openally/constants

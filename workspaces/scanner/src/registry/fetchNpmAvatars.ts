@@ -6,7 +6,7 @@ import type {
   Dependency,
   Maintainer,
   Publisher
-} from "../types.js";
+} from "../types.ts";
 
 type Contributor = Maintainer | Publisher;
 

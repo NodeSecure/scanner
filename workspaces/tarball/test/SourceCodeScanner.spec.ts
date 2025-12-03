@@ -14,7 +14,7 @@ import { type ReportOnFile, AstAnalyser } from "@nodesecure/js-x-ray";
 import {
   SourceCodeScanner,
   type SourceCodeAggregator
-} from "../src/class/SourceCodeScanner.class.js";
+} from "../src/class/SourceCodeScanner.class.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

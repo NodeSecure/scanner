@@ -3,7 +3,7 @@ import {
   licenseIdConformance,
   searchSpdxLicenseId,
   type SpdxLicenseConformance
-} from "../parse.js";
+} from "../parse.ts";
 
 export interface SpdxFileLicenseConformance extends SpdxLicenseConformance {
   fileName: string;

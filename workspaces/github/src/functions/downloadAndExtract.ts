@@ -13,7 +13,7 @@ import {
   download,
   type DownloadOptions,
   type DownloadResult
-} from "./download.js";
+} from "./download.ts";
 
 export interface DownloadExtractOptions extends DownloadOptions {
   /**

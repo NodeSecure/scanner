@@ -4,7 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { filterDependencyKind } from "../../src/utils/index.js";
+import { filterDependencyKind } from "../../src/utils/index.ts";
 
 test("filterDependencyKind should be able to split files and packages", () => {
   const result = filterDependencyKind(["mocha", "."], process.cwd());

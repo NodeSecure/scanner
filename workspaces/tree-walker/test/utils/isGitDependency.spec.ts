@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { isGitDependency } from "../../src/utils/index.js";
+import { isGitDependency } from "../../src/utils/index.ts";
 
 describe("isGitDependency", () => {
   it("should return true for git related package versions", () => {

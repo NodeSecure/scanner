@@ -3,7 +3,7 @@ import {
   FLAGS,
   type Flag,
   type FlagDescriptor
-} from "./manifest.js";
+} from "./manifest.ts";
 
 // CONSTANTS
 const kNotFoundFlags = "🔴";

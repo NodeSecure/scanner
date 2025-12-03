@@ -9,7 +9,7 @@ import { describe, test, it, beforeEach, afterEach } from "node:test";
 import is from "@slimio/is";
 
 // Import Internal Dependencies
-import * as gitlab from "../../src/index.js";
+import * as gitlab from "../../src/index.ts";
 
 describe("downloadAndExtract", () => {
   let tempDownloadDir: string;

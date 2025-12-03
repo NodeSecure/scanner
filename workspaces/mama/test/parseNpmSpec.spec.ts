@@ -3,7 +3,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { parseNpmSpec } from "../src/index.js";
+import { parseNpmSpec } from "../src/index.ts";
 
 describe("parseNpmSpec", () => {
   test("should parse the simplest package spec", () => {

@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import * as utils from "../src/locationToString";
+import * as utils from "../src/locationToString.ts";
 
 describe("locationToString", () => {
   it("should return the location array in string syntax", () => {

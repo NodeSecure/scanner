@@ -3,7 +3,10 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { licenseIdConformance, searchSpdxLicenseId } from "../src/index.js";
+import {
+  licenseIdConformance,
+  searchSpdxLicenseId
+} from "../src/index.ts";
 
 describe("searchSpdxLicenseId", () => {
   test("search for Apache 2.0 license", () => {

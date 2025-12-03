@@ -8,8 +8,8 @@ import {
   licenseNameToId,
   closestSpdxLicenseID,
   checkSpdx
-} from "./licenses.js";
-import * as utils from "./utils/index.js";
+} from "./licenses.ts";
+import * as utils from "./utils/index.ts";
 
 export interface SpdxLicenseConformance {
   licenses: Record<string, string>;

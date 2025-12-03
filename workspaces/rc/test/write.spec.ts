@@ -6,8 +6,8 @@ import assert from "node:assert";
 import { describe, it, before, beforeEach, after } from "node:test";
 
 // Import Internal Dependencies
-import { read, write, CONSTANTS } from "../src/index.js";
-import { generateDefaultRC } from "../src/rc.js";
+import { read, write, CONSTANTS } from "../src/index.ts";
+import { generateDefaultRC } from "../src/rc.ts";
 
 describe("write and/or update .nodesecurerc", () => {
   const location = path.join(os.tmpdir(), "rcwrite");

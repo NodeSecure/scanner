@@ -10,14 +10,14 @@ import * as Vulnera from "@nodesecure/vulnera";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
-import { depWalker } from "../src/depWalker.js";
+import { depWalker } from "../src/depWalker.ts";
 import {
   Logger,
   from,
   cwd,
   type Payload,
   type DependencyVersion
-} from "../src/index.js";
+} from "../src/index.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));

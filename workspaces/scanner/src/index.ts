@@ -11,12 +11,12 @@ import type { PackageJSON } from "@nodesecure/npm-types";
 import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
-import { depWalker } from "./depWalker.js";
-import { NPM_TOKEN, urlToString } from "./utils/index.js";
-import { Logger, ScannerLoggerEvents } from "./class/logger.class.js";
-import { TempDirectory } from "./class/TempDirectory.class.js";
-import { comparePayloads } from "./comparePayloads.js";
-import type { Options } from "./types.js";
+import { depWalker } from "./depWalker.ts";
+import { NPM_TOKEN, urlToString } from "./utils/index.ts";
+import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
+import { TempDirectory } from "./class/TempDirectory.class.ts";
+import { comparePayloads } from "./comparePayloads.ts";
+import type { Options } from "./types.ts";
 
 // CONSTANTS
 const kDefaultCwdOptions = {
@@ -24,8 +24,8 @@ const kDefaultCwdOptions = {
   includeDevDeps: false
 };
 
-export * from "./types.js";
-export * from "./extractors/index.js";
+export * from "./types.ts";
+export * from "./extractors/index.ts";
 
 export type CwdOptions = Options & {
   /**

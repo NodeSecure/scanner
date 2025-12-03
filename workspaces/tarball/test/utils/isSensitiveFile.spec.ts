@@ -3,7 +3,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import { isSensitiveFile } from "../../src/utils/index.js";
+import { isSensitiveFile } from "../../src/utils/index.ts";
 
 test("isSensitiveFile should return true for sensitive files", () => {
   assert.ok(isSensitiveFile(".npmrc"));

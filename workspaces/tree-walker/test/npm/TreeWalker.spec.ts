@@ -9,7 +9,7 @@ import pacote from "pacote";
 import type { PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { npm, type DependencyJSON } from "../../src/index.js";
+import { npm, type DependencyJSON } from "../../src/index.ts";
 
 // CONSTANTS
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

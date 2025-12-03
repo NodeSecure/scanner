@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Internal Dependencies
-import * as utils from "../src/parseManifestAuthor.js";
+import * as utils from "../src/parseManifestAuthor.ts";
 
 describe("parseAuthor", () => {
   it("should be able to parse a string (without email)", () => {
@@ -99,7 +99,7 @@ describe("parseManifestAuthor", () => {
     try {
       utils.parseManifestAuthor(null as unknown as string);
     }
-    catch (error) {
+    catch (error: any) {
       assert.strictEqual(error.message, "expected manifestAuthorField to be a string");
     }
   });

@@ -15,7 +15,7 @@ import {
   download,
   type DownloadResult,
   type DownloadOptions
-} from "./download.js";
+} from "./download.ts";
 
 export interface DownloadExtractOptions extends DownloadOptions {
   /**
