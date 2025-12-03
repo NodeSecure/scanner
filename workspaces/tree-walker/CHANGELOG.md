@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 2.1.0
+
+### Minor Changes
+
+- [#566](https://github.com/NodeSecure/scanner/pull/566) [`d280c39`](https://github.com/NodeSecure/scanner/commit/d280c39c61cfe4cd6559d894524c54dd0431584c) Thanks [@fraxken](https://github.com/fraxken)! - Re-abstract tree loading with NPM arborist
+
 ## 2.0.0
 
 ### Major Changes
