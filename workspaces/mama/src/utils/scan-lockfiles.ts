@@ -9,7 +9,7 @@ export const LOCK_FILES = {
   pnpm: "pnpm-lock.yaml"
 };
 
-export function scanLockFiles(dirPath: string) {
+export function scanLockFiles(dirPath: string): null | object {
   const result: { [k: string]: string; } = {};
   for (const [k, v] of Object.entries(LOCK_FILES)) {
     const filePath = path.join(dirPath, v);
@@ -18,5 +18,7 @@ export function scanLockFiles(dirPath: string) {
     }
   }
 
-  return result;
+  const isEmpty = Object.keys(result).length === 0;
+
+  return isEmpty ? null : result;
 }
