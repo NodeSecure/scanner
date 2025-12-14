@@ -16,6 +16,7 @@ import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodes
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
 import { fromData } from "ssri";
+import semver from "semver";
 
 // Import Internal Dependencies
 import {
@@ -136,6 +137,7 @@ export async function depWalker(
   };
 
   const dependencies: Map<string, Dependency> = new Map();
+  const highlightedPackages: Set<string> = new Set();
   const npmTreeWalker = new npm.TreeWalker({
     registry
   });
@@ -300,6 +302,10 @@ export async function depWalker(
     }
     for (const version of Object.entries(dependency.versions)) {
       const [verStr, verDescriptor] = version as [string, DependencyVersion];
+      const range = options.highlight?.packages?.[packageName];
+      if (range && semver.satisfies(verStr, range)) {
+        highlightedPackages.add(`${packageName}@${verStr}`);
+      }
       verDescriptor.flags.push(
         ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
       );
@@ -338,7 +344,8 @@ export async function depWalker(
     );
     payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
     payload.highlighted = {
-      contacts: illuminated
+      contacts: illuminated,
+      packages: [...highlightedPackages]
     };
     payload.dependencies = Object.fromEntries(dependencies);
     payload.metadata.executionTime = Date.now() - startedAt;
