@@ -10,14 +10,14 @@ import { scanLockFiles, LOCK_FILES } from "../src/index.ts";
 
 describe("scanLockFiles", () => {
   test("should scan lock files", () => {
-    const output: typeof LOCK_FILES = {} as typeof LOCK_FILES;
+    const output: [string, string][] = [];
     const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "/"));
 
-    for (const [k, v] of Object.entries(LOCK_FILES)) {
+    for (const [k, v] of LOCK_FILES) {
       const filepath = path.join(tmpDir, v);
 
       fs.writeFileSync(filepath, "");
-      output[k as keyof typeof LOCK_FILES] = filepath;
+      output.push([k, v]);
     }
 
     assert.deepEqual(scanLockFiles(tmpDir), output);

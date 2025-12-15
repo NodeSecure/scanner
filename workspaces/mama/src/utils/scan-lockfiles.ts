@@ -1,24 +1,26 @@
 // Import Node.js Dependencies
 import fs from "node:fs";
-import path from "node:path";
 
-export const LOCK_FILES = {
-  npm: "package-lock.json",
-  bun: "bun.lockb",
-  yarn: "yarn.lock",
-  pnpm: "pnpm-lock.yaml"
-};
+export const LOCK_FILES = [
+  ["npm", "package-lock.json"],
+  ["bun", "bun.lockb"],
+  ["pnpm", "pnpm-lock.yaml"],
+  ["yarn", "yarn.lock"],
+  ["deno", "deno.lock"]
+];
 
 export function scanLockFiles(dirPath: string): null | object {
-  const result: { [k: string]: string; } = {};
-  for (const [k, v] of Object.entries(LOCK_FILES)) {
-    const filePath = path.join(dirPath, v);
-    if (fs.existsSync(filePath)) {
-      result[k] = filePath;
+  const dir = fs.readdirSync(dirPath);
+  if (dir.length === 0) {
+    return null;
+  }
+
+  const result: [string, string][] = [];
+  for (const [k, v] of LOCK_FILES) {
+    if (dir.includes(v)) {
+      result.push([k, v]);
     }
   }
 
-  const isEmpty = Object.keys(result).length === 0;
-
-  return isEmpty ? null : result;
+  return result.length === 0 ? null : result;
 }
