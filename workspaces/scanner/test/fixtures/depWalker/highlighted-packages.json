@@ -1,0 +1,12 @@
+{
+  "name": "highlighted-packages",
+  "version": "0.1.0",
+  "description": "Mock package with dependency versions",
+  "main": "index.js",
+  "homepage": "https://github.com/username/highlighted-packages#readme",
+  "dependencies": {
+    "zen-observable": "0.8.15",
+    "nanoid": "5.1.6",
+    "nanoevents": "9.1.0"
+  }
+}

@@ -47,6 +47,11 @@ const pkgTypoSquatting = JSON.parse(readFileSync(
   "utf8"
 ));
 
+const pkgHighlightedPackages = JSON.parse(readFileSync(
+  path.join(kFixturePath, "highlighted-packages.json"),
+  "utf8"
+));
+
 function cleanupPayload(payload: Payload) {
   for (const pkg of Object.values(payload)) {
     const versions = Object.values(
@@ -219,6 +224,36 @@ test("execute depWalker on typo-squatting (with no location)", async(test) => {
       phase: "tarball-scan"
     }
   ]);
+});
+
+test("should highlight the given packages", async() => {
+  const { logger } = errorLogger();
+  test.after(() => logger.removeAllListeners());
+
+  const hightlightPackages = {
+    "zen-observable": "0.8.14 || 0.8.15",
+    nanoid: "*"
+  };
+
+  const result = await depWalker(
+    pkgHighlightedPackages,
+    structuredClone({
+      ...kDefaultWalkerOptions,
+      highlight: {
+        packages: hightlightPackages,
+        contacts: []
+      }
+    }),
+    logger
+  );
+
+  assert.deepStrictEqual(
+    result.highlighted.packages.sort(),
+    [
+      "nanoid@5.1.6",
+      "zen-observable@0.8.15"
+    ]
+  );
 });
 
 test("fetch payload of pacote on the npm registry", async() => {

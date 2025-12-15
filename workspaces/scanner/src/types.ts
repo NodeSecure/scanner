@@ -198,6 +198,7 @@ export interface Payload {
   warnings: GlobalWarning[];
   highlighted: {
     contacts: IlluminatedContact[];
+    packages: string[];
   };
   /** All the dependencies of the package (flattened) */
   dependencies: Dependencies;
@@ -217,6 +218,10 @@ export interface Payload {
     executionTime: number;
   };
 }
+
+export type SemverRange = string | "*";
+
+export type HighlightPackages = Record<string, SemverRange>;
 
 export interface Options {
   /**
@@ -253,6 +258,7 @@ export interface Options {
 
   highlight?: {
     contacts: Contact[];
+    packages?: HighlightPackages;
   };
 
   /**
