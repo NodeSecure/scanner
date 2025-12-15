@@ -281,6 +281,31 @@ describe("Extractors.Payload events", () => {
     assert.deepEqual(packumentEvents, expectedPackumentEvents);
     assert.deepEqual(manifestEvents, expectedManifestEvents);
   });
+
+  it("should emit error when extraction listener goes wrong", () => {
+    const extractor = new Extractors.Payload(
+      expressNodesecurePayload,
+      [
+        new Extractors.Probes.Licenses()
+      ]
+    );
+
+    const error = new Error("Listener error");
+    extractor.on("packument", () => {
+      throw error;
+    });
+
+    const packumentListenerErrors: Error[] = [];
+
+    extractor.onError((error) => {
+      packumentListenerErrors.push(error.cause as Error);
+    });
+
+    extractor.extract();
+
+    const expectedPackumentListenerErrors = packumentListenerErrors.map(() => error);
+    assert.deepEqual(packumentListenerErrors, expectedPackumentListenerErrors);
+  });
 });
 
 describe("Extractors.Callbacks", () => {

@@ -82,12 +82,12 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
 
     for (const [name, dependency] of Object.entries(this.dependencies)) {
       this.probes.packument.forEach((probe) => probe.next(name, dependency));
-      this.emit("packument", name, dependency);
+      this.#emit("packument", name, dependency);
 
       if (this.probes.manifest.length > 0) {
         for (const [spec, depVersion] of Object.entries(dependency.versions)) {
           this.probes.manifest.forEach((probe) => probe.next(spec, depVersion, { name, dependency }));
-          this.emit("manifest", spec, depVersion, { name, dependency });
+          this.#emit("manifest", spec, depVersion, { name, dependency });
         }
       }
     }
@@ -106,7 +106,38 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
     ) as unknown as MergedExtractProbeResult<T>;
   }
 
-  emit<T extends ProbeExtractorLevel>(
+  on<T extends ProbeExtractorLevel>(
+    e: T,
+    listener: ExtractorListener<T>
+  ): this {
+    const wrappedListener = (event: Event) => {
+      const customEvent = event as CustomEvent<ExtractorCallbackParams<T>>;
+      try {
+        listener(...customEvent.detail);
+      }
+      catch (error) {
+        this.#emitError(new Error(`An error occured during ${e} event`, { cause: error }));
+      }
+    };
+    this.addEventListener(e, wrappedListener);
+
+    return this;
+  }
+
+  onError(listener: (e: Error) => void) {
+    function wrappedListener(event: Event) {
+      const customErrorEvent = event as CustomEvent<Error>;
+      try {
+        listener(customErrorEvent.detail);
+      }
+      catch (error) {
+        console.warn("Something went wrong in error listener", { cause: error });
+      }
+    }
+    this.addEventListener("error", wrappedListener);
+  }
+
+  #emit<T extends ProbeExtractorLevel>(
     event: T,
     ...extractionDetails: unknown[]
   ) {
@@ -116,17 +147,12 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
     this.dispatchEvent(customEvent);
   }
 
-  on<T extends ProbeExtractorLevel>(
-    e: T,
-    listener: ExtractorListener<T>
-  ): this {
-    function wrappedListener(event: Event) {
-      const customEvent = event as CustomEvent<ExtractorCallbackParams<T>>;
-      listener(...customEvent.detail);
-    }
-    this.addEventListener(e, wrappedListener);
-
-    return this;
+  #emitError(e: Error
+  ) {
+    const customErrorEvent = new CustomEvent("error", {
+      detail: e
+    });
+    this.dispatchEvent(customErrorEvent);
   }
 }
 
