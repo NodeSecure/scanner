@@ -15,13 +15,19 @@
     "test-types": "attw --pack . --profile esm-only",
     "test": "c8 -r html npm run test-only && npm run test-types"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NodeSecure/scanner",
+    "directory": "workspaces/utils"
+  },
   "files": [
     "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NodeSecure/scanner.git"
-  },
   "bugs": {
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
