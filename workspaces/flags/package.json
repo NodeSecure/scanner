@@ -10,6 +10,16 @@
     "test": "c8 -r html npm run test-only && npm run test-types",
     "generateFlags": "node scripts/generateFlags.ts"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NodeSecure/scanner",
+    "directory": "workspaces/flags"
+  },
   "keywords": [
     "nodesecure",
     "flags",
@@ -34,10 +44,6 @@
     "dist"
   ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NodeSecure/scanner.git"
-  },
   "bugs": {
     "url": "https://github.com/NodeSecure/scanner/issues"
   },
