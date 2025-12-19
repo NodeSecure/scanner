@@ -9,18 +9,17 @@ export const LOCK_FILES = [
   ["deno", "deno.lock"]
 ];
 
-export function scanLockFiles(dirPath: string): null | object {
+export function scanLockFiles(dirPath: string): null | Record<string, string> {
   const dir = fs.readdirSync(dirPath);
   if (dir.length === 0) {
     return null;
   }
 
-  const result: [string, string][] = [];
-  for (const [k, v] of LOCK_FILES) {
-    if (dir.includes(v)) {
-      result.push([k, v]);
-    }
-  }
+  const filteredEntries = Array.from(LOCK_FILES).flatMap(function x([k, v]) {
+    return dir.includes(v) ? [[k, v]] : [];
+  });
 
-  return result.length === 0 ? null : result;
+  return filteredEntries.length === 0
+    ? null
+    : Object.fromEntries(filteredEntries);
 }

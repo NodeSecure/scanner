@@ -20,7 +20,7 @@ describe("scanLockFiles", () => {
       output.push([k, v]);
     }
 
-    assert.deepEqual(scanLockFiles(tmpDir), output);
+    assert.deepEqual(scanLockFiles(tmpDir), Object.fromEntries(output));
   });
 
   test("should return null no lockfiles", () => {
