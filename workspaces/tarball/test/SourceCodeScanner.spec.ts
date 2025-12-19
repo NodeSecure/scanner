@@ -21,29 +21,25 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const kFixturePath = path.join(__dirname, "fixtures", "scanPackage");
 
 describe("SourceCodeScanner", () => {
-  test("iterate() should throw if we provide no files", async() => {
+  test("iterate() should return empty report if we provide no files", async() => {
     const mama = loadFixtureManifest("entryfiles");
     const scanner = new SourceCodeScanner(mama);
 
-    await assert.rejects(
-      () => scanner.iterate({ manifest: [], javascript: [] }),
-      { message: "You must provide at least one file either in manifest or javascript" }
-    );
+    const report = await scanner.iterate({ manifest: [], javascript: [] });
+    assert.strictEqual(report.consumed, false);
   });
 
-  test("iterate() should throw if we provide a manifest that doesn't exist and zero JavaScript files", async() => {
+  test("iterate() should return empty report if we provide a manifest that doesn't exist and zero JavaScript files", async() => {
     const mama = loadFixtureManifest("entryfiles");
     const scanner = new SourceCodeScanner(mama);
 
-    await assert.rejects(
-      () => scanner.iterate({
-        manifest: [
-          "src/bar.js"
-        ],
-        javascript: []
-      }),
-      { message: "You must provide at least one javascript source file" }
-    );
+    const report = await scanner.iterate({
+      manifest: [
+        "src/bar.js"
+      ],
+      javascript: []
+    });
+    assert.strictEqual(report.consumed, false);
   });
 
   test("iterate() should properly trace and report required files using one manifest entry file", async() => {
