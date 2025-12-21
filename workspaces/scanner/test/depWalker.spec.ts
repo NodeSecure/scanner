@@ -163,10 +163,6 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
 
   assert.deepStrictEqual(walkErrors, [
     {
-      error: "You must provide at least one file either in manifest or javascript",
-      phase: "tarball-scan"
-    },
-    {
       error: "404 Not Found - GET https://registry.npmjs.org/pkg.gitdeps - Not found",
       phase: "tarball-scan"
     }

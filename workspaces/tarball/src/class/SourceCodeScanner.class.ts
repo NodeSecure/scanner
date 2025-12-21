@@ -153,22 +153,23 @@ export class SourceCodeScanner<
   async iterate(
     entries: SourceCodeEntries
   ): Promise<T> {
+    const report = this.#initNewReport();
     if (
       entries.manifest.length === 0 &&
       entries.javascript.length === 0
     ) {
-      throw new Error("You must provide at least one file either in manifest or javascript");
+      return report;
     }
 
     return entries.manifest.length > 0 ?
-      this.#iterateWithEntries(entries) :
-      this.#iterateAll(entries.javascript);
+      this.#iterateWithEntries(report, entries) :
+      this.#iterateAll(report, entries.javascript);
   }
 
   async #iterateWithEntries(
+    report: T,
     entries: SourceCodeEntries
   ): Promise<T> {
-    const report = this.#initNewReport();
     const { location } = this.manifest;
 
     const efa = new EntryFilesAnalyser({
@@ -187,21 +188,21 @@ export class SourceCodeScanner<
 
     return report.consumed ?
       report :
-      this.#iterateAll(entries.javascript);
+      this.#iterateAll(report, entries.javascript);
   }
 
   async #iterateAll(
+    report: T,
     sourceFiles: string[]
   ): Promise<T> {
     if (sourceFiles.length === 0) {
-      throw new Error("You must provide at least one javascript source file");
+      return report;
     }
 
     const {
       location,
       document: { name: packageName, type }
     } = this.manifest;
-    const report = this.#initNewReport();
 
     await Promise.allSettled(
       sourceFiles.map(async(relativeFile) => {

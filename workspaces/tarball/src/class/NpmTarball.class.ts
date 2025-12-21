@@ -29,7 +29,9 @@ export interface ScannedFilesResult {
 }
 
 export class NpmTarball {
-  static JS_EXTENSIONS = new Set([".js", ".mjs", ".cjs"]);
+  static JS_EXTENSIONS = new Set([
+    ".js", ".mjs", ".cjs"
+  ]);
 
   manifest: LocatedManifestManager;
 
