@@ -15,9 +15,8 @@ export function scanLockFiles(dirPath: string): null | Record<string, string> {
     return null;
   }
 
-  const filteredEntries = Array.from(LOCK_FILES).flatMap(function x([k, v]) {
-    return dir.includes(v) ? [[k, v]] : [];
-  });
+  const filteredEntries = Array.from(LOCK_FILES).flatMap(([k, v]) => (dir.includes(v) ? [[k, v]] : [])
+  );
 
   return filteredEntries.length === 0
     ? null
