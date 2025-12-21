@@ -221,7 +221,7 @@ export interface Payload {
 
 export type SemverRange = string | "*";
 
-export type HighlightPackages = Record<string, SemverRange>;
+export type HighlightPackages = string[] | Record<string, string[] | SemverRange>;
 
 export interface Options {
   /**

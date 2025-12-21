@@ -252,6 +252,33 @@ test("should highlight the given packages", async() => {
   );
 });
 
+test("should support multiple formats for packages highlighted", async() => {
+  const { logger } = errorLogger();
+  test.after(() => logger.removeAllListeners());
+
+  const hightlightPackages = ["zen-observable@0.8.14 || 0.8.15", "nanoid"];
+
+  const result = await depWalker(
+    pkgHighlightedPackages,
+    structuredClone({
+      ...kDefaultWalkerOptions,
+      highlight: {
+        packages: hightlightPackages,
+        contacts: []
+      }
+    }),
+    logger
+  );
+
+  assert.deepStrictEqual(
+    result.highlighted.packages.sort(),
+    [
+      "nanoid@5.1.6",
+      "zen-observable@0.8.15"
+    ]
+  );
+});
+
 test("fetch payload of pacote on the npm registry", async() => {
   const result = await from(
     "pacote",
