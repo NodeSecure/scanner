@@ -38,6 +38,7 @@ import type {
   Options,
   Payload
 } from "./types.ts";
+import { parseSemverRange } from "./utils/parseSemverRange.ts";
 
 // CONSTANTS
 const kDefaultDependencyVersionFields = {
@@ -300,9 +301,10 @@ export async function depWalker(
         });
       }
     }
+    const semverRanges = parseSemverRange(options.highlight?.packages ?? {});
     for (const version of Object.entries(dependency.versions)) {
       const [verStr, verDescriptor] = version as [string, DependencyVersion];
-      const range = options.highlight?.packages?.[packageName];
+      const range = semverRanges?.[packageName];
       if (range && semver.satisfies(verStr, range)) {
         highlightedPackages.add(`${packageName}@${verStr}`);
       }
