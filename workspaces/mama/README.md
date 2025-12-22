@@ -38,7 +38,7 @@ This package exports a set of standalone utilities that are internally used by t
 - [packageJSONIntegrityHash](./docs/packageJSONIntegrityHash.md)
 - [parseNpmSpec](./docs/parseNpmSpec.md)
 - [inspectModuleType](./docs/inspectModuleType.md)
-- [scanLockFiles](./docs/scan-lockfiles.md)
+- [scanLockFiles](./docs/scanLockFiles.md)
 
 ## ManifestManager API
 
