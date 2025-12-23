@@ -201,7 +201,7 @@ export class SourceCodeScanner<
 
     const {
       location,
-      document: { name: packageName, type }
+      document: { name: packageName }
     } = this.manifest;
 
     await Promise.allSettled(
@@ -210,8 +210,7 @@ export class SourceCodeScanner<
         const fileReport = await this.#astAnalyser.analyseFile(
           filePath,
           {
-            packageName,
-            module: type === "module"
+            packageName
           }
         );
 
