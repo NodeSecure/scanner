@@ -257,7 +257,7 @@ export interface Options {
   };
 
   highlight?: {
-    contacts: Contact[];
+    contacts?: Contact[];
     packages?: HighlightPackages;
   };
 
