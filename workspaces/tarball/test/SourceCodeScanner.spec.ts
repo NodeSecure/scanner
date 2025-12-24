@@ -136,6 +136,46 @@ describe("SourceCodeScanner", () => {
       ]
     );
   });
+
+  test("iterate() should report typescript files", async() => {
+    const mama = loadFixtureManifest("tsOnly");
+    const astAnalyser = new AstAnalyser();
+    const aggregator = createAggregator();
+
+    const scanner = new SourceCodeScanner(mama, {
+      reportInitiator: () => aggregator,
+      astAnalyser
+    });
+    await scanner.iterate({
+      manifest: [
+        "src/index.ts"
+      ],
+      javascript: []
+    });
+
+    const { reports } = aggregator;
+
+    const firstReport = reports[0];
+    if (firstReport.ok) {
+      assert.ok(firstReport.dependencies.has("node:http"));
+      assert.ok(firstReport.dependencies.has("./bar.ts"));
+    }
+    else {
+      assert.fail("First report should be ok");
+    }
+
+    const files = reports
+      .map((report) => path.normalize(report.file))
+      .sort();
+
+    assert.deepEqual(
+      files,
+      [
+        "src\\index.ts",
+        "src\\bar.ts"
+      ].sort()
+    );
+  });
 });
 
 function loadFixtureManifest(
