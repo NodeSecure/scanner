@@ -1,5 +1,15 @@
 # @nodesecure/mama
 
+## 2.1.0
+
+### Minor Changes
+
+- [#582](https://github.com/NodeSecure/scanner/pull/582) [`d6c08cb`](https://github.com/NodeSecure/scanner/commit/d6c08cba0548cc54eb38601ad273a4c3a1900184) Thanks [@codingdestro](https://github.com/codingdestro)! - Added lockfile scanning utils
+
+### Patch Changes
+
+- [#592](https://github.com/NodeSecure/scanner/pull/592) [`407db4d`](https://github.com/NodeSecure/scanner/commit/407db4d86162e796030369781db285454249573e) Thanks [@fraxken](https://github.com/fraxken)! - Refactor scanLockFiles
+
 ## 2.0.2
 
 ### Patch Changes

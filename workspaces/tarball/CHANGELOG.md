@@ -1,5 +1,18 @@
 # @nodesecure/tarball
 
+## 3.0.0
+
+### Major Changes
+
+- [#593](https://github.com/NodeSecure/scanner/pull/593) [`5a91b4d`](https://github.com/NodeSecure/scanner/commit/5a91b4d9baf0376072ab37cb57dbffa0fb845a06) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to major v11
+
+### Patch Changes
+
+- [#589](https://github.com/NodeSecure/scanner/pull/589) [`e920b6d`](https://github.com/NodeSecure/scanner/commit/e920b6d6c5b37221774058c47403c6a0a957767d) Thanks [@fraxken](https://github.com/fraxken)! - Never throw in SourceCodeScanner because it break the scanner pipeline
+
+- Updated dependencies [[`407db4d`](https://github.com/NodeSecure/scanner/commit/407db4d86162e796030369781db285454249573e), [`d6c08cb`](https://github.com/NodeSecure/scanner/commit/d6c08cba0548cc54eb38601ad273a4c3a1900184)]:
+  - @nodesecure/mama@2.1.0
+
 ## 2.3.0
 
 ### Minor Changes
