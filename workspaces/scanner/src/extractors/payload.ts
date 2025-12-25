@@ -109,11 +109,36 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
   on<T extends ProbeExtractorLevel>(
     e: T,
     listener: ExtractorListener<T>
+  ): this;
+  on(
+    e: "error",
+    listener: ErrorListener
+  ): this;
+  on<
+    TEvent extends ProbeExtractorLevel | "error",
+    TListener = TEvent extends ProbeExtractorLevel ? ExtractorListener<TEvent> : ErrorListener>(
+    e: TEvent,
+    listener: TListener
   ): this {
+    if (e === "error") {
+      function wrappedErrorListener(event: Event) {
+        const customErrorEvent = event as CustomEvent<Error>;
+        try {
+          (listener as ErrorListener)(customErrorEvent.detail);
+        }
+        catch (error) {
+          console.warn("Something went wrong in error listener", { cause: error });
+        }
+      }
+      this.addEventListener(e, wrappedErrorListener);
+
+      return this;
+    }
+
     const wrappedListener = (event: Event) => {
-      const customEvent = event as CustomEvent<ExtractorCallbackParams<T>>;
+      const customEvent = event as CustomEvent<ExtractorCallbackParams<ProbeExtractorLevel>>;
       try {
-        listener(...customEvent.detail);
+        (listener as ExtractorListener<ProbeExtractorLevel>)(...customEvent.detail);
       }
       catch (error) {
         this.#emitError(new Error(`An error occured during ${e} event`, { cause: error }));
@@ -122,19 +147,6 @@ export class Payload<T extends ProbeExtractor<any>[]> extends EventTarget {
     this.addEventListener(e, wrappedListener);
 
     return this;
-  }
-
-  onError(listener: (e: Error) => void) {
-    function wrappedListener(event: Event) {
-      const customErrorEvent = event as CustomEvent<Error>;
-      try {
-        listener(customErrorEvent.detail);
-      }
-      catch (error) {
-        console.warn("Something went wrong in error listener", { cause: error });
-      }
-    }
-    this.addEventListener("error", wrappedListener);
   }
 
   #emit<T extends ProbeExtractorLevel>(
@@ -188,6 +200,8 @@ export type ExtractorCallbackParams<T extends ProbeExtractorLevel> = Parameters<
 export type ExtractorListener<T extends ProbeExtractorLevel> = (
   ...events: CustomEvent<ExtractorCallbackParams<T>>["detail"]
 ) => void;
+
+type ErrorListener = (e: Error) => void;
 
 function noop() {
   return void 0;
