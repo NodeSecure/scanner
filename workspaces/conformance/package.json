@@ -47,7 +47,7 @@
   },
   "dependencies": {
     "@nodesecure/mama": "^2.0.0",
-    "@openally/result": "^1.2.1",
+    "@openally/result": "^2.0.0",
     "astring": "^1.9.0",
     "fastest-levenshtein": "^1.0.16",
     "spdx-expression-parse": "^4.0.0"
