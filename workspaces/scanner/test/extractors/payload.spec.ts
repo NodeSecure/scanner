@@ -297,7 +297,7 @@ describe("Extractors.Payload events", () => {
 
     const packumentListenerErrors: Error[] = [];
 
-    extractor.onError((error) => {
+    extractor.on("error", (error) => {
       packumentListenerErrors.push(error.cause as Error);
     });
 
