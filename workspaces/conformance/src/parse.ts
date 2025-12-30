@@ -1,6 +1,6 @@
 // Import Third-party Dependencies
 import parseExpressions from "spdx-expression-parse";
-import { Result, Ok, Err } from "@openally/result";
+import { type Result, Ok, Err } from "@openally/result";
 
 // Import Internal Dependencies
 import {

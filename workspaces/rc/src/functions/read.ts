@@ -4,7 +4,7 @@ import { once } from "node:events";
 
 // Import Third-party Dependencies
 import { AsynchronousConfig } from "@openally/config";
-import { Ok, Err, Result } from "@openally/result";
+import { Ok, Err, type Result } from "@openally/result";
 import type { RequireAtLeastOne } from "type-fest";
 
 // Import Internal Dependencies

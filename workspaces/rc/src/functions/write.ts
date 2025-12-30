@@ -3,7 +3,7 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import { AsynchronousConfig } from "@openally/config";
-import { Ok, Err, Result } from "@openally/result";
+import { Ok, Err, type Result } from "@openally/result";
 
 // Import Internal Dependencies
 import { JSONSchema, type RC } from "../rc.ts";
