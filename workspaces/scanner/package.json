@@ -68,7 +68,7 @@
     "@nodesecure/contact": "^3.0.0",
     "@nodesecure/flags": "^3.0.3",
     "@nodesecure/i18n": "^4.0.2",
-    "@nodesecure/js-x-ray": "11.0.1",
+    "@nodesecure/js-x-ray": "11.1.0",
     "@nodesecure/mama": "^2.0.2",
     "@nodesecure/npm-registry-sdk": "^4.4.0",
     "@nodesecure/npm-types": "^1.3.0",
@@ -89,7 +89,6 @@
     "@npmcli/config": "^10.4.2",
     "@types/node": "^24.0.2",
     "@types/npmcli__config": "^6.0.3",
-    "c8": "^10.1.3",
-    "typescript": "^5.8.3"
+    "c8": "^10.1.3"
   }
 }
