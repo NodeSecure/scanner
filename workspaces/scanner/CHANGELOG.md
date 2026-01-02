@@ -1,5 +1,31 @@
 # @nodesecure/scanner
 
+## 9.0.0
+
+### Major Changes
+
+- [#593](https://github.com/NodeSecure/scanner/pull/593) [`5a91b4d`](https://github.com/NodeSecure/scanner/commit/5a91b4d9baf0376072ab37cb57dbffa0fb845a06) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to major v11
+
+### Minor Changes
+
+- [#590](https://github.com/NodeSecure/scanner/pull/590) [`388ee3d`](https://github.com/NodeSecure/scanner/commit/388ee3d8b9f5a1645eabed87467bf91accd69ad5) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): support more formats for highlight.packages
+
+- [#596](https://github.com/NodeSecure/scanner/pull/596) [`98b9705`](https://github.com/NodeSecure/scanner/commit/98b970521015867acf5652fd37d74bb3e79b1dd7) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(scanner): make highlight contacts optional
+
+- [#584](https://github.com/NodeSecure/scanner/pull/584) [`df67b07`](https://github.com/NodeSecure/scanner/commit/df67b07bae789fef3c3ac1241323a34293258c5b) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(deepWalker): highlight packages
+
+### Patch Changes
+
+- [#586](https://github.com/NodeSecure/scanner/pull/586) [`e5e09b2`](https://github.com/NodeSecure/scanner/commit/e5e09b2ceb1a6acf8dd5ff2b983cd036de93a683) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - fix(extractor): improve error handling for event listener
+
+- [#597](https://github.com/NodeSecure/scanner/pull/597) [`eb51d04`](https://github.com/NodeSecure/scanner/commit/eb51d044eb3abc31280612fc21e6f07e6ebd0ea4) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - feat(extractor): use standard error event hook
+
+- Updated dependencies [[`c04c8d7`](https://github.com/NodeSecure/scanner/commit/c04c8d785e71610fe701092417218c45784e5b92), [`407db4d`](https://github.com/NodeSecure/scanner/commit/407db4d86162e796030369781db285454249573e), [`3365790`](https://github.com/NodeSecure/scanner/commit/33657903e66a9bdb8ff5fb02673bec7211061d14), [`d6c08cb`](https://github.com/NodeSecure/scanner/commit/d6c08cba0548cc54eb38601ad273a4c3a1900184), [`e920b6d`](https://github.com/NodeSecure/scanner/commit/e920b6d6c5b37221774058c47403c6a0a957767d), [`5a91b4d`](https://github.com/NodeSecure/scanner/commit/5a91b4d9baf0376072ab37cb57dbffa0fb845a06)]:
+  - @nodesecure/conformance@1.2.1
+  - @nodesecure/rc@5.0.2
+  - @nodesecure/mama@2.1.0
+  - @nodesecure/tarball@3.0.0
+
 ## 8.2.0
 
 ### Minor Changes
