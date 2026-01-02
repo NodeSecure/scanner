@@ -1,5 +1,11 @@
 # @nodesecure/rc
 
+## 5.0.2
+
+### Patch Changes
+
+- [#599](https://github.com/NodeSecure/scanner/pull/599) [`c04c8d7`](https://github.com/NodeSecure/scanner/commit/c04c8d785e71610fe701092417218c45784e5b92) Thanks [@fraxken](https://github.com/fraxken)! - Update @openally/result to v2.0.0
+
 ## 5.0.1
 
 ### Patch Changes

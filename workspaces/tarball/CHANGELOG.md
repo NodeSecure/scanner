@@ -1,5 +1,23 @@
 # @nodesecure/tarball
 
+## 3.0.0
+
+### Major Changes
+
+- [#593](https://github.com/NodeSecure/scanner/pull/593) [`5a91b4d`](https://github.com/NodeSecure/scanner/commit/5a91b4d9baf0376072ab37cb57dbffa0fb845a06) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to major v11
+
+### Minor Changes
+
+- [#594](https://github.com/NodeSecure/scanner/pull/594) [`3365790`](https://github.com/NodeSecure/scanner/commit/33657903e66a9bdb8ff5fb02673bec7211061d14) Thanks [@fraxken](https://github.com/fraxken)! - Integrate support of TypeScript source files
+
+### Patch Changes
+
+- [#589](https://github.com/NodeSecure/scanner/pull/589) [`e920b6d`](https://github.com/NodeSecure/scanner/commit/e920b6d6c5b37221774058c47403c6a0a957767d) Thanks [@fraxken](https://github.com/fraxken)! - Never throw in SourceCodeScanner because it break the scanner pipeline
+
+- Updated dependencies [[`c04c8d7`](https://github.com/NodeSecure/scanner/commit/c04c8d785e71610fe701092417218c45784e5b92), [`407db4d`](https://github.com/NodeSecure/scanner/commit/407db4d86162e796030369781db285454249573e), [`d6c08cb`](https://github.com/NodeSecure/scanner/commit/d6c08cba0548cc54eb38601ad273a4c3a1900184)]:
+  - @nodesecure/conformance@1.2.1
+  - @nodesecure/mama@2.1.0
+
 ## 2.3.0
 
 ### Minor Changes

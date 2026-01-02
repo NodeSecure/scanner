@@ -1,5 +1,14 @@
 # @nodesecure/conformance
 
+## 1.2.1
+
+### Patch Changes
+
+- [#599](https://github.com/NodeSecure/scanner/pull/599) [`c04c8d7`](https://github.com/NodeSecure/scanner/commit/c04c8d785e71610fe701092417218c45784e5b92) Thanks [@fraxken](https://github.com/fraxken)! - Update @openally/result to v2.0.0
+
+- Updated dependencies [[`407db4d`](https://github.com/NodeSecure/scanner/commit/407db4d86162e796030369781db285454249573e), [`d6c08cb`](https://github.com/NodeSecure/scanner/commit/d6c08cba0548cc54eb38601ad273a4c3a1900184)]:
+  - @nodesecure/mama@2.1.0
+
 ## 1.2.0
 
 ### Minor Changes
