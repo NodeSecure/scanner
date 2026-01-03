@@ -13,6 +13,18 @@ Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/sca
 
 - [Node.js](https://nodejs.org/en/) version 22 or higher
 
+## Features
+
+Scanner builds on [JS-X-Ray](https://github.com/NodeSecure/js-x-ray) (SAST) and [Vulnera](https://github.com/NodeSecure/vulnera) (CVE detection), and adds additional detections such as:
+
+- Detects:
+  - [Manifest confusion](https://blog.vlt.sh/blog/the-massive-hole-in-the-npm-ecosystem)
+  - [Dependency confusion](https://www.landh.tech/blog/20250610-netflix-vulnerability-dependency-confusion/)
+  - Typosquatting of popular package names
+  - Install scripts (e.g. `install`, `preinstall`, `postinstall`, `preuninstall`, `postuninstall`)
+- Highlights packages by name, version(s), or maintainer
+- Supports NPM and Yarn lockfiles
+
 ## Getting Started
 
 This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
