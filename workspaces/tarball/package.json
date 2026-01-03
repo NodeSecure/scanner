@@ -47,10 +47,11 @@
   "dependencies": {
     "@nodesecure/conformance": "^1.2.1",
     "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/js-x-ray": "11.1.0",
+    "@nodesecure/js-x-ray": "11.2.0",
     "@nodesecure/mama": "^2.1.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
+    "ipaddr.js": "2.3.0",
     "pacote": "^21.0.0"
   },
   "devDependencies": {

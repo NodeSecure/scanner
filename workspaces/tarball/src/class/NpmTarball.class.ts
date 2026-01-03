@@ -9,6 +9,8 @@ import {
 } from "@nodesecure/mama";
 import {
   AstAnalyser,
+  CollectableSet,
+  warnings,
   type AstAnalyserOptions
 } from "@nodesecure/js-x-ray";
 
@@ -21,6 +23,7 @@ import {
   getTarballComposition,
   type TarballComposition
 } from "../utils/index.ts";
+import { DnsResolver } from "./DnsResolver.class.ts";
 
 export interface ScannedFilesResult {
   composition: TarballComposition;
@@ -64,7 +67,11 @@ export class NpmTarball {
       code = new SourceCodeReport();
     }
     else {
-      const astAnalyser = new AstAnalyser(astAnalyserOptions);
+      const options = this.#optionsWithHostnameSet(astAnalyserOptions ?? {});
+
+      const hostNameSet = options?.collectables?.find((collectable) => collectable.type === "hostname")!;
+
+      const astAnalyser = new AstAnalyser(options);
 
       code = await new SourceCodeScanner(this.manifest, { astAnalyser }).iterate({
         manifest: [...this.manifest.getEntryFiles()]
@@ -72,6 +79,25 @@ export class NpmTarball {
         javascript: composition.files
           .flatMap(filterJavaScriptFiles())
       });
+
+      const dns = new DnsResolver();
+      const operationQueue =
+        Array.from(hostNameSet).flatMap(({ value, locations }) => locations.map(({ file, location }) => dns.isPrivateHost(value)
+          .then((isPrivate) => {
+            if (isPrivate) {
+              code.warnings.push({
+                kind: "shady-link",
+                ...warnings["shady-link"],
+                file: file ?? undefined,
+                location,
+                value,
+                source: "Scanner"
+              });
+            }
+          })
+        )
+        );
+      await Promise.allSettled(operationQueue);
     }
 
     return {
@@ -79,6 +105,15 @@ export class NpmTarball {
       composition,
       code
     };
+  }
+
+  #optionsWithHostnameSet(options: AstAnalyserOptions): AstAnalyserOptions {
+    const hasHostnameSet = options?.collectables?.some((collectable) => collectable.type === "hostname");
+    if (hasHostnameSet) {
+      return options;
+    }
+
+    return { ...options, collectables: [...options.collectables ?? [], new CollectableSet("hostname")] };
   }
 }
 
