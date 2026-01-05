@@ -19,7 +19,7 @@ import { comparePayloads } from "./comparePayloads.ts";
 import type { Options } from "./types.ts";
 
 // CONSTANTS
-const kDefaultCwdOptions = {
+const kDefaultWorkingDirOptions = {
   forceRootAnalysis: true,
   includeDevDeps: false
 };
@@ -27,7 +27,7 @@ const kDefaultCwdOptions = {
 export * from "./types.ts";
 export * from "./extractors/index.ts";
 
-export type CwdOptions = Options & {
+export type WorkingDirOptions = Options & {
   /**
    * NPM runtime configuration (such as local .npmrc file)
    * It is optionally used to fetch registry authentication tokens
@@ -35,9 +35,9 @@ export type CwdOptions = Options & {
   npmRcConfig?: Config;
 };
 
-export async function cwd(
+export async function workingDir(
   location = process.cwd(),
-  options: CwdOptions = {},
+  options: WorkingDirOptions = {},
   logger = new Logger()
 ) {
   const registry = options.registry ?
@@ -50,7 +50,7 @@ export async function cwd(
 
   const finalizedOptions = Object.assign(
     { location },
-    kDefaultCwdOptions,
+    kDefaultWorkingDirOptions,
     {
       ...options,
       packageLock,

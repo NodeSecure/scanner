@@ -62,9 +62,9 @@ await Promise.allSettled(promises);
 See [types.ts](https://github.com/NodeSecure/scanner/blob/master/workspaces/scanner/src/types.ts) for a complete TypeScript definition.
 
 ```ts
-function cwd(
+function workingDir(
   location: string,
-  options?: Scanner.CwdOptions,
+  options?: Scanner.WorkingDirOptions,
   logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function from(
@@ -77,11 +77,11 @@ function verify(
 ): Promise<tarball.ScannedPackageResult>;
 ```
 
-`CwdOptions` and `FromOptions` are described with the following TypeScript interfaces:
+`WorkingDirOptions` and `FromOptions` are described with the following TypeScript interfaces:
 
 ```ts
 
-type CwdOptions = Options & {
+type WorkingDirOptions = Options & {
   /**
    * NPM runtime configuration (such as local .npmrc file)
    * It is optionally used to fetch registry authentication tokens
@@ -94,7 +94,7 @@ type FromOptions = Omit<Options, "includeDevDeps">;
 interface Options {
   /**
    * Specifies the maximum depth to traverse for each root dependency.
-   * For example, a value of 2 would mean only traversing dependencies and their immediate dependencies.
+   * A value of 2 would mean only traversing deps and their immediate deps.
    *
    * @default Infinity
    */

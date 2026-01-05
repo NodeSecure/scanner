@@ -14,7 +14,7 @@ import { depWalker } from "../src/depWalker.ts";
 import {
   Logger,
   from,
-  cwd,
+  workingDir,
   type Payload,
   type DependencyVersion
 } from "../src/index.ts";
@@ -342,7 +342,7 @@ test("highlight contacts from a remote package", async() => {
 
 describe("scanner.cwd()", () => {
   test("should parse author, homepage and links for a local package who doesn't exist on the remote registry", async() => {
-    const result = await cwd(path.join(kFixturePath, "non-npm-package"));
+    const result = await workingDir(path.join(kFixturePath, "non-npm-package"));
 
     const dep = result.dependencies["non-npm-package"];
     const v1 = dep.versions["1.0.0"];
@@ -368,7 +368,7 @@ describe("scanner.cwd()", () => {
   });
 
   test("should parse local manifest author field without throwing when attempting to highlight contacts", async() => {
-    const { dependencies } = await cwd(
+    const { dependencies } = await workingDir(
       path.join(kFixturePath, "non-valid-authors")
     );
     const pkg = dependencies["random-package"];
@@ -380,7 +380,7 @@ describe("scanner.cwd()", () => {
   });
 
   test("should scan a workspace package.json and assign 'workspace' as the package name", async() => {
-    const result = await cwd(
+    const result = await workingDir(
       path.join(kFixturePath, "workspace-no-name-version")
     );
 
