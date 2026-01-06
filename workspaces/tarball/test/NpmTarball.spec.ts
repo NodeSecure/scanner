@@ -36,7 +36,7 @@ describe("NpmTarball", () => {
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-1`
+        file: path.join(kShadyLinkPath, "private-ip-1")
       },
       {
         ...warnings["shady-link"],
@@ -44,14 +44,14 @@ describe("NpmTarball", () => {
         location: [[[3, 19], [3, 51]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-2`
+        file: path.join(kShadyLinkPath, "private-ip-2")
       },
       {
         ...warnings["shady-link"],
         kind: "shady-link",
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
-        file: `${kShadyLinkPath}/private-ip-2`,
+        file: path.join(kShadyLinkPath, "private-ip-2"),
         value: "192-168-1-250.sslip.io"
       }].sort(compareWarning)
     );
@@ -71,7 +71,7 @@ describe("NpmTarball", () => {
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-1`
+        file: path.join(kShadyLinkPath, "private-ip-1")
       },
       {
         ...warnings["shady-link"],
@@ -79,14 +79,14 @@ describe("NpmTarball", () => {
         location: [[[3, 19], [3, 51]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-2`
+        file: path.join(kShadyLinkPath, "private-ip-2")
       },
       {
         ...warnings["shady-link"],
         kind: "shady-link",
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
-        file: `${kShadyLinkPath}/private-ip-2`,
+        file: path.join(kShadyLinkPath, "private-ip-2"),
         value: "192-168-1-250.sslip.io"
       }].sort(compareWarning)
     );
@@ -108,7 +108,7 @@ describe("NpmTarball", () => {
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-1`
+        file: path.join(kShadyLinkPath, "private-ip-1")
       },
       {
         ...warnings["shady-link"],
@@ -116,14 +116,14 @@ describe("NpmTarball", () => {
         location: [[[3, 19], [3, 51]]] as SourceArrayLocation[],
         source: "Scanner",
         value: "10.0.0.1.sslip.io",
-        file: `${kShadyLinkPath}/private-ip-2`
+        file: path.join(kShadyLinkPath, "private-ip-2")
       },
       {
         ...warnings["shady-link"],
         kind: "shady-link",
         location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
         source: "Scanner",
-        file: `${kShadyLinkPath}/private-ip-2`,
+        file: path.join(kShadyLinkPath, "private-ip-2"),
         value: "192-168-1-250.sslip.io"
       }].sort(compareWarning)
     );
