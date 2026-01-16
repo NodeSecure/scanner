@@ -50,7 +50,7 @@ export function packageJSONIntegrityHash(
   const object: PackageJSONIntegrityObject = {
     name,
     version,
-    dependencies,
+    dependencies: document?.optionalDependencies ? { ...dependencies, ...document.optionalDependencies } : dependencies,
     license,
     /**
      * Note: NPM registry automatically add `./node_modules/.bin/` to scripts

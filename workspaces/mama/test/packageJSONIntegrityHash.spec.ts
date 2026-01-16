@@ -64,4 +64,30 @@ describe("packageJSONIntegrityHash", () => {
       );
     }
   });
+
+  test("should include optional dependencies in the hash when there is some", () => {
+    const packageJSONWithOptionalDeps = {
+      ...kMinimalPackageJSON,
+      optionalDependencies: {
+        canvas: "^2.11.0"
+      }
+    };
+
+    const expectedObject = {
+      ...kMinimalPackageJSON,
+      dependencies: {
+        canvas: "^2.11.0"
+      },
+      scripts: {},
+      license: "NONE"
+
+    };
+
+    const expectedIntegrity = hash(expectedObject);
+
+    const { integrity, object } = packageJSONIntegrityHash(packageJSONWithOptionalDeps, { isFromRemoteRegistry: true });
+
+    assert.deepEqual(object, expectedObject);
+    assert.strictEqual(integrity, expectedIntegrity);
+  });
 });
