@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tree-walker#readme",
   "dependencies": {
-    "@nodesecure/js-x-ray": "11.2.0",
+    "@nodesecure/js-x-ray": "11.3.0",
     "@nodesecure/npm-registry-sdk": "^4.0.0",
     "@nodesecure/npm-types": "^1.1.0",
     "@npmcli/arborist": "9.1.9",
