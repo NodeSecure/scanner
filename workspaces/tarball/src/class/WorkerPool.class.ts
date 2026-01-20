@@ -1,7 +1,10 @@
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
-import PiscinaImport from 'piscina';
-import type { AstAnalyserOptions, ReportOnFile } from '@nodesecure/js-x-ray';
+// Import Node.js Dependencies
+import { fileURLToPath } from "node:url";
+import path from "node:path";
+
+// Import Third-party Dependencies
+import PiscinaImport from "piscina";
+import type { AstAnalyserOptions, ReportOnFile } from "@nodesecure/js-x-ray";
 
 const Piscina = PiscinaImport.default || PiscinaImport;
 
@@ -13,12 +16,30 @@ export interface AnalyseFileOptions {
 }
 
 interface WorkerResponse {
-  s: boolean; // success
-  r?: ReportOnFile; // result
+  /**
+   * Success flag
+   */
+  s: boolean;
+  /**
+   * Result data
+   */
+  r?: ReportOnFile;
+  /**
+   * Error details
+   */
   e?: {
-    c: string; // code
-    m: string; // message
-    f: string; // filepath
+    /**
+     * Error code
+     */
+    c: string;
+    /**
+     * Error message
+     */
+    m: string;
+    /**
+     * File path
+     */
+    f: string;
   };
   file: string;
 }
@@ -32,11 +53,11 @@ export interface BatchResult {
 
 /**
  * Worker Pool manager for parallel AST analysis using Worker Threads.
- * 
+ *
  * @class WorkerPool
  * @description Singleton Worker Pool that distributes file analysis across multiple threads.
  * Automatically scales based on CPU cores and available memory.
- * 
+ *
  * @example
  * ```typescript
  * const pool = WorkerPool.getInstance();
@@ -52,13 +73,15 @@ export class WorkerPool {
   private constructor() {
     const maxThreads = this.calculateOptimalThreads();
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const workerPath = path.join(__dirname, '../workers/scanner.worker.js');
+    const workerPath = path.join(__dirname, "../workers/scanner.worker.js");
 
     this.pool = new Piscina({
       filename: workerPath,
       maxThreads,
-      minThreads: maxThreads, // Pre-create all workers
-      idleTimeout: 300000, // 5 minutes
+      // Pre-create all workers
+      minThreads: maxThreads,
+      // 5 minutes idle timeout
+      idleTimeout: 300000,
       resourceLimits: {
         maxOldGenerationSizeMb: 512,
         maxYoungGenerationSizeMb: 128
@@ -73,17 +96,21 @@ export class WorkerPool {
   private async warmupWorkers(): Promise<void> {
     // True JIT Warmup: Force V8 to compile the analysis hot paths
     // We send a task that actually runs the analyser
-    const warmupTasks = Array.from({ length: this.pool.threads.length }, () => 
-      this.pool.run({ 
-        files: [], 
-        options: { 
+    const warmupTasks = Array.from(
+      { length: this.pool.threads.length },
+      () => this.pool.run({
+        files: [],
+        options: {
           astAnalyserOptions: { isMinified: false },
-          fileOptions: { packageName: 'warmup' } 
+          fileOptions: { packageName: "warmup" }
         },
-        isWarmup: true // Custom flag signals worker to run dummy analysis
-      }).catch(() => {})
+        // Custom flag signals worker to run dummy analysis
+        isWarmup: true
+      }).catch(() => {
+        // Warmup error ignored
+      })
     );
-    
+
     Promise.allSettled(warmupTasks).then(() => {
       // Warmup complete (silently)
     });
@@ -92,7 +119,7 @@ export class WorkerPool {
   /**
    * Get the singleton instance of WorkerPool.
    * Creates a new instance if one doesn't exist.
-   * 
+   *
    * @returns {WorkerPool} The singleton WorkerPool instance
    */
   static getInstance(): WorkerPool {
@@ -106,7 +133,7 @@ export class WorkerPool {
   /**
    * Analyze a batch of files using Worker Threads.
    * Returns validation results for each file independently.
-   * 
+   *
    * @param {string[]} files - Array of absolute file paths
    * @param {AnalyseFileOptions} options - Analysis options
    * @returns {Promise<BatchResult[]>} Array of results
@@ -128,8 +155,9 @@ export class WorkerPool {
 
       if (res.s) {
         result.result = res.r;
-      } else {
-        const error: any = new Error(res.e?.m || 'Worker analysis failed');
+      }
+      else {
+        const error: any = new Error(res.e?.m || "Worker analysis failed");
         error.code = res.e?.c;
         error.filePath = res.e?.f;
         result.error = error;
@@ -142,7 +170,7 @@ export class WorkerPool {
   /**
    * Analyze a JavaScript/TypeScript file using Worker Threads.
    * Falls back to synchronous analysis in Worker on error.
-   * 
+   *
    * @param {string} filePath - Absolute path to file
    * @param {AnalyseFileOptions} options - Analysis options
    * @returns {Promise<ReportOnFile>} Analysis result
@@ -173,7 +201,7 @@ export class WorkerPool {
   }
 
   private setupGracefulShutdown(): void {
-    process.on('beforeExit', async () => {
+    process.on("beforeExit", async() => {
       if (WorkerPool.instance) {
         await this.destroy();
       }

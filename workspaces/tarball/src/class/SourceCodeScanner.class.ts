@@ -1,3 +1,4 @@
+// Import Node.js Dependencies
 import path from "node:path";
 
 // Import Third-party Dependencies
@@ -204,17 +205,17 @@ export class SourceCodeScanner<
     } = this.manifest;
 
     const workersAvailable = await this.#checkWorkerSupport();
-    
+
     // Intelligent Threshold: Use workers only when parallelism benefit > overhead
     // Analysis: Worker overhead ~1.5s, avg file analysis ~10ms
     // Break-even: ~250-280 files (tested: 280 files = +10% gain)
     // Benchmark data: 280 files with 2 workers = +10.1% improvement
     const useWorkers = workersAvailable &&
-                       process.env.NODE_SECURE_DISABLE_WORKERS !== 'true' &&
-                       sourceFiles.length >= 250;
+      process.env.NODE_SECURE_DISABLE_WORKERS !== "true" &&
+      sourceFiles.length >= 250;
 
     if (useWorkers) {
-      const { WorkerPool } = await import('./WorkerPool.class.js');
+      const { WorkerPool } = await import("./WorkerPool.class.js");
       const pool = WorkerPool.getInstance();
 
       // Dynamic Load Balancing: Use smaller batches (e.g., 40 files)
@@ -222,7 +223,7 @@ export class SourceCodeScanner<
       // where one worker gets stuck with complex files while the other sits idle.
       const BATCH_SIZE = 40;
       const packageGroups: string[][] = [];
-      
+
       for (let i = 0; i < sourceFiles.length; i += BATCH_SIZE) {
         packageGroups.push(sourceFiles.slice(i, i + BATCH_SIZE));
       }
@@ -241,7 +242,8 @@ export class SourceCodeScanner<
 
               if (result.ok && result.result) {
                 report.push({ ...result.result, file: relativeFile });
-              } else {
+              }
+              else {
                 // Fallback to synchronous analysis for individual failures
                 const fallbackReport = await this.#astAnalyser.analyseFile(
                   result.file,
@@ -250,7 +252,8 @@ export class SourceCodeScanner<
                 report.push({ ...fallbackReport, file: relativeFile });
               }
             }
-          } catch {
+          }
+          catch {
             // Fallback for entire group in case of catastrophic WorkerPool failure
             for (const relativeFile of group) {
               const filePath = path.join(location, relativeFile);
@@ -263,7 +266,8 @@ export class SourceCodeScanner<
           }
         })
       );
-    } else {
+    }
+    else {
       await Promise.allSettled(
         sourceFiles.map(async(relativeFile) => {
           const filePath = path.join(location, relativeFile);
@@ -282,9 +286,11 @@ export class SourceCodeScanner<
 
   async #checkWorkerSupport(): Promise<boolean> {
     try {
-      const { Worker } = await import('node:worker_threads');
-      return typeof Worker === 'function';
-    } catch {
+      const { Worker } = await import("node:worker_threads");
+
+      return typeof Worker === "function";
+    }
+    catch {
       return false;
     }
   }

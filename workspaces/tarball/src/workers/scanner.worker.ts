@@ -1,5 +1,5 @@
-import { AstAnalyser } from '@nodesecure/js-x-ray';
-import type { AstAnalyserOptions, ReportOnFile } from '@nodesecure/js-x-ray';
+// Import Third-party Dependencies
+import { AstAnalyser, type AstAnalyserOptions, type ReportOnFile } from "@nodesecure/js-x-ray";
 
 interface WorkerMessage {
   files: string[];
@@ -13,14 +13,35 @@ interface WorkerMessage {
 }
 
 interface WorkerResponse {
-  s: boolean; // success
-  r?: ReportOnFile | null; // result
+  /**
+   * Success flag
+   */
+  s: boolean;
+  /**
+   * Result data
+   */
+  r?: ReportOnFile | null;
+  /**
+   * Error details
+   */
   e?: {
-    c: string; // code
-    m: string; // message
-    f: string; // filepath
+    /**
+     * Error code
+     */
+    c: string;
+    /**
+     * Error message
+     */
+    m: string;
+    /**
+     * File path
+     */
+    f: string;
   };
-  file: string; // The specific file this result corresponds to
+  /**
+   * The specific file this result corresponds to
+   */
+  file: string;
 }
 
 let analyser: AstAnalyser | null = null;
@@ -34,7 +55,7 @@ export default async function analyzeBatch(message: WorkerMessage): Promise<Work
   }
 
   if (message.isWarmup) {
-    // Just triggering instantiation (line 31) is enough to warm up the module loading
+    // Just triggering instantiation is enough to warm up the module loading
     return [];
   }
 
@@ -42,18 +63,19 @@ export default async function analyzeBatch(message: WorkerMessage): Promise<Work
   for (const filePath of files) {
     try {
       const result = await analyser.analyseFile(filePath, options.fileOptions);
-      
+
       results.push({
         s: true,
         r: result,
         file: filePath
       });
-    } catch (error: any) {
+    }
+    catch (error: any) {
       results.push({
         s: false,
         file: filePath,
         e: {
-          c: error.code || 'UNKNOWN_ERROR',
+          c: error.code || "UNKNOWN_ERROR",
           m: error.message,
           f: filePath
         }
