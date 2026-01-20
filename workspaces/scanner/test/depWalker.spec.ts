@@ -294,9 +294,9 @@ test("fetch payload of pacote on the npm registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "metadata",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "metadata"
   ]);
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
@@ -314,9 +314,9 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "metadata",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "metadata"
   ]);
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
@@ -338,6 +338,23 @@ test("highlight contacts from a remote package", async() => {
   assert.ok(
     maintainer.dependencies.includes(spec)
   );
+});
+
+test("should collect stats", async() => {
+  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+  const { logger } = errorLogger();
+  test.after(() => logger.removeAllListeners());
+
+  const { metadata } = await depWalker(
+    pkgGitdeps,
+    structuredClone(kDefaultWalkerOptions),
+    logger
+  );
+
+  assert.strictEqual(typeof metadata.startedAt, "number");
+  assert.strictEqual(typeof metadata.executionTime, "number");
+  assert.strictEqual(Array.isArray(metadata.apiCalls), true);
+  assert.strictEqual(metadata.apiCallsCount, 25);
 });
 
 describe("scanner.cwd()", () => {

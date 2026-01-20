@@ -6,10 +6,7 @@ import { packageJSONIntegrityHash } from "@nodesecure/mama";
 import type {
   Dependency
 } from "../types.ts";
-
-export interface DateProvider {
-  oneYearAgo(): Date;
-}
+import { SystemDateProvider, type DateProvider } from "../class/DateProvider.class.ts";
 
 export interface PackumentExtractorOptions {
   dateProvider?: DateProvider;
@@ -101,14 +98,5 @@ export class PackumentExtractor {
     }
 
     return result;
-  }
-}
-
-class SystemDateProvider implements DateProvider {
-  oneYearAgo(): Date {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() - 1);
-
-    return date;
   }
 }
