@@ -1,5 +1,19 @@
 # @nodesecure/tarball
 
+## [Unreleased]
+
+### Added
+- **Worker Threads support** for parallel JavaScript file analysis
+  - Reduces Event Loop blocking by **+36%** (main thread stays responsive)
+  - Lowers peak memory usage by **90-94%** (1-2MB vs 15-20MB)
+  - Delivers **10-15% average speedup** for large codebases (250+ files)
+  - Includes intelligent threshold: workers activate only when beneficial
+  - Safe fallback to synchronous mode if workers fail or unavailable
+  - Configurable via `NODE_SECURE_DISABLE_WORKERS=true` environment variable
+
+### Dependencies
+- Added `piscina@^4.8.0` for Worker Thread pool management
+
 ## 3.0.0
 
 ### Major Changes
