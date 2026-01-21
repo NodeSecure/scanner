@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/tarball",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "NodeSecure tarball scanner",
   "type": "module",
   "exports": {
@@ -48,7 +48,7 @@
     "@nodesecure/conformance": "^1.2.1",
     "@nodesecure/fs-walk": "^2.0.0",
     "@nodesecure/js-x-ray": "11.3.0",
-    "@nodesecure/mama": "^2.1.0",
+    "@nodesecure/mama": "^2.1.1",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
     "ipaddr.js": "2.3.0",

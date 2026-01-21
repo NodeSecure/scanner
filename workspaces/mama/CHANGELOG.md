@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 2.1.1
+
+### Patch Changes
+
+- [#610](https://github.com/NodeSecure/scanner/pull/610) [`5b71ff9`](https://github.com/NodeSecure/scanner/commit/5b71ff9ef8663b03af0ff2950a3532ade428b66d) Thanks [@clemgbld](https://github.com/clemgbld)! - fix(mama): include optional deps in pkg json integrity hash
+
 ## 2.1.0
 
 ### Minor Changes
