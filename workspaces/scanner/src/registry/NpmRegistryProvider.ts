@@ -11,7 +11,8 @@ import * as i18n from "@nodesecure/i18n";
 import { isHTTPError } from "@openally/httpie";
 
 // Import Internal Dependencies
-import { PackumentExtractor, type DateProvider } from "./PackumentExtractor.ts";
+import { PackumentExtractor } from "./PackumentExtractor.ts";
+import type { DateProvider } from "../class/DateProvider.class.ts";
 import { fetchNpmAvatars } from "./fetchNpmAvatars.ts";
 import type {
   Dependency,
