@@ -1,17 +1,15 @@
 // Import Node.js Dependencies
 import os from "node:os";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-import { readdir } from "node:fs/promises";
+import { setTimeout } from "node:timers/promises";
 import { monitorEventLoopDelay, performance } from "node:perf_hooks";
 
 // Import Third-party Dependencies
 import { AstAnalyser } from "@nodesecure/js-x-ray";
+import { walk } from "@nodesecure/fs-walk";
 
 // Import Internal Dependencies
 import { WorkerPool } from "../dist/class/WorkerPool.class.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface BenchmarkResult {
   mode: "sync" | "workers";
@@ -26,50 +24,31 @@ interface BenchmarkResult {
 async function measureGC() {
   if (global.gc) {
     global.gc();
-    await new Promise((resolve) => {
-      setTimeout(resolve, 100);
-    });
+    await setTimeout(100);
   }
 }
 
 async function findJavaScriptFiles(dir: string, maxFiles: number): Promise<string[]> {
   const files: string[] = [];
 
-  async function walk(currentDir: string) {
-    if (files.length >= maxFiles) {
-      return;
-    }
+  try {
+    for await (const [dirent, location] of walk(dir, { extensions: new Set([".js"]) })) {
+      if (files.length >= maxFiles) {
+        break;
+      }
 
-    try {
-      const entries = await readdir(currentDir, { withFileTypes: true });
-
-      for (const entry of entries) {
-        if (files.length >= maxFiles) {
-          break;
-        }
-
-        const fullPath = path.join(currentDir, entry.name);
-
-        // Skip hidden directories and test/spec files
-        if (entry.isDirectory() && !entry.name.startsWith(".")) {
-          await walk(fullPath);
-        }
-        else if (
-          entry.isFile() &&
-          entry.name.endsWith(".js") &&
-          !entry.name.includes(".spec.") &&
-          !entry.name.includes(".test.")
-        ) {
-          files.push(fullPath);
-        }
+      if (
+        dirent.isFile() &&
+        !dirent.name.includes(".spec.") &&
+        !dirent.name.includes(".test.")
+      ) {
+        files.push(location);
       }
     }
-    catch {
-      // Skip directories we can't read
-    }
   }
-
-  await walk(dir);
+  catch {
+    // Skip directories we can't read
+  }
 
   return files.slice(0, maxFiles);
 }
@@ -223,7 +202,7 @@ async function main() {
   console.log("Discovering JavaScript files for benchmark...\n");
 
   // Use entire scanner project (includes all workspaces + node_modules)
-  const scannerRoot = path.join(__dirname, "../..");
+  const scannerRoot = path.join(import.meta.dirname, "../..");
 
   const smallFiles = await findJavaScriptFiles(scannerRoot, 25);
   const mediumFiles = await findJavaScriptFiles(scannerRoot, 80);

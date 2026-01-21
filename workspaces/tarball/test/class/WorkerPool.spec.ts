@@ -2,12 +2,9 @@
 import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 // Import Internal Dependencies
 import { WorkerPool } from "../../dist/class/WorkerPool.class.js";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 describe("WorkerPool.class.ts", () => {
   let pool: WorkerPool;
@@ -28,7 +25,7 @@ describe("WorkerPool.class.ts", () => {
   });
 
   it("should analyze file using Worker Pool", async() => {
-    const testFile = path.join(__dirname, "../test/fixtures/basic.js");
+    const testFile = path.join(import.meta.dirname, "../test/fixtures/basic.js");
 
     const result = await pool.analyseFile(testFile, {
       fileOptions: { packageName: "test-package" }
@@ -39,7 +36,7 @@ describe("WorkerPool.class.ts", () => {
   });
 
   it("should handle concurrent file analysis", async() => {
-    const testFile = path.join(__dirname, "../test/fixtures/basic.js");
+    const testFile = path.join(import.meta.dirname, "../test/fixtures/basic.js");
 
     const promises = Array.from({ length: 10 }, () => pool.analyseFile(testFile, {
       fileOptions: { packageName: "test-package" }
@@ -68,7 +65,7 @@ describe("WorkerPool.class.ts", () => {
   });
 
   it("should handle syntax errors in Worker gracefully", async() => {
-    const testFile = path.join(__dirname, "../test/fixtures/invalid-syntax.js");
+    const testFile = path.join(import.meta.dirname, "../test/fixtures/invalid-syntax.js");
 
     // js-x-ray handles syntax errors internally
     const result = await pool.analyseFile(testFile, {

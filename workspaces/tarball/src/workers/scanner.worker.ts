@@ -13,34 +13,13 @@ interface WorkerMessage {
 }
 
 interface WorkerResponse {
-  /**
-   * Success flag
-   */
-  s: boolean;
-  /**
-   * Result data
-   */
-  r?: ReportOnFile | null;
-  /**
-   * Error details
-   */
-  e?: {
-    /**
-     * Error code
-     */
-    c: string;
-    /**
-     * Error message
-     */
-    m: string;
-    /**
-     * File path
-     */
-    f: string;
+  success: boolean;
+  result?: ReportOnFile | null;
+  error?: {
+    code: string;
+    message: string;
+    filePath: string;
   };
-  /**
-   * The specific file this result corresponds to
-   */
   file: string;
 }
 
@@ -65,19 +44,19 @@ export default async function analyzeBatch(message: WorkerMessage): Promise<Work
       const result = await analyser.analyseFile(filePath, options.fileOptions);
 
       results.push({
-        s: true,
-        r: result,
+        success: true,
+        result,
         file: filePath
       });
     }
-    catch (error: any) {
+    catch (err: any) {
       results.push({
-        s: false,
+        success: false,
         file: filePath,
-        e: {
-          c: error.code || "UNKNOWN_ERROR",
-          m: error.message,
-          f: filePath
+        error: {
+          code: err.code || "UNKNOWN_ERROR",
+          message: err.message,
+          filePath
         }
       });
     }

@@ -1,5 +1,4 @@
 // Import Node.js Dependencies
-import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 // Import Third-party Dependencies
@@ -16,30 +15,12 @@ export interface AnalyseFileOptions {
 }
 
 interface WorkerResponse {
-  /**
-   * Success flag
-   */
-  s: boolean;
-  /**
-   * Result data
-   */
-  r?: ReportOnFile;
-  /**
-   * Error details
-   */
-  e?: {
-    /**
-     * Error code
-     */
-    c: string;
-    /**
-     * Error message
-     */
-    m: string;
-    /**
-     * File path
-     */
-    f: string;
+  success: boolean;
+  result?: ReportOnFile;
+  error?: {
+    code: string;
+    message: string;
+    filePath: string;
   };
   file: string;
 }
@@ -56,7 +37,8 @@ export interface BatchResult {
  *
  * @class WorkerPool
  * @description Singleton Worker Pool that distributes file analysis across multiple threads.
- * Automatically scales based on CPU cores and available memory.
+ * The Singleton pattern ensures the pool persists across multiple scanPackage() calls,
+ * eliminating ~200ms startup overhead per subsequent scan.
  *
  * @example
  * ```typescript
@@ -72,8 +54,7 @@ export class WorkerPool {
 
   private constructor() {
     const maxThreads = this.calculateOptimalThreads();
-    const __dirname = path.dirname(fileURLToPath(import.meta.url));
-    const workerPath = path.join(__dirname, "../workers/scanner.worker.js");
+    const workerPath = path.join(import.meta.dirname, "../workers/scanner.worker.js");
 
     this.pool = new Piscina({
       filename: workerPath,
@@ -150,16 +131,16 @@ export class WorkerPool {
     return response.map((res) => {
       const result: BatchResult = {
         file: res.file,
-        ok: res.s
+        ok: res.success
       };
 
-      if (res.s) {
-        result.result = res.r;
+      if (res.success) {
+        result.result = res.result;
       }
       else {
-        const error: any = new Error(res.e?.m || "Worker analysis failed");
-        error.code = res.e?.c;
-        error.filePath = res.e?.f;
+        const error: any = new Error(res.error?.message || "Worker analysis failed");
+        error.code = res.error?.code;
+        error.filePath = res.error?.filePath;
         result.error = error;
       }
 
