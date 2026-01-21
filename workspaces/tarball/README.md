@@ -37,6 +37,7 @@ console.log(scanResult);
 
 - [SourceCode](./docs/SourceCode.md)
 - [NpmTarball](./docs/NpmTarball.md)
+- [WorkerThreads](./docs/WorkerThreads.md) ⚡ Performance & Architecture
 
 ---
 

@@ -52,9 +52,11 @@
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
     "ipaddr.js": "2.3.0",
-    "pacote": "^21.0.0"
+    "pacote": "^21.0.0",
+    "piscina": "5.1.4"
   },
   "devDependencies": {
+    "@types/node": "24.10.9",
     "get-folder-size": "^5.0.0"
   }
 }
