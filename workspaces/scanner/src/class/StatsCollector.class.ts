@@ -20,13 +20,10 @@ export class StatsCollector {
         ) as ReturnType<T>;
       }
 
-      this.#addApiStat(name, startedAt);
-
       return result;
     }
-    catch (error) {
+    finally {
       this.#addApiStat(name, startedAt);
-      throw error;
     }
   }
 
