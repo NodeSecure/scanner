@@ -6,6 +6,7 @@ export class StatsCollector {
   #apiCalls: ApiStats[] = [];
   #dateProvider: DateProvider;
   #startedAt: number;
+
   constructor(dateProvider: DateProvider = new SystemDateProvider()) {
     this.#dateProvider = dateProvider;
     this.#startedAt = this.#dateProvider.now();
@@ -20,10 +21,13 @@ export class StatsCollector {
         ) as ReturnType<T>;
       }
 
+      this.#addApiStat(name, startedAt);
+
       return result;
     }
-    finally {
+    catch (err) {
       this.#addApiStat(name, startedAt);
+      throw err;
     }
   }
 

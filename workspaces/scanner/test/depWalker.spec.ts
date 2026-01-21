@@ -167,6 +167,11 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
       phase: "tarball-scan"
     }
   ]);
+  const { metadata } = result;
+  assert.strictEqual(typeof metadata.startedAt, "number");
+  assert.strictEqual(typeof metadata.executionTime, "number");
+  assert.strictEqual(Array.isArray(metadata.apiCalls), true);
+  assert.strictEqual(metadata.apiCallsCount, 25);
 });
 
 test("execute depWalker on typo-squatting (with location)", async(test) => {
@@ -338,23 +343,6 @@ test("highlight contacts from a remote package", async() => {
   assert.ok(
     maintainer.dependencies.includes(spec)
   );
-});
-
-test("should collect stats", async() => {
-  Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger } = errorLogger();
-  test.after(() => logger.removeAllListeners());
-
-  const { metadata } = await depWalker(
-    pkgGitdeps,
-    structuredClone(kDefaultWalkerOptions),
-    logger
-  );
-
-  assert.strictEqual(typeof metadata.startedAt, "number");
-  assert.strictEqual(typeof metadata.executionTime, "number");
-  assert.strictEqual(Array.isArray(metadata.apiCalls), true);
-  assert.strictEqual(metadata.apiCallsCount, 25);
 });
 
 describe("scanner.cwd()", () => {
