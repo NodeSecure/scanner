@@ -1,5 +1,18 @@
 # @nodesecure/tarball
 
+## 3.1.0
+
+### Minor Changes
+
+- [#607](https://github.com/NodeSecure/scanner/pull/607) [`e013b49`](https://github.com/NodeSecure/scanner/commit/e013b4907c8f7f4046ecbf079ae529011b17c597) Thanks [@clemgbld](https://github.com/clemgbld)! - fix(tarball): fix npm tarball tests on windows by normalizing paths
+
+- [#603](https://github.com/NodeSecure/scanner/pull/603) [`5b237e2`](https://github.com/NodeSecure/scanner/commit/5b237e22ccee184855188ff1a94c9d5bc29920e4) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(tarball): add warning when hostname resolve to a private ip
+
+### Patch Changes
+
+- Updated dependencies [[`5b71ff9`](https://github.com/NodeSecure/scanner/commit/5b71ff9ef8663b03af0ff2950a3532ade428b66d)]:
+  - @nodesecure/mama@2.1.1
+
 ## 3.0.0
 
 ### Major Changes

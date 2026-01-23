@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/mama",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Manifest Manager",
   "type": "module",
   "exports": "./dist/index.js",
