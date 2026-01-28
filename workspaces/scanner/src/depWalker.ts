@@ -264,7 +264,8 @@ export async function depWalker(
         ref: dependency.versions[version] as any,
         location,
         isRootNode: scanRootNode && name === manifest.name,
-        registry
+        registry,
+        statsCollector
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
@@ -392,31 +393,35 @@ async function scanDirOrArchiveEx(
     isRootNode: boolean;
     location: string | undefined;
     ref: any;
+    statsCollector: StatsCollector;
   }
 ) {
   using _ = await locker.acquire();
+
+  const spec = `${name}@${version}`;
 
   try {
     const {
       registry,
       location = process.cwd(),
       isRootNode,
-      ref
+      ref,
+      statsCollector
     } = options;
 
     const mama = await (isRootNode ?
       ManifestManager.fromPackageJSON(location) :
       extractAndResolve(tempDir.location, {
-        spec: `${name}@${version}`,
+        spec,
         registry
       })
     );
 
-    await scanDirOrArchive(mama, ref, {
+    await statsCollector.track(`tarball.scanDirOrArchive ${spec}`, () => scanDirOrArchive(mama, ref, {
       astAnalyserOptions: {
         optionalWarnings: typeof location !== "undefined"
       }
-    });
+    }));
   }
   catch (error: any) {
     logger.emit(ScannerLoggerEvents.error, error, "tarball-scan");
