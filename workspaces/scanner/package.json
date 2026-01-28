@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/scanner",
-  "version": "10.0.0",
+  "version": "10.1.0",
   "description": "A package API to run a static analysis of your module's dependencies.",
   "type": "module",
   "exports": {
