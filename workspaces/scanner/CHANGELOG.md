@@ -1,5 +1,11 @@
 # @nodesecure/scanner
 
+## 10.1.0
+
+### Minor Changes
+
+- [#616](https://github.com/NodeSecure/scanner/pull/616) [`82c6f80`](https://github.com/NodeSecure/scanner/commit/82c6f805c609c5bbd12023a0f324468ff2984093) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): depWalker add stats on tarball.scanDirOrArchive
+
 ## 10.0.0
 
 ### Major Changes
