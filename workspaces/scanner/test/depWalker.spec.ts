@@ -167,6 +167,11 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
       phase: "tarball-scan"
     }
   ]);
+  const { metadata } = result;
+  assert.strictEqual(typeof metadata.startedAt, "number");
+  assert.strictEqual(typeof metadata.executionTime, "number");
+  assert.strictEqual(Array.isArray(metadata.apiCalls), true);
+  assert.strictEqual(metadata.apiCallsCount, 37);
 });
 
 test("execute depWalker on typo-squatting (with location)", async(test) => {
@@ -294,9 +299,9 @@ test("fetch payload of pacote on the npm registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "metadata",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "metadata"
   ]);
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
@@ -314,9 +319,9 @@ test("fetch payload of pacote on the gitlab registry", async() => {
     "scannerVersion",
     "vulnerabilityStrategy",
     "warnings",
-    "metadata",
     "highlighted",
-    "dependencies"
+    "dependencies",
+    "metadata"
   ]);
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });

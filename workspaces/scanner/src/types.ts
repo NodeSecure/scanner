@@ -184,6 +184,40 @@ export type GlobalWarning = { message: string; } & (
   |
   DependencyConfusionWarning);
 
+export type ApiStats = {
+  /**
+    * UNIX Timestamp just before the api call start
+  */
+  startedAt: number;
+  /**
+    * Execution time in milliseconds
+  */
+  executionTime: number;
+
+  /**
+    * Name of the api call
+  */
+  name: string;
+};
+
+export type Stats = {
+  /**
+    * UNIX Timestamp when the scan started
+  */
+  startedAt: number;
+  /**
+    * Execution time in milliseconds
+  */
+  executionTime: number;
+
+  /**
+    * Number of external API calls
+  */
+  apiCallsCount: number;
+
+  apiCalls: ApiStats[];
+};
+
 export interface Payload {
   /** Payload unique id */
   id: string;
@@ -207,20 +241,7 @@ export interface Payload {
   /** Vulnerability strategy name (npm, snyk, node) */
   vulnerabilityStrategy: Vulnera.Kind;
 
-  metadata: {
-    startedAt: number;
-    executionTime: number;
-    stats?: {
-      startedAt: number;
-      executionTime: number;
-      apiCalls: Array<{
-        name: string;
-        startedAt: number;
-        executionTime: number;
-      }>;
-      apiCallsCount: number;
-    };
-  };
+  metadata: Stats;
 }
 
 export type SemverRange = string | "*";

@@ -1,5 +1,25 @@
 # @nodesecure/scanner
 
+## 10.0.0
+
+### Major Changes
+
+- [#606](https://github.com/NodeSecure/scanner/pull/606) [`2afafb7`](https://github.com/NodeSecure/scanner/commit/2afafb71835347208ce57ec0ed52041f2e7486bc) Thanks [@fraxken](https://github.com/fraxken)! - refactor: rename cwd() to workingDir()
+
+### Minor Changes
+
+- [#603](https://github.com/NodeSecure/scanner/pull/603) [`5b237e2`](https://github.com/NodeSecure/scanner/commit/5b237e22ccee184855188ff1a94c9d5bc29920e4) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(tarball): add warning when hostname resolve to a private ip
+
+- [#612](https://github.com/NodeSecure/scanner/pull/612) [`7330ef9`](https://github.com/NodeSecure/scanner/commit/7330ef937925da95680e188e04a34fdc033aa288) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): integrate built-in stats in the response of depWalker
+
+### Patch Changes
+
+- Updated dependencies [[`5b71ff9`](https://github.com/NodeSecure/scanner/commit/5b71ff9ef8663b03af0ff2950a3532ade428b66d), [`e013b49`](https://github.com/NodeSecure/scanner/commit/e013b4907c8f7f4046ecbf079ae529011b17c597), [`5b237e2`](https://github.com/NodeSecure/scanner/commit/5b237e22ccee184855188ff1a94c9d5bc29920e4)]:
+  - @nodesecure/mama@2.1.1
+  - @nodesecure/tarball@3.1.0
+  - @nodesecure/tree-walker@2.2.0
+  - @nodesecure/rc@5.1.0
+
 ## 9.0.0
 
 ### Major Changes

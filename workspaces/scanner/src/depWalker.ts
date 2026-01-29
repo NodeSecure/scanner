@@ -3,12 +3,13 @@ import path from "node:path";
 import { readFileSync } from "node:fs";
 
 // Import Third-party Dependencies
+import pacote from "pacote";
+import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
 import { Mutex, MutexRelease } from "@openally/mutex";
 import {
   extractAndResolve,
   scanDirOrArchive
 } from "@nodesecure/tarball";
-import pacote from "pacote";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
@@ -27,11 +28,11 @@ import {
   getManifestLinks,
   NPM_TOKEN
 } from "./utils/index.ts";
-import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.ts";
+import { NpmRegistryProvider, type NpmApiClient } from "./registry/NpmRegistryProvider.ts";
+import { StatsCollector } from "./class/StatsCollector.class.ts";
 import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
-import { StatsCollector } from "./class/StatsCollector.class.ts";
 import type {
   Dependency,
   DependencyVersion,
@@ -96,7 +97,6 @@ type InitialPayload =
   Partial<Payload> &
   {
     rootDependency: Payload["rootDependency"];
-    metadata: Payload["metadata"];
   };
 
 export async function depWalker(
@@ -115,10 +115,9 @@ export async function depWalker(
     npmRcConfig
   } = options;
 
-  const startedAt = Date.now();
+  const statsCollector = new StatsCollector();
   const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
-  const statsCollector = new StatsCollector();
 
   await using tempDir = await TempDirectory.create();
 
@@ -133,18 +132,36 @@ export async function depWalker(
     },
     scannerVersion: packageVersion,
     vulnerabilityStrategy,
-    warnings: [],
-    metadata: {
-      startedAt,
-      executionTime: 0
-    }
+    warnings: []
   };
 
   const dependencies: Map<string, Dependency> = new Map();
   const highlightedPackages: Set<string> = new Set();
   const npmTreeWalker = new npm.TreeWalker({
-    registry
+    registry,
+    providers: {
+      pacote: {
+        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, () => pacote.manifest(spec, opts)),
+        packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`, () => pacote.packument(spec, opts))
+      }
+    }
   });
+  const npmApiClient: NpmApiClient = {
+    packument: (name, opts) => statsCollector.track(
+      `npmRegistrySDK.packument ${name}`,
+      () => npmRegistrySDK.packument(name, opts)
+    ),
+
+    packumentVersion: (name, version, opts) => statsCollector.track(
+      `npmRegistrySDK.packumentVersion ${name}@${version}`,
+      () => npmRegistrySDK.packumentVersion(name, version, opts)
+    ),
+
+    org: (namespace) => statsCollector.track(
+      `npmRegistrySDK.org ${namespace}`,
+      () => npmRegistrySDK.org(namespace)
+    )
+  };
   {
     logger
       .start(ScannerLoggerEvents.analysis.tree)
@@ -184,7 +201,8 @@ export async function depWalker(
         operationsQueue.push(
           new NpmRegistryProvider(name, version, {
             registry,
-            tokenStore
+            tokenStore,
+            npmApiClient
           }).enrichDependencyVersion(dep, dependencyConfusionWarnings, org)
         );
 
@@ -258,6 +276,7 @@ export async function depWalker(
         location,
         isRootNode: scanRootNode && name === manifest.name,
         registry,
+        statsCollector,
         extractFn: trackedExtract
       };
       operationsQueue.push(
@@ -365,11 +384,7 @@ export async function depWalker(
       packages: [...highlightedPackages]
     };
     payload.dependencies = Object.fromEntries(dependencies);
-    payload.metadata = {
-      ...payload.metadata,
-      executionTime: Date.now() - startedAt,
-      stats: statsCollector.getStats()
-    };
+    payload.metadata = statsCollector.getStats();
 
     return payload as Payload;
   }
@@ -390,10 +405,13 @@ async function scanDirOrArchiveEx(
     isRootNode: boolean;
     location: string | undefined;
     ref: any;
+    statsCollector: StatsCollector;
     extractFn?: (spec: string, dest: string, opts: pacote.Options) => Promise<void>;
   }
 ) {
   using _ = await locker.acquire();
+
+  const spec = `${name}@${version}`;
 
   try {
     const {
@@ -401,23 +419,24 @@ async function scanDirOrArchiveEx(
       location = process.cwd(),
       isRootNode,
       ref,
+      statsCollector,
       extractFn
     } = options;
 
     const mama = await (isRootNode ?
       ManifestManager.fromPackageJSON(location) :
       extractAndResolve(tempDir.location, {
-        spec: `${name}@${version}`,
+        spec,
         registry,
         extractFn
       })
     );
 
-    await scanDirOrArchive(mama, ref, {
+    await statsCollector.track(`tarball.scanDirOrArchive ${spec}`, () => scanDirOrArchive(mama, ref, {
       astAnalyserOptions: {
         optionalWarnings: typeof location !== "undefined"
       }
-    });
+    }));
   }
   catch (error: any) {
     logger.emit(ScannerLoggerEvents.error, error, "tarball-scan");

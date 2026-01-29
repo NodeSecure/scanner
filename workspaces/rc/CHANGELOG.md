@@ -1,5 +1,11 @@
 # @nodesecure/rc
 
+## 5.1.0
+
+### Minor Changes
+
+- [#603](https://github.com/NodeSecure/scanner/pull/603) [`5b237e2`](https://github.com/NodeSecure/scanner/commit/5b237e22ccee184855188ff1a94c9d5bc29920e4) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(tarball): add warning when hostname resolve to a private ip
+
 ## 5.0.2
 
 ### Patch Changes

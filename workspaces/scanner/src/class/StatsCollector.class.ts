@@ -1,18 +1,6 @@
 // Import Internal Dependencies
 import { SystemDateProvider, type DateProvider } from "./DateProvider.class.ts";
-
-export interface ApiStats {
-  name: string;
-  startedAt: number;
-  executionTime: number;
-}
-
-export interface Stats {
-  startedAt: number;
-  executionTime: number;
-  apiCalls: ApiStats[];
-  apiCallsCount: number;
-}
+import type { ApiStats, Stats } from "../types.ts";
 
 export class StatsCollector {
   #apiCalls: ApiStats[] = [];
