@@ -208,14 +208,18 @@ export interface Payload {
   vulnerabilityStrategy: Vulnera.Kind;
 
   metadata: {
-    /**
-     * UNIX Timestamp when the scan started
-     */
     startedAt: number;
-    /**
-     * Execution time in milliseconds
-     */
     executionTime: number;
+    stats?: {
+      startedAt: number;
+      executionTime: number;
+      apiCalls: Array<{
+        name: string;
+        startedAt: number;
+        executionTime: number;
+      }>;
+      apiCallsCount: number;
+    };
   };
 }
 

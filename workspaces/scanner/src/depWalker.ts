@@ -8,6 +8,7 @@ import {
   extractAndResolve,
   scanDirOrArchive
 } from "@nodesecure/tarball";
+import pacote from "pacote";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
@@ -30,6 +31,7 @@ import { NpmRegistryProvider } from "./registry/NpmRegistryProvider.ts";
 import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
+import { StatsCollector } from "./class/StatsCollector.class.ts";
 import type {
   Dependency,
   DependencyVersion,
@@ -116,6 +118,7 @@ export async function depWalker(
   const startedAt = Date.now();
   const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
+  const statsCollector = new StatsCollector();
 
   await using tempDir = await TempDirectory.create();
 
@@ -239,11 +242,23 @@ export async function depWalker(
         }
       }
 
+      async function trackedExtract(
+        spec: string,
+        dest: string,
+        opts: pacote.Options
+      ): Promise<void> {
+        await statsCollector.track(
+          `pacote.extract[${spec}]`,
+          () => pacote.extract(spec, dest, opts)
+        );
+      }
+
       const scanDirOptions = {
         ref: dependency.versions[version] as any,
         location,
         isRootNode: scanRootNode && name === manifest.name,
-        registry
+        registry,
+        extractFn: trackedExtract
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
@@ -350,7 +365,11 @@ export async function depWalker(
       packages: [...highlightedPackages]
     };
     payload.dependencies = Object.fromEntries(dependencies);
-    payload.metadata.executionTime = Date.now() - startedAt;
+    payload.metadata = {
+      ...payload.metadata,
+      executionTime: Date.now() - startedAt,
+      stats: statsCollector.getStats()
+    };
 
     return payload as Payload;
   }
@@ -371,6 +390,7 @@ async function scanDirOrArchiveEx(
     isRootNode: boolean;
     location: string | undefined;
     ref: any;
+    extractFn?: (spec: string, dest: string, opts: pacote.Options) => Promise<void>;
   }
 ) {
   using _ = await locker.acquire();
@@ -380,14 +400,16 @@ async function scanDirOrArchiveEx(
       registry,
       location = process.cwd(),
       isRootNode,
-      ref
+      ref,
+      extractFn
     } = options;
 
     const mama = await (isRootNode ?
       ManifestManager.fromPackageJSON(location) :
       extractAndResolve(tempDir.location, {
         spec: `${name}@${version}`,
-        registry
+        registry,
+        extractFn
       })
     );
 
