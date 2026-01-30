@@ -406,7 +406,7 @@ async function scanDirOrArchiveEx(
     location: string | undefined;
     ref: any;
     statsCollector: StatsCollector;
-    pacoteProvider?: import("@nodesecure/tarball").PacoteProvider;
+    pacoteProvider?: PacoteProvider;
   }
 ) {
   using _ = await locker.acquire();
