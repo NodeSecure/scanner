@@ -260,24 +260,20 @@ export async function depWalker(
         }
       }
 
-      async function trackedExtract(
-        spec: string,
-        dest: string,
-        opts: pacote.Options
-      ): Promise<void> {
-        await statsCollector.track(
-          `pacote.extract[${spec}]`,
-          () => pacote.extract(spec, dest, opts)
-        );
-      }
-
       const scanDirOptions = {
         ref: dependency.versions[version] as any,
         location,
         isRootNode: scanRootNode && name === manifest.name,
         registry,
         statsCollector,
-        extractFn: trackedExtract
+        pacoteProvider: {
+          extract: async(spec: string, dest: string, opts: pacote.Options) => {
+            await statsCollector.track(
+              `pacote.extract[${spec}]`,
+              () => pacote.extract(spec, dest, opts)
+            );
+          }
+        }
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
@@ -406,7 +402,7 @@ async function scanDirOrArchiveEx(
     location: string | undefined;
     ref: any;
     statsCollector: StatsCollector;
-    extractFn?: (spec: string, dest: string, opts: pacote.Options) => Promise<void>;
+    pacoteProvider?: import("@nodesecure/tarball").PacoteProvider;
   }
 ) {
   using _ = await locker.acquire();
@@ -420,7 +416,7 @@ async function scanDirOrArchiveEx(
       isRootNode,
       ref,
       statsCollector,
-      extractFn
+      pacoteProvider
     } = options;
 
     const mama = await (isRootNode ?
@@ -428,7 +424,7 @@ async function scanDirOrArchiveEx(
       extractAndResolve(tempDir.location, {
         spec,
         registry,
-        extractFn
+        pacoteProvider
       })
     );
 
