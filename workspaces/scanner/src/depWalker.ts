@@ -122,7 +122,7 @@ export async function depWalker(
     extract: (spec, dest, opts) => statsCollector.track(
       `pacote.extract ${spec}`,
       () => pacote.extract(spec, dest, opts)
-    ).then(() => {})
+    )
   };
 
   const isRemoteScanning = typeof location === "undefined";
