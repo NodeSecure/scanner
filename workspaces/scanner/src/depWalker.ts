@@ -8,7 +8,8 @@ import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
 import { Mutex, MutexRelease } from "@openally/mutex";
 import {
   extractAndResolve,
-  scanDirOrArchive
+  scanDirOrArchive,
+  type PacoteProvider
 } from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
@@ -116,6 +117,16 @@ export async function depWalker(
   } = options;
 
   const statsCollector = new StatsCollector();
+
+  const pacoteProvider: PacoteProvider = {
+    extract: async(spec, dest, opts) => {
+      await statsCollector.track(
+        `pacote.extract ${spec}`,
+        () => pacote.extract(spec, dest, opts)
+      );
+    }
+  };
+
   const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
@@ -266,14 +277,7 @@ export async function depWalker(
         isRootNode: scanRootNode && name === manifest.name,
         registry,
         statsCollector,
-        pacoteProvider: {
-          extract: async(spec: string, dest: string, opts: pacote.Options) => {
-            await statsCollector.track(
-              `pacote.extract[${spec}]`,
-              () => pacote.extract(spec, dest, opts)
-            );
-          }
-        }
+        pacoteProvider
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
