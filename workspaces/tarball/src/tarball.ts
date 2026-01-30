@@ -205,7 +205,7 @@ export interface PacoteProvider {
     spec: string,
     destination: string,
     options: pacote.Options
-  ): Promise<any>;
+  ): Promise<void>;
 }
 
 export interface TarballResolutionOptions {

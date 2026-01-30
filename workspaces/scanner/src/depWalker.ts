@@ -119,10 +119,12 @@ export async function depWalker(
   const statsCollector = new StatsCollector();
 
   const pacoteProvider: PacoteProvider = {
-    extract: (spec, dest, opts) => statsCollector.track(
-      `pacote.extract ${spec}`,
-      () => pacote.extract(spec, dest, opts)
-    )
+    async extract(spec, dest, opts): Promise<void> {
+      await statsCollector.track(
+        `pacote.extract ${spec}`,
+        () => pacote.extract(spec, dest, opts)
+      );
+    }
   };
 
   const isRemoteScanning = typeof location === "undefined";
