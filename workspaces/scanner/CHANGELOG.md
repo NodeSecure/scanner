@@ -1,5 +1,20 @@
 # @nodesecure/scanner
 
+## 10.1.0
+
+### Minor Changes
+
+- [#616](https://github.com/NodeSecure/scanner/pull/616) [`82c6f80`](https://github.com/NodeSecure/scanner/commit/82c6f805c609c5bbd12023a0f324468ff2984093) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): depWalker add stats on tarball.scanDirOrArchive
+
+- [#618](https://github.com/NodeSecure/scanner/pull/618) [`a5377e9`](https://github.com/NodeSecure/scanner/commit/a5377e9b95d3b5f07aaecf65350bc6f8d4f5d39d) Thanks [@7amed3li](https://github.com/7amed3li)! - feat: add stats tracking on pacote.extract through extractAndResolve
+
+  Add support for dependency injection of extractFn in extractAndResolve to enable tracking of pacote.extract calls using StatsCollector. This allows measuring extraction time for each package during scanning.
+
+### Patch Changes
+
+- Updated dependencies [[`a5377e9`](https://github.com/NodeSecure/scanner/commit/a5377e9b95d3b5f07aaecf65350bc6f8d4f5d39d)]:
+  - @nodesecure/tarball@3.2.0
+
 ## 10.0.0
 
 ### Major Changes
