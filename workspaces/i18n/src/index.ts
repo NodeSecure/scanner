@@ -35,11 +35,23 @@ export async function getLocalLang(): Promise<Languages> {
   return CONSTANTS.CURRENT_LANG;
 }
 
+export interface SetLocalLangOptions {
+  /** If true, calls getLocalLang() after setting and returns the language. */
+  force?: boolean;
+}
+
 export async function setLocalLang(
-  selectedLang: Languages
-): Promise<void> {
+  selectedLang: Languages,
+  options?: SetLocalLangOptions
+): Promise<Languages | void> {
   await cacache.put(CACHE_PATH, "cli-lang", selectedLang);
   CONSTANTS.LANG_UPDATED = true;
+
+  if (options?.force) {
+    return getLocalLang();
+  }
+
+  return undefined;
 }
 
 export async function getLanguages(): Promise<string[]> {
