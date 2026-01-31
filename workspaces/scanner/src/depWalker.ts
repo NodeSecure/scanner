@@ -8,7 +8,8 @@ import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
 import { Mutex, MutexRelease } from "@openally/mutex";
 import {
   extractAndResolve,
-  scanDirOrArchive
+  scanDirOrArchive,
+  type PacoteProvider
 } from "@nodesecure/tarball";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
@@ -116,6 +117,16 @@ export async function depWalker(
   } = options;
 
   const statsCollector = new StatsCollector();
+
+  const pacoteProvider: PacoteProvider = {
+    async extract(spec, dest, opts): Promise<void> {
+      await statsCollector.track(
+        `pacote.extract ${spec}`,
+        () => pacote.extract(spec, dest, opts)
+      );
+    }
+  };
+
   const isRemoteScanning = typeof location === "undefined";
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
@@ -265,7 +276,8 @@ export async function depWalker(
         location,
         isRootNode: scanRootNode && name === manifest.name,
         registry,
-        statsCollector
+        statsCollector,
+        pacoteProvider
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
@@ -394,6 +406,7 @@ async function scanDirOrArchiveEx(
     location: string | undefined;
     ref: any;
     statsCollector: StatsCollector;
+    pacoteProvider?: PacoteProvider;
   }
 ) {
   using _ = await locker.acquire();
@@ -406,14 +419,16 @@ async function scanDirOrArchiveEx(
       location = process.cwd(),
       isRootNode,
       ref,
-      statsCollector
+      statsCollector,
+      pacoteProvider
     } = options;
 
     const mama = await (isRootNode ?
       ManifestManager.fromPackageJSON(location) :
       extractAndResolve(tempDir.location, {
         spec,
-        registry
+        registry,
+        pacoteProvider
       })
     );
 

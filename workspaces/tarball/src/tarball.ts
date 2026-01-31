@@ -200,19 +200,28 @@ export async function scanPackage(
   };
 }
 
+export interface PacoteProvider {
+  extract(
+    spec: string,
+    destination: string,
+    options: pacote.Options
+  ): Promise<void>;
+}
+
 export interface TarballResolutionOptions {
   spec: string;
   registry?: string;
+  pacoteProvider?: PacoteProvider;
 }
 
 export async function extractAndResolve(
   location: string,
   options: TarballResolutionOptions
 ): Promise<ManifestManager> {
-  const { spec, registry } = options;
+  const { spec, registry, pacoteProvider = pacote } = options;
 
   const tarballLocation = path.join(location, spec.replaceAll("/", "_"));
-  await pacote.extract(
+  await pacoteProvider.extract(
     spec,
     tarballLocation,
     {
