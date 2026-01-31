@@ -1,5 +1,11 @@
 # @nodesecure/i18n
 
+## 4.1.0
+
+### Minor Changes
+
+- [#622](https://github.com/NodeSecure/scanner/pull/622) [`442b364`](https://github.com/NodeSecure/scanner/commit/442b364b8a5d568e267a11f91bd6360f341a24ff) Thanks [@7amed3li](https://github.com/7amed3li)! - feat: add force option to setLocalLang
+
 ## 4.0.3
 
 ### Patch Changes
