@@ -43,6 +43,26 @@ describe("getLocalLang/setLocalLang", () => {
     assert.strictEqual(languages[0], "french");
     assert.strictEqual(languages[1], "english");
   });
+
+  it("setLocalLang with force option returns language and updates LANG_UPDATED", async() => {
+    await i18n.setLocalLang("english");
+    await i18n.getLocalLang();
+
+    const result = await i18n.setLocalLang("french", { force: true });
+
+    assert.strictEqual(result, "french");
+    assert.strictEqual(i18n.CONSTANTS.LANG_UPDATED, false);
+    assert.strictEqual(i18n.CONSTANTS.CURRENT_LANG, "french");
+  });
+
+  it("setLocalLang without force option returns undefined", async() => {
+    const result = await i18n.setLocalLang("english");
+
+    assert.strictEqual(result, undefined);
+    assert.strictEqual(i18n.CONSTANTS.LANG_UPDATED, true);
+
+    await i18n.setLocalLang("french");
+  });
 });
 
 describe("getToken", () => {

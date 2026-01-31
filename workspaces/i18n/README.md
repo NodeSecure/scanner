@@ -49,8 +49,13 @@ See TypeScript definition file.
 ```ts
 type languages = "french" | "english";
 
+interface SetLocalLangOptions {
+  /** If true, calls getLocalLang() after setting and returns the language. */
+  force?: boolean;
+}
+
 export function getLocalLang(): Promise<languages>;
-export function setLocalLang(newLanguage: languages): Promise<void>;
+export function setLocalLang(newLanguage: languages, options?: SetLocalLangOptions): Promise<languages | void>;
 export function getToken(token: string, ...parameters): Promise<string>;
 export function getTokenSync(token: string, ...parameters): string;
 export function getLanguages(): Promise<languages[]>;
@@ -59,8 +64,23 @@ export function extend(language: string, tokens: Record<string, any>): void;
 export function extendFromSystemPath(path: string): Promise<void>;
 ```
 
+### Using the `force` option
+
+Instead of calling `setLocalLang` and `getLocalLang` separately:
+
+```js
+await i18n.setLocalLang("french");
+await i18n.getLocalLang();
+```
+
+You can use the `force` option to do it in one call:
+
+```js
+await i18n.setLocalLang("french", { force: true });
+```
+
 > [!NOTE]
-> Local lang must be updated otherwise `getTokenSync()` will throws. Make sure to use `await i18n.getLocalLang()` before any synchronous usage.
+> Local lang must be updated otherwise `getTokenSync()` will throws. Make sure to use `await i18n.getLocalLang()` or `await i18n.setLocalLang(lang, { force: true })` before any synchronous usage.
 
 ## Generate documentation
 
