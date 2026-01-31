@@ -323,7 +323,7 @@ function compareRepository(
   const isComparedString = typeof toCompare === "string";
 
   if (isOriginalString || isComparedString) {
-    return compareValues<string | undefined>(original as string | undefined, toCompare as string | undefined);
+    return compareValues(original, toCompare);
   }
 
   return compareObjects("type", original as Repository, toCompare as Repository)
