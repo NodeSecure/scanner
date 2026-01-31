@@ -182,7 +182,7 @@ Click on one of the links to access the documentation of the workspace:
 ## Contributors ✨
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -231,6 +231,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/zwOk9"><img src="https://avatars.githubusercontent.com/u/18079239?v=4?s=100" width="100px;" alt="zwOk9"/><br /><sub><b>zwOk9</b></sub></a><br /><a href="https://github.com/NodeSecure/scanner/commits?author=zwOk9" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/pmartin-dev"><img src="https://avatars.githubusercontent.com/u/45450501?v=4?s=100" width="100px;" alt="Pierre Martin"/><br /><sub><b>Pierre Martin</b></sub></a><br /><a href="https://github.com/NodeSecure/scanner/commits?author=pmartin-dev" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/7amed3li"><img src="https://avatars.githubusercontent.com/u/190534558?v=4?s=100" width="100px;" alt="Hamed Mohamed"/><br /><sub><b>Hamed Mohamed</b></sub></a><br /><a href="https://github.com/NodeSecure/scanner/commits?author=7amed3li" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
