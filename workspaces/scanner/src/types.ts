@@ -67,7 +67,7 @@ export interface DependencyVersion {
   /** Author of the package. This information is not trustable and can be empty. */
   author: Maintainer | null;
   engines: Engines;
-  repository?: Repository;
+  repository?: Repository | string;
   scripts: Record<string, string>;
   /**
    * JS-X-Ray warnings

@@ -51,7 +51,7 @@ export interface DependencyVersionComparison {
   description: ValueComparison<string>;
   author: ValueComparison<Maintainer>;
   engines: DictionaryComparison<string>;
-  repository: ValueComparison<Repository>;
+  repository: ValueComparison<Repository | string | undefined>;
   scripts: DictionaryComparison<string>;
   warnings: ArrayDiff<Warning>;
   composition: CompositionComparison;
@@ -166,9 +166,7 @@ function compareVersions(
       author: version.author && comparedVersion.author ? compareObjects("name", version.author, comparedVersion.author) : void 0,
       // @ts-ignore
       engines: compareDictionnaries(version.engines, comparedVersion.engines),
-      // FIXME: repository can be a string: https://github.com/pillarjs/encodeurl/blob/master/package.json#L14
-      repository: compareObjects("type", version.repository, comparedVersion.repository)
-        ?? compareObjects("url", version.repository, comparedVersion.repository),
+      repository: compareRepositories(version.repository, comparedVersion.repository),
       scripts: compareDictionnaries(version.scripts, comparedVersion.scripts),
       warnings: arrayDiff(version.warnings, comparedVersion.warnings),
       composition: compareComposition(version.composition, comparedVersion.composition),
@@ -311,4 +309,16 @@ export function arrayOfObjectsDiffByKey<T extends Record<string, any>>(
   const removed = original.filter((item) => !toCompareMap.has(item[key]));
 
   return { added, removed };
+}
+
+function compareRepositories(
+  original: DependencyVersion["repository"],
+  toCompare: DependencyVersion["repository"]
+): ValueComparison<Repository | string | undefined> {
+  if (typeof original === "string" || typeof toCompare === "string") {
+    return compareValues(original, toCompare);
+  }
+
+  return compareObjects("type", original, toCompare)
+    ?? compareObjects("url", original, toCompare);
 }
