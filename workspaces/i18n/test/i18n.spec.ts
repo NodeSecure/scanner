@@ -39,9 +39,11 @@ describe("getLocalLang/setLocalLang", () => {
     await i18n.setLocalLang("french");
     const languages = await i18n.getLanguages();
 
-    assert.strictEqual(languages.length, 2);
+    assert.strictEqual(languages.length, 4);
     assert.strictEqual(languages[0], "french");
-    assert.strictEqual(languages[1], "english");
+    assert.ok(languages.includes("english"));
+    assert.ok(languages.includes("arabic"));
+    assert.ok(languages.includes("turkish"));
   });
 
   it("setLocalLang with force option returns language and updates LANG_UPDATED", async() => {
