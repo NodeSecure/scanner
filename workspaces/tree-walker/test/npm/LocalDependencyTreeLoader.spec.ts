@@ -31,6 +31,23 @@ describe("LocalDependencyTreeLoader", () => {
         ["@types/node"]
       );
     });
+
+    it("should load and return workspaces as dependencies without devDependencies", async() => {
+      const treeLoader = new LocalDependencyTreeLoader();
+
+      const { dependencies } = await treeLoader.load(
+        path.join(kFixturesDir, "workspaces")
+      );
+
+      const dependenciesName = Array.from(dependencies.keys());
+      assert.deepEqual(
+        dependenciesName,
+        [
+          "workspace_v1",
+          "workspace_v2"
+        ]
+      );
+    });
   });
 
   describe("arborist.loadActual()", () => {

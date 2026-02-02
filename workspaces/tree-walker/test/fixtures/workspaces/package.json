@@ -1,0 +1,11 @@
+{
+  "name": "workspaces",
+  "version": "1.0.0",
+  "workspaces": [
+    "src/A",
+    "src/B"
+  ],
+  "devDependencies": {
+    "@types/node": "^25.2.0"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "name": "workspace_v1",
+  "devDependencies": {
+    "undici": "^7.20.0"
+  }
+}
