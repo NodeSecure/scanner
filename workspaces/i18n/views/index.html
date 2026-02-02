@@ -47,14 +47,14 @@
         <button id="table-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-warnings" aria-selected="false">WARNINGS</button>
         <button id="table-sast-warnings-tab" class="table__tabs-item" type="button" role="tab" aria-controls="table-sast-warnings" aria-selected="false">SAST_WARNINGS</button>
       </nav>
-      <table id="table-cli" class="table" role="tabpanel" aria-labelledby="table-cli-tab">
+      <table id="table-cli" class="table active" role="tabpanel" aria-labelledby="table-cli-tab">
         <thead>
           <tr>
             <th>Key</th>
             <th>Value</th>
           </tr>
         </thead>
-        <tbody class="en">
+        <tbody class="en active">
           [[ for (props in z.template('cli', 'english')) { ]]
             <tr>
               <td>[[-z.printKey(props)]]</td>
