@@ -47,7 +47,7 @@
   "dependencies": {
     "@nodesecure/conformance": "^1.2.1",
     "@nodesecure/fs-walk": "^2.0.0",
-    "@nodesecure/js-x-ray": "11.3.0",
+    "@nodesecure/js-x-ray": "11.5.0",
     "@nodesecure/mama": "^2.1.1",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",

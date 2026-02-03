@@ -8,7 +8,7 @@ import { describe, test } from "node:test";
 import {
   ManifestManager
 } from "@nodesecure/mama";
-import { type ReportOnFile, AstAnalyser } from "@nodesecure/js-x-ray";
+import { type ReportOnFile, AstAnalyser, CollectableSet } from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
 import {
@@ -135,6 +135,25 @@ describe("SourceCodeScanner", () => {
         }
       ]
     );
+  });
+
+  test("it should add spec to collectables", async() => {
+    const mama = loadFixtureManifest("entryfiles");
+    const emailSet = new CollectableSet<{ spec?: string; }>("email");
+
+    const scanner = new SourceCodeScanner(mama, {
+      astAnalyser: new AstAnalyser({
+        collectables: [emailSet]
+      })
+    });
+    await scanner.iterate({
+      manifest: [
+        "src/index.js"
+      ],
+      javascript: []
+    });
+
+    assert.deepEqual(Array.from(emailSet)[0].locations[0].metadata?.spec, "foobar@1.0.0");
   });
 
   test("iterate() should report typescript files", async() => {

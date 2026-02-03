@@ -18,6 +18,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const kFixturePath = path.join(__dirname, "fixtures", "npmTarball");
 const kShadyLinkPath = path.join(kFixturePath, "shady-link");
 
+type Metadata = {
+  spec?: string;
+};
+
 describe("NpmTarball", () => {
   test("it should have a shady-link warning when a hostname resolve a private ip address with collectables", async() => {
     const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
@@ -128,7 +132,24 @@ describe("NpmTarball", () => {
       }].sort(compareWarning)
     );
   });
+
+  test("it should add the spec to collectables", async() => {
+    const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
+    const npmTarball = new NpmTarball(mama);
+    const hostnameSet = new CollectableSet<Metadata>("hostname");
+
+    await npmTarball.scanFiles({
+      collectables: [hostnameSet]
+    });
+
+    assert.deepEqual(extractSpecs(hostnameSet), Array(5).fill("shady-link@0.1.0"));
+  });
 });
+
+function extractSpecs(collectableSet: CollectableSet<Metadata>) {
+  return Array.from(collectableSet)
+    .flatMap(({ locations }) => locations.flatMap(({ metadata }) => metadata?.spec ?? []));
+}
 
 function compareWarning(a: Warning, b: Warning): number {
   const fileComparison = a.file?.localeCompare(b.file ?? "");

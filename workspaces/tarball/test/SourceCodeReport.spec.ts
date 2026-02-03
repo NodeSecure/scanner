@@ -4,6 +4,9 @@ import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert";
 
+// Import Third-party Dependencies
+import { AstAnalyser, CollectableSet } from "@nodesecure/js-x-ray";
+
 // Import Internal Dependencies
 import { SourceCodeScanner } from "../src/class/SourceCodeScanner.class.ts";
 
@@ -137,6 +140,21 @@ test("should detect the usage of global fetch and update hasExternalCapacity fla
   assert.ok(report.flags.hasExternalCapacity);
 });
 
+test("should add spec to collectables", async() => {
+  const emailSet = new CollectableSet<{ spec: string; }>("email");
+  const mama = createFakeManifestManager();
+  const scanner = new SourceCodeScanner(mama, {
+    astAnalyser: new AstAnalyser({ collectables: [emailSet] })
+  });
+
+  await scanner.iterate({
+    manifest: [],
+    javascript: ["email.js"]
+  });
+
+  assert.deepEqual(Array.from(emailSet)[0].locations[0].metadata?.spec, "fake-package@1.0.0");
+});
+
 function normalize(values: Iterable<string>): string[] {
   return Array.from(values)
     .map((value) => path.normalize(value))
@@ -151,6 +169,7 @@ function createFakeManifestManager(
     location: kFixturePath,
     dependencies,
     devDependencies,
+    spec: "fake-package@1.0.0",
     document: {
       name: "fake-package",
       type: "module"
