@@ -182,7 +182,11 @@ export class SourceCodeScanner<
       (filePath) => path.join(location, filePath)
     );
 
-    for await (const fileReport of efa.analyse(absoluteEntryFiles)) {
+    for await (const fileReport of efa.analyse(absoluteEntryFiles, {
+      metadata: {
+        spec: this.manifest.spec
+      }
+    })) {
       report.push(fileReport);
     }
 
@@ -210,7 +214,10 @@ export class SourceCodeScanner<
         const fileReport = await this.#astAnalyser.analyseFile(
           filePath,
           {
-            packageName
+            packageName,
+            metadata: {
+              spec: this.manifest.spec
+            }
           }
         );
 

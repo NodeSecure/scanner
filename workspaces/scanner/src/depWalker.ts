@@ -11,6 +11,7 @@ import {
   scanDirOrArchive,
   type PacoteProvider
 } from "@nodesecure/tarball";
+import { CollectableSet } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
@@ -81,6 +82,8 @@ const kDefaultDependencyMetadata: Dependency["metadata"] = {
 
 const kRootDependencyId = 0;
 
+const kCollectableTypes = ["url", "hostname", "ip", "email"];
+
 const { version: packageVersion } = JSON.parse(
   readFileSync(
     new URL(path.join("..", "package.json"), import.meta.url),
@@ -100,6 +103,10 @@ type InitialPayload =
     rootDependency: Payload["rootDependency"];
   };
 
+type Metadata = {
+  spec?: string;
+};
+
 export async function depWalker(
   manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
   options: WalkerOptions,
@@ -117,6 +124,8 @@ export async function depWalker(
   } = options;
 
   const statsCollector = new StatsCollector();
+
+  const collectables = kCollectableTypes.map((type) => new CollectableSet<Metadata>(type));
 
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
@@ -148,6 +157,7 @@ export async function depWalker(
 
   const dependencies: Map<string, Dependency> = new Map();
   const highlightedPackages: Set<string> = new Set();
+  const identifiersToHighlight = new Set<string>(options.highlight?.identifiers ?? []);
   const npmTreeWalker = new npm.TreeWalker({
     registry,
     providers: {
@@ -277,7 +287,8 @@ export async function depWalker(
         isRootNode: scanRootNode && name === manifest.name,
         registry,
         statsCollector,
-        pacoteProvider
+        pacoteProvider,
+        collectables
       };
       operationsQueue.push(
         scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
@@ -381,7 +392,8 @@ export async function depWalker(
     payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
     payload.highlighted = {
       contacts: illuminated,
-      packages: [...highlightedPackages]
+      packages: [...highlightedPackages],
+      identifiers: extractHighlightedIdentifiers(collectables, identifiersToHighlight)
     };
     payload.dependencies = Object.fromEntries(dependencies);
     payload.metadata = statsCollector.getStats();
@@ -391,6 +403,25 @@ export async function depWalker(
   finally {
     logger.emit(ScannerLoggerEvents.done);
   }
+}
+
+function extractHighlightedIdentifiers(collectables: CollectableSet<Metadata>[], identifiersToHighlight: Set<string>) {
+  if (identifiersToHighlight.size === 0) {
+    return [];
+  }
+
+  return collectables.flatMap((collectableSet) => Array.from(collectableSet)
+    .flatMap(({ value, locations }) => (identifiersToHighlight.has(value) ?
+      locations.map(({ file, metadata, location }) => {
+        return {
+          value,
+          spec: metadata?.spec,
+          location: {
+            file,
+            lines: location
+          }
+        };
+      }) : [])));
 }
 
 // eslint-disable-next-line max-params
@@ -407,6 +438,7 @@ async function scanDirOrArchiveEx(
     ref: any;
     statsCollector: StatsCollector;
     pacoteProvider?: PacoteProvider;
+    collectables: CollectableSet<Metadata>[];
   }
 ) {
   using _ = await locker.acquire();
@@ -420,7 +452,8 @@ async function scanDirOrArchiveEx(
       isRootNode,
       ref,
       statsCollector,
-      pacoteProvider
+      pacoteProvider,
+      collectables
     } = options;
 
     const mama = await (isRootNode ?
@@ -434,7 +467,8 @@ async function scanDirOrArchiveEx(
 
     await statsCollector.track(`tarball.scanDirOrArchive ${spec}`, () => scanDirOrArchive(mama, ref, {
       astAnalyserOptions: {
-        optionalWarnings: typeof location !== "undefined"
+        optionalWarnings: typeof location !== "undefined",
+        collectables
       }
     }));
   }

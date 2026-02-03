@@ -218,6 +218,15 @@ export type Stats = {
   apiCalls: ApiStats[];
 };
 
+export type Identifier = {
+  value: string;
+  spec?: string;
+  location: {
+    file: string | null;
+    lines: [[number, number], [number, number]][];
+  };
+};
+
 export interface Payload {
   /** Payload unique id */
   id: string;
@@ -233,6 +242,7 @@ export interface Payload {
   highlighted: {
     contacts: IlluminatedContact[];
     packages: string[];
+    identifiers: Identifier[];
   };
   /** All the dependencies of the package (flattened) */
   dependencies: Dependencies;
@@ -284,6 +294,7 @@ export interface Options {
   highlight?: {
     contacts?: Contact[];
     packages?: HighlightPackages;
+    identifiers?: string[];
   };
 
   /**

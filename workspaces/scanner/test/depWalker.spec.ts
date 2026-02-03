@@ -16,7 +16,8 @@ import {
   from,
   workingDir,
   type Payload,
-  type DependencyVersion
+  type DependencyVersion,
+  type Identifier
 } from "../src/index.ts";
 
 // CONSTANTS
@@ -171,7 +172,7 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
   assert.strictEqual(typeof metadata.startedAt, "number");
   assert.strictEqual(typeof metadata.executionTime, "number");
   assert.strictEqual(Array.isArray(metadata.apiCalls), true);
-  assert.strictEqual(metadata.apiCallsCount, 37);
+  assert.strictEqual(metadata.apiCallsCount, 50);
 });
 
 test("execute depWalker on typo-squatting (with location)", async(test) => {
@@ -347,7 +348,13 @@ test("highlight contacts from a remote package", async() => {
 
 describe("scanner.cwd()", () => {
   test("should parse author, homepage and links for a local package who doesn't exist on the remote registry", async() => {
-    const result = await workingDir(path.join(kFixturePath, "non-npm-package"));
+    const file = path.join(kFixturePath, "non-npm-package");
+    const result = await workingDir(file, {
+      highlight: {
+        identifiers: ["foobar@gmail.com", "https://foobar.com/something", "foobar.com", "127.0.0.1"]
+      },
+      scanRootNode: true
+    });
 
     const dep = result.dependencies["non-npm-package"];
     const v1 = dep.versions["1.0.0"];
@@ -370,6 +377,44 @@ describe("scanner.cwd()", () => {
     });
     assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
     assert.strictEqual(typeof result.rootDependency.integrity, "string");
+    const spec = "non-npm-package@1.0.0";
+    assert.partialDeepStrictEqual(sortIdentifiers(result.highlighted.identifiers), sortIdentifiers([
+      {
+        value: "foobar@gmail.com",
+        spec,
+        location: {
+          file
+        }
+      },
+      {
+        value: "foobar@gmail.com",
+        spec,
+        location: {
+          file: path.join(file, "email")
+        }
+      },
+      {
+        value: "https://foobar.com/something",
+        spec,
+        location: {
+          file
+        }
+      },
+      {
+        value: "foobar.com",
+        spec,
+        location: {
+          file
+        }
+      },
+      {
+        value: "127.0.0.1",
+        spec,
+        location: {
+          file
+        }
+      }
+    ]));
   });
 
   test("should parse local manifest author field without throwing when attempting to highlight contacts", async() => {
@@ -396,6 +441,16 @@ describe("scanner.cwd()", () => {
     });
   });
 });
+
+type PartialIdentifer = Omit<Identifier, "location"> & { location: { file: string | null; }; };
+
+function sortIdentifiers(identifiers: PartialIdentifer[]) {
+  return identifiers.slice().sort((a, b) => uniqueIdenfier(a).localeCompare(uniqueIdenfier(b)));
+}
+
+function uniqueIdenfier(identifer: PartialIdentifer) {
+  return `${identifer.value} ${identifer.location.file}`;
+}
 
 function errorLogger() {
   const errors: ({ error: string; phase: string | undefined; })[] = [];

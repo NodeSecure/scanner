@@ -23,6 +23,7 @@ Scanner builds on [JS-X-Ray](https://github.com/NodeSecure/js-x-ray) (SAST) and 
   - Typosquatting of popular package names
   - Install scripts (e.g. `install`, `preinstall`, `postinstall`, `preuninstall`, `postuninstall`)
 - Highlights packages by name, version(s), or maintainer
+- Highlights infrastructure components such as ip, hostname, email, url
 - Supports NPM and Yarn lockfiles
 
 ## Getting Started
@@ -134,7 +135,9 @@ interface Options {
   };
 
   highlight?: {
-    contacts: Contact[];
+    contacts?: Contact[];
+    packages?: HighlightPackages;
+    identifiers?: string[];
   };
 
   /**
