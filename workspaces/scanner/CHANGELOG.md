@@ -1,5 +1,21 @@
 # @nodesecure/scanner
 
+## 10.2.0
+
+### Minor Changes
+
+- [#632](https://github.com/NodeSecure/scanner/pull/632) [`36dc1fc`](https://github.com/NodeSecure/scanner/commit/36dc1fca73ed74bcba0b272b2eecdb66f24e2b30) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: highlight infrastructure components
+
+### Patch Changes
+
+- [#624](https://github.com/NodeSecure/scanner/pull/624) [`e338410`](https://github.com/NodeSecure/scanner/commit/e33841050a13a79f49ab27696ae025746387576d) Thanks [@7amed3li](https://github.com/7amed3li)! - fix: support string format for 'repository' field in comparePayloads
+
+- Updated dependencies [[`ce22eb8`](https://github.com/NodeSecure/scanner/commit/ce22eb8161278eacdf993bc3e3cb4b6235ad7910), [`442b364`](https://github.com/NodeSecure/scanner/commit/442b364b8a5d568e267a11f91bd6360f341a24ff), [`36dc1fc`](https://github.com/NodeSecure/scanner/commit/36dc1fca73ed74bcba0b272b2eecdb66f24e2b30)]:
+  - @nodesecure/i18n@4.1.0
+  - @nodesecure/tree-walker@2.3.0
+  - @nodesecure/tarball@3.3.0
+  - @nodesecure/rc@5.2.0
+
 ## 10.1.0
 
 ### Minor Changes
