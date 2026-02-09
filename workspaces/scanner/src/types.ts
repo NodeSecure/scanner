@@ -200,6 +200,16 @@ export type ApiStats = {
   name: string;
 };
 
+export type Error = {
+  name: string;
+  message?: string;
+  stack?: string;
+  /**
+    * HTTP Status code
+  */
+  statusCode?: number;
+};
+
 export type Stats = {
   /**
     * UNIX Timestamp when the scan started
@@ -216,6 +226,12 @@ export type Stats = {
   apiCallsCount: number;
 
   apiCalls: ApiStats[];
+  /**
+    * Number of errors
+  */
+  errorCount: number;
+
+  errors: Error[];
 };
 
 export type Identifier = {

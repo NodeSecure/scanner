@@ -173,6 +173,8 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
   assert.strictEqual(typeof metadata.executionTime, "number");
   assert.strictEqual(Array.isArray(metadata.apiCalls), true);
   assert.strictEqual(metadata.apiCallsCount, 50);
+  assert.strictEqual(metadata.errorCount, 2);
+  assert.strictEqual(metadata.errors.length, 2);
 });
 
 test("execute depWalker on typo-squatting (with location)", async(test) => {
