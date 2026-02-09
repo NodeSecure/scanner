@@ -2,86 +2,212 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
 
+// Import Third-party Dependencies
+import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
+
 // Import Internal Dependencies
 import type { DateProvider } from "../src/class/DateProvider.class.ts";
 import { StatsCollector } from "../src/class/StatsCollector.class.ts";
 
 describe("StatsCollectors", () => {
-  it("should get the expected global start and execution time", () => {
-    const dateProvider = new FakeDateProvider();
-    dateProvider.setNow(1658512000000);
-    const statsCollector = new StatsCollector(dateProvider);
-    dateProvider.setNow(1658512001000);
-    const { startedAt, executionTime } = statsCollector.getStats();
-    assert.strictEqual(startedAt, 1658512000000);
-    assert.strictEqual(executionTime, 1000);
-  });
+  describe("api calls", () => {
+    it("should get the expected global start and execution time", () => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      dateProvider.setNow(1658512001000);
+      const { startedAt, executionTime } = statsCollector.getStats();
+      assert.strictEqual(startedAt, 1658512000000);
+      assert.strictEqual(executionTime, 1000);
+    });
 
-  it("should still record the exexution time if the function being tracked throws", () => {
-    const dateProvider = new FakeDateProvider();
-    dateProvider.setNow(1658512000000);
-    const statsCollector = new StatsCollector(dateProvider);
-    assert.throws(() => {
-      statsCollector.track("api/test/1", () => {
-        dateProvider.setNow(1658512001000);
-        throw new Error("oh no!");
+    it("should still record the exexution time if the function being tracked throws", () => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      assert.throws(() => {
+        statsCollector.track("api/test/1", () => {
+          dateProvider.setNow(1658512001000);
+          throw new Error("oh no!");
+        });
       });
+
+      const { apiCalls, apiCallsCount } = statsCollector.getStats();
+      assert.strictEqual(apiCallsCount, 1);
+      assert.deepEqual(apiCalls, [
+        {
+          name: "api/test/1",
+          startedAt: 1658512000000,
+          executionTime: 1000
+        }
+
+      ]);
     });
 
-    const { apiCalls, apiCallsCount } = statsCollector.getStats();
-    assert.strictEqual(apiCallsCount, 1);
-    assert.deepEqual(apiCalls, [
-      {
-        name: "api/test/1",
-        startedAt: 1658512000000,
-        executionTime: 1000
-      }
+    it("should be able to track the start and execution time of external api call", async() => {
+      let hasFnOneBeenCalled = false;
+      let hasFnTwoBeenCalled = false;
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      dateProvider.setNow(1658512001001);
+      const promise = statsCollector.track("api/test/1", () => {
+        hasFnOneBeenCalled = true;
 
-    ]);
+        return Promise.resolve(1);
+      });
+
+      dateProvider.setNow(1658512002000);
+      const promiseResult = await promise;
+
+      dateProvider.setNow(1658512003000);
+      const fnResult = statsCollector.track("api/test/2", () => {
+        hasFnTwoBeenCalled = true;
+        dateProvider.setNow(1658512004000);
+
+        return null;
+      });
+      dateProvider.setNow(1658512005000);
+      const { apiCalls, apiCallsCount } = statsCollector.getStats();
+      assert.strictEqual(promiseResult, 1);
+      assert.strictEqual(fnResult, null);
+      assert.strictEqual(hasFnOneBeenCalled, true);
+      assert.strictEqual(hasFnTwoBeenCalled, true);
+      assert.strictEqual(apiCallsCount, 2);
+      assert.deepEqual(apiCalls, [
+        {
+          name: "api/test/1",
+          startedAt: 1658512001001,
+          executionTime: 999
+        },
+        {
+          name: "api/test/2",
+          startedAt: 1658512003000,
+          executionTime: 1000
+        }
+      ]);
+    });
   });
 
-  it("should be able to track the start and execution time of external api call", async() => {
-    let hasFnOneBeenCalled = false;
-    let hasFnTwoBeenCalled = false;
-    const dateProvider = new FakeDateProvider();
-    dateProvider.setNow(1658512000000);
-    const statsCollector = new StatsCollector(dateProvider);
-    dateProvider.setNow(1658512001001);
-    const promise = statsCollector.track("api/test/1", () => {
-      hasFnOneBeenCalled = true;
-
-      return Promise.resolve(1);
+  describe("errors", () => {
+    it("should have no errors when no tracked function throwed", () => {
+      const dateProvider = new FakeDateProvider();
+      const statsCollector = new StatsCollector(dateProvider);
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 0);
+      assert.strictEqual(errors.length, 0);
     });
 
-    dateProvider.setNow(1658512002000);
-    const promiseResult = await promise;
-
-    dateProvider.setNow(1658512003000);
-    const fnResult = statsCollector.track("api/test/2", () => {
-      hasFnTwoBeenCalled = true;
-      dateProvider.setNow(1658512004000);
-
-      return null;
-    });
-    dateProvider.setNow(1658512005000);
-    const { apiCalls, apiCallsCount } = statsCollector.getStats();
-    assert.strictEqual(promiseResult, 1);
-    assert.strictEqual(fnResult, null);
-    assert.strictEqual(hasFnOneBeenCalled, true);
-    assert.strictEqual(hasFnTwoBeenCalled, true);
-    assert.strictEqual(apiCallsCount, 2);
-    assert.deepEqual(apiCalls, [
-      {
+    it("should record when a sync error occurs", () => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      assert.throws(() => {
+        statsCollector.track("api/test/1", () => {
+          dateProvider.setNow(1658512001000);
+          throw new Error("oh no!");
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
         name: "api/test/1",
-        startedAt: 1658512001001,
-        executionTime: 999
-      },
-      {
-        name: "api/test/2",
-        startedAt: 1658512003000,
-        executionTime: 1000
-      }
-    ]);
+        message: "oh no!"
+      }]);
+    });
+
+    it("should record when an error that is not an instance of error occurs", () => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      assert.throws(() => {
+        statsCollector.track("api/test/1", () => {
+          dateProvider.setNow(1658512001000);
+          // eslint-disable-next-line no-throw-literal
+          throw null;
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
+        name: "api/test/1"
+      }]);
+    });
+
+    it("should have no errors when no async tracked function rejected", async() => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      await statsCollector.track("api/test/1", async() => {
+        dateProvider.setNow(1658512001000);
+
+        return Promise.resolve(42);
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 0);
+      assert.strictEqual(errors.length, 0);
+    });
+
+    it("should record when an async error occurs", async() => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      await assert.rejects(async() => {
+        await statsCollector.track("api/test/1", async() => {
+          dateProvider.setNow(1658512001000);
+          throw new Error("async oh no!");
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
+        name: "api/test/1",
+        message: "async oh no!"
+      }]);
+    });
+
+    it("should record when an async error that is not an instance of error occurs", async() => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      await assert.rejects(async() => {
+        await statsCollector.track("api/test/1", async() => {
+          dateProvider.setNow(1658512001000);
+          // eslint-disable-next-line no-throw-literal
+          throw "string error";
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
+        name: "api/test/1"
+      }]);
+    });
+
+    it("should add the status code when there is an http error", async() => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector(dateProvider);
+      await assert.rejects(async() => {
+        await statsCollector.track("api/test/1", async() => {
+          dateProvider.setNow(1658512001000);
+
+          return npmRegistrySDK.packument("does-not-exist");
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
+        name: "api/test/1",
+        message: "Not Found",
+        statusCode: 404
+      }]);
+    });
   });
 });
 
