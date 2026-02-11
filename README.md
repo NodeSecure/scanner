@@ -161,6 +161,7 @@ Additional APIs are available at:
 
 - [from](./workspaces/scanner/docs/from.md)
 - [extractors](./workspaces/scanner/docs/extractors.md)
+- [logger](./workspaces/scanner/docs/logger.md)
 
 ## Workspaces
 
