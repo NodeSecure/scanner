@@ -2,6 +2,9 @@
 import { EventEmitter } from "node:events";
 import { performance } from "node:perf_hooks";
 
+// Import Internal Dependencies
+import type { Error } from "../types.ts";
+
 export const ScannerLoggerEvents = {
   error: "error",
   done: "depWalkerFinished",
@@ -23,12 +26,16 @@ export interface LoggerEventData {
   count: number;
 }
 
+export type LoggerEventError = {
+  executionTime: number;
+} & Error;
+
 export type LoggerEventsMap = {
   start: [eventName: string];
   tick: [eventName: string];
   end: [eventName: string, data: LoggerEventData & { executionTime: number; }];
   depWalkerFinished: [];
-  error: [error: Error, phase?: string];
+  error: [error: LoggerEventError, phase?: string];
 };
 
 export class Logger extends EventEmitter<LoggerEventsMap> {

@@ -123,7 +123,7 @@ export async function depWalker(
     npmRcConfig
   } = options;
 
-  const statsCollector = new StatsCollector();
+  const statsCollector = new StatsCollector(logger);
 
   const collectables = kCollectableTypes.map((type) => new CollectableSet<Metadata>(type));
 
@@ -131,6 +131,7 @@ export async function depWalker(
     async extract(spec, dest, opts): Promise<void> {
       await statsCollector.track(
         `pacote.extract ${spec}`,
+        "tarball-scan",
         () => pacote.extract(spec, dest, opts)
       );
     }
@@ -162,24 +163,29 @@ export async function depWalker(
     registry,
     providers: {
       pacote: {
-        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, () => pacote.manifest(spec, opts)),
-        packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`, () => pacote.packument(spec, opts))
+        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, "tree-walk", () => pacote.manifest(spec, opts)),
+        packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`,
+          "tree-walk",
+          () => pacote.packument(spec, opts))
       }
     }
   });
   const npmApiClient: NpmApiClient = {
     packument: (name, opts) => statsCollector.track(
       `npmRegistrySDK.packument ${name}`,
+      "metadata-fetch",
       () => npmRegistrySDK.packument(name, opts)
     ),
 
     packumentVersion: (name, version, opts) => statsCollector.track(
       `npmRegistrySDK.packumentVersion ${name}@${version}`,
+      "metadata-fetch",
       () => npmRegistrySDK.packumentVersion(name, version, opts)
     ),
 
     org: (namespace) => statsCollector.track(
       `npmRegistrySDK.org ${namespace}`,
+      "metadata-fetch",
       () => npmRegistrySDK.org(namespace)
     )
   };
@@ -291,7 +297,7 @@ export async function depWalker(
         collectables
       };
       operationsQueue.push(
-        scanDirOrArchiveEx(name, version, locker, tempDir, logger, scanDirOptions)
+        scanDirOrArchiveEx(name, version, locker, tempDir, scanDirOptions)
       );
     }
 
@@ -430,7 +436,6 @@ async function scanDirOrArchiveEx(
   version: string,
   locker: Mutex,
   tempDir: TempDirectory,
-  logger: Logger,
   options: {
     registry?: string;
     isRootNode: boolean;
@@ -445,36 +450,33 @@ async function scanDirOrArchiveEx(
 
   const spec = `${name}@${version}`;
 
-  try {
-    const {
+  const {
+    registry,
+    location = process.cwd(),
+    isRootNode,
+    ref,
+    statsCollector,
+    pacoteProvider,
+    collectables
+  } = options;
+
+  const mama = await (isRootNode ?
+    ManifestManager.fromPackageJSON(location) :
+    extractAndResolve(tempDir.location, {
+      spec,
       registry,
-      location = process.cwd(),
-      isRootNode,
-      ref,
-      statsCollector,
-      pacoteProvider,
-      collectables
-    } = options;
+      pacoteProvider
+    })
+  );
 
-    const mama = await (isRootNode ?
-      ManifestManager.fromPackageJSON(location) :
-      extractAndResolve(tempDir.location, {
-        spec,
-        registry,
-        pacoteProvider
-      })
-    );
-
-    await statsCollector.track(`tarball.scanDirOrArchive ${spec}`, () => scanDirOrArchive(mama, ref, {
+  await statsCollector.track(`tarball.scanDirOrArchive ${spec}`,
+    "tarball-scan",
+    () => scanDirOrArchive(mama, ref, {
       astAnalyserOptions: {
         optionalWarnings: typeof location !== "undefined",
         collectables
       }
     }));
-  }
-  catch (error: any) {
-    logger.emit(ScannerLoggerEvents.error, error, "tarball-scan");
-  }
 }
 
 function isLocalManifest(

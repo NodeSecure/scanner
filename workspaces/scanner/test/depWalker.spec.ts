@@ -164,6 +164,12 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
 
   assert.deepStrictEqual(walkErrors, [
     {
+      name: "pacote.manifest pkg.gitdeps@0.1.0",
+      error: "404 Not Found - GET https://registry.npmjs.org/pkg.gitdeps - Not found",
+      phase: "tree-walk"
+    },
+    {
+      name: "pacote.extract pkg.gitdeps@0.1.0",
       error: "404 Not Found - GET https://registry.npmjs.org/pkg.gitdeps - Not found",
       phase: "tarball-scan"
     }
@@ -203,6 +209,12 @@ test("execute depWalker on typo-squatting (with location)", async(test) => {
   const walkErrors = errors();
   assert.deepStrictEqual(walkErrors, [
     {
+      name: "pacote.manifest mecha@1.0.0",
+      error: "No matching version found for mecha@1.0.0.",
+      phase: "tree-walk"
+    },
+    {
+      name: "pacote.extract mecha@1.0.0",
       error: "No matching version found for mecha@1.0.0.",
       phase: "tarball-scan"
     }
@@ -224,6 +236,12 @@ test("execute depWalker on typo-squatting (with no location)", async(test) => {
   const walkErrors = errors();
   assert.deepStrictEqual(walkErrors, [
     {
+      name: "pacote.manifest mecha@1.0.0",
+      error: "No matching version found for mecha@1.0.0.",
+      phase: "tree-walk"
+    },
+    {
+      name: "pacote.extract mecha@1.0.0",
       error: "No matching version found for mecha@1.0.0.",
       phase: "tarball-scan"
     }
@@ -455,11 +473,15 @@ function uniqueIdenfier(identifer: PartialIdentifer) {
 }
 
 function errorLogger() {
-  const errors: ({ error: string; phase: string | undefined; })[] = [];
+  const errors: ({
+    name: string | undefined;
+    error: string | undefined;
+    phase: string | undefined;
+  })[] = [];
 
   const logger = new Logger();
   logger.on("error", (error, phase) => {
-    errors.push({ error: error.message, phase });
+    errors.push({ name: error.name, error: error.message, phase });
   });
 
   return {
