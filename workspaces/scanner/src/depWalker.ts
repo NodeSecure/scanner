@@ -115,6 +115,7 @@ export async function depWalker(
   const {
     scanRootNode = false,
     includeDevDeps = false,
+    isVerbose = false,
     packageLock,
     maxDepth,
     location,
@@ -123,7 +124,7 @@ export async function depWalker(
     npmRcConfig
   } = options;
 
-  const statsCollector = new StatsCollector(logger);
+  const statsCollector = new StatsCollector({ logger }, { isVerbose });
 
   const collectables = kCollectableTypes.map((type) => new CollectableSet<Metadata>(type));
 

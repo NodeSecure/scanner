@@ -77,7 +77,7 @@ function cleanupPayload(payload: Payload) {
 
 test("execute depWalker on @slimio/is", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger, errorCount } = errorLogger();
+  const { logger, errorCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const result = await depWalker(
@@ -95,7 +95,7 @@ test("execute depWalker on @slimio/is", async(test) => {
 
 test("execute depWalker on @slimio/config", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger, errorCount } = errorLogger();
+  const { logger, errorCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const result = await depWalker(
@@ -133,12 +133,12 @@ test("execute depWalker on @slimio/config", async(test) => {
 
 test("execute depWalker on pkg.gitdeps", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger, errors } = errorLogger();
+  const { logger, errors, statsCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const result = await depWalker(
     pkgGitdeps,
-    structuredClone(kDefaultWalkerOptions),
+    { ...structuredClone(kDefaultWalkerOptions), isVerbose: true },
     logger
   );
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
@@ -181,11 +181,12 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
   assert.strictEqual(metadata.apiCallsCount, 50);
   assert.strictEqual(metadata.errorCount, 2);
   assert.strictEqual(metadata.errors.length, 2);
+  assert.strictEqual(statsCount(), 48);
 });
 
 test("execute depWalker on typo-squatting (with location)", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger, errors } = errorLogger();
+  const { logger, errors, statsCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const result = await depWalker(
@@ -219,11 +220,12 @@ test("execute depWalker on typo-squatting (with location)", async(test) => {
       phase: "tarball-scan"
     }
   ]);
+  assert.strictEqual(statsCount(), 0);
 });
 
 test("execute depWalker on typo-squatting (with no location)", async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
-  const { logger, errors } = errorLogger();
+  const { logger, errors } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const result = await depWalker(
@@ -249,7 +251,7 @@ test("execute depWalker on typo-squatting (with no location)", async(test) => {
 });
 
 test("should highlight the given packages", async() => {
-  const { logger } = errorLogger();
+  const { logger } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const hightlightPackages = {
@@ -279,7 +281,7 @@ test("should highlight the given packages", async() => {
 });
 
 test("should support multiple formats for packages highlighted", async() => {
-  const { logger } = errorLogger();
+  const { logger } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
   const hightlightPackages = ["zen-observable@0.8.14 || 0.8.15", "nanoid"];
@@ -472,21 +474,31 @@ function uniqueIdenfier(identifer: PartialIdentifer) {
   return `${identifer.value} ${identifer.location.file}`;
 }
 
-function errorLogger() {
+function buildLogger() {
   const errors: ({
     name: string | undefined;
     error: string | undefined;
     phase: string | undefined;
   })[] = [];
 
+  const stats: ({ name: string; })[] = [];
+
   const logger = new Logger();
   logger.on("error", (error, phase) => {
     errors.push({ name: error.name, error: error.message, phase });
   });
 
+  logger.on("stat", (stat) => {
+    stats.push({
+      name: stat.name
+    });
+  });
+
   return {
     logger,
     errorCount: () => errors.length,
-    errors: () => errors
+    statsCount: () => stats.length,
+    errors: () => errors,
+    stats: () => stats
   };
 }
