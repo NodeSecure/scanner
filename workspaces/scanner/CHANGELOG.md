@@ -1,5 +1,27 @@
 # @nodesecure/scanner
 
+## 10.2.0
+
+### Minor Changes
+
+- [#632](https://github.com/NodeSecure/scanner/pull/632) [`36dc1fc`](https://github.com/NodeSecure/scanner/commit/36dc1fca73ed74bcba0b272b2eecdb66f24e2b30) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: highlight infrastructure components
+
+- [#641](https://github.com/NodeSecure/scanner/pull/641) [`3870425`](https://github.com/NodeSecure/scanner/commit/38704255896e0483a0473b5a21a47a6f0da366c2) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): emit stat event when api call is a success
+
+- [#639](https://github.com/NodeSecure/scanner/pull/639) [`2ddafa0`](https://github.com/NodeSecure/scanner/commit/2ddafa024130be089a03adb5bd3ad05a3fa12199) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): emit an error event when an IO fails
+
+- [#635](https://github.com/NodeSecure/scanner/pull/635) [`b32ee1a`](https://github.com/NodeSecure/scanner/commit/b32ee1ab773e98ed2ddc646c8ae7fb67055ec632) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): improve error handling for depwalker
+
+### Patch Changes
+
+- [#624](https://github.com/NodeSecure/scanner/pull/624) [`e338410`](https://github.com/NodeSecure/scanner/commit/e33841050a13a79f49ab27696ae025746387576d) Thanks [@7amed3li](https://github.com/7amed3li)! - fix: support string format for 'repository' field in comparePayloads
+
+- Updated dependencies [[`ce22eb8`](https://github.com/NodeSecure/scanner/commit/ce22eb8161278eacdf993bc3e3cb4b6235ad7910), [`442b364`](https://github.com/NodeSecure/scanner/commit/442b364b8a5d568e267a11f91bd6360f341a24ff), [`36dc1fc`](https://github.com/NodeSecure/scanner/commit/36dc1fca73ed74bcba0b272b2eecdb66f24e2b30)]:
+  - @nodesecure/i18n@4.1.0
+  - @nodesecure/tree-walker@2.3.0
+  - @nodesecure/tarball@3.3.0
+  - @nodesecure/rc@5.2.0
+
 ## 10.1.0
 
 ### Minor Changes
