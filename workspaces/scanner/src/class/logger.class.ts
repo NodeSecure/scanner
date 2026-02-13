@@ -3,7 +3,7 @@ import { EventEmitter } from "node:events";
 import { performance } from "node:perf_hooks";
 
 // Import Internal Dependencies
-import type { Error } from "../types.ts";
+import type { Error, ApiStats } from "../types.ts";
 
 export const ScannerLoggerEvents = {
   error: "error",
@@ -36,6 +36,7 @@ export type LoggerEventsMap = {
   end: [eventName: string, data: LoggerEventData & { executionTime: number; }];
   depWalkerFinished: [];
   error: [error: LoggerEventError, phase?: string];
+  stat: [stat: ApiStats];
 };
 
 export class Logger extends EventEmitter<LoggerEventsMap> {

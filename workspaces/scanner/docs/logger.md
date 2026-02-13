@@ -79,6 +79,17 @@ logger.on("error", (error: Error, phase?: string) => {
 });
 ```
 
+### stat
+
+Emitted when a successful API call is made:
+
+```ts
+logger.on("stat", (stat: ApiStats) => {
+  console.log(`API call: ${stat.name}`);
+  console.log(`Duration: ${stat.executionTime}ms`);
+  console.log(`Start at: ${stat.startedAt}`);
+});
+
 ### depWalkerFinished
 
 Emitted when the dependency walker completes its analysis:
@@ -143,6 +154,10 @@ export interface LoggerEventData {
   /** Count of triggered event */
   count: number;
 }
+
+export type LoggerEventError = {
+  executionTime: number;
+} & Error;
 ```
 
 ### LoggerEventsMap
@@ -153,6 +168,7 @@ export type LoggerEventsMap = {
   tick: [eventName: string];
   end: [eventName: string, data: LoggerEventData & { executionTime: number; }];
   depWalkerFinished: [];
-  error: [error: Error, phase?: string];
+  error: [error: LoggerEventError, phase?: string];
+  stat: [stat: ApiStats];
 };
 ```

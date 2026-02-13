@@ -334,6 +334,13 @@ export interface Options {
    * @default true  for cwd()  API
    */
   readonly scanRootNode?: boolean;
+
+  /**
+   * Enable verbose mode
+   *
+   * @default false
+   */
+  isVerbose?: boolean;
 }
 
 export interface TokenStore {

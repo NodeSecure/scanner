@@ -6,8 +6,17 @@ import { isHTTPError } from "@openally/httpie";
 
 // Import Internal Dependencies
 import { SystemDateProvider, type DateProvider } from "./DateProvider.class.ts";
-import type { LoggerEventsMap } from "./logger.class.ts";
+import { type LoggerEventsMap, Logger } from "./logger.class.ts";
 import type { ApiStats, Stats, Error } from "../types.ts";
+
+export type Providers = {
+  dateProvider?: DateProvider;
+  logger?: EventEmitter<LoggerEventsMap>;
+};
+
+export type Options = {
+  isVerbose: boolean;
+};
 
 export class StatsCollector {
   #logger: EventEmitter<LoggerEventsMap>;
@@ -15,11 +24,14 @@ export class StatsCollector {
   #apiCalls: ApiStats[] = [];
   #startedAt: number;
   #errors: Error[] = [];
+  #isVerbose: boolean;
 
-  constructor(logger: EventEmitter<LoggerEventsMap>, dateProvider: DateProvider = new SystemDateProvider()) {
+  constructor(providers: Providers, options: Options) {
+    const { dateProvider = new SystemDateProvider(), logger = new Logger() } = providers;
     this.#logger = logger;
     this.#dateProvider = dateProvider;
     this.#startedAt = this.#dateProvider.now();
+    this.#isVerbose = options.isVerbose;
   }
 
   track<T extends () => any>(name: string, phase: string, fn: T): ReturnType<T> {
@@ -29,7 +41,7 @@ export class StatsCollector {
       if (result instanceof Promise) {
         return result
           .then((res: ReturnType<T>) => {
-            this.#addApiStat(name, startedAt, this.#calcExecutionTime(startedAt));
+            this.#addApiStatVerbose(name, startedAt, this.#calcExecutionTime(startedAt));
 
             return res;
           })
@@ -38,19 +50,26 @@ export class StatsCollector {
             this.#addError({
               name, err, executionTime, phase
             });
-            this.#addApiStat(name, startedAt, executionTime);
-
+            this.#apiCalls.push({
+              name,
+              startedAt,
+              executionTime
+            });
             throw err;
           }) as ReturnType<T>;
       }
 
-      this.#addApiStat(name, startedAt, this.#calcExecutionTime(startedAt));
+      this.#addApiStatVerbose(name, startedAt, this.#calcExecutionTime(startedAt));
 
       return result;
     }
     catch (err) {
       const executionTime = this.#calcExecutionTime(startedAt);
-      this.#addApiStat(name, startedAt, executionTime);
+      this.#apiCalls.push({
+        name,
+        startedAt,
+        executionTime
+      });
       this.#addError({
         name, err, executionTime, phase
       });
@@ -62,12 +81,16 @@ export class StatsCollector {
     return this.#dateProvider.now() - startedAt;
   }
 
-  #addApiStat(name: string, startedAt: number, executionTime: number) {
-    this.#apiCalls.push({
+  #addApiStatVerbose(name: string, startedAt: number, executionTime: number) {
+    const stat = {
       name,
       startedAt,
       executionTime
-    });
+    };
+    this.#apiCalls.push(stat);
+    if (this.#isVerbose) {
+      this.#logger.emit("stat", stat);
+    }
   }
 
   #addError(params: {
