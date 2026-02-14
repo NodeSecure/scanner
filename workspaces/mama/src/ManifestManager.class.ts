@@ -120,6 +120,14 @@ export class ManifestManager<
       .some((script) => kUnsafeNPMScripts.has(script.toLowerCase()));
   }
 
+  get name() {
+    return this.document.name ?? "workspace";
+  }
+
+  get version() {
+    return this.document.version ?? "1.0.0";
+  }
+
   get moduleType() {
     return inspectModuleType(this.document);
   }
