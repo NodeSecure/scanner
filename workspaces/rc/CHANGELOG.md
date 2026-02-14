@@ -1,5 +1,11 @@
 # @nodesecure/rc
 
+## 5.2.0
+
+### Minor Changes
+
+- [#632](https://github.com/NodeSecure/scanner/pull/632) [`36dc1fc`](https://github.com/NodeSecure/scanner/commit/36dc1fca73ed74bcba0b272b2eecdb66f24e2b30) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: highlight infrastructure components
+
 ## 5.1.0
 
 ### Minor Changes
