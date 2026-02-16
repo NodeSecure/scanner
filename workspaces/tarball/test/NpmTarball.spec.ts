@@ -5,7 +5,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
-import { CollectableSet, warnings, type Warning } from "@nodesecure/js-x-ray";
+import { DefaultCollectableSet, warnings, type Warning } from "@nodesecure/js-x-ray";
 import { ManifestManager } from "@nodesecure/mama";
 
 type SourceArrayLocation = [[number, number], [number, number]];
@@ -26,7 +26,7 @@ describe("NpmTarball", () => {
   test("it should have a shady-link warning when a hostname resolve a private ip address with collectables", async() => {
     const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
     const npmTarball = new NpmTarball(mama);
-    const hostnameSet = new CollectableSet("hostname");
+    const hostnameSet = new DefaultCollectableSet("hostname");
 
     const result = await npmTarball.scanFiles({
       collectables: [hostnameSet]
@@ -101,7 +101,7 @@ describe("NpmTarball", () => {
     const npmTarball = new NpmTarball(mama);
 
     const result = await npmTarball.scanFiles({
-      collectables: [new CollectableSet("url"), new CollectableSet("ip")]
+      collectables: [new DefaultCollectableSet("url"), new DefaultCollectableSet("ip")]
     });
 
     assert.deepEqual(
@@ -136,7 +136,7 @@ describe("NpmTarball", () => {
   test("it should add the spec to collectables", async() => {
     const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
     const npmTarball = new NpmTarball(mama);
-    const hostnameSet = new CollectableSet<Metadata>("hostname");
+    const hostnameSet = new DefaultCollectableSet<Metadata>("hostname");
 
     await npmTarball.scanFiles({
       collectables: [hostnameSet]
@@ -146,7 +146,7 @@ describe("NpmTarball", () => {
   });
 });
 
-function extractSpecs(collectableSet: CollectableSet<Metadata>) {
+function extractSpecs(collectableSet: DefaultCollectableSet<Metadata>) {
   return Array.from(collectableSet)
     .flatMap(({ locations }) => locations.flatMap(({ metadata }) => metadata?.spec ?? []));
 }
