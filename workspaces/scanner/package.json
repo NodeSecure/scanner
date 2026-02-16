@@ -68,7 +68,7 @@
     "@nodesecure/contact": "^3.0.0",
     "@nodesecure/flags": "^3.0.3",
     "@nodesecure/i18n": "^4.1.0",
-    "@nodesecure/js-x-ray": "11.5.0",
+    "@nodesecure/js-x-ray": "11.7.0",
     "@nodesecure/mama": "^2.1.1",
     "@nodesecure/npm-registry-sdk": "^4.4.0",
     "@nodesecure/npm-types": "^1.3.0",
@@ -82,7 +82,7 @@
     "frequency-set": "^2.1.0",
     "pacote": "^21.0.0",
     "semver": "^7.5.4",
-    "ssri": "13.0.0",
+    "ssri": "13.0.1",
     "type-fest": "^5.0.1"
   },
   "devDependencies": {
