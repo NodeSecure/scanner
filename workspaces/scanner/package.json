@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/scanner",
-  "version": "10.2.0",
+  "version": "10.3.0",
   "description": "A package API to run a static analysis of your module's dependencies.",
   "type": "module",
   "exports": {
@@ -72,9 +72,9 @@
     "@nodesecure/mama": "^2.1.1",
     "@nodesecure/npm-registry-sdk": "^4.4.0",
     "@nodesecure/npm-types": "^1.3.0",
-    "@nodesecure/rc": "^5.2.0",
-    "@nodesecure/tarball": "^3.3.0",
-    "@nodesecure/tree-walker": "^2.3.0",
+    "@nodesecure/rc": "^5.3.0",
+    "@nodesecure/tarball": "^3.4.0",
+    "@nodesecure/tree-walker": "^2.4.0",
     "@nodesecure/utils": "^2.3.0",
     "@nodesecure/vulnera": "^2.0.1",
     "@openally/mutex": "^2.0.0",
