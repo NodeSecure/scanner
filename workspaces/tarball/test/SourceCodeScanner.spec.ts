@@ -8,7 +8,7 @@ import { describe, test } from "node:test";
 import {
   ManifestManager
 } from "@nodesecure/mama";
-import { type ReportOnFile, AstAnalyser, CollectableSet } from "@nodesecure/js-x-ray";
+import { type ReportOnFile, AstAnalyser, DefaultCollectableSet } from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
 import {
@@ -139,7 +139,7 @@ describe("SourceCodeScanner", () => {
 
   test("it should add spec to collectables", async() => {
     const mama = loadFixtureManifest("entryfiles");
-    const emailSet = new CollectableSet<{ spec?: string; }>("email");
+    const emailSet = new DefaultCollectableSet<{ spec?: string; }>("email");
 
     const scanner = new SourceCodeScanner(mama, {
       astAnalyser: new AstAnalyser({

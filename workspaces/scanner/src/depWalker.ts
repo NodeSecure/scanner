@@ -11,7 +11,7 @@ import {
   scanDirOrArchive,
   type PacoteProvider
 } from "@nodesecure/tarball";
-import { CollectableSet } from "@nodesecure/js-x-ray";
+import { DefaultCollectableSet, type CollectableSet } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
@@ -126,7 +126,7 @@ export async function depWalker(
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
 
-  const collectables = kCollectableTypes.map((type) => new CollectableSet<Metadata>(type));
+  const collectables = kCollectableTypes.map((type) => new DefaultCollectableSet<Metadata>(type));
 
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
@@ -412,7 +412,7 @@ export async function depWalker(
   }
 }
 
-function extractHighlightedIdentifiers(collectables: CollectableSet<Metadata>[], identifiersToHighlight: Set<string>) {
+function extractHighlightedIdentifiers(collectables: DefaultCollectableSet<Metadata>[], identifiersToHighlight: Set<string>) {
   if (identifiersToHighlight.size === 0) {
     return [];
   }

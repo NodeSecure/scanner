@@ -9,7 +9,7 @@ import {
 } from "@nodesecure/mama";
 import {
   AstAnalyser,
-  CollectableSet,
+  DefaultCollectableSet,
   warnings,
   type AstAnalyserOptions
 } from "@nodesecure/js-x-ray";
@@ -87,25 +87,27 @@ export class NpmTarball {
           .flatMap(filterJavaScriptFiles())
       });
 
-      const operationQueue =
-        Array.from(hostNameSet)
-          .map(({ value, locations }) => this.#resolver.isPrivateHost(value)
-            .then((isPrivate) => {
-              if (isPrivate) {
-                locations.forEach(({ file, location }) => {
-                  code.warnings.push({
-                    kind: "shady-link",
-                    ...warnings["shady-link"],
-                    file: file ?? undefined,
-                    location,
-                    value,
-                    source: "Scanner"
+      if (hostNameSet instanceof DefaultCollectableSet) {
+        const operationQueue =
+          Array.from(hostNameSet)
+            .map(({ value, locations }) => this.#resolver.isPrivateHost(value)
+              .then((isPrivate) => {
+                if (isPrivate) {
+                  locations.forEach(({ file, location }) => {
+                    code.warnings.push({
+                      kind: "shady-link",
+                      ...warnings["shady-link"],
+                      file: file ?? undefined,
+                      location,
+                      value,
+                      source: "Scanner"
+                    });
                   });
-                });
-              }
-            })
-          );
-      await Promise.allSettled(operationQueue);
+                }
+              })
+            );
+        await Promise.allSettled(operationQueue);
+      }
     }
 
     return {
@@ -121,7 +123,7 @@ export class NpmTarball {
       return options;
     }
 
-    return { ...options, collectables: [...options.collectables ?? [], new CollectableSet("hostname")] };
+    return { ...options, collectables: [...options.collectables ?? [], new DefaultCollectableSet("hostname")] };
   }
 }
 

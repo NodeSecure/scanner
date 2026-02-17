@@ -5,7 +5,7 @@ import { test } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
-import { AstAnalyser, CollectableSet } from "@nodesecure/js-x-ray";
+import { AstAnalyser, DefaultCollectableSet } from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
 import { SourceCodeScanner } from "../src/class/SourceCodeScanner.class.ts";
@@ -141,7 +141,7 @@ test("should detect the usage of global fetch and update hasExternalCapacity fla
 });
 
 test("should add spec to collectables", async() => {
-  const emailSet = new CollectableSet<{ spec: string; }>("email");
+  const emailSet = new DefaultCollectableSet<{ spec: string; }>("email");
   const mama = createFakeManifestManager();
   const scanner = new SourceCodeScanner(mama, {
     astAnalyser: new AstAnalyser({ collectables: [emailSet] })
