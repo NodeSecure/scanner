@@ -1,5 +1,11 @@
 # @nodesecure/rc
 
+## 5.3.0
+
+### Minor Changes
+
+- [#643](https://github.com/NodeSecure/scanner/pull/643) [`8afa3a4`](https://github.com/NodeSecure/scanner/commit/8afa3a48c2943ddf15b5bf80c0917b6f7985352f) Thanks [@clemgbld](https://github.com/clemgbld)! - chore: upgrade js-x-ray
+
 ## 5.2.0
 
 ### Minor Changes
