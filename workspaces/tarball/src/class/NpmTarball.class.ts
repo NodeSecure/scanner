@@ -11,6 +11,7 @@ import {
   AstAnalyser,
   DefaultCollectableSet,
   warnings,
+  TsSourceParser,
   type AstAnalyserOptions
 } from "@nodesecure/js-x-ray";
 
@@ -29,6 +30,14 @@ export interface ScannedFilesResult {
   composition: TarballComposition;
   conformance: conformance.SpdxExtractedResult;
   code: SourceCodeReport;
+}
+
+export interface NpmTarballScanFilesOptions {
+  /**
+   * List of files and directories to exclude from the scan.
+   * Support glob patterns (e.g., "node_modules/**", "dist/**")
+   */
+  exclude?: string[];
 }
 
 export type NpmTarballOptions = {
@@ -58,8 +67,11 @@ export class NpmTarball {
   }
 
   async scanFiles(
-    astAnalyserOptions?: AstAnalyserOptions
+    astAnalyserOptions?: AstAnalyserOptions,
+    options: NpmTarballScanFilesOptions = {}
   ): Promise<ScannedFilesResult> {
+    const { exclude = [] } = options;
+
     const location = this.manifest.location;
     const [
       composition,
@@ -74,17 +86,21 @@ export class NpmTarball {
       code = new SourceCodeReport();
     }
     else {
-      const options = this.#optionsWithHostnameSet(astAnalyserOptions ?? {});
+      const options = this.#optionsWithHostnameSet(
+        astAnalyserOptions ?? {}
+      );
 
-      const hostNameSet = options?.collectables?.find((collectable) => collectable.type === "hostname")!;
+      const hostNameSet = options?.collectables?.find(
+        (collectable) => collectable.type === "hostname"
+      )!;
 
       const astAnalyser = new AstAnalyser(options);
 
       code = await new SourceCodeScanner(this.manifest, { astAnalyser }).iterate({
         manifest: [...this.manifest.getEntryFiles()]
-          .flatMap(filterJavaScriptFiles()),
+          .flatMap(filterJavaScriptFiles(exclude)),
         javascript: composition.files
-          .flatMap(filterJavaScriptFiles())
+          .flatMap(filterJavaScriptFiles(exclude))
       });
 
       if (hostNameSet instanceof DefaultCollectableSet) {
@@ -117,19 +133,46 @@ export class NpmTarball {
     };
   }
 
-  #optionsWithHostnameSet(options: AstAnalyserOptions): AstAnalyserOptions {
-    const hasHostnameSet = options?.collectables?.some((collectable) => collectable.type === "hostname");
+  #optionsWithHostnameSet(
+    options: AstAnalyserOptions
+  ): AstAnalyserOptions {
+    const hasHostnameSet = options?.collectables?.some(
+      (collectable) => collectable.type === "hostname"
+    );
     if (hasHostnameSet) {
       return options;
     }
 
-    return { ...options, collectables: [...options.collectables ?? [], new DefaultCollectableSet("hostname")] };
+    return {
+      ...options,
+      collectables: [
+        ...options.collectables ?? [],
+        new DefaultCollectableSet("hostname")
+      ]
+    };
   }
 }
 
-function filterJavaScriptFiles() {
+function filterJavaScriptFiles(
+  exclude: string[] = []
+) {
   return (file: string) => {
-    if (NpmTarball.JS_EXTENSIONS.has(path.extname(file))) {
+    // Exclude .d.ts files
+    if (file.includes("d.ts")) {
+      return [];
+    }
+
+    // Exclude files matching any glob pattern
+    if (exclude.some((pattern) => path.matchesGlob(file, pattern))) {
+      return [];
+    }
+
+    const fileExt = path.extname(file);
+
+    if (NpmTarball.JS_EXTENSIONS.has(fileExt)) {
+      return file;
+    }
+    if (TsSourceParser.FileExtensions.has(fileExt)) {
       return file;
     }
 

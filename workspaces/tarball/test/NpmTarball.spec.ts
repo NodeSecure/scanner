@@ -23,6 +23,25 @@ type Metadata = {
 };
 
 describe("NpmTarball", () => {
+  test("it should exclude files matching glob patterns via the exclude option", async() => {
+    const fixturePath = path.join(__dirname, "fixtures", "exclude-test");
+    const mama = await ManifestManager.fromPackageJSON(
+      path.join(fixturePath, "package.json")
+    );
+    const npmTarball = new NpmTarball(mama);
+
+    const exclude: string[] = [
+      "ignoreme.js",
+      "subdir/**"
+    ];
+    const result = await npmTarball.scanFiles(
+      undefined,
+      { exclude }
+    );
+
+    assert.ok(result.code.warnings.length === 0);
+  });
+
   test("it should have a shady-link warning when a hostname resolve a private ip address with collectables", async() => {
     const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
     const npmTarball = new NpmTarball(mama);

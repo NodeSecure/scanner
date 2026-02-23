@@ -27,14 +27,26 @@ Create a new NpmTarball instance.
 > [!CAUTION]
 > ManifestManager instance must have a location defined
 
-### scanFiles(): Promise< ScannedFilesResult >
+### scanFiles(astAnalyserOptions?: AstAnalyserOptions, options?: NpmTarballScanFilesOptions): Promise< ScannedFilesResult >
 
 Scan all the files contained in the tarball and obtain a complete report, including detection of JavaScript threats.
 
 ```ts
+interface NpmTarballScanFilesOptions {
+  /**
+   * List of files and directories to exclude from the scan.
+   * Support glob patterns (e.g., "node_modules/**", "dist/**")
+   */
+  exclude?: string[];
+}
+```
+
+The function return the following object as response:
+
+```ts
 interface ScannedFilesResult {
   composition: TarballComposition;
-  conformance: SpdxExtractedResult;
+  conformance: conformance.SpdxExtractedResult;
   code: SourceCodeReport;
 }
 ```
