@@ -82,7 +82,7 @@
     "frequency-set": "^2.1.0",
     "pacote": "^21.0.0",
     "semver": "^7.5.4",
-    "ssri": "13.0.0",
+    "ssri": "13.0.1",
     "type-fest": "^5.0.1"
   },
   "devDependencies": {
