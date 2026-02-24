@@ -1,5 +1,13 @@
 # @nodesecure/tarball
 
+## 3.5.0
+
+### Minor Changes
+
+- [#646](https://github.com/NodeSecure/scanner/pull/646) [`45eb26a`](https://github.com/NodeSecure/scanner/commit/45eb26aa6edf3857b13ce8539640f097a91203a3) Thanks [@fraxken](https://github.com/fraxken)! - Allow to exclude files and patterns in NpmTarball scanFiles function
+
+- [#648](https://github.com/NodeSecure/scanner/pull/648) [`94167b4`](https://github.com/NodeSecure/scanner/commit/94167b464f7818ae648bb41b0ad7900add5b0699) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor: upgrade to js-x-ray 13
+
 ## 3.4.0
 
 ### Minor Changes

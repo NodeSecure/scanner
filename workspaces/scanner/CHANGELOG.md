@@ -1,5 +1,18 @@
 # @nodesecure/scanner
 
+## 10.4.0
+
+### Minor Changes
+
+- [#648](https://github.com/NodeSecure/scanner/pull/648) [`94167b4`](https://github.com/NodeSecure/scanner/commit/94167b464f7818ae648bb41b0ad7900add5b0699) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor: upgrade to js-x-ray 13
+
+### Patch Changes
+
+- Updated dependencies [[`45eb26a`](https://github.com/NodeSecure/scanner/commit/45eb26aa6edf3857b13ce8539640f097a91203a3), [`94167b4`](https://github.com/NodeSecure/scanner/commit/94167b464f7818ae648bb41b0ad7900add5b0699)]:
+  - @nodesecure/tarball@3.5.0
+  - @nodesecure/tree-walker@2.5.0
+  - @nodesecure/rc@5.4.0
+
 ## 10.3.0
 
 ### Minor Changes
