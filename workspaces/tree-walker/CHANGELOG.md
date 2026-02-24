@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 2.5.0
+
+### Minor Changes
+
+- [#648](https://github.com/NodeSecure/scanner/pull/648) [`94167b4`](https://github.com/NodeSecure/scanner/commit/94167b464f7818ae648bb41b0ad7900add5b0699) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor: upgrade to js-x-ray 13
+
 ## 2.4.0
 
 ### Minor Changes
