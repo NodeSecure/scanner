@@ -54,6 +54,8 @@ console.log({ illuminated, expired });
 
 ## API
 
+- [NsResolver](./docs/NsResolver.md)
+
 Contact is defined by the following TypeScript interface:
 ```ts
 interface Contact {
