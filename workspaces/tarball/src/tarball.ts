@@ -21,6 +21,7 @@ import {
   booleanToFlags
 } from "./utils/index.ts";
 import { NpmTarball } from "./class/NpmTarball.class.ts";
+import { DependencyCollectableSet } from "./class/DependencyCollectableSet.class.ts";
 import {
   getEmptyPackageWarning,
   getSemVerWarning
@@ -79,11 +80,16 @@ export async function scanDirOrArchive(
   );
   const tarex = new NpmTarball(mama);
 
+  const dependencySet = new DependencyCollectableSet(mama);
+
   const {
     composition,
     conformance,
     code
-  } = await tarex.scanFiles(astAnalyserOptions);
+  } = await tarex.scanFiles({
+    ...astAnalyserOptions,
+    collectables: [...astAnalyserOptions?.collectables ?? [], dependencySet]
+  });
 
   {
     const { description, engines, repository, scripts } = mama.document;
@@ -110,7 +116,7 @@ export async function scanDirOrArchive(
     files,
     dependencies,
     flags
-  } = code.groupAndAnalyseDependencies(mama);
+  } = dependencySet.extract();
 
   ref.licenses = conformance.licenses;
   ref.uniqueLicenseIds = conformance.uniqueLicenseIds;
@@ -123,7 +129,7 @@ export async function scanDirOrArchive(
   ref.composition.unused.push(...dependencies.unused);
   ref.composition.missing.push(...dependencies.missing);
   ref.composition.required_files = [...files];
-  ref.composition.required_nodejs = dependencies.nodejs;
+  ref.composition.required_nodejs = dependencies.nodeJs;
   ref.composition.minified = code.minified;
 
   ref.flags.push(...booleanToFlags({
@@ -172,11 +178,16 @@ export async function scanPackage(
   );
   const extractor = new NpmTarball(mama);
 
+  const dependencySet = new DependencyCollectableSet(mama);
+
   const {
     composition,
     conformance,
     code
-  } = await extractor.scanFiles(astAnalyserOptions);
+  } = await extractor.scanFiles({
+    ...astAnalyserOptions,
+    collectables: [...astAnalyserOptions?.collectables ?? [], dependencySet]
+  });
 
   // Check for empty package
   const warnings = [...code.warnings];
@@ -194,7 +205,7 @@ export async function scanPackage(
     uniqueLicenseIds: conformance.uniqueLicenseIds,
     licenses: conformance.licenses,
     ast: {
-      dependencies: code.dependencies,
+      dependencies: dependencySet.dependencies,
       warnings
     }
   };

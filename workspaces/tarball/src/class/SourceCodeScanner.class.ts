@@ -10,15 +10,8 @@ import {
   type ReportOnFile
 } from "@nodesecure/js-x-ray";
 import {
-  ManifestManager,
   type LocatedManifestManager
 } from "@nodesecure/mama";
-
-// Import Internal Dependencies
-import {
-  filterDependencyKind,
-  analyzeDependencies
-} from "../utils/index.ts";
 
 export interface SourceCodeAggregator {
   readonly consumed: boolean;
@@ -68,58 +61,8 @@ export class SourceCodeReport implements SourceCodeAggregator {
       if (report.flags.has("fetch")) {
         this.flags.hasExternalCapacity = true;
       }
-      this.dependencies[report.file] = Object.fromEntries(
-        report.dependencies
-      );
       report.flags.has("is-minified") && this.minified.push(report.file);
     }
-  }
-
-  groupAndAnalyseDependencies(
-    mama: ManifestManager
-  ) {
-    const files = new Set<string>();
-    const dependencies = new Set<string>();
-    const dependenciesInTryBlock = new Set<string>();
-
-    for (const [file, fileDeps] of Object.entries(this.dependencies)) {
-      const filtered = filterDependencyKind(
-        [...Object.keys(fileDeps)],
-        path.dirname(file)
-      );
-
-      [...Object.entries(fileDeps)]
-        .flatMap(([name, dependency]) => (dependency.inTry ? [name] : []))
-        .forEach((name) => dependenciesInTryBlock.add(name));
-
-      filtered.packages.forEach((name) => dependencies.add(name));
-      filtered.files.forEach((file) => files.add(file));
-    }
-
-    const {
-      nodeDependencies,
-      thirdPartyDependencies,
-      subpathImportsDependencies,
-      missingDependencies,
-      unusedDependencies,
-      flags
-    } = analyzeDependencies(
-      [...dependencies],
-      { mama, tryDependencies: dependenciesInTryBlock }
-    );
-
-    return {
-      files,
-      dependenciesInTryBlock: [...dependenciesInTryBlock],
-      dependencies: {
-        nodejs: nodeDependencies,
-        subpathImports: subpathImportsDependencies,
-        thirdparty: thirdPartyDependencies,
-        missing: missingDependencies,
-        unused: unusedDependencies
-      },
-      flags
-    };
   }
 }
 
@@ -216,7 +159,8 @@ export class SourceCodeScanner<
           {
             packageName,
             metadata: {
-              spec: this.manifest.spec
+              spec: this.manifest.spec,
+              relativeFile
             }
           }
         );
