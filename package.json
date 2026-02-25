@@ -13,7 +13,8 @@
     "workspaces/flags",
     "workspaces/fs-walk",
     "workspaces/github",
-    "workspaces/gitlab"
+    "workspaces/gitlab",
+    "workspaces/opencode-nodesecure"
   ],
   "scripts": {
     "build": "npm run build --ws --if-present",
