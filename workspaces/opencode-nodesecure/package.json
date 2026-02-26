@@ -1,0 +1,45 @@
+{
+  "name": "@nodesecure/opencode-nodesecure",
+  "version": "1.0.0",
+  "description": "A plugin for OpenCode that leverage NodeSecure packages.",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "prepublishOnly": "npm run build",
+    "test-types": "npm run build && tsd && attw --pack . --profile esm-only"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org",
+    "access": "public",
+    "provenance": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NodeSecure/scanner",
+    "directory": "workspaces/opencode-nodesecure"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "NodeSecure",
+    "opencode"
+  ],
+  "author": "GOMBAULD Clément <clementgombauld@hotmail.fr>",
+  "license": "MIT",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/NodeSecure/scanner/issues"
+  },
+  "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/opencode-nodesecure#readme",
+  "dependencies": {
+    "@nodesecure/scanner": "^10.4.0",
+    "@opencode-ai/plugin": "^1.2.10"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "@opencode-ai/plugin": true
+    }
+  }
+}
