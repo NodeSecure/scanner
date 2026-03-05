@@ -1,5 +1,11 @@
 # @nodesecure/contact
 
+## 3.1.0
+
+### Minor Changes
+
+- [#650](https://github.com/NodeSecure/scanner/pull/650) [`88675a6`](https://github.com/NodeSecure/scanner/commit/88675a6252760a64036818b6da51903ba374c9b1) Thanks [@fraxken](https://github.com/fraxken)! - Expose NsResolver class and add API documentation
+
 ## 3.0.0
 
 ### Major Changes
