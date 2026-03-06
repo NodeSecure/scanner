@@ -48,22 +48,41 @@ always-auth=true
     await tempDir.clear();
   });
 
-  test("should store and retrieve tokens", async() => {
-    const store = new RegistryTokenStore(config, undefined);
-    assert.strictEqual(store.get("https://registry.npmjs.org/"), "public-token");
-    assert.strictEqual(store.get("http://npm.nodescure.github.com/"), "private-token");
-    assert.strictEqual(store.get("https://registry.npmjs.org/"), "public-token");
-    assert.strictEqual(store.get("unknown"), undefined);
+  describe("get", () => {
+    test("should store and retrieve tokens", () => {
+      const store = new RegistryTokenStore(config, undefined);
+      assert.strictEqual(store.get("https://registry.npmjs.org/"), "public-token");
+      assert.strictEqual(store.get("http://npm.nodescure.github.com/"), "private-token");
+      assert.strictEqual(store.get("https://registry.npmjs.org/"), "public-token");
+      assert.strictEqual(store.get("unknown"), undefined);
+    });
+
+    test("should default to token from env when there is one", () => {
+      const store = new RegistryTokenStore(config, "token-from-env");
+      assert.strictEqual(store.get("unknown"), "token-from-env");
+      assert.strictEqual(store.get("unknown"), "token-from-env");
+    });
+
+    test("should always default to token from env when there is no config", () => {
+      const store = new RegistryTokenStore(undefined, "token-from-env");
+      assert.strictEqual(store.get("https://registry.npmjs.org/"), "token-from-env");
+    });
   });
 
-  test("should default to token from env when there is one", () => {
-    const store = new RegistryTokenStore(config, "token-from-env");
-    assert.strictEqual(store.get("unknown"), "token-from-env");
-    assert.strictEqual(store.get("unknown"), "token-from-env");
-  });
+  describe("getConfig", () => {
+    test("should get no config", () => {
+      const store = new RegistryTokenStore(undefined, "token-from-env");
+      assert.deepEqual(store.getConfig("https://registry.npmjs.org/"), {});
+    });
 
-  test("should always default to token from env when there is no config", () => {
-    const store = new RegistryTokenStore(undefined, "token-from-env");
-    assert.strictEqual(store.get("https://registry.npmjs.org/"), "token-from-env");
+    test("should get the right config by registry", () => {
+      const store = new RegistryTokenStore(config, "token-from-env");
+      assert.deepEqual(store.getConfig("https://registry.npmjs.org/"), {
+        "//registry.npmjs.org/": "public-token"
+      });
+      assert.deepEqual(store.getConfig("http://npm.nodescure.github.com/"), {
+        "//npm.nodescure.github.com/": "private-token"
+      });
+    });
   });
 });
