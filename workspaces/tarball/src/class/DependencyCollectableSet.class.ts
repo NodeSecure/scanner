@@ -217,9 +217,7 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
       }
     }
 
-    const name = dependencies.includes(sourceDependency) ?
-      sourceDependency :
-      parseNpmSpec(sourceDependency)?.name ?? sourceDependency;
+    const name = this.#extractDependencyName(sourceDependency, dependencies);
 
     let thirdPartyDependency: string | undefined;
 
@@ -251,6 +249,20 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
       || (thirdPartyDependency && kExternalThirdPartyDeps.has(thirdPartyDependency)))) {
       this.#hasExternalCapacity = true;
     }
+  }
+
+  #extractDependencyName(sourceDependency: string, dependencies: string[]) {
+    for (const dependency of dependencies) {
+      if (dependency === sourceDependency) {
+        return sourceDependency;
+      }
+
+      if (sourceDependency.startsWith(dependency)) {
+        return dependency;
+      }
+    }
+
+    return parseNpmSpec(sourceDependency)?.name ?? sourceDependency;
   }
 
   #isMissingDependency(thirdPartyDependency: string, thirdPartyAliasedDependency: string | undefined) {

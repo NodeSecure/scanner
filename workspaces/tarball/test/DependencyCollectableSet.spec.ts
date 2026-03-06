@@ -263,6 +263,51 @@ describe("DependencyCollectableSet", () => {
     });
   });
 
+  test("should not detect unused dependencies on deep import", () => {
+    const mama = {
+      dependencies: ["koa", "kleur"],
+      devDependencies: ["mocha"]
+    };
+    const dependencyCollectableSet = new DependencyCollectableSet(mama);
+
+    dependencyCollectableSet.add("mocha", {
+      file: process.cwd(), location: [[0, 0], [0, 0]], metadata: {
+        unsafe: false,
+        inTry: false,
+        relativeFile: process.cwd()
+      }
+    });
+
+    dependencyCollectableSet.add("kleur", {
+      file: process.cwd(), location: [[0, 0], [0, 0]], metadata: {
+        unsafe: false,
+        inTry: false,
+        relativeFile: process.cwd()
+      }
+    });
+
+    dependencyCollectableSet.add("koa/dist/index.js", {
+      file: process.cwd(), location: [[0, 0], [0, 0]], metadata: {
+        unsafe: false,
+        inTry: false,
+        relativeFile: process.cwd()
+      }
+    });
+
+    assert.deepEqual(dependencyCollectableSet.extract(), {
+      files: new Set([]),
+      dependenciesInTryBlock: [],
+      flags: { hasExternalCapacity: false, hasMissingOrUnusedDependency: false },
+      dependencies: {
+        nodeJs: [],
+        thirdparty: ["kleur", "koa"],
+        subpathImports: {},
+        unused: [],
+        missing: []
+      }
+    });
+  });
+
   test("should be capable of detecting missing dependency 'kleur'", () => {
     const mama = {
       dependencies: ["mocha"],
