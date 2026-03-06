@@ -1,5 +1,16 @@
 # @nodesecure/scanner
 
+## 10.5.0
+
+### Minor Changes
+
+- [#659](https://github.com/NodeSecure/scanner/pull/659) [`8673a44`](https://github.com/NodeSecure/scanner/commit/8673a44e308cf2dc3641214659a5a0dc26e55b23) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): sync config with pacote when config is present
+
+### Patch Changes
+
+- Updated dependencies [[`e852fe1`](https://github.com/NodeSecure/scanner/commit/e852fe1a27386957bfb3c0cd552b2c006e3bdfef), [`fbc6023`](https://github.com/NodeSecure/scanner/commit/fbc6023d710a9c9291cd8ab8bb128438c068c250)]:
+  - @nodesecure/tarball@3.6.0
+
 ## 10.4.0
 
 ### Minor Changes
