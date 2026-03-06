@@ -128,18 +128,24 @@ export async function depWalker(
 
   const collectables = kCollectableTypes.map((type) => new DefaultCollectableSet<Metadata>(type));
 
+  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
+
+  const npmProjectConfig = tokenStore.getConfig(registry);
+
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
       await statsCollector.track(
         `pacote.extract ${spec}`,
         "tarball-scan",
-        () => pacote.extract(spec, dest, opts)
+        () => pacote.extract(spec, dest, {
+          ...opts,
+          ...npmProjectConfig
+        })
       );
     }
   };
 
   const isRemoteScanning = typeof location === "undefined";
-  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
 
   await using tempDir = await TempDirectory.create();
 
@@ -164,10 +170,11 @@ export async function depWalker(
     registry,
     providers: {
       pacote: {
-        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, "tree-walk", () => pacote.manifest(spec, opts)),
+        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, "tree-walk", () => pacote.manifest(spec,
+          { ...opts, ...npmProjectConfig })),
         packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`,
           "tree-walk",
-          () => pacote.packument(spec, opts))
+          () => pacote.packument(spec, { ...opts, ...npmProjectConfig }))
       }
     }
   });

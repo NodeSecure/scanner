@@ -26,7 +26,15 @@ export class RegistryTokenStore implements TokenStore {
     return token;
   }
 
+  getConfig(registry: string) {
+    return this.#config ? { [this.getKey(registry)]: this.get(registry) } : {};
+  }
+
   private getTokenKey(registry: string) {
-    return `${registry.replace(/https:|http:/, "")}:_authToken`;
+    return `${this.getKey(registry)}:_authToken`;
+  }
+
+  private getKey(registry: string) {
+    return registry.replace(/https:|http:/, "");
   }
 }
