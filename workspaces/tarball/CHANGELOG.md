@@ -1,5 +1,15 @@
 # @nodesecure/tarball
 
+## 3.6.0
+
+### Minor Changes
+
+- [#656](https://github.com/NodeSecure/scanner/pull/656) [`fbc6023`](https://github.com/NodeSecure/scanner/commit/fbc6023d710a9c9291cd8ab8bb128438c068c250) Thanks [@fraxken](https://github.com/fraxken)! - Export/Expose DependencyCollectableSet from tarball API entry
+
+### Patch Changes
+
+- [#658](https://github.com/NodeSecure/scanner/pull/658) [`e852fe1`](https://github.com/NodeSecure/scanner/commit/e852fe1a27386957bfb3c0cd552b2c006e3bdfef) Thanks [@clemgbld](https://github.com/clemgbld)! - fix(tarball): unused dependency false positive
+
 ## 3.5.0
 
 ### Minor Changes
