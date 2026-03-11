@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/lodash.merge": "^4.6.7",
     "@types/zen-observable": "^0.8.4",
-    "ajv": "6.12.6"
+    "ajv": "8.18.0"
   },
   "dependencies": {
     "@nodesecure/js-x-ray": "14.0.0",
