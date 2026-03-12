@@ -324,8 +324,8 @@ export async function depWalker(
   const isVulnHydratable = (strategy === "github-advisory" || strategy === "snyk")
     && isRemoteScanning;
   if (!isVulnHydratable) {
-    await hydratePayloadDependencies(dependencies as any, {
-      useStandardFormat: true,
+    await hydratePayloadDependencies(dependencies, {
+      useFormat: "Standard",
       path: location
     });
   }
