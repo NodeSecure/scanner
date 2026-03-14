@@ -1,5 +1,11 @@
 # @nodesecure/rc
 
+## 5.5.0
+
+### Minor Changes
+
+- [#662](https://github.com/NodeSecure/scanner/pull/662) [`4b2b834`](https://github.com/NodeSecure/scanner/commit/4b2b834389cc9db3b9357944f2330d42a772cbb9) Thanks [@fraxken](https://github.com/fraxken)! - Update vulnera to v3.x.x
+
 ## 5.4.0
 
 ### Minor Changes
