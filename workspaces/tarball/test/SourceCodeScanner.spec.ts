@@ -8,9 +8,14 @@ import { describe, test } from "node:test";
 import {
   ManifestManager
 } from "@nodesecure/mama";
-import { type ReportOnFile, AstAnalyser, DefaultCollectableSet } from "@nodesecure/js-x-ray";
+import {
+  type ReportOnFile,
+  AstAnalyser,
+  DefaultCollectableSet
+} from "@nodesecure/js-x-ray";
 
 // Import Internal Dependencies
+import { DependencyCollectableSet } from "../src/index.ts";
 import {
   SourceCodeScanner,
   type SourceCodeAggregator
@@ -143,7 +148,10 @@ describe("SourceCodeScanner", () => {
 
     const scanner = new SourceCodeScanner(mama, {
       astAnalyser: new AstAnalyser({
-        collectables: [emailSet]
+        collectables: [
+          emailSet,
+          new DefaultCollectableSet("dependency")
+        ]
       })
     });
     await scanner.iterate({
@@ -158,7 +166,10 @@ describe("SourceCodeScanner", () => {
 
   test("iterate() should report typescript files", async() => {
     const mama = loadFixtureManifest("tsOnly");
-    const astAnalyser = new AstAnalyser();
+    const depsSet = new DependencyCollectableSet(mama);
+    const astAnalyser = new AstAnalyser({
+      collectables: [depsSet]
+    });
     const aggregator = createAggregator();
 
     const scanner = new SourceCodeScanner(mama, {
@@ -176,8 +187,9 @@ describe("SourceCodeScanner", () => {
 
     const firstReport = reports[0];
     if (firstReport.ok) {
-      assert.ok(firstReport.dependencies.has("node:http"));
-      assert.ok(firstReport.dependencies.has("./bar.ts"));
+      const { files, dependencies } = depsSet.extract();
+      assert.ok(dependencies.nodeJs.includes("node:http"));
+      assert.ok(files.has("bar.ts"));
     }
     else {
       assert.fail("First report should be ok");

@@ -7,7 +7,8 @@ import {
   AstAnalyser,
   type Warning,
   type Dependency,
-  type ReportOnFile
+  type ReportOnFile,
+  DefaultCollectableSet
 } from "@nodesecure/js-x-ray";
 import {
   type LocatedManifestManager
@@ -85,7 +86,11 @@ export class SourceCodeScanner<
   ) {
     const {
       reportInitiator = () => new SourceCodeReport(),
-      astAnalyser = new AstAnalyser()
+      astAnalyser = new AstAnalyser({
+        collectables: [
+          new DefaultCollectableSet("dependency")
+        ]
+      })
     } = options;
 
     this.manifest = manifest;
