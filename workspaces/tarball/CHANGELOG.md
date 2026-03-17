@@ -1,5 +1,17 @@
 # @nodesecure/tarball
 
+## 3.6.0
+
+### Minor Changes
+
+- [#656](https://github.com/NodeSecure/scanner/pull/656) [`fbc6023`](https://github.com/NodeSecure/scanner/commit/fbc6023d710a9c9291cd8ab8bb128438c068c250) Thanks [@fraxken](https://github.com/fraxken)! - Export/Expose DependencyCollectableSet from tarball API entry
+
+### Patch Changes
+
+- [#658](https://github.com/NodeSecure/scanner/pull/658) [`e852fe1`](https://github.com/NodeSecure/scanner/commit/e852fe1a27386957bfb3c0cd552b2c006e3bdfef) Thanks [@clemgbld](https://github.com/clemgbld)! - fix(tarball): unused dependency false positive
+
+- [#664](https://github.com/NodeSecure/scanner/pull/664) [`fe0a69f`](https://github.com/NodeSecure/scanner/commit/fe0a69fb6a0a38c513e6ac0701ea2e4f0c7df644) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to v14.1.0
+
 ## 3.5.0
 
 ### Minor Changes
