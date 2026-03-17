@@ -176,7 +176,10 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     this.#values.add(value);
   }
 
-  #filerDependencyByKind(dependency: string, relativeFileLocation: string) {
+  #filerDependencyByKind(
+    dependency: string,
+    relativeFileLocation: string = ""
+  ) {
     const firstChar = dependency.charAt(0);
 
     /**
