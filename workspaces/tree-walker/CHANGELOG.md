@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 2.6.0
+
+### Minor Changes
+
+- [#664](https://github.com/NodeSecure/scanner/pull/664) [`fe0a69f`](https://github.com/NodeSecure/scanner/commit/fe0a69fb6a0a38c513e6ac0701ea2e4f0c7df644) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to v14.1.0
+
 ## 2.5.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @nodesecure/rc
 
+## 5.5.0
+
+### Minor Changes
+
+- [#662](https://github.com/NodeSecure/scanner/pull/662) [`4b2b834`](https://github.com/NodeSecure/scanner/commit/4b2b834389cc9db3b9357944f2330d42a772cbb9) Thanks [@fraxken](https://github.com/fraxken)! - Update vulnera to v3.x.x
+
+- [#664](https://github.com/NodeSecure/scanner/pull/664) [`fe0a69f`](https://github.com/NodeSecure/scanner/commit/fe0a69fb6a0a38c513e6ac0701ea2e4f0c7df644) Thanks [@fraxken](https://github.com/fraxken)! - Update JS-X-Ray to v14.1.0
+
 ## 5.4.0
 
 ### Minor Changes
