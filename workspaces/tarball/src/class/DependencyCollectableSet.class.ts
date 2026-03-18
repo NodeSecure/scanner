@@ -102,9 +102,11 @@ const kExternalThirdPartyDeps = new Set([
 ]);
 const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 
-type Metadata = Dependency & { relativeFile: string; };
+export type DependencyCollectableSetMetadata = Dependency & {
+  relativeFile: string;
+};
 
-export class DependencyCollectableSet implements CollectableSet<Metadata> {
+export class DependencyCollectableSet implements CollectableSet<DependencyCollectableSetMetadata> {
   type = "dependency";
   dependencies: Record<
     string,
@@ -121,7 +123,9 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
   #mama: Pick<ManifestManager, "dependencies" | "devDependencies" | "nodejsImports">;
   #hasExternalCapacity: boolean = false;
 
-  constructor(mama: Pick<ManifestManager, "dependencies" | "devDependencies" | "nodejsImports">) {
+  constructor(
+    mama: Pick<ManifestManager, "dependencies" | "devDependencies" | "nodejsImports">
+  ) {
     this.#mama = mama;
   }
 
@@ -151,8 +155,15 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     };
   }
 
-  add(value: string, { metadata }: CollectableInfos<Metadata>) {
-    const relativeFile = metadata?.relativeFile!;
+  add(
+    value: string,
+    { metadata }: CollectableInfos<DependencyCollectableSetMetadata>
+  ) {
+    if (!metadata) {
+      return;
+    }
+
+    const relativeFile = metadata.relativeFile;
     if (!(relativeFile in this.dependencies)) {
       this.dependencies[relativeFile] = Object.create(null);
     }
@@ -165,7 +176,10 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     if (metadata?.inTry) {
       this.#dependenciesInTryBlock.add(value);
     }
-    const filtered = this.#filerDependencyByKind(value, relativeFile);
+    const filtered = this.#filerDependencyByKind(
+      value,
+      path.dirname(relativeFile)
+    );
 
     if (filtered.file) {
       this.#files.add(filtered.file);
@@ -178,7 +192,7 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
 
   #filerDependencyByKind(
     dependency: string,
-    relativeFileLocation: string = ""
+    relativeFileLocation: string
   ) {
     const firstChar = dependency.charAt(0);
 
@@ -202,13 +216,21 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
 
     return { package: dependency };
   }
-  relativeFileLocation: string;
 
-  #analyzeDependency(sourceDependency: string, inTry: boolean) {
+  #analyzeDependency(
+    sourceDependency: string,
+    inTry: boolean
+  ) {
     if (this.#values.has(sourceDependency)) {
       return;
     }
-    const { dependencies, devDependencies, nodejsImports = {} } = this.#mama;
+
+    const {
+      dependencies,
+      devDependencies,
+      nodejsImports = {}
+    } = this.#mama;
+
     let thirdPartyAliasedDependency: string | undefined;
     // See: https://nodejs.org/api/packages.html#subpath-imports
     if (this.#isAliasFileModule(sourceDependency) && sourceDependency in nodejsImports) {
@@ -233,7 +255,10 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
       this.#thirdPartyDependencies.add(name);
     }
 
-    if (thirdPartyDependency && this.#isMissingDependency(thirdPartyDependency, thirdPartyAliasedDependency)) {
+    if (
+      thirdPartyDependency &&
+      this.#isMissingDependency(thirdPartyDependency, thirdPartyAliasedDependency)
+    ) {
       this.#missingDependencies.add(thirdPartyDependency);
     }
 
@@ -254,7 +279,10 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     }
   }
 
-  #extractDependencyName(sourceDependency: string, dependencies: string[]) {
+  #extractDependencyName(
+    sourceDependency: string,
+    dependencies: string[]
+  ) {
     for (const dependency of dependencies) {
       if (dependency === sourceDependency) {
         return sourceDependency;
@@ -268,7 +296,10 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     return parseNpmSpec(sourceDependency)?.name ?? sourceDependency;
   }
 
-  #isMissingDependency(thirdPartyDependency: string, thirdPartyAliasedDependency: string | undefined) {
+  #isMissingDependency(
+    thirdPartyDependency: string,
+    thirdPartyAliasedDependency: string | undefined
+  ) {
     const { dependencies, nodejsImports = {} } = this.#mama;
 
     return !dependencies.includes(thirdPartyDependency) &&
@@ -306,7 +337,7 @@ export class DependencyCollectableSet implements CollectableSet<Metadata> {
     alias: string,
     nodeImports: Record<string, string | NodeImport>
   ): [string, string] {
-    const importEntry = nodeImports[alias]!;
+    const importEntry = nodeImports[alias];
 
     return typeof importEntry === "string" ?
       [alias, importEntry] :

@@ -3,14 +3,20 @@ import path from "node:path";
 import { test, describe } from "node:test";
 import assert from "node:assert";
 
+// Import Third-party Dependencies
+import type { ManifestManager } from "@nodesecure/mama";
+
 // Import Internal Dependencies
 import { DependencyCollectableSet } from "../src/class/DependencyCollectableSet.class.ts";
 
+type Manifest = Pick<ManifestManager, "dependencies" | "devDependencies" | "nodejsImports">;
+
 describe("DependencyCollectableSet", () => {
   test("should have no dependencies initialy", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
 
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
@@ -18,9 +24,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should group dependencies by file", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
 
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
@@ -71,9 +78,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should detect Node.js dependencies and also flag hasExternalCapacity", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -121,9 +129,10 @@ describe("DependencyCollectableSet", () => {
     ];
 
     for (const externalThridPartyDep of externalThridPartyDeps) {
-      const mama = {
+      const mama: Manifest = {
         dependencies: [externalThridPartyDep],
-        devDependencies: []
+        devDependencies: [],
+        nodejsImports: {}
       };
 
       const dependencyCollectableSet = new DependencyCollectableSet(mama);
@@ -153,9 +162,10 @@ describe("DependencyCollectableSet", () => {
 
   test(`should detect no unused or missing dependencies
       and avoid confusion for package name with dots`, () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["lodash.isequal"],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -182,9 +192,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should detect prefixed (namespaced 'node:') core dependencies", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["node:foo"],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -227,9 +238,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should be capable of detecting unused dependency 'koa'", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["koa", "kleur"],
-      devDependencies: ["mocha"]
+      devDependencies: ["mocha"],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -264,9 +276,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should not detect unused dependencies on deep import", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["koa", "kleur"],
-      devDependencies: ["mocha"]
+      devDependencies: ["mocha"],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -309,9 +322,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should be capable of detecting missing dependency 'kleur'", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["mocha"],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -346,9 +360,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should ignore '@types' for third-party dependencies", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: ["@types/npm"],
-      devDependencies: ["kleur"]
+      devDependencies: ["kleur"],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -375,9 +390,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should ignore file dependencies and try dependencies", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: ["kleur"]
+      devDependencies: ["kleur"],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -492,9 +508,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("get all the dependencies name", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -518,9 +535,10 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should be able to match all relative import path", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet1 = new DependencyCollectableSet(mama);
     const dependencyCollectableSet2 = new DependencyCollectableSet(mama);
@@ -568,48 +586,55 @@ describe("DependencyCollectableSet", () => {
   });
 
   test("should be able to match a file and join with the relative path", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
     dependencyCollectableSet.add("./foobar.js", {
-      file: process.cwd(), location: [[0, 0], [0, 0]], metadata: {
+      file: process.cwd(),
+      location: [[0, 0], [0, 0]],
+      metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: process.cwd()
+        relativeFile: "src/entry.js"
       }
     });
 
     assert.deepEqual([...dependencyCollectableSet.extract().files], [
-      path.join(process.cwd(), "foobar.js")
+      path.join("src", "foobar.js")
     ]);
   });
   test("should be able to automatically append the '.js' extension", () => {
-    const mama = {
+    const mama: Manifest = {
       dependencies: [],
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
     dependencyCollectableSet.add("./foobar", {
-      file: process.cwd(), location: [[0, 0], [0, 0]], metadata: {
+      file: process.cwd(),
+      location: [[0, 0], [0, 0]],
+      metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: process.cwd()
+        relativeFile: "src/entry.js"
       }
     });
     assert.deepEqual([...dependencyCollectableSet.extract().files], [
-      path.join(process.cwd(), "foobar.js")
+      path.join("src", "foobar.js")
     ]);
   });
 
   test("should detect all required dependencies (node, files, third-party)", () => {
     const thirdpartyDependencies = ["mocha", "yolo"];
-    const mama = {
+    const mama: Manifest = {
       dependencies: thirdpartyDependencies,
-      devDependencies: []
+      devDependencies: [],
+      nodejsImports: {}
     };
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
@@ -617,7 +642,7 @@ describe("DependencyCollectableSet", () => {
       file: "one", location: [[0, 0], [0, 0]], metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: "one"
+        relativeFile: "one/index.js"
       }
     });
 
@@ -625,7 +650,7 @@ describe("DependencyCollectableSet", () => {
       file: "one", location: [[0, 0], [0, 0]], metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: "one"
+        relativeFile: "one/index.js"
       }
     });
 
@@ -633,7 +658,7 @@ describe("DependencyCollectableSet", () => {
       file: "one", location: [[0, 0], [0, 0]], metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: "one"
+        relativeFile: "one/index.js"
       }
     });
 
@@ -641,7 +666,7 @@ describe("DependencyCollectableSet", () => {
       file: "one", location: [[0, 0], [0, 0]], metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: "one"
+        relativeFile: "one/index.js"
       }
     });
 
@@ -649,7 +674,7 @@ describe("DependencyCollectableSet", () => {
       file: "one", location: [[0, 0], [0, 0]], metadata: {
         unsafe: false,
         inTry: false,
-        relativeFile: "one"
+        relativeFile: "one/index.js"
       }
     });
 

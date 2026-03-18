@@ -133,6 +133,11 @@ export class SourceCodeScanner<
     for await (const fileReport of efa.analyse(absoluteEntryFiles, {
       metadata: {
         spec: this.manifest.spec
+      },
+      fileMetadata: (absoluteFile) => {
+        const relativeFile = path.relative(location, absoluteFile);
+
+        return { relativeFile };
       }
     })) {
       report.push(fileReport);

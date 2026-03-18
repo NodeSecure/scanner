@@ -189,7 +189,7 @@ describe("SourceCodeScanner", () => {
     if (firstReport.ok) {
       const { files, dependencies } = depsSet.extract();
       assert.ok(dependencies.nodeJs.includes("node:http"));
-      assert.ok(files.has("bar.ts"));
+      assert.ok(files.has("src\\bar.ts"));
     }
     else {
       assert.fail("First report should be ok");
