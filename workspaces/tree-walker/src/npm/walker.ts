@@ -2,6 +2,7 @@
 import os from "node:os";
 
 // Import Third-party Dependencies
+import { ManifestManager } from "@nodesecure/mama";
 import * as iter from "itertools";
 import combineAsyncIterators from "combine-async-iterators";
 import pacote from "pacote";
@@ -308,6 +309,8 @@ export class TreeWalker {
     manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
     options: WalkOptions = {}
   ): AsyncIterableIterator<DependencyJSON> {
+    const mama = new ManifestManager(manifest);
+
     this.relationsMap.clear();
     const {
       maxDepth = Infinity,
@@ -315,10 +318,12 @@ export class TreeWalker {
       includeDevDeps = false
     } = options;
 
-    const { dependencies, customResolvers, alias } = utils.mergeDependencies(manifest);
+    const { dependencies, customResolvers, alias } = utils.mergeDependencies(
+      mama.document
+    );
     const rootDependency = new Dependency(
-      manifest?.name ?? "workspace",
-      manifest?.version ?? "1.0.0",
+      mama.name,
+      mama.version,
       {
         alias: Object.fromEntries(alias)
       }
@@ -326,7 +331,7 @@ export class TreeWalker {
 
     try {
       const { _integrity: integrity } = await this.providers.pacote.manifest(
-        `${manifest.name}@${manifest.version}`,
+        mama.spec,
         this.registryOptions
       );
       rootDependency.integrity = integrity;
