@@ -2,15 +2,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as consumers from "node:stream/consumers";
-import { fileURLToPath } from "node:url";
 import { Readable } from "node:stream";
 
 // Import Internal Dependencies
 import { getFlags } from "./web.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFlagsPath = path.join(__dirname, "flags");
+const kFlagsPath = path.join(import.meta.dirname, "flags");
 
 /**
  * @description lazy read a flag file by getting a Node.js Readable Stream

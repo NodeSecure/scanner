@@ -1,8 +1,7 @@
 // Import Node.js Dependencies
 import assert from "node:assert";
 import { describe, test } from "node:test";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { readFileSync } from "node:fs";
 
 // Import Third-party Dependencies
@@ -16,9 +15,8 @@ import {
 } from "../src/index.ts";
 
 // CONSTANTS
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const kManifestFixturePath = join(__dirname, "fixtures", "manifest");
-const kPackumentFixturePath = join(__dirname, "fixtures", "packument");
+const kManifestFixturePath = join(import.meta.dirname, "fixtures", "manifest");
+const kPackumentFixturePath = join(import.meta.dirname, "fixtures", "packument");
 const kManifest: PackumentVersion = JSON.parse(readFileSync(join(kManifestFixturePath, "/manifest.json"), "utf8"));
 const kPackument: Packument = JSON.parse(readFileSync(join(kPackumentFixturePath, "/packument.json"), "utf8"));
 

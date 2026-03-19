@@ -1,6 +1,5 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert";
 
@@ -11,8 +10,7 @@ import { AstAnalyser, DefaultCollectableSet } from "@nodesecure/js-x-ray";
 import { SourceCodeScanner } from "../src/class/SourceCodeScanner.class.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "fixtures", "scanJavascriptFile");
+const kFixturePath = path.join(import.meta.dirname, "fixtures", "scanJavascriptFile");
 
 test("should have no warning and no minified file", async() => {
   const thirdPartyDependencies = ["mocha", "yolo"];

@@ -1,16 +1,14 @@
 // Import Node.js Dependencies
 import { it } from "node:test";
 import assert from "node:assert";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join } from "node:path";
 import { readFileSync } from "node:fs";
 
 // Import Internal Dependencies
 import { comparePayloads } from "../src/index.ts";
 
 // CONSTANTS
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const kFixturePath = join(__dirname, "fixtures", "scannerPayloads");
+const kFixturePath = join(import.meta.dirname, "fixtures", "scannerPayloads");
 const kPayload = JSON.parse(readFileSync(join(kFixturePath, "/payload.json"), "utf8"));
 
 it("should throw an error if compared payloads have the same id", () => {

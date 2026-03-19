@@ -5,12 +5,6 @@ import fs from "node:fs/promises";
 // Import Third-party Dependencies
 import { distance } from "fastest-levenshtein";
 
-// Import Internal Dependencies
-import { getDirNameFromUrl } from "../utils/index.ts";
-
-// CONSTANTS
-const __dirname = getDirNameFromUrl(import.meta.url);
-
 /**
  * This implementation take inspiration from npq
  * @see https://github.com/lirantal/npq/blob/c11e5425707ae992fcd6fb0878abe01ccd77399b/lib/marshalls/typosquatting.marshall.js#L23
@@ -20,7 +14,7 @@ export class TopPackages {
 
   async loadJSON() {
     const rawPackageStr = await fs.readFile(
-      path.join(__dirname, "..", "data", "top-packages.json"),
+      path.join(import.meta.dirname, "..", "data", "top-packages.json"),
       "utf-8"
     );
 

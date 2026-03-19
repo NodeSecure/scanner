@@ -2,16 +2,13 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
 // Import Internal Dependencies
 import { walk, walkSync } from "../src/index.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const kRootLocation = path.join(__dirname, "..");
-const kFixturesDir = path.join(__dirname, "fixtures");
+const kRootLocation = path.join(import.meta.dirname, "..");
+const kFixturesDir = path.join(import.meta.dirname, "fixtures");
 
 const kExpectedJSFiles = [
   "src/index.ts",

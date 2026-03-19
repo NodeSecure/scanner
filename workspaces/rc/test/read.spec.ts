@@ -2,7 +2,6 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 import os from "node:os";
-import { fileURLToPath } from "node:url";
 import assert from "node:assert";
 import { describe, before, beforeEach, it, after } from "node:test";
 
@@ -16,12 +15,9 @@ import {
 } from "../src/index.ts";
 import { generateDefaultRC } from "../src/rc.ts";
 
-// CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 describe("read .nodesecurerc", () => {
   const location = path.join(os.tmpdir(), "rcread");
-  const fixtures = path.join(__dirname, "fixtures");
+  const fixtures = path.join(import.meta.dirname, "fixtures");
 
   before(async() => {
     await fs.mkdir(location);

@@ -10,7 +10,7 @@ import type { WalkOptions, WalkEntry } from "./types.ts";
  * @example
  * import { walkSync, FILE } from "@nodesecure/fs-walk";
  *
- * for (const [type, location] of walkSync(__dirname) {
+ * for (const [type, location] of walkSync(import.meta.dirname)) {
  *  if (type === FILE) {
  *    console.log(location);
  *  }

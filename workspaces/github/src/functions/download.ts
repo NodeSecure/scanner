@@ -46,7 +46,7 @@ export interface DownloadResult {
 /**
  * @example
  * const { location } = await github.download("NodeSecure.utils", {
- *  dest: __dirname
+ *  dest: import.meta.dirname
  * });
  * console.log(location);
  */

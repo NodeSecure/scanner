@@ -2,15 +2,13 @@
 import path from "node:path";
 import fs from "node:fs";
 import assert from "node:assert";
-import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 // Import Internal Dependencies
 import { verify } from "../src/index.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "fixtures", "verify");
+const kFixturePath = path.join(import.meta.dirname, "fixtures", "verify");
 
 test("verify 'express' package", async() => {
   const data = await verify("express@4.17.0");

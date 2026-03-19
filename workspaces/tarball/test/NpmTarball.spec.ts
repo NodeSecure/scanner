@@ -1,6 +1,5 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { describe, test } from "node:test";
 import assert from "node:assert";
 
@@ -14,8 +13,7 @@ type SourceArrayLocation = [[number, number], [number, number]];
 import { NpmTarball } from "../src/class/NpmTarball.class.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "fixtures", "npmTarball");
+const kFixturePath = path.join(import.meta.dirname, "fixtures", "npmTarball");
 const kShadyLinkPath = path.join(kFixturePath, "shady-link");
 
 type Metadata = {
@@ -24,7 +22,7 @@ type Metadata = {
 
 describe("NpmTarball", () => {
   test("it should exclude files matching glob patterns via the exclude option", async() => {
-    const fixturePath = path.join(__dirname, "fixtures", "exclude-test");
+    const fixturePath = path.join(import.meta.dirname, "fixtures", "exclude-test");
     const mama = await ManifestManager.fromPackageJSON(
       path.join(fixturePath, "package.json")
     );

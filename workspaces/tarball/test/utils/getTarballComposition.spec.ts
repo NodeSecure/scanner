@@ -1,7 +1,6 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import assert from "node:assert";
-import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 
 // Import Third-party Dependencies
@@ -11,8 +10,7 @@ import getSize from "get-folder-size";
 import { getTarballComposition } from "../../src/utils/index.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "..", "fixtures", "getTarballComposition");
+const kFixturePath = path.join(import.meta.dirname, "..", "fixtures", "getTarballComposition");
 
 test("should return the composition of a directory", async() => {
   const composition = await getTarballComposition(kFixturePath);

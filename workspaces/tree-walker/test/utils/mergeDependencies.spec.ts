@@ -1,8 +1,7 @@
 // Import Node.js Dependencies
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { fileURLToPath } from "node:url";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
@@ -12,8 +11,7 @@ import is from "@slimio/is";
 import { mergeDependencies } from "../../src/utils/index.ts";
 
 // CONSTANTS
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const kFixturePath = join(__dirname, "..", "fixtures/mergeDependencies");
+const kFixturePath = join(import.meta.dirname, "..", "fixtures/mergeDependencies");
 
 // JSON PAYLOADS
 const one = JSON.parse(readFileSync(join(kFixturePath, "one.json"), "utf-8"));

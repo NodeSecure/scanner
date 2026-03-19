@@ -1,6 +1,6 @@
 // Import Node.js Dependencies
 import { describe, it, test } from "node:test";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 import assert from "node:assert";
 import path from "node:path";
 
@@ -12,8 +12,7 @@ import type { PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 import { npm, type DependencyJSON } from "../../src/index.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturesDir = path.join(__dirname, "..", "fixtures");
+const kFixturesDir = path.join(import.meta.dirname, "..", "fixtures");
 
 describe("npm.TreeWalker", () => {
   test("Given a fixed '@nodesecure/fs-walk' manifest then it must extract one root dependency", async() => {
@@ -139,7 +138,7 @@ describe("npm.TreeWalker", () => {
 
   test(`Given the local scanner workspace as Manifest with maxDepth: 1
     it must return all workspaces as Dependency and complete the manifest name and version with default values`, async() => {
-    const manifestLocation = path.join(__dirname, "..", "..", "..", "..", "package.json");
+    const manifestLocation = path.join(import.meta.dirname, "..", "..", "..", "..", "package.json");
 
     const manifest = (
       await import(pathToFileURL(manifestLocation).href, { with: { type: "json" } })
