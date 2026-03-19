@@ -1,5 +1,11 @@
 # @nodesecure/tarball
 
+## 3.6.1
+
+### Patch Changes
+
+- [#667](https://github.com/NodeSecure/scanner/pull/667) [`d6f9487`](https://github.com/NodeSecure/scanner/commit/d6f948728f9c3e960172240a434e5190bd0b4ac2) Thanks [@fraxken](https://github.com/fraxken)! - Properly implement metadata.relativePath across EFA and DependencyCollectableSet
+
 ## 3.6.0
 
 ### Minor Changes
