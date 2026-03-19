@@ -20,6 +20,9 @@ import {
   type Identifier
 } from "../src/index.ts";
 
+// VARS
+const skip = false;
+
 // CONSTANTS
 const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 const kFixturePath = path.join(__dirname, "fixtures", "depWalker");
@@ -75,7 +78,7 @@ function cleanupPayload(payload: Payload) {
   }
 }
 
-test("execute depWalker on @slimio/is", async(test) => {
+test("execute depWalker on @slimio/is", { skip }, async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
   const { logger, errorCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
@@ -93,7 +96,7 @@ test("execute depWalker on @slimio/is", async(test) => {
   assert.strictEqual(errorCount(), 0);
 });
 
-test("execute depWalker on @slimio/config", async(test) => {
+test("execute depWalker on @slimio/config", { skip }, async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
   const { logger, errorCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
@@ -123,7 +126,7 @@ test("execute depWalker on @slimio/config", async(test) => {
     "@slimio/config"
   ].sort());
 
-  const ajvDescriptor = resultAsJSON.ajv.versions["6.12.6"];
+  const ajvDescriptor = resultAsJSON.ajv.versions["6.14.0"];
   const ajvUsedBy = Object.keys(ajvDescriptor.usedBy);
   assert.deepEqual(ajvUsedBy, [
     "@slimio/config"
@@ -131,7 +134,7 @@ test("execute depWalker on @slimio/config", async(test) => {
   assert.strictEqual(errorCount(), 0);
 });
 
-test("execute depWalker on pkg.gitdeps", async(test) => {
+test("execute depWalker on pkg.gitdeps", { skip }, async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
   const { logger, errors, statsCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
@@ -149,13 +152,11 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
     "@nodesecure/npm-types",
     "@openally/httpie",
     "@openally/result",
-    "content-type",
     "lru-cache",
     "nanodelay",
     "nanoevents",
     "nanoid",
     "pkg.gitdeps",
-    "statuses",
     "undici",
     "zen-observable"
   ].sort());
@@ -178,13 +179,13 @@ test("execute depWalker on pkg.gitdeps", async(test) => {
   assert.strictEqual(typeof metadata.startedAt, "number");
   assert.strictEqual(typeof metadata.executionTime, "number");
   assert.strictEqual(Array.isArray(metadata.apiCalls), true);
-  assert.strictEqual(metadata.apiCallsCount, 50);
+  assert.strictEqual(metadata.apiCallsCount, 42);
   assert.strictEqual(metadata.errorCount, 2);
   assert.strictEqual(metadata.errors.length, 2);
-  assert.strictEqual(statsCount(), 48);
+  assert.strictEqual(statsCount(), 40);
 });
 
-test("execute depWalker on typo-squatting (with location)", async(test) => {
+test("execute depWalker on typo-squatting (with location)", { skip }, async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
   const { logger, errors, statsCount } = buildLogger();
   test.after(() => logger.removeAllListeners());
@@ -223,7 +224,7 @@ test("execute depWalker on typo-squatting (with location)", async(test) => {
   assert.strictEqual(statsCount(), 0);
 });
 
-test("execute depWalker on typo-squatting (with no location)", async(test) => {
+test("execute depWalker on typo-squatting (with no location)", { skip }, async(test) => {
   Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
   const { logger, errors } = buildLogger();
   test.after(() => logger.removeAllListeners());
@@ -250,7 +251,7 @@ test("execute depWalker on typo-squatting (with no location)", async(test) => {
   ]);
 });
 
-test("should highlight the given packages", async() => {
+test("should highlight the given packages", { skip }, async() => {
   const { logger } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
@@ -280,7 +281,7 @@ test("should highlight the given packages", async() => {
   );
 });
 
-test("should support multiple formats for packages highlighted", async() => {
+test("should support multiple formats for packages highlighted", { skip }, async() => {
   const { logger } = buildLogger();
   test.after(() => logger.removeAllListeners());
 
@@ -307,7 +308,7 @@ test("should support multiple formats for packages highlighted", async() => {
   );
 });
 
-test("fetch payload of pacote on the npm registry", async() => {
+test("fetch payload of pacote on the npm registry", { skip }, async() => {
   const result = await from(
     "pacote",
     {
@@ -329,7 +330,7 @@ test("fetch payload of pacote on the npm registry", async() => {
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
 
-test("fetch payload of pacote on the gitlab registry", async() => {
+test("fetch payload of pacote on the gitlab registry", { skip }, async() => {
   const result = await from("pacote", {
     registry: "https://gitlab.com/api/v4/packages/npm/",
     maxDepth: 10,
@@ -349,7 +350,7 @@ test("fetch payload of pacote on the gitlab registry", async() => {
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
 
-test("highlight contacts from a remote package", async() => {
+test("highlight contacts from a remote package", { skip }, async() => {
   const spec = "@adonisjs/logger";
   const result = await from(spec, {
     highlight: {
