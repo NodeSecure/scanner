@@ -1,6 +1,5 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import assert from "node:assert";
 
@@ -9,8 +8,7 @@ import { scanPackage } from "../../src/index.ts";
 import { getEmptyPackageWarning } from "../../src/warnings.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "..", "fixtures", "scanPackage");
+const kFixturePath = path.join(import.meta.dirname, "..", "fixtures", "scanPackage");
 
 test("scanPackage (caseone)", async() => {
   const result = await scanPackage(

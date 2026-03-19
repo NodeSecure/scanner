@@ -2,7 +2,7 @@
 import path from "node:path";
 import fs from "node:fs";
 import os from "node:os";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { pathToFileURL } from "node:url";
 
 // Import Third-party Dependencies
 import zup from "zup";
@@ -12,8 +12,7 @@ import { english } from "../src/languages/english.ts";
 import { french } from "../src/languages/french.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kProjectRootDir = path.join(__dirname, "..");
+const kProjectRootDir = path.join(import.meta.dirname, "..");
 const kTokens = {
   english,
   french

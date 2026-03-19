@@ -1,14 +1,12 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import fs from "node:fs/promises";
-import { fileURLToPath } from "node:url";
 
 // Import Third-party Dependencies
 import TurndownService from "turndown";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kRootPath = path.join(__dirname, "..");
+const kRootPath = path.join(import.meta.dirname, "..");
 
 const turndownService = new TurndownService();
 
@@ -35,7 +33,7 @@ async function loadHTMLs() {
 
   const [headerTemplate, ...HTMLFlagsFiles] = await Promise.all([
     fs.readFile(
-      path.join(__dirname, "template", "flagDocHeader.md"),
+      path.join(import.meta.dirname, "template", "flagDocHeader.md"),
       "utf-8"
     ),
     ...HTMLFlagsEntries.map(

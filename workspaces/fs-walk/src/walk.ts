@@ -10,7 +10,7 @@ import type { WalkOptions, WalkEntry } from "./types.ts";
  * @example
  * import { walk } from "@nodesecure/fs-walk";
  *
- * for await (const [dirent, location] of walk(__dirname) {
+ * for await (const [dirent, location] of walk(import.meta.dirname)) {
  *  if (dirent.isFile()) {
  *    console.log(location);
  *  }

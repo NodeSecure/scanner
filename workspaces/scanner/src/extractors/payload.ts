@@ -15,7 +15,7 @@ import { isNodesecurePayload } from "../utils/isNodesecurePayload.ts";
 const kFastMerge = deepmerge({ all: true });
 
 type MergeDeep<T extends unknown[]> =
-    T extends [a: infer A, ...rest: infer R] ? A & MergeDeep<R> : {};
+  T extends [a: infer A, ...rest: infer R] ? A & MergeDeep<R> : {};
 
 export type ExtractProbeResult<
   T extends ProbeExtractor<any>[]

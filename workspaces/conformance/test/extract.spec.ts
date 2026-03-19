@@ -1,7 +1,6 @@
 // Import Node.js Dependencies
 import path from "node:path";
 import assert from "node:assert";
-import { fileURLToPath } from "node:url";
 import { describe, it } from "node:test";
 
 // Import Third-party Dependencies
@@ -15,8 +14,7 @@ import {
 import expectedParsedLicense from "./fixtures/parseLicense.snap.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "fixtures");
+const kFixturePath = path.join(import.meta.dirname, "fixtures");
 const kFixtureProjectOne = path.join(kFixturePath, "project1");
 const kFixtureProjectTwo = path.join(kFixturePath, "project2");
 

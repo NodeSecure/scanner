@@ -1,6 +1,5 @@
 // Import Node.js Dependencies
 import path from "node:path";
-import url from "node:url";
 import { readFileSync } from "node:fs";
 import { test, describe } from "node:test";
 import assert from "node:assert";
@@ -24,8 +23,7 @@ import {
 const skip = false;
 
 // CONSTANTS
-const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
-const kFixturePath = path.join(__dirname, "fixtures", "depWalker");
+const kFixturePath = path.join(import.meta.dirname, "fixtures", "depWalker");
 const kDefaultWalkerOptions = {
   registry: getLocalRegistryURL()
 };

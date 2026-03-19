@@ -5,7 +5,6 @@ import fs from "node:fs";
 import os from "node:os";
 import assert from "node:assert";
 import { spawnSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
 
 // Import Internal Dependencies
 import {
@@ -13,8 +12,7 @@ import {
 } from "../../src/npm/LocalDependencyTreeLoader.ts";
 
 // CONSTANTS
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const kFixturesDir = path.join(__dirname, "..", "fixtures");
+const kFixturesDir = path.join(import.meta.dirname, "..", "fixtures");
 
 describe("LocalDependencyTreeLoader", () => {
   describe("arborist.loadVirtual()", () => {
