@@ -1,5 +1,14 @@
 # @nodesecure/scanner
 
+## 10.5.1
+
+### Patch Changes
+
+- [#669](https://github.com/NodeSecure/scanner/pull/669) [`6075920`](https://github.com/NodeSecure/scanner/commit/60759208e0fdbe46558f884a2c51f67f99a94cac) Thanks [@fraxken](https://github.com/fraxken)! - Comment NPM avatar hydratation because the .user() API in the SDK is deprecated and cannot be used anymore
+
+- Updated dependencies [[`d6f9487`](https://github.com/NodeSecure/scanner/commit/d6f948728f9c3e960172240a434e5190bd0b4ac2)]:
+  - @nodesecure/tarball@3.6.1
+
 ## 10.5.0
 
 ### Minor Changes
