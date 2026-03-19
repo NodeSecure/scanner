@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
+// import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import type {
@@ -20,9 +20,14 @@ export async function fetchNpmAvatars(
   ];
   const avatarCache = new Map<string, string>();
 
-  await Promise.all(
-    contributors.map((contributor) => enrichContributorWithAvatar(contributor, avatarCache))
-  );
+  /**
+   * @deprecated
+   * NPM website user API is no longer exploitable for avatar
+   * We need to find an alternative way to fetch avatars
+   */
+  // await Promise.all(
+  //   contributors.map((contributor) => enrichContributorWithAvatar(contributor, avatarCache))
+  // );
 
   // Backfill missing avatars: some contributors may have failed username lookup
   // but their email might match a cached avatar from a successful contributor
@@ -36,44 +41,44 @@ export async function fetchNpmAvatars(
     });
 }
 
-async function enrichContributorWithAvatar(
-  contributor: Contributor,
-  avatarCache: Map<string, string>
-): Promise<void> {
-  if (trySetAvatarFromCache(contributor, avatarCache)) {
-    return;
-  }
+// async function enrichContributorWithAvatar(
+//   contributor: Contributor,
+//   avatarCache: Map<string, string>
+// ): Promise<void> {
+//   if (trySetAvatarFromCache(contributor, avatarCache)) {
+//     return;
+//   }
 
-  try {
-    const profile = await npmRegistrySDK.user(
-      contributor.name,
-      { perPage: 1 }
-    );
-    contributor.npmAvatar = profile.avatars.small;
+//   try {
+//     const profile = await npmRegistrySDK.user(
+//       contributor.name,
+//       { perPage: 1 }
+//     );
+//     contributor.npmAvatar = profile.avatars.small;
 
-    if (contributor.email && contributor.npmAvatar) {
-      avatarCache.set(contributor.email, contributor.npmAvatar);
-    }
-  }
-  catch {
-    contributor.npmAvatar = undefined;
-  }
-}
+//     if (contributor.email && contributor.npmAvatar) {
+//       avatarCache.set(contributor.email, contributor.npmAvatar);
+//     }
+//   }
+//   catch {
+//     contributor.npmAvatar = undefined;
+//   }
+// }
 
-function trySetAvatarFromCache(
-  contributor: Contributor,
-  avatarCache: Map<string, string>
-): boolean {
-  if (!contributor.email) {
-    return false;
-  }
+// function trySetAvatarFromCache(
+//   contributor: Contributor,
+//   avatarCache: Map<string, string>
+// ): boolean {
+//   if (!contributor.email) {
+//     return false;
+//   }
 
-  const cachedAvatar = avatarCache.get(contributor.email);
-  if (cachedAvatar) {
-    contributor.npmAvatar = cachedAvatar;
+//   const cachedAvatar = avatarCache.get(contributor.email);
+//   if (cachedAvatar) {
+//     contributor.npmAvatar = cachedAvatar;
 
-    return true;
-  }
+//     return true;
+//   }
 
-  return false;
-}
+//   return false;
+// }
