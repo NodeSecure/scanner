@@ -99,7 +99,13 @@ interface Options {
    *
    * @default Infinity
    */
-  maxDepth?: number;
+  readonly maxDepth?: number;
+
+  /**
+   * Maximum concurrency to fetch and scan NPM tarballs
+   * @default 8
+   */
+  readonly maxConcurrency?: number;
 
   /**
    * Includes development dependencies in the walk.
