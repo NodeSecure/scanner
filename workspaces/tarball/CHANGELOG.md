@@ -1,5 +1,16 @@
 # @nodesecure/tarball
 
+## 3.7.0
+
+### Minor Changes
+
+- [#676](https://github.com/NodeSecure/scanner/pull/676) [`c839e46`](https://github.com/NodeSecure/scanner/commit/c839e46769e9b0dcc1be09e9f3a6e780fb0bbb6d) Thanks [@clemgbld](https://github.com/clemgbld)! - refactor(tarball): improve dns resolver
+
+### Patch Changes
+
+- Updated dependencies [[`7937d38`](https://github.com/NodeSecure/scanner/commit/7937d386de2dfdcf615e710e7f50382ce1a37d1a)]:
+  - @nodesecure/mama@2.2.0
+
 ## 3.6.1
 
 ### Patch Changes
