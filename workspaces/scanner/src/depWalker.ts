@@ -121,7 +121,8 @@ export async function depWalker(
     location,
     vulnerabilityStrategy = Vulnera.strategies.NONE,
     registry,
-    npmRcConfig
+    npmRcConfig,
+    maxConcurrency = 8
   } = options;
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
@@ -205,7 +206,7 @@ export async function depWalker(
     const fetchedMetadataPackages = new Set<string>();
     const operationsQueue: Promise<void>[] = [];
 
-    const locker = new Mutex({ concurrency: 5 });
+    const locker = new Mutex({ concurrency: maxConcurrency });
     locker.on(
       MutexRelease,
       () => logger.tick(ScannerLoggerEvents.analysis.tarball)

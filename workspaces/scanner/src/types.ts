@@ -282,6 +282,12 @@ export interface Options {
    */
   readonly maxDepth?: number;
 
+  /**
+   * Maximum concurrency to fetch and scan NPM tarballs
+   * @default 8
+   */
+  readonly maxConcurrency?: number;
+
   readonly registry?: string | URL;
 
   /**
