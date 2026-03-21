@@ -125,17 +125,37 @@ describe("StatsCollectors", () => {
   describe("errors", () => {
     it("should have no errors when no tracked function throwed", () => {
       const dateProvider = new FakeDateProvider();
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       const { errors, errorCount } = statsCollector.getStats();
       assert.strictEqual(errorCount, 0);
       assert.strictEqual(errors.length, 0);
       assert.strictEqual(fakeLogger.stats.length, 0);
     });
 
-    it("should record when a sync error occurs", () => {
+    it("should only log errors in verbose mode", async() => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      await assert.rejects(async() => {
+        await statsCollector.track("api/test/1", "phase-async", async() => {
+          dateProvider.setNow(1658512001000);
+          throw new Error("async oh no!");
+        });
+      });
+      const { errors, errorCount } = statsCollector.getStats();
+      assert.strictEqual(errorCount, 1);
+      assert.strictEqual(errors.length, 1);
+      assert.partialDeepStrictEqual(errors, [{
+        name: "api/test/1",
+        message: "async oh no!"
+      }]);
+      assert.strictEqual(fakeLogger.errors.length, 0);
+    });
+
+    it("should record when a sync error occurs", () => {
+      const dateProvider = new FakeDateProvider();
+      dateProvider.setNow(1658512000000);
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       assert.throws(() => {
         statsCollector.track("api/test/1", "phase-1", () => {
           dateProvider.setNow(1658512001000);
@@ -164,7 +184,7 @@ describe("StatsCollectors", () => {
     it("should record when an error that is not an instance of error occurs", () => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       assert.throws(() => {
         statsCollector.track("api/test/1", "phase-1", () => {
           dateProvider.setNow(1658512001000);
@@ -192,7 +212,7 @@ describe("StatsCollectors", () => {
     it("should have no errors when no async tracked function rejected", async() => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await statsCollector.track("api/test/1", "phase-1", async() => {
         dateProvider.setNow(1658512001000);
 
@@ -202,13 +222,13 @@ describe("StatsCollectors", () => {
       assert.strictEqual(errorCount, 0);
       assert.strictEqual(errors.length, 0);
       assert.strictEqual(fakeLogger.errors.length, 0);
-      assert.strictEqual(fakeLogger.stats.length, 0);
+      assert.strictEqual(fakeLogger.stats.length, 1);
     });
 
     it("should record when an async error occurs", async() => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
         await statsCollector.track("api/test/1", "phase-async", async() => {
           dateProvider.setNow(1658512001000);
@@ -237,7 +257,7 @@ describe("StatsCollectors", () => {
     it("should record when an async error that is not an instance of error occurs", async() => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
         await statsCollector.track("api/test/1", "phase-1", async() => {
           dateProvider.setNow(1658512001000);
@@ -265,7 +285,7 @@ describe("StatsCollectors", () => {
     it("should add the status code when there is an http error", async() => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
-      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
         await statsCollector.track("api/test/1", "phase-1", async() => {
           dateProvider.setNow(1658512001000);
