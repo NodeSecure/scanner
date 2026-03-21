@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 2.2.0
+
+### Minor Changes
+
+- [#670](https://github.com/NodeSecure/scanner/pull/670) [`7937d38`](https://github.com/NodeSecure/scanner/commit/7937d386de2dfdcf615e710e7f50382ce1a37d1a) Thanks [@fraxken](https://github.com/fraxken)! - Use ManifestManager in NPM TreeWalker class
+
 ## 2.1.1
 
 ### Patch Changes

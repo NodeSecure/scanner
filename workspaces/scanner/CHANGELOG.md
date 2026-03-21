@@ -1,5 +1,20 @@
 # @nodesecure/scanner
 
+## 10.6.0
+
+### Minor Changes
+
+- [#675](https://github.com/NodeSecure/scanner/pull/675) [`dc40fb3`](https://github.com/NodeSecure/scanner/commit/dc40fb3f263ce9866188cc463f8c52682e226c8c) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): log error only in verbose mode
+
+- [#677](https://github.com/NodeSecure/scanner/pull/677) [`cef7c24`](https://github.com/NodeSecure/scanner/commit/cef7c24b1c1ec95833c4c323829e6b0a410a7513) Thanks [@fraxken](https://github.com/fraxken)! - Implement a new maxConcurrency options to configure how much NPM tarballs we scan/limit in depWalker
+
+### Patch Changes
+
+- Updated dependencies [[`7937d38`](https://github.com/NodeSecure/scanner/commit/7937d386de2dfdcf615e710e7f50382ce1a37d1a), [`c839e46`](https://github.com/NodeSecure/scanner/commit/c839e46769e9b0dcc1be09e9f3a6e780fb0bbb6d)]:
+  - @nodesecure/tree-walker@2.7.0
+  - @nodesecure/mama@2.2.0
+  - @nodesecure/tarball@3.7.0
+
 ## 10.5.1
 
 ### Patch Changes
