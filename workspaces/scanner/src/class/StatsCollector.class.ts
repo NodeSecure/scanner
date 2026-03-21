@@ -111,7 +111,9 @@ export class StatsCollector {
       error.statusCode = err.statusCode;
     }
     this.#errors.push(error);
-    this.#logger.emit("error", { ...error, executionTime }, phase);
+    if (this.#isVerbose) {
+      this.#logger.emit("error", { ...error, executionTime }, phase);
+    }
   }
 
   getStats(): Stats {
