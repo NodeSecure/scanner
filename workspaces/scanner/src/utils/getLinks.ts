@@ -44,8 +44,8 @@ export function getLinks(
     npm: `https://www.npmjs.com/package/${packumentVersion.name}/v/${packumentVersion.version}`,
     homepage,
     repository:
-      getVCSRepositoryURL(homepage) ??
-      getVCSRepositoryURL(repositoryUrl)
+      getVCSRepositoryURL(repositoryUrl) ??
+      getVCSRepositoryURL(homepage)
   };
 }
 
@@ -61,7 +61,7 @@ export function getManifestLinks(
     npm: null,
     homepage,
     repository:
-      getVCSRepositoryURL(homepage) ??
-      getVCSRepositoryURL(repositoryUrl)
+      getVCSRepositoryURL(repositoryUrl) ??
+      getVCSRepositoryURL(homepage)
   };
 }
