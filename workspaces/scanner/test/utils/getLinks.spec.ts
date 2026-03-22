@@ -44,10 +44,27 @@ describe("utils.getLinks", () => {
         type: "git",
         url: "github.com/foo/bar"
       }
-    } as any), {
+    } as PackumentVersion), {
       npm: "https://www.npmjs.com/package/foo/v/1.0.0",
       homepage: "https://github.com/foo/bar",
       repository: "https://github.com/foo/bar"
+    });
+  });
+
+  it("repository url should prioritize repository over homepage", () => {
+    assert.deepStrictEqual(utils.getLinks({
+      name: "@nodesecure/utils",
+      version: "2.3.0",
+      homepage: "https://github.com/NodeSecure/tree/master/workspaces/utils#readme",
+      repository: {
+        type: "git",
+        url: "https://github.com/NodeSecure/scanner",
+        directory: "workspaces/utils"
+      }
+    } as PackumentVersion), {
+      npm: "https://www.npmjs.com/package/@nodesecure/utils/v/2.3.0",
+      homepage: "https://github.com/NodeSecure/tree/master/workspaces/utils#readme",
+      repository: "https://github.com/NodeSecure/scanner"
     });
   });
 });
@@ -92,6 +109,23 @@ describe("utils.getManifestLinks", () => {
       npm: null,
       homepage: null,
       repository: "https://github.com/foo/bar"
+    });
+  });
+
+  it("repository url should prioritize repository over homepage", () => {
+    assert.deepStrictEqual(utils.getManifestLinks({
+      name: "@nodesecure/utils",
+      version: "2.3.0",
+      homepage: "https://github.com/NodeSecure/tree/master/workspaces/utils#readme",
+      repository: {
+        type: "git",
+        url: "https://github.com/NodeSecure/scanner",
+        directory: "workspaces/utils"
+      }
+    }), {
+      npm: null,
+      homepage: "https://github.com/NodeSecure/tree/master/workspaces/utils#readme",
+      repository: "https://github.com/NodeSecure/scanner"
     });
   });
 });
