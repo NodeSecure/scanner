@@ -12,7 +12,7 @@ import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
 import { depWalker } from "./depWalker.ts";
-import { NPM_TOKEN, urlToString } from "./utils/index.ts";
+import { NPM_TOKEN, urlToString, readNpmRc } from "./utils/index.ts";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
 import { comparePayloads } from "./comparePayloads.ts";
@@ -48,13 +48,16 @@ export async function workingDir(
     location
   };
 
+  const npmRcEntries = await readNpmRc(location);
+
   const finalizedOptions = Object.assign(
     { location },
     kDefaultWorkingDirOptions,
     {
       ...options,
       packageLock,
-      registry
+      registry,
+      npmRcEntries
     }
   );
 
