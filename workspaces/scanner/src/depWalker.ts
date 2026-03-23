@@ -30,6 +30,7 @@ import {
   getManifestLinks,
   NPM_TOKEN
 } from "./utils/index.ts";
+import { getRegistryForPackage } from "./utils/npmrc.ts";
 import { NpmRegistryProvider, type NpmApiClient } from "./registry/NpmRegistryProvider.ts";
 import { StatsCollector } from "./class/StatsCollector.class.ts";
 import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
@@ -95,6 +96,7 @@ type WalkerOptions = Omit<Options, "registry"> & {
   registry: string;
   location?: string;
   npmRcConfig?: Config;
+  npmRcEntries?: Record<string, string>;
 };
 
 type InitialPayload =
@@ -122,6 +124,7 @@ export async function depWalker(
     vulnerabilityStrategy = Vulnera.strategies.NONE,
     registry,
     npmRcConfig,
+    npmRcEntries = {},
     maxConcurrency = 8
   } = options;
 
@@ -129,9 +132,10 @@ export async function depWalker(
 
   const collectables = kCollectableTypes.map((type) => new DefaultCollectableSet<Metadata>(type));
 
-  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token);
+  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token, npmRcEntries);
 
   const npmProjectConfig = tokenStore.getConfig(registry);
+  const pacoteScopedConfig = { ...npmProjectConfig, ...npmRcEntries };
 
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
@@ -140,7 +144,7 @@ export async function depWalker(
         "tarball-scan",
         () => pacote.extract(spec, dest, {
           ...opts,
-          ...npmProjectConfig
+          ...pacoteScopedConfig
         })
       );
     }
@@ -172,10 +176,10 @@ export async function depWalker(
     providers: {
       pacote: {
         manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, "tree-walk", () => pacote.manifest(spec,
-          { ...opts, ...npmProjectConfig })),
+          { ...opts, ...pacoteScopedConfig })),
         packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`,
           "tree-walk",
-          () => pacote.packument(spec, { ...opts, ...npmProjectConfig }))
+          () => pacote.packument(spec, { ...opts, ...pacoteScopedConfig }))
       }
     }
   });
@@ -234,9 +238,10 @@ export async function depWalker(
       const org = parseNpmSpec(name)?.org;
       if (dependencies.has(name)) {
         const dep = dependencies.get(name)!;
+        const packageRegistry = getRegistryForPackage(name, npmRcEntries, registry);
         operationsQueue.push(
           new NpmRegistryProvider(name, version, {
-            registry,
+            registry: packageRegistry,
             tokenStore,
             npmApiClient
           }).enrichDependencyVersion(dep, dependencyConfusionWarnings, org)
@@ -280,16 +285,17 @@ export async function depWalker(
       }
       else {
         fetchedMetadataPackages.add(name);
+        const packageRegistry = getRegistryForPackage(name, npmRcEntries, registry);
         const provider = new NpmRegistryProvider(name, version, {
-          registry,
+          registry: packageRegistry,
           tokenStore
         });
 
         operationsQueue.push(provider.enrichDependency(logger, dependency));
-        if (registry !== getNpmRegistryURL() && org) {
+        if (packageRegistry !== getNpmRegistryURL() && org) {
           operationsQueue.push(
             new NpmRegistryProvider(name, version, {
-              registry,
+              registry: packageRegistry,
               tokenStore
             }).enrichScopedDependencyConfusionWarnings(dependencyConfusionWarnings, org)
           );

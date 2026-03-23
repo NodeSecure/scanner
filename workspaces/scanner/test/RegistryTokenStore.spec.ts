@@ -85,4 +85,44 @@ always-auth=true
       });
     });
   });
+
+  describe("npmRcEntries", () => {
+    const npmRcEntries = {
+      "//npm.private-registry.test/:_authToken": "private-token",
+      "//other.registry.test/:_authToken": "other-token"
+    };
+
+    test("should resolve token from npmRcEntries when no config", () => {
+      const store = new RegistryTokenStore(undefined, undefined, npmRcEntries);
+      assert.strictEqual(
+        store.get("https://npm.private-registry.test/"),
+        "private-token"
+      );
+      assert.strictEqual(
+        store.get("https://other.registry.test/"),
+        "other-token"
+      );
+    });
+
+    test("should fallback to tokenFromEnv when registry not in npmRcEntries", () => {
+      const store = new RegistryTokenStore(undefined, "env-token", npmRcEntries);
+      assert.strictEqual(store.get("https://unknown.registry.test/"), "env-token");
+    });
+
+    test("should prefer npmRcEntries over tokenFromEnv when no config", () => {
+      const store = new RegistryTokenStore(undefined, "env-token", npmRcEntries);
+      assert.strictEqual(
+        store.get("https://npm.private-registry.test/"),
+        "private-token"
+      );
+    });
+
+    test("should ignore npmRcEntries when @npmcli/config is provided", () => {
+      const store = new RegistryTokenStore(config, undefined, npmRcEntries);
+      assert.strictEqual(
+        store.get("https://registry.npmjs.org/"),
+        "public-token"
+      );
+    });
+  });
 });
