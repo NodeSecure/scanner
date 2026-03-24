@@ -70,7 +70,7 @@
     "@nodesecure/i18n": "^4.1.0",
     "@nodesecure/js-x-ray": "14.3.0",
     "@nodesecure/mama": "^2.2.0",
-    "@nodesecure/npm-registry-sdk": "^4.4.0",
+    "@nodesecure/npm-registry-sdk": "4.5.2",
     "@nodesecure/npm-types": "^1.3.0",
     "@nodesecure/rc": "^5.5.0",
     "@nodesecure/tarball": "^3.7.0",
