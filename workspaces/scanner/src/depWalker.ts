@@ -328,8 +328,7 @@ export async function depWalker(
     vulnerabilityStrategy
   );
 
-  const isVulnHydratable = (strategy === "github-advisory" || strategy === "snyk")
-    && isRemoteScanning;
+  const isVulnHydratable = strategy === "github-advisory" && isRemoteScanning;
   if (!isVulnHydratable) {
     await hydratePayloadDependencies(dependencies, {
       useFormat: "Standard",
