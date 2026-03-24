@@ -1,5 +1,17 @@
 # @nodesecure/scanner
 
+## 10.7.0
+
+### Minor Changes
+
+- [#684](https://github.com/NodeSecure/scanner/pull/684) [`5c44211`](https://github.com/NodeSecure/scanner/commit/5c44211f8da550e194f073bff91426b243ff078b) Thanks [@PierreDemailly](https://github.com/PierreDemailly)! - feat(scanner): read .npmrc scoped registries for private package resolution
+
+### Patch Changes
+
+- [#685](https://github.com/NodeSecure/scanner/pull/685) [`633493b`](https://github.com/NodeSecure/scanner/commit/633493bf68683b34030e347c018d3ae355215b4c) Thanks [@fraxken](https://github.com/fraxken)! - Remove snyk from hydratable strategy as it's no more available
+
+- [#681](https://github.com/NodeSecure/scanner/pull/681) [`44761b8`](https://github.com/NodeSecure/scanner/commit/44761b8069b3840d6ed7748a62a1ec0359e44087) Thanks [@PierreDemailly](https://github.com/PierreDemailly)! - Prioritize repository over homepage in package.json to generate repository link
+
 ## 10.6.0
 
 ### Minor Changes
