@@ -41,7 +41,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/conformance#readme",
   "devDependencies": {
-    "@openally/httpie": "^1.0.0",
+    "@openally/httpie": "1.1.2",
     "@types/spdx-expression-parse": "^3.0.5",
     "node-estree": "^4.0.0"
   },
