@@ -45,9 +45,9 @@
     "ajv": "8.18.0"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "14.2.0",
+    "@nodesecure/js-x-ray": "14.3.0",
     "@nodesecure/npm-types": "^1.2.0",
-    "@nodesecure/vulnera": "3.0.0",
+    "@nodesecure/vulnera": "3.1.0",
     "@openally/config": "^1.0.1",
     "@openally/result": "2.0.0",
     "lodash.merge": "^4.6.2",
