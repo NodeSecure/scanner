@@ -9,10 +9,7 @@ import {
   type AstAnalyserOptions
 } from "@nodesecure/js-x-ray";
 import * as conformance from "@nodesecure/conformance";
-import {
-  ManifestManager,
-  type PackageModuleType
-} from "@nodesecure/mama";
+import { ManifestManager, type PackageModuleType } from "@nodesecure/mama";
 import pacote from "pacote";
 
 // Import Internal Dependencies
@@ -26,46 +23,87 @@ import {
   getEmptyPackageWarning,
   getSemVerWarning
 } from "./warnings.ts";
-
-export interface DependencyRef {
-  id: number;
-  type: PackageModuleType;
-  usedBy: Record<string, string>;
-  isDevDependency: boolean;
-  existOnRemoteRegistry: boolean;
-  flags: string[];
-  description: string;
-  size: number;
-  author: Record<string, any>;
-  engines: Record<string, any>;
-  repository: any;
-  scripts: Record<string, string>;
-  warnings: any;
-  licenses: conformance.SpdxFileLicenseConformance[];
-  uniqueLicenseIds: string[];
-  gitUrl: string | null;
-  alias: Record<string, string>;
-  composition: {
-    extensions: string[];
-    files: string[];
-    minified: string[];
-    unused: string[];
-    missing: string[];
-    required_files: string[];
-    required_nodejs: string[];
-    required_thirdparty: string[];
-    required_subpath: Record<string, string>;
-  };
-}
-
-// CONSTANTS
-const kNativeCodeExtensions = new Set([".gyp", ".c", ".cpp", ".node", ".so", ".h"]);
-const kNpmToken = typeof process.env.NODE_SECURE_TOKEN === "string" ?
-  { token: process.env.NODE_SECURE_TOKEN } :
-  {};
+import {
+  NATIVE_CODE_EXTENSIONS,
+  NPM_TOKEN
+} from "./constants.ts";
+import type {
+  ScanResultPayload,
+  DependencyRef
+} from "./types.ts";
 
 export interface ScanOptions {
   astAnalyserOptions?: AstAnalyserOptions;
+}
+
+export async function scanPackageCore(
+  locationOrManifest: string | ManifestManager,
+  astAnalyserOptions?: AstAnalyserOptions
+): Promise<ScanResultPayload> {
+  const mama = await ManifestManager.fromPackageJSON(locationOrManifest);
+  const dependencySet = new DependencyCollectableSet(mama);
+  const tarex = new NpmTarball(mama);
+
+  const {
+    composition,
+    conformance: conformanceResult,
+    code
+  } = await tarex.scanFiles({
+    ...astAnalyserOptions,
+    collectables: [
+      ...astAnalyserOptions?.collectables ?? [],
+      dependencySet
+    ]
+  });
+
+  const warnings: Warning[] = [];
+  if (composition.files.length === 1 && composition.files.includes("package.json")) {
+    warnings.push(getEmptyPackageWarning());
+  }
+  if (mama.hasZeroSemver) {
+    warnings.push(getSemVerWarning(mama.document.version!));
+  }
+  warnings.push(...code.warnings);
+
+  const { files, dependencies, flags } = dependencySet.extract();
+  const { description, engines, repository, scripts } = mama.document;
+
+  return {
+    description,
+    engines,
+    repository,
+    scripts,
+    author: mama.author,
+    integrity: mama.isWorkspace ? null : mama.integrity,
+    type: mama.moduleType,
+    size: composition.size,
+    licenses: conformanceResult.licenses,
+    uniqueLicenseIds: conformanceResult.uniqueLicenseIds,
+    warnings,
+    flags: Array.from(booleanToFlags({
+      ...flags,
+      hasExternalCapacity: code.flags.hasExternalCapacity || flags.hasExternalCapacity,
+      hasNoLicense: conformanceResult.uniqueLicenseIds.length === 0,
+      hasMultipleLicenses: conformanceResult.uniqueLicenseIds.length > 1,
+      hasMinifiedCode: code.minified.length > 0,
+      hasWarnings: warnings.length > 0,
+      hasBannedFile: composition.files.some((filePath) => isSensitiveFile(filePath)),
+      hasNativeCode: mama.flags.isNative ||
+        composition.files.some((file) => NATIVE_CODE_EXTENSIONS.has(path.extname(file))),
+      hasScript: mama.flags.hasUnsafeScripts
+    })),
+    composition: {
+      extensions: [...composition.ext],
+      files: composition.files,
+      minified: code.minified,
+      unused: dependencies.unused,
+      missing: dependencies.missing,
+      required_files: [...files],
+      required_nodejs: dependencies.nodeJs,
+      required_thirdparty: dependencies.thirdparty,
+      required_subpath: dependencies.subpathImports
+    }
+  };
 }
 
 export async function scanDirOrArchive(
@@ -73,77 +111,28 @@ export async function scanDirOrArchive(
   ref: DependencyRef,
   options: ScanOptions = {}
 ): Promise<void> {
-  const { astAnalyserOptions } = options;
+  const result = await scanPackageCore(locationOrManifest, options.astAnalyserOptions);
 
-  const mama = await ManifestManager.fromPackageJSON(
-    locationOrManifest
-  );
-  const tarex = new NpmTarball(mama);
+  const { description, engines, repository, scripts, author, integrity } = result;
+  Object.assign(ref, { description, engines, repository, scripts, author, integrity });
 
-  const dependencySet = new DependencyCollectableSet(mama);
+  ref.warnings.push(...result.warnings);
+  ref.licenses = result.licenses;
+  ref.uniqueLicenseIds = result.uniqueLicenseIds;
+  ref.type = result.type as PackageModuleType;
+  ref.size = result.size;
+  ref.composition.extensions.push(...result.composition.extensions);
+  ref.composition.files.push(...result.composition.files);
+  ref.composition.minified = result.composition.minified;
+  ref.composition.unused.push(...result.composition.unused);
+  ref.composition.missing.push(...result.composition.missing);
+  ref.composition.required_files = result.composition.required_files;
+  ref.composition.required_nodejs = result.composition.required_nodejs;
+  ref.composition.required_thirdparty = result.composition.required_thirdparty;
+  ref.composition.required_subpath = result.composition.required_subpath;
 
-  const {
-    composition,
-    conformance,
-    code
-  } = await tarex.scanFiles({
-    ...astAnalyserOptions,
-    collectables: [...astAnalyserOptions?.collectables ?? [], dependencySet]
-  });
-
-  {
-    const { description, engines, repository, scripts } = mama.document;
-    Object.assign(ref, {
-      description, engines, repository, scripts,
-      author: mama.author,
-      integrity: mama.isWorkspace ? null : mama.integrity
-    });
-  }
-
-  if (
-    composition.files.length === 1 &&
-    composition.files.includes("package.json")
-  ) {
-    ref.warnings.push(getEmptyPackageWarning());
-  }
-
-  if (mama.hasZeroSemver) {
-    ref.warnings.push(getSemVerWarning(mama.document.version!));
-  }
-  ref.warnings.push(...code.warnings);
-
-  const {
-    files,
-    dependencies,
-    flags
-  } = dependencySet.extract();
-
-  ref.licenses = conformance.licenses;
-  ref.uniqueLicenseIds = conformance.uniqueLicenseIds;
-  ref.type = mama.moduleType;
-  ref.size = composition.size;
-  ref.composition.extensions.push(...composition.ext);
-  ref.composition.files.push(...composition.files);
-  ref.composition.required_thirdparty = dependencies.thirdparty;
-  ref.composition.required_subpath = dependencies.subpathImports;
-  ref.composition.unused.push(...dependencies.unused);
-  ref.composition.missing.push(...dependencies.missing);
-  ref.composition.required_files = [...files];
-  ref.composition.required_nodejs = dependencies.nodeJs;
-  ref.composition.minified = code.minified;
-
-  ref.flags.push(...booleanToFlags({
-    ...flags,
-    hasExternalCapacity: code.flags.hasExternalCapacity || flags.hasExternalCapacity,
-    hasNoLicense: conformance.uniqueLicenseIds.length === 0,
-    hasMultipleLicenses: conformance.uniqueLicenseIds.length > 1,
-    hasMinifiedCode: code.minified.length > 0,
-    hasWarnings: ref.warnings.length > 0 && !ref.flags.includes("hasWarnings"),
-    hasBannedFile: composition.files.some((path) => isSensitiveFile(path)),
-    hasNativeCode: mama.flags.isNative ||
-      composition.files.some((file) => kNativeCodeExtensions.has(path.extname(file))),
-    hasScript: mama.flags.hasUnsafeScripts
-  }));
+  const flags = result.flags.filter((flag) => flag !== "hasWarnings" || !ref.flags.includes("hasWarnings"));
+  ref.flags.push(...flags);
 }
 
 export interface ScannedPackageResult {
@@ -173,23 +162,22 @@ export async function scanPackage(
 ): Promise<ScannedPackageResult> {
   const { astAnalyserOptions } = options;
 
-  const mama = await ManifestManager.fromPackageJSON(
-    manifestOrLocation
-  );
+  const mama = await ManifestManager.fromPackageJSON(manifestOrLocation);
   const extractor = new NpmTarball(mama);
-
   const dependencySet = new DependencyCollectableSet(mama);
 
   const {
     composition,
-    conformance,
+    conformance: conformanceResult,
     code
   } = await extractor.scanFiles({
     ...astAnalyserOptions,
-    collectables: [...astAnalyserOptions?.collectables ?? [], dependencySet]
+    collectables: [
+      ...(astAnalyserOptions?.collectables ?? []),
+      dependencySet
+    ]
   });
 
-  // Check for empty package
   const warnings = [...code.warnings];
   if (composition.files.length === 1 && composition.files.includes("package.json")) {
     warnings.push(getEmptyPackageWarning());
@@ -202,8 +190,8 @@ export async function scanPackage(
       minified: code.minified
     },
     directorySize: composition.size,
-    uniqueLicenseIds: conformance.uniqueLicenseIds,
-    licenses: conformance.licenses,
+    uniqueLicenseIds: conformanceResult.uniqueLicenseIds,
+    licenses: conformanceResult.licenses,
     ast: {
       dependencies: dependencySet.dependencies,
       warnings
@@ -236,13 +224,11 @@ export async function extractAndResolve(
     spec,
     tarballLocation,
     {
-      ...kNpmToken,
+      ...NPM_TOKEN,
       registry,
       cache: `${os.homedir()}/.npm`
     }
   );
 
-  return ManifestManager.fromPackageJSON(
-    tarballLocation
-  );
+  return ManifestManager.fromPackageJSON(tarballLocation);
 }

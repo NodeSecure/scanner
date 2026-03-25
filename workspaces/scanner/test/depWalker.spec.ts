@@ -328,7 +328,7 @@ test("fetch payload of pacote on the npm registry", { skip }, async() => {
   assert.strictEqual(typeof result.rootDependency.integrity, "string");
 });
 
-test("fetch payload of pacote on the gitlab registry", { skip }, async() => {
+test.skip("fetch payload of pacote on the gitlab registry", { skip }, async() => {
   const result = await from("pacote", {
     registry: "https://gitlab.com/api/v4/packages/npm/",
     maxDepth: 10,

@@ -347,6 +347,15 @@ export interface Options {
    * @default false
    */
   isVerbose?: boolean;
+
+  /**
+   * Enable worker threads for parallel tarball scanning.
+   * - `true` uses the default worker count (4)
+   * - `number` sets an explicit worker count
+   *
+   * @default false
+   */
+  readonly workers?: boolean | number;
 }
 
 export interface TokenStore {

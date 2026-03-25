@@ -6,6 +6,7 @@ import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
 import {
   type Dependency,
   type CollectableSet,
+  type CollectableSetData,
   type CollectableInfos
 } from "@nodesecure/js-x-ray";
 import type { NodeImport } from "@nodesecure/npm-types";
@@ -346,5 +347,12 @@ export class DependencyCollectableSet implements CollectableSet<DependencyCollec
 
   values() {
     return this.#values;
+  }
+
+  toJSON(): CollectableSetData<DependencyCollectableSetMetadata> {
+    return {
+      type: this.type,
+      entries: []
+    };
   }
 }

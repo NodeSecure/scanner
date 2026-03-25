@@ -45,7 +45,7 @@
     "ajv": "8.18.0"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "14.3.0",
+    "@nodesecure/js-x-ray": "15.0.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/vulnera": "3.1.0",
     "@openally/config": "^1.0.1",
