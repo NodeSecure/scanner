@@ -465,8 +465,10 @@ describe("scanner.cwd()", () => {
 
 type PartialIdentifer = Omit<Identifier, "location"> & { location: { file: string | null; }; };
 
-function sortIdentifiers(identifiers: PartialIdentifer[]) {
-  return identifiers.slice().sort((a, b) => uniqueIdenfier(a).localeCompare(uniqueIdenfier(b)));
+function sortIdentifiers(
+  identifiers: PartialIdentifer[]
+) {
+  return identifiers.toSorted((a, b) => uniqueIdenfier(a).localeCompare(uniqueIdenfier(b)));
 }
 
 function uniqueIdenfier(identifer: PartialIdentifer) {
