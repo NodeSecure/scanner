@@ -63,7 +63,9 @@ typings/
 *.tsbuildinfo
 
 nsecure-result.json
-temp/
 dist/
+temp/
+temp.ts
 temp.js
 temp.mjs
+.claude

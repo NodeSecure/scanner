@@ -5,17 +5,14 @@ import { readFileSync } from "node:fs";
 // Import Third-party Dependencies
 import pacote from "pacote";
 import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
-import { Mutex, MutexRelease } from "@openally/mutex";
 import {
-  extractAndResolve,
-  scanDirOrArchive,
   type PacoteProvider
 } from "@nodesecure/tarball";
-import { DefaultCollectableSet, type CollectableSet } from "@nodesecure/js-x-ray";
+import { DefaultCollectableSet } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import { parseAuthor } from "@nodesecure/utils";
-import { ManifestManager, parseNpmSpec } from "@nodesecure/mama";
+import { parseNpmSpec } from "@nodesecure/mama";
 import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
@@ -36,6 +33,7 @@ import { StatsCollector } from "./class/StatsCollector.class.ts";
 import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
 import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
+import { TarballScanner } from "./class/TarballScanner.class.ts";
 import type {
   Dependency,
   DependencyVersion,
@@ -125,7 +123,8 @@ export async function depWalker(
     registry,
     npmRcConfig,
     npmRcEntries = {},
-    maxConcurrency = 8
+    maxConcurrency = 8,
+    workers
   } = options;
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
@@ -210,11 +209,15 @@ export async function depWalker(
     const fetchedMetadataPackages = new Set<string>();
     const operationsQueue: Promise<void>[] = [];
 
-    const locker = new Mutex({ concurrency: maxConcurrency });
-    locker.on(
-      MutexRelease,
-      () => logger.tick(ScannerLoggerEvents.analysis.tarball)
-    );
+    await using tarballScanner = new TarballScanner({
+      tempDir,
+      statsCollector,
+      pacoteProvider,
+      collectables,
+      maxConcurrency,
+      logger,
+      workers
+    });
 
     const rootDepsOptions: npm.WalkOptions = {
       maxDepth,
@@ -302,17 +305,15 @@ export async function depWalker(
         }
       }
 
-      const scanDirOptions = {
-        ref: dependency.versions[version] as any,
-        location,
-        isRootNode: scanRootNode && name === manifest.name,
-        registry,
-        statsCollector,
-        pacoteProvider,
-        collectables
-      };
       operationsQueue.push(
-        scanDirOrArchiveEx(name, version, locker, tempDir, scanDirOptions)
+        tarballScanner.scan({
+          name,
+          version,
+          ref: dependency.versions[version] as any,
+          location,
+          isRootNode: scanRootNode && name === manifest.name,
+          registry
+        })
       );
     }
 
@@ -425,7 +426,10 @@ export async function depWalker(
   }
 }
 
-function extractHighlightedIdentifiers(collectables: DefaultCollectableSet<Metadata>[], identifiersToHighlight: Set<string>) {
+function extractHighlightedIdentifiers(
+  collectables: DefaultCollectableSet<Metadata>[],
+  identifiersToHighlight: Set<string>
+) {
   if (identifiersToHighlight.size === 0) {
     return [];
   }
@@ -442,55 +446,6 @@ function extractHighlightedIdentifiers(collectables: DefaultCollectableSet<Metad
           }
         };
       }) : [])));
-}
-
-// eslint-disable-next-line max-params
-async function scanDirOrArchiveEx(
-  name: string,
-  version: string,
-  locker: Mutex,
-  tempDir: TempDirectory,
-  options: {
-    registry?: string;
-    isRootNode: boolean;
-    location: string | undefined;
-    ref: any;
-    statsCollector: StatsCollector;
-    pacoteProvider?: PacoteProvider;
-    collectables: CollectableSet<Metadata>[];
-  }
-) {
-  using _ = await locker.acquire();
-
-  const spec = `${name}@${version}`;
-
-  const {
-    registry,
-    location = process.cwd(),
-    isRootNode,
-    ref,
-    statsCollector,
-    pacoteProvider,
-    collectables
-  } = options;
-
-  const mama = await (isRootNode ?
-    ManifestManager.fromPackageJSON(location) :
-    extractAndResolve(tempDir.location, {
-      spec,
-      registry,
-      pacoteProvider
-    })
-  );
-
-  await statsCollector.track(`tarball.scanDirOrArchive ${spec}`,
-    "tarball-scan",
-    () => scanDirOrArchive(mama, ref, {
-      astAnalyserOptions: {
-        optionalWarnings: typeof location !== "undefined",
-        collectables
-      }
-    }));
 }
 
 function isLocalManifest(

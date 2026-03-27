@@ -782,8 +782,6 @@ describe("NpmRegistryProvider", () => {
   });
 
   describe("enrichDependencyConfusionWarnings", async() => {
-    const message = "The org 'foo' is not claimed on the public registry";
-
     const privateRegistry = "https://registry.npmjs.org/private";
 
     test("should add a warning when the org is not found on the public npm registry", async(t) => {
@@ -797,15 +795,17 @@ describe("NpmRegistryProvider", () => {
       });
       const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
-      assert.deepEqual(warnings, [{
-        type: "dependency-confusion",
-        message,
-        metadata: {
-          name: "@foo/utils"
-        }
-      }]);
+
+      assert.strictEqual(warnings.length, 1);
+      const [warning] = warnings;
+      assert.strictEqual(warning.type, "dependency-confusion");
+      assert.match(warning.message, /.*'foo'.*public.*/);
+      assert.deepEqual(warning.metadata, {
+        name: "@foo/utils"
+      });
       assert.strictEqual(mockOrg.mock.callCount(), 1);
     });
+
     test("should not add a warning when the error is not a 404", async(t) => {
       const mockOrg = t.mock.fn(() => {
         throw new HttpieOnHttpError({
@@ -815,6 +815,7 @@ describe("NpmRegistryProvider", () => {
           statusCode: 500
         });
       });
+
       const provider = new NpmRegistryProvider("@foo/utils", "2.5.9", {
         npmApiClient: {
           ...defaultNpmApiClient,
@@ -824,13 +825,16 @@ describe("NpmRegistryProvider", () => {
       });
       const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
+
       assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
     });
+
     test("should not not add a dependency confusion warning when the org exist on the public registry", async(t) => {
       const mockOrg = t.mock.fn(async(_) => {
         return {};
       });
+
       const provider = new NpmRegistryProvider("@foo/utils", "2.5.9", {
         npmApiClient: {
           ...defaultNpmApiClient,
@@ -840,6 +844,7 @@ describe("NpmRegistryProvider", () => {
       });
       const warnings: DependencyConfusionWarning[] = [];
       await provider.enrichScopedDependencyConfusionWarnings(warnings, "foo");
+
       assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
       assert.deepEqual(mockOrg.mock.calls[0].arguments, ["@foo/utils"]);

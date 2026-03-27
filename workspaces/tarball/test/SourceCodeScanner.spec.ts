@@ -68,8 +68,8 @@ describe("SourceCodeScanner", () => {
     assert.deepEqual(
       files,
       [
-        "src\\index.js",
-        "src\\foo.js"
+        path.join("src", "index.js"),
+        path.join("src", "foo.js")
       ].sort()
     );
   });
@@ -99,7 +99,7 @@ describe("SourceCodeScanner", () => {
       files,
       [
         "index.js",
-        "src\\deps.js"
+        path.join("src", "deps.js")
       ].sort()
     );
   });
@@ -187,7 +187,10 @@ describe("SourceCodeScanner", () => {
     if (firstReport.ok) {
       const { files, dependencies } = depsSet.extract();
       assert.ok(dependencies.nodeJs.includes("node:http"));
-      assert.ok(files.has("src\\bar.ts"));
+
+      const normalizedFiles = Array.from(files)
+        .map((file) => path.normalize(file));
+      assert.ok(normalizedFiles.includes(path.join("src", "bar.ts")));
     }
     else {
       assert.fail("First report should be ok");
@@ -200,8 +203,8 @@ describe("SourceCodeScanner", () => {
     assert.deepEqual(
       files,
       [
-        "src\\index.ts",
-        "src\\bar.ts"
+        path.join("src", "index.ts"),
+        path.join("src", "bar.ts")
       ].sort()
     );
   });

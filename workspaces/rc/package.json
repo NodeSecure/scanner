@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
-    "test-only": "node --test ./test/**/*.spec.ts",
+    "test-only": "node --test \"./test/**/*.spec.ts\"",
     "test-types": "npm run build && tsd && attw --pack . --profile esm-only",
     "test": "c8 -r html npm run test-only && npm run test-types"
   },
@@ -45,7 +45,7 @@
     "ajv": "8.18.0"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "14.3.0",
+    "@nodesecure/js-x-ray": "15.0.0",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/vulnera": "3.1.0",
     "@openally/config": "^1.0.1",

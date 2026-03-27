@@ -8,7 +8,7 @@
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
-    "test-only": "node --test ./test/**/*.spec.ts",
+    "test-only": "node --test \"./test/**/*.spec.ts\"",
     "test-types": "attw --pack . --profile esm-only",
     "test": "c8 -r html npm run test-only && npm run test-types"
   },
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/NodeSecure/tree/master/workspaces/tree-walker#readme",
   "dependencies": {
-    "@nodesecure/js-x-ray": "14.3.0",
+    "@nodesecure/js-x-ray": "15.0.0",
     "@nodesecure/mama": "2.2.0",
     "@nodesecure/npm-registry-sdk": "4.5.2",
     "@nodesecure/npm-types": "^1.1.0",

@@ -37,6 +37,7 @@ console.log(scanResult);
 
 - [SourceCode](./docs/SourceCode.md)
 - [NpmTarball](./docs/NpmTarball.md)
+- [NpmTarballWorkerPool](./docs/NpmTarballWorkerPool.md)
 
 ---
 

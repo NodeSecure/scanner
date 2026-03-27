@@ -33,7 +33,9 @@ describe("DependencyCollectableSet", () => {
     const dependencyCollectableSet = new DependencyCollectableSet(mama);
 
     dependencyCollectableSet.add("fs", {
-      file: ".", location: [[0, 0], [0, 0]], metadata: {
+      file: ".",
+      location: [[0, 0], [0, 0]],
+      metadata: {
         unsafe: false,
         inTry: false,
         relativeFile: "file1.js"
@@ -41,7 +43,9 @@ describe("DependencyCollectableSet", () => {
     });
 
     dependencyCollectableSet.add("http", {
-      file: ".", location: [[0, 0], [0, 0]], metadata: {
+      file: ".",
+      location: [[0, 0], [0, 0]],
+      metadata: {
         unsafe: false,
         inTry: true,
         relativeFile: "file2.js"
@@ -49,7 +53,9 @@ describe("DependencyCollectableSet", () => {
     });
 
     dependencyCollectableSet.add("lodash.isequal", {
-      file: ".", location: [[0, 0], [0, 0]], metadata: {
+      file: ".",
+      location: [[0, 0], [0, 0]],
+      metadata: {
         unsafe: false,
         inTry: false,
 
@@ -61,17 +67,20 @@ describe("DependencyCollectableSet", () => {
       "file1.js": {
         fs: {
           unsafe: false,
-          inTry: false
+          inTry: false,
+          location: [[0, 0], [0, 0]]
         }
       },
       "file2.js": {
         http: {
           unsafe: false,
-          inTry: true
+          inTry: true,
+          location: [[0, 0], [0, 0]]
         },
         "lodash.isequal": {
           unsafe: false,
-          inTry: false
+          inTry: false,
+          location: [[0, 0], [0, 0]]
         }
       }
     });
