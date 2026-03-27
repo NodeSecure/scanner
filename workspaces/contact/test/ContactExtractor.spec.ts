@@ -1,6 +1,6 @@
 // Import Node.js Dependencies
 import assert from "node:assert";
-import { describe, test } from "node:test";
+import { describe, test, mock } from "node:test";
 import { join } from "node:path";
 import { readFileSync } from "node:fs";
 
@@ -13,6 +13,7 @@ import {
   ContactExtractor,
   type ContactExtractorPackageMetadata
 } from "../src/index.ts";
+import { NsResolver } from "../src/NsResolver.class.ts";
 
 // CONSTANTS
 const kManifestFixturePath = join(import.meta.dirname, "fixtures", "manifest");
@@ -110,10 +111,14 @@ describe("ContactExtractor", () => {
     });
 
     test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
+      const mockedGetExpired = mock.method(NsResolver.prototype, "getExpired");
       const extractor = new ContactExtractor({
         highlight: []
       });
       const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+      mockedGetExpired.mock.mockImplementation(
+        () => Promise.resolve([expiredEmail])
+      );
 
       const dependencies: Record<string, ContactExtractorPackageMetadata> = {
         kleur: {
@@ -127,6 +132,7 @@ describe("ContactExtractor", () => {
 
       const { expired } = await extractor.fromDependencies(dependencies);
       assert.deepEqual(expired, [expiredEmail]);
+      mockedGetExpired.mock.restore();
     });
   });
 
@@ -185,12 +191,18 @@ describe("ContactExtractor", () => {
     });
 
     test("Given a manifest with only active emails it shouldn't have any expired email", async() => {
+      const mockedGetExpired = mock.method(
+        NsResolver.prototype,
+        "getExpired",
+        () => Promise.resolve([])
+      );
       const extractor = new ContactExtractor({
         highlight: []
       });
 
       const { expired } = await extractor.fromManifest(kManifest);
       assert.deepEqual(expired, []);
+      mockedGetExpired.mock.restore();
     });
 
     test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
@@ -198,9 +210,18 @@ describe("ContactExtractor", () => {
         highlight: []
       });
       const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+      const mockedGetExpired = mock.method(
+        NsResolver.prototype,
+        "getExpired",
+        () => Promise.resolve([expiredEmail])
+      );
 
-      const { expired } = await extractor.fromManifest({ ...kManifest, author: { ...kManifest.author!, email: expiredEmail } });
+      const { expired } = await extractor.fromManifest({
+        ...kManifest,
+        author: { ...kManifest.author!, email: expiredEmail }
+      });
       assert.deepEqual(expired, [expiredEmail]);
+      mockedGetExpired.mock.restore();
     });
   });
 
@@ -270,12 +291,19 @@ describe("ContactExtractor", () => {
     });
 
     test("Given a packument with only active emails it shouldn't have any expired email", async() => {
+      const mockedGetExpired = mock.method(
+        NsResolver.prototype,
+        "getExpired",
+        () => Promise.resolve([])
+      );
+
       const extractor = new ContactExtractor({
         highlight: []
       });
 
       const { expired } = await extractor.fromPackument(kPackument);
       assert.deepEqual(expired, []);
+      mockedGetExpired.mock.restore();
     });
 
     test("Given a Contact with a non-existing email domain, it must be identified as expired", async() => {
@@ -283,6 +311,11 @@ describe("ContactExtractor", () => {
         highlight: []
       });
       const expiredEmail = "john.doe+test@somenonexistentdomainongoogle9991254874x54x54.com";
+      const mockedGetExpired = mock.method(
+        NsResolver.prototype,
+        "getExpired",
+        () => Promise.resolve([expiredEmail])
+      );
       const versions = Object.entries(kPackument.versions)
         .reduce((acc: Record<string, PackumentVersion>, [version, value]) => {
           return {
@@ -294,8 +327,12 @@ describe("ContactExtractor", () => {
           };
         }, {});
 
-      const { expired } = await extractor.fromPackument({ ...kPackument, versions });
+      const { expired } = await extractor.fromPackument({
+        ...kPackument,
+        versions
+      });
       assert.deepEqual(expired, [expiredEmail]);
+      mockedGetExpired.mock.restore();
     });
   });
 });

@@ -139,7 +139,10 @@ test("execute depWalker on pkg.gitdeps", { skip }, async(test) => {
 
   const result = await depWalker(
     pkgGitdeps,
-    { ...structuredClone(kDefaultWalkerOptions), isVerbose: true },
+    {
+      ...structuredClone(kDefaultWalkerOptions),
+      isVerbose: true
+    },
     logger
   );
   const resultAsJSON = JSON.parse(JSON.stringify(result.dependencies, null, 2));
@@ -192,7 +195,8 @@ test("execute depWalker on typo-squatting (with location)", { skip }, async(test
     pkgTypoSquatting,
     {
       ...structuredClone(kDefaultWalkerOptions),
-      location: ""
+      location: "",
+      isVerbose: true
     },
     logger
   );
@@ -201,9 +205,9 @@ test("execute depWalker on typo-squatting (with location)", { skip }, async(test
   const warning = result.warnings[0];
 
   assert.equal(warning.type, "typo-squatting");
-  assert.strictEqual(
+  assert.match(
     result.warnings[0].message,
-    "Dependency 'mecha' is similar to the following popular packages: fecha, mocha"
+    /.*'mecha'.*fecha, mocha/
   );
 
   const walkErrors = errors();
@@ -229,7 +233,10 @@ test("execute depWalker on typo-squatting (with no location)", { skip }, async(t
 
   const result = await depWalker(
     pkgTypoSquatting,
-    structuredClone(kDefaultWalkerOptions),
+    {
+      ...structuredClone(kDefaultWalkerOptions),
+      isVerbose: true
+    },
     logger
   );
 

@@ -7,7 +7,8 @@ import {
   type Dependency,
   type CollectableSet,
   type CollectableSetData,
-  type CollectableInfos
+  type CollectableInfos,
+  type SourceArrayLocation
 } from "@nodesecure/js-x-ray";
 import type { NodeImport } from "@nodesecure/npm-types";
 
@@ -111,7 +112,7 @@ export class DependencyCollectableSet implements CollectableSet<DependencyCollec
   type = "dependency";
   dependencies: Record<
     string,
-    Record<string, Dependency>
+    Record<string, Dependency & { location: SourceArrayLocation; }>
   > = Object.create(null);
   #values: Set<string> = new Set();
   #files: Set<string> = new Set();
@@ -158,7 +159,7 @@ export class DependencyCollectableSet implements CollectableSet<DependencyCollec
 
   add(
     value: string,
-    { metadata }: CollectableInfos<DependencyCollectableSetMetadata>
+    { metadata, location }: CollectableInfos<DependencyCollectableSetMetadata>
   ) {
     if (!metadata) {
       return;
@@ -171,7 +172,8 @@ export class DependencyCollectableSet implements CollectableSet<DependencyCollec
 
     this.dependencies[relativeFile][value] = {
       unsafe: Boolean(metadata?.unsafe),
-      inTry: Boolean(metadata?.inTry)
+      inTry: Boolean(metadata?.inTry),
+      location
     };
 
     if (metadata?.inTry) {
