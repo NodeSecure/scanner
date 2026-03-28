@@ -226,7 +226,8 @@ export async function extractAndResolve(
     {
       ...NPM_TOKEN,
       registry,
-      cache: `${os.homedir()}/.npm`
+      cache: `${os.homedir()}/.npm`,
+      userAgent: `@nodesecure/tarball node/${process.version}`
     }
   );
 

@@ -86,7 +86,8 @@ export async function from(
 
   logger.start(ScannerLoggerEvents.manifest.fetch);
   const manifest = await pacote.manifest(packageName, {
-    ...NPM_TOKEN, registry, cache: `${os.homedir()}/.npm`
+    ...NPM_TOKEN, registry, cache: `${os.homedir()}/.npm`,
+    userAgent: `@nodesecure/scanner node/${process.version}`
   });
   logger.end(ScannerLoggerEvents.manifest.fetch);
 
