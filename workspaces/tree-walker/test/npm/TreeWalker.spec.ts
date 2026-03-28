@@ -239,6 +239,159 @@ describe("npm.TreeWalker", () => {
       );
     });
   });
+
+  describe("error resilience", () => {
+    test(`Given a manifest with transitive dependencies and a mocked pacote that fails on transitive fetches
+      it should gracefully skip the failing dependencies and still yield the root`, async(t) => {
+      const rootManifest = {
+        name: "test-pkg",
+        version: "1.0.0",
+        dependencies: {
+          "dep-a": "^1.0.0",
+          "dep-b": "^2.0.0"
+        }
+      };
+
+      let callCount = 0;
+      const mockedPacoteProvider = {
+        manifest: t.mock.fn(async(_: string) => {
+          callCount++;
+          // First call is for root integrity check, let it fail (existOnRemoteRegistry = false)
+          if (callCount === 1) {
+            throw new Error("root not found");
+          }
+          // Transitive dependency fetches all fail (simulating registry 403)
+          throw new Error("403 Forbidden");
+        }),
+        packument: t.mock.fn(async() => {
+          throw new Error("403 Forbidden");
+        })
+      };
+
+      const walker = new npm.TreeWalker({
+        providers: {
+          pacote: mockedPacoteProvider
+        }
+      });
+
+      const dependencies: DependencyJSON[] = [];
+      for await (const dependency of walker.walk(rootManifest as any, { maxDepth: 10 })) {
+        dependencies.push(dependency);
+      }
+
+      // Should still yield the root dependency despite all transitive fetches failing
+      assert.strictEqual(dependencies.length, 1);
+      assert.strictEqual(dependencies[0].name, "test-pkg");
+      assert.strictEqual(dependencies[0].id, 0);
+      assert.strictEqual(dependencies[0].existOnRemoteRegistry, false);
+    });
+
+    test(`Given a manifest where some transitive dependencies fail and others succeed
+      it should yield the successful ones and skip the failures without leaking promises`, async(t) => {
+      const rootManifest = {
+        name: "test-pkg",
+        version: "1.0.0",
+        dependencies: {
+          "good-dep": "^1.0.0",
+          "bad-dep": "^1.0.0"
+        }
+      };
+
+      let callCount = 0;
+      const mockedPacoteProvider = {
+        manifest: t.mock.fn(async(spec: string) => {
+          callCount++;
+          // First call: root integrity check -> fail
+          if (callCount === 1) {
+            throw new Error("root not found");
+          }
+          // good-dep resolves successfully
+          if (typeof spec === "string" && spec.includes("good-dep")) {
+            return {
+              name: "good-dep",
+              version: "1.0.0",
+              dependencies: {},
+              _integrity: "sha512-good"
+            };
+          }
+
+          // bad-dep always fails
+          throw new Error("503 Service Unavailable");
+        }),
+        packument: t.mock.fn(async(name: string) => {
+          if (name === "good-dep") {
+            return {
+              "dist-tags": { latest: "1.0.0" },
+              versions: {
+                "1.0.0": { version: "1.0.0" }
+              }
+            };
+          }
+
+          throw new Error("503 Service Unavailable");
+        })
+      };
+
+      const walker = new npm.TreeWalker({
+        providers: {
+          // @ts-expect-error
+          pacote: mockedPacoteProvider
+        }
+      });
+
+      const dependencies: DependencyJSON[] = [];
+      for await (const dependency of walker.walk(rootManifest, { maxDepth: 10 })) {
+        dependencies.push(dependency);
+      }
+
+      const names = dependencies
+        .map((dependency) => dependency.name)
+        .sort();
+      // Should yield good-dep and root, but not bad-dep
+      assert.ok(names.includes("test-pkg"), "root dependency should be present");
+      assert.ok(names.includes("good-dep"), "successful dependency should be present");
+      assert.ok(!names.includes("bad-dep"), "failed dependency should be skipped");
+    });
+
+    test(`Given a manifest where all transitive dependency fetches throw
+      it should not produce unhandled promise rejections`, async(t) => {
+      const rootManifest = {
+        name: "test-pkg",
+        version: "1.0.0",
+        dependencies: {
+          "fail-a": "^1.0.0",
+          "fail-b": "^1.0.0",
+          "fail-c": "^1.0.0"
+        }
+      };
+
+      const mockedPacoteProvider = {
+        manifest: t.mock.fn(async() => {
+          throw new Error("registry unreachable");
+        }),
+        packument: t.mock.fn(async() => {
+          throw new Error("registry unreachable");
+        })
+      };
+
+      const walker = new npm.TreeWalker({
+        providers: {
+          pacote: mockedPacoteProvider
+        }
+      });
+
+      // This should complete without throwing and without leaking unhandled rejections
+      const dependencies: DependencyJSON[] = [];
+      for await (const dependency of walker.walk(rootManifest, { maxDepth: 10 })) {
+        dependencies.push(dependency);
+      }
+
+      // Only root should be yielded
+      assert.strictEqual(dependencies.length, 1);
+      assert.strictEqual(dependencies[0].name, "test-pkg");
+      assert.strictEqual(dependencies[0].existOnRemoteRegistry, false);
+    });
+  });
 });
 
 function sortByName(left: string, right: string) {

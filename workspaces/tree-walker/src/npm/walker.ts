@@ -127,7 +127,8 @@ export class TreeWalker {
     return {
       ...utils.NPM_TOKEN,
       registry: this.registry,
-      cache: `${os.homedir()}/.npm`
+      cache: `${os.homedir()}/.npm`,
+      userAgent: `@nodesecure/tree-walker node/${process.version}`
     };
   }
 
@@ -177,10 +178,20 @@ export class TreeWalker {
   ): AsyncIterableIterator<Dependency> {
     const { currDepth = 1, parent, maxDepth, gitURL } = options;
 
-    const { name, version, deprecated, ...pkg } = await this.providers.pacote.manifest(
-      gitURL ?? spec,
-      this.registryOptions
-    );
+    let manifest: pacote.AbbreviatedManifest & pacote.ManifestResult;
+    try {
+      manifest = await this.providers.pacote.manifest(
+        gitURL ?? spec,
+        this.registryOptions
+      );
+    }
+    catch {
+      // Unable to fetch manifest for this dependency (e.g. registry unreachable, 403, etc.)
+      // Skip this branch of the tree entirely rather than crashing the whole walk.
+      return;
+    }
+
+    const { name, version, deprecated, ...pkg } = manifest;
     const { dependencies, customResolvers, alias } = utils.mergeDependencies(pkg);
 
     const current = new Dependency(name, version, {
@@ -367,7 +378,7 @@ export class TreeWalker {
           ...packageLockOptions
         }));
 
-      for await (const dep of combineAsyncIterators({}, ...iterators)) {
+      for await (const dep of combineAsyncIterators({ throwError: false }, ...iterators)) {
         yield dep.exportAsPlainObject();
       }
 
@@ -392,7 +403,7 @@ export class TreeWalker {
         .map(dependencies.entries(), ([name, ver]) => this.walkRemoteDependency(`${name}@${ver}`, walkRemoteOptions))
     ];
 
-    for await (const dep of combineAsyncIterators({}, ...iterators)) {
+    for await (const dep of combineAsyncIterators({ throwError: false }, ...iterators)) {
       yield dep.exportAsPlainObject();
     }
 

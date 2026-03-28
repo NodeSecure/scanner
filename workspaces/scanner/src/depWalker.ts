@@ -134,7 +134,11 @@ export async function depWalker(
   const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token, npmRcEntries);
 
   const npmProjectConfig = tokenStore.getConfig(registry);
-  const pacoteScopedConfig = { ...npmProjectConfig, ...npmRcEntries };
+  const pacoteScopedConfig = {
+    ...npmProjectConfig,
+    ...npmRcEntries,
+    userAgent: `@nodesecure/scanner node/${process.version}`
+  };
 
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
@@ -201,29 +205,30 @@ export async function depWalker(
       () => npmRegistrySDK.org(namespace)
     )
   };
-  {
-    logger
-      .start(ScannerLoggerEvents.analysis.tree)
-      .start(ScannerLoggerEvents.analysis.tarball)
-      .start(ScannerLoggerEvents.analysis.registry);
-    const fetchedMetadataPackages = new Set<string>();
-    const operationsQueue: Promise<void>[] = [];
 
-    await using tarballScanner = new TarballScanner({
-      tempDir,
-      statsCollector,
-      pacoteProvider,
-      collectables,
-      maxConcurrency,
-      logger,
-      workers
-    });
+  logger
+    .start(ScannerLoggerEvents.analysis.tree)
+    .start(ScannerLoggerEvents.analysis.tarball)
+    .start(ScannerLoggerEvents.analysis.registry);
+  const fetchedMetadataPackages = new Set<string>();
+  const operationsQueue: Promise<void>[] = [];
 
-    const rootDepsOptions: npm.WalkOptions = {
-      maxDepth,
-      includeDevDeps,
-      packageLock
-    };
+  await using tarballScanner = new TarballScanner({
+    tempDir,
+    statsCollector,
+    pacoteProvider,
+    collectables,
+    maxConcurrency,
+    logger,
+    workers
+  });
+
+  const rootDepsOptions: npm.WalkOptions = {
+    maxDepth,
+    includeDevDeps,
+    packageLock
+  };
+  try {
     for await (const current of npmTreeWalker.walk(manifest, rootDepsOptions)) {
       const { name, version, integrity, ...currentVersion } = current;
       const dependency: Dependency = {
@@ -316,7 +321,8 @@ export async function depWalker(
         })
       );
     }
-
+  }
+  finally {
     logger.end(ScannerLoggerEvents.analysis.tree);
     await Promise.allSettled(operationsQueue);
 
