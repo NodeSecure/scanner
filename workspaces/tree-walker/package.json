@@ -1,6 +1,6 @@
 {
   "name": "@nodesecure/tree-walker",
-  "version": "2.7.0",
+  "version": "2.8.0",
   "description": "NodeSecure tree walker",
   "type": "module",
   "exports": "./dist/index.js",

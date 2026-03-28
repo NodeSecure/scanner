@@ -1,5 +1,20 @@
 # @nodesecure/scanner
 
+## 10.8.0
+
+### Minor Changes
+
+- [#687](https://github.com/NodeSecure/scanner/pull/687) [`d656c7b`](https://github.com/NodeSecure/scanner/commit/d656c7bb68649ace01ee21c0d9398bfacbd1e5af) Thanks [@fraxken](https://github.com/fraxken)! - Implement Node.js worker_threads with a custom Pool to scan packages tarball with JS-X-Ray
+
+### Patch Changes
+
+- [#690](https://github.com/NodeSecure/scanner/pull/690) [`39bd5ce`](https://github.com/NodeSecure/scanner/commit/39bd5ce1fba5eef4ca7f8968c27d69dc31914a03) Thanks [@PierreDemailly](https://github.com/PierreDemailly)! - Add attestations on first dependency enrichment
+
+- Updated dependencies [[`d656c7b`](https://github.com/NodeSecure/scanner/commit/d656c7bb68649ace01ee21c0d9398bfacbd1e5af)]:
+  - @nodesecure/tarball@4.0.0
+  - @nodesecure/rc@5.6.0
+  - @nodesecure/tree-walker@2.8.0
+
 ## 10.7.0
 
 ### Minor Changes
