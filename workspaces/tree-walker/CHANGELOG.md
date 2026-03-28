@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 2.8.0
+
+### Minor Changes
+
+- [#687](https://github.com/NodeSecure/scanner/pull/687) [`d656c7b`](https://github.com/NodeSecure/scanner/commit/d656c7bb68649ace01ee21c0d9398bfacbd1e5af) Thanks [@fraxken](https://github.com/fraxken)! - Implement Node.js worker_threads with a custom Pool to scan packages tarball with JS-X-Ray
+
 ## 2.7.0
 
 ### Minor Changes

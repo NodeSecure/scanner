@@ -1,5 +1,11 @@
 # @nodesecure/tarball
 
+## 4.0.0
+
+### Major Changes
+
+- [#687](https://github.com/NodeSecure/scanner/pull/687) [`d656c7b`](https://github.com/NodeSecure/scanner/commit/d656c7bb68649ace01ee21c0d9398bfacbd1e5af) Thanks [@fraxken](https://github.com/fraxken)! - Implement Node.js worker_threads with a custom Pool to scan packages tarball with JS-X-Ray
+
 ## 3.7.0
 
 ### Minor Changes
