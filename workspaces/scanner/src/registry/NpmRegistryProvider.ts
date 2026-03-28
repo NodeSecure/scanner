@@ -123,7 +123,8 @@ export class NpmRegistryProvider {
       flags: Object.keys(flags).filter((key) => flags[key]),
       version: {
         links: getLinks(packumentVersion),
-        deprecated: packumentVersion.deprecated
+        deprecated: packumentVersion.deprecated,
+        attestations: packumentVersion.dist.attestations
       }
     };
   }

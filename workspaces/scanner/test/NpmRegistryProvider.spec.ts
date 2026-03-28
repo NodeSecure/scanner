@@ -758,6 +758,28 @@ describe("NpmRegistryProvider", () => {
       });
     });
 
+    test("should enrich dependency with attestations for a package with provenance", async() => {
+      const dependency = {
+        metadata: {},
+        versions: {
+          "3.1.0": {
+            flags: []
+          }
+        }
+      } as unknown as Dependency;
+      const logger = new Logger().start("registry");
+      const provider = new NpmRegistryProvider("@nodesecure/cli", "3.1.0");
+
+      await provider.enrichDependency(logger, dependency);
+
+      assert.deepEqual(dependency.versions["3.1.0"]!.attestations, {
+        url: "https://registry.npmjs.org/-/npm/v1/attestations/@nodesecure%2fcli@3.1.0",
+        provenance: {
+          predicateType: "https://slsa.dev/provenance/v1"
+        }
+      });
+    });
+
     test("should detect and flag deprecated package versions", async() => {
       const dependency = {
         metadata: {},
