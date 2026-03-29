@@ -21,6 +21,7 @@
     "test": "npm run test --ws --if-present",
     "test-types": "npm run test-types --ws --if-present",
     "lint": "eslint workspaces",
+    "check": "npm run lint && npm run test && npm run test-types",
     "ci:publish": "changeset publish",
     "ci:version": "changeset version",
     "clean": "clear-ts-build"
