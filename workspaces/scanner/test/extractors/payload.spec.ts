@@ -5,8 +5,13 @@ import path from "node:path";
 import { describe, it } from "node:test";
 
 // Import Internal Dependencies
-import { type ExtractorCallbackParams } from "../../src/extractors/payload.ts";
-import { Extractors, type Payload } from "../../src/index.ts";
+import {
+  Extractors,
+  type Payload
+} from "../../src/index.ts";
+import type {
+  ExtractorCallbackParams
+} from "../../src/extractors/payload.ts";
 
 // CONSTANTS
 const kFixturePath = path.join("fixtures", "extractors");

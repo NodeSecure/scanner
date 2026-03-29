@@ -33,7 +33,7 @@ function buildFakePayload(): Payload {
   };
 }
 
-describe("scanner.from()", () => {
+describe("scanner.from()", { concurrency: 2 }, () => {
   it("should fetch the payload of pacote on the npm registry", async() => {
     const result = await from(
       "pacote",
@@ -93,6 +93,18 @@ describe("scanner.from()", () => {
     assert.ok(
       maintainer.dependencies.includes(spec)
     );
+  });
+
+  it("should report an integrity-mismatch warning for 'darcyclarke-manifest-pkg'", async() => {
+    const result = await from("darcyclarke-manifest-pkg", {
+      maxDepth: 2
+    });
+
+    assert.equal(result.warnings.length, 1);
+
+    const warning = result.warnings[0];
+    assert.equal(warning.type, "integrity-mismatch");
+    assert.match(warning.message, /manifest & tarball integrity doesn't match/g);
   });
 
   describe("cacheLookup", () => {

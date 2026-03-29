@@ -1,6 +1,6 @@
 // Import Node.js Dependencies
 import EventEmitter, { once } from "node:events";
-import { test } from "node:test";
+import { describe, it } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
@@ -9,95 +9,97 @@ import is from "@slimio/is";
 // Import Internal Dependencies
 import { Logger } from "../src/index.ts";
 
-test("Logger: Creating a new class instance and assert all properties", () => {
-  assert.ok(is.classObject(Logger));
-  const logger = new Logger();
-  assert.ok(is.map(logger.events), "logger instance as an ES6 Map of events");
-  assert.equal(logger.events.size, 0, "logger events must be empty");
-  assert.ok(logger instanceof EventEmitter, "Logger class must extend from Node.js EventEmitter");
-});
-
-test("Logger: Initialized event should have the right properties", () => {
-  const logger = new Logger().start("foobar");
-  const data = logger.events.get("foobar")!;
-  assert.deepEqual(Object.keys(data), ["startedAt", "count"]);
-});
-
-test("Logger: triggering .count() of unknown event must return zero", () => {
-  const logger = new Logger();
-
-  assert.equal(logger.count("foobar"), 0);
-});
-
-test("Logger: triggering .start() with known event should emit event and create a new events entry", async() => {
-  const logger = new Logger();
-  setImmediate(() => {
-    logger.start("foobar");
+describe("Logger", () => {
+  it("should be a class with an empty events map extending EventEmitter", () => {
+    assert.ok(is.classObject(Logger));
+    const logger = new Logger();
+    assert.ok(is.map(logger.events), "logger instance as an ES6 Map of events");
+    assert.equal(logger.events.size, 0, "logger events must be empty");
+    assert.ok(logger instanceof EventEmitter, "Logger class must extend from Node.js EventEmitter");
   });
 
-  const [eventName] = await once(logger, "start");
-  assert.equal(eventName, "foobar");
-  assert.ok(logger.events.has("foobar"));
-});
-
-test("Logger: triggering .count() on a started/ticked event should return one", async() => {
-  const logger = new Logger().start("foobar");
-  setImmediate(() => {
-    logger.tick("foobar");
+  it("initialized event should have startedAt and count properties", () => {
+    const logger = new Logger().start("foobar");
+    const data = logger.events.get("foobar")!;
+    assert.deepEqual(Object.keys(data), ["startedAt", "count"]);
   });
 
-  const [eventName] = await once(logger, "tick");
-  assert.equal(eventName, "foobar");
-  assert.equal(logger.count("foobar"), 1);
-});
+  it(".count() on unknown event should return zero", () => {
+    const logger = new Logger();
 
-test("Logger: triggering .end() on a started event should emit end event", async() => {
-  const logger = new Logger().start("foobar");
-  setImmediate(() => {
-    logger.end("foobar");
+    assert.equal(logger.count("foobar"), 0);
   });
 
-  const [eventName, properties] = await once(logger, "end");
-  assert.equal(eventName, "foobar");
-  assert.ok(typeof properties.executionTime === "number");
-  assert.equal(properties.count, 0);
-});
+  it(".start() should emit event and create a new events entry", async() => {
+    const logger = new Logger();
+    setImmediate(() => {
+      logger.start("foobar");
+    });
 
-test("Logger: triggering .start() a second time should not emit an event", async() => {
-  const logger = new Logger().start("foobar");
-
-  let count = 0;
-  logger.on("start", () => {
-    count++;
+    const [eventName] = await once(logger, "start");
+    assert.equal(eventName, "foobar");
+    assert.ok(logger.events.has("foobar"));
   });
 
-  const loggerBis = logger.start("foobar");
-  assert.strictEqual(logger, loggerBis);
-  assert.equal(count, 0);
-});
+  it(".count() on a started/ticked event should return one", async() => {
+    const logger = new Logger().start("foobar");
+    setImmediate(() => {
+      logger.tick("foobar");
+    });
 
-test("Logger: triggering .end() on a unknown event should return", async() => {
-  const logger = new Logger();
-
-  let count = 0;
-  logger.on("end", () => {
-    count++;
+    const [eventName] = await once(logger, "tick");
+    assert.equal(eventName, "foobar");
+    assert.equal(logger.count("foobar"), 1);
   });
 
-  const loggerBis = logger.end("foobar");
-  assert.strictEqual(logger, loggerBis);
-  assert.equal(count, 0);
-});
+  it(".end() on a started event should emit end event", async() => {
+    const logger = new Logger().start("foobar");
+    setImmediate(() => {
+      logger.end("foobar");
+    });
 
-test("Logger: triggering .tick() on a unknown event should return", async() => {
-  const logger = new Logger();
-
-  let count = 0;
-  logger.on("tick", () => {
-    count++;
+    const [eventName, properties] = await once(logger, "end");
+    assert.equal(eventName, "foobar");
+    assert.ok(typeof properties.executionTime === "number");
+    assert.equal(properties.count, 0);
   });
 
-  const loggerBis = logger.tick("foobar");
-  assert.strictEqual(logger, loggerBis);
-  assert.equal(count, 0);
+  it(".start() called a second time on same event should not emit", async() => {
+    const logger = new Logger().start("foobar");
+
+    let count = 0;
+    logger.on("start", () => {
+      count++;
+    });
+
+    const loggerBis = logger.start("foobar");
+    assert.strictEqual(logger, loggerBis);
+    assert.equal(count, 0);
+  });
+
+  it(".end() on unknown event should return without emitting", async() => {
+    const logger = new Logger();
+
+    let count = 0;
+    logger.on("end", () => {
+      count++;
+    });
+
+    const loggerBis = logger.end("foobar");
+    assert.strictEqual(logger, loggerBis);
+    assert.equal(count, 0);
+  });
+
+  it(".tick() on unknown event should return without emitting", async() => {
+    const logger = new Logger();
+
+    let count = 0;
+    logger.on("tick", () => {
+      count++;
+    });
+
+    const loggerBis = logger.tick("foobar");
+    assert.strictEqual(logger, loggerBis);
+    assert.equal(count, 0);
+  });
 });

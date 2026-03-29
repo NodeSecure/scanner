@@ -37,7 +37,7 @@ function buildFakePayload(): Payload {
   };
 }
 
-describe("scanner.workingDir()", () => {
+describe("scanner.workingDir()", { concurrency: 2 }, () => {
   it("should parse author, homepage and links for a local package who doesn't exist on the remote registry", async() => {
     const file = path.join(kFixturePath, "non-npm-package");
     const result = await workingDir(file, {
