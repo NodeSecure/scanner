@@ -1,38 +1,46 @@
-# from API
+# workingDir API
 
-Analyze a package from a remote registry (npm by default) by recursively scanning its dependency tree.
+Analyze a local project by reading its `package.json` and recursively scanning its dependency tree.
 
 ```ts
 import * as scanner from "@nodesecure/scanner";
 
-const payload = await scanner.from("fastify");
+const payload = await scanner.workingDir(process.cwd());
 console.log(payload);
 ```
 
 ## Signature
 
 ```ts
-function from(
-  packageName: string,
-  options?: FromOptions,
+function workingDir(
+  location?: string,
+  options?: WorkingDirOptions,
   logger?: Logger
 ): Promise<Scanner.Payload>
 ```
 
-- `packageName` — npm package name, with optional version or semver range (e.g. `"mocha"`, `"mocha@10"`, `"mocha@^10.0.0"`).
-- `options` — optional configuration, see `FromOptions` below.
+- `location` — path to the local project directory (must contain a `package.json`). Defaults to `process.cwd()`.
+- `options` — optional configuration, see `WorkingDirOptions` below.
 - `logger` — optional logger instance for tracking scan phases. See [logger](./logger.md).
 
 ## Options
 
+> **Defaults specific to `workingDir()`:** `scanRootNode` is `true` and `includeDevDeps` is `false`.
+
 ```ts
-export type FromOptions = Omit<Options, "includeDevDeps"> & {
+export type WorkingDirOptions = Options & {
   /**
-   * Optional cache lookup called after fetching the remote manifest.
+   * NPM runtime configuration (such as local .npmrc file).
+   * It is optionally used to fetch registry authentication tokens.
+   */
+  npmRcConfig?: Config;
+
+  /**
+   * Optional cache lookup called after reading the local package.json.
    * If it returns a non-null Payload, the dependency walker is skipped entirely.
    */
   cacheLookup?: (
-    manifest: pacote.AbbreviatedManifest & pacote.ManifestResult
+    packageJSON: PackageJSON
   ) => Promise<Payload | null>;
 };
 
@@ -84,6 +92,14 @@ export interface Options {
   };
 
   /**
+   * Includes development dependencies in the walk.
+   * Note that enabling this option can significantly increase I/O and processing time.
+   *
+   * @default false
+   */
+  includeDevDeps?: boolean;
+
+  /**
    * Vulnerability strategy name (npm, snyk, node)
    *
    * @default NONE
@@ -93,7 +109,7 @@ export interface Options {
   /**
    * Analyze root package.
    *
-   * @default false
+   * @default true
    */
   readonly scanRootNode?: boolean;
 

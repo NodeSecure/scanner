@@ -1,19 +1,28 @@
-<img align="center" alt="# Nodesecure Scanner" src="https://user-images.githubusercontent.com/4438263/226018084-113c49e6-6c69-4baa-8f84-87e6d695be6d.jpg">
+<p align="center">
+  <img alt="# Nodesecure Scanner" src="https://user-images.githubusercontent.com/4438263/226018084-113c49e6-6c69-4baa-8f84-87e6d695be6d.jpg">
+</p>
 
-![version](https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/master/workspaces/scanner/package.json&query=$.version&label=Version)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/graphs/commit-activity)
-[![OpenSSF
-Scorecard](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge?style=for-the-badge)](https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner)
-[![mit](https://img.shields.io/github/license/NodeSecure/scanner.svg?style=for-the-badge)](https://github.com/NodeSecure/scanner/blob/master/LICENSE)
-![build](https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml?style=for-the-badge)
+<p align="center">
+  <a href="https://github.com/NodeSecure/scanner">
+    <img src="https://img.shields.io/badge/dynamic/json.svg?style=for-the-badge&url=https://raw.githubusercontent.com/NodeSecure/scanner/master/workspaces/scanner/package.json&query=$.version&label=Version" alt="version">
+  </a>
+  <a href="https://github.com/NodeSecure/scanner/graphs/commit-activity">
+    <img src="https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=for-the-badge" alt="maintained">
+  </a>
+  <a href="https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner">
+    <img src="https://api.securityscorecards.dev/projects/github.com/NodeSecure/scanner/badge?style=for-the-badge" alt="OpenSSF Scorecard">
+  </a>
+  <a href="https://github.com/NodeSecure/scanner/blob/master/LICENSE">
+    <img src="https://img.shields.io/github/license/NodeSecure/scanner.svg?style=for-the-badge" alt="mit">
+  </a>
+  <a href="https://github.com/NodeSecure/scanner/actions/workflows/node.js.yml">
+    <img src="https://img.shields.io/github/actions/workflow/status/NodeSecure/scanner/node.js.yml?style=for-the-badge" alt="build">
+  </a>
+</p>
 
 ⚡️ Run a static analysis of your module's dependencies.
 
-## Requirements
-
-- [Node.js](https://nodejs.org/en/) version 22 or higher
-
-## Features
+## 💡 Features
 
 Scanner builds on [JS-X-Ray](https://github.com/NodeSecure/js-x-ray) (SAST) and [Vulnera](https://github.com/NodeSecure/vulnera) (CVE detection), and adds additional detections such as:
 
@@ -26,9 +35,7 @@ Scanner builds on [JS-X-Ray](https://github.com/NodeSecure/js-x-ray) (SAST) and 
 - Highlights infrastructure components such as ip, hostname, email, url
 - Supports NPM and Yarn lockfiles
 
-## Getting Started
-
-This package is available in the Node Package Repository and can be easily installed with [npm](https://docs.npmjs.com/getting-started/what-is-npm) or [yarn](https://yarnpkg.com).
+## 💃 Getting Started
 
 ```bash
 $ npm i @nodesecure/scanner
@@ -36,171 +43,37 @@ $ npm i @nodesecure/scanner
 $ yarn add @nodesecure/scanner
 ```
 
-## Usage example
-
-```js
-import * as scanner from "@nodesecure/scanner";
-import fs from "node:fs/promises";
-
-// CONSTANTS
-const kPackagesToAnalyze = ["mocha", "cacache", "is-wsl"];
-
-const payloads = await Promise.all(
-  kPackagesToAnalyze.map((name) => scanner.from(name))
-);
-
-const promises = [];
-for (let i = 0; i < kPackagesToAnalyze.length; i++) {
-  const data = JSON.stringify(payloads[i], null, 2);
-
-  promises.push(fs.writeFile(`${kPackagesToAnalyze[i]}.json`, data));
-}
-await Promise.allSettled(promises);
-```
-
-## API
-
-See [types.ts](https://github.com/NodeSecure/scanner/blob/master/workspaces/scanner/src/types.ts) for a complete TypeScript definition.
-
-```ts
-function workingDir(
-  location: string,
-  options?: Scanner.WorkingDirOptions,
-  logger?: Scanner.Logger
-): Promise<Scanner.Payload>;
-function from(
-  packageName: string,
-  options?: Scanner.FromOptions,
-  logger?: Scanner.Logger
-): Promise<Scanner.Payload>;
-function verify(
-  packageName?: string
-): Promise<tarball.ScannedPackageResult>;
-```
-
-`WorkingDirOptions` and `FromOptions` are described with the following TypeScript interfaces:
-
-```ts
-
-type WorkingDirOptions = Options & {
-  /**
-   * NPM runtime configuration (such as local .npmrc file)
-   * It is optionally used to fetch registry authentication tokens
-   */
-  npmRcConfig?: Config;
-  /**
-   * Optional cache lookup called after reading the local package.json.
-   */
-  cacheLookup?: (
-    packageJSON: PackageJSON
-  ) => Promise<Payload | null>;
-};
-
-type FromOptions = Omit<Options, "includeDevDeps"> & {
-  /**
-   * Optional cache lookup called after fetching the remote manifest.
-   */
-  cacheLookup?: (
-    manifest: pacote.AbbreviatedManifest & pacote.ManifestResult
-  ) => Promise<Payload | null>;
-};
-
-interface Options {
-  /**
-   * Specifies the maximum depth to traverse for each root dependency.
-   * A value of 2 would mean only traversing deps and their immediate deps.
-   *
-   * @default Infinity
-   */
-  readonly maxDepth?: number;
-
-  /**
-   * Maximum concurrency to fetch and scan NPM tarballs
-   * @default 8
-   */
-  readonly maxConcurrency?: number;
-
-  /**
-   * Includes development dependencies in the walk.
-   * Note that enabling this option can significantly increase I/O and processing time.
-   *
-   * @default false
-   */
-  includeDevDeps?: boolean;
-
-  readonly registry?: string | URL;
-
-  /**
-   * Enables the use of Arborist for rapidly walking over the dependency tree.
-   * When enabled, it triggers different methods based on the presence of `node_modules`:
-   * - `loadActual()` if `node_modules` is available.
-   * - `loadVirtual()` otherwise.
-   *
-   * When disabled, it will iterate on all dependencies by using pacote
-   */
-  packageLock?: {
-    /**
-     * Fetches all manifests for additional metadata.
-     *
-     * @default false
-     */
-    fetchManifest?: boolean;
-
-    /**
-     * Specifies the location of the manifest file for Arborist.
-     * This is typically the path to the `package.json` file.
-     */
-    location: string;
-  };
-
-  highlight?: {
-    contacts?: Contact[];
-    packages?: HighlightPackages;
-    identifiers?: string[];
-  };
-
-  /**
-   * Vulnerability strategy name (npm, snyk, node)
-   *
-   * @default NONE
-   */
-  readonly vulnerabilityStrategy?: Vuln.Strategy.Kind;
-
-  /**
-   * Analyze root package.
-   *
-   * @default false for from() API
-   * @default true  for cwd()  API
-   */
-  readonly scanRootNode?: boolean;
-}
-```
-
-Additional APIs are available at:
-
-- [from](./workspaces/scanner/docs/from.md)
-- [extractors](./workspaces/scanner/docs/extractors.md)
-- [logger](./workspaces/scanner/docs/logger.md)
+For full API documentation, options, and usage examples, see the [@nodesecure/scanner package README](./workspaces/scanner/README.md).
 
 ## Workspaces
 
-Click on one of the links to access the documentation of the workspace:
+- [@nodesecure/scanner](./workspaces/scanner)
+- [@nodesecure/tarball](./workspaces/tarball)
+- [@nodesecure/tree-walker](./workspaces/tree-walker)
+- [@nodesecure/flags](./workspaces/flags)
+- [@nodesecure/mama](./workspaces/mama)
+- [@nodesecure/contact](./workspaces/contact)
+- [@nodesecure/conformance](./workspaces/conformance)
+- [@nodesecure/npm-types](./workspaces/npm-types)
+- [@nodesecure/i18n](./workspaces/i18n)
+- [@nodesecure/rc](./workspaces/rc)
+- [@nodesecure/utils](./workspaces/utils)
+- [@nodesecure/fs-walk](./workspaces/fs-walk)
+- [@nodesecure/github](./workspaces/github)
+- [@nodesecure/gitlab](./workspaces/gitlab)
 
-| name | package and link |
-| --- | --- |
-| tarball | [@nodesecure/tarball](./workspaces/tarball) |
-| tree-walker | [@nodesecure/tree-walker](./workspaces/tree-walker) |
-| flags | [@nodesecure/flags](./workspaces/flags) |
-| mama | [@nodesecure/mama](./workspaces/mama) |
-| contact | [@nodesecure/contact](./workspaces/contact) |
-| conformance | [@nodesecure/conformance](./workspaces/conformance) |
-| npm-types | [@nodesecure/npm-types](./workspaces/npm-types) |
-| i18n | [@nodesecure/i18n](./workspaces/i18n) |
-| rc | [@nodesecure/rc](./workspaces/rc) |
-| utils | [@nodesecure/utils](./workspaces/utils) |
-| fs-walk | [@nodesecure/fs-walk](./workspaces/fs-walk) |
-| github | [@nodesecure/github](./workspaces/github) |
-| gitlab | [@nodesecure/gitlab](./workspaces/gitlab) |
+## 🐥 Contributors guide
+
+If you are a developer **looking to contribute** to the project, you must first read the [CONTRIBUTING](./CONTRIBUTING.md) guide.
+
+Once you have finished your development, check that the tests (and linter) are still good by running the following script:
+
+```bash
+$ npm run check
+```
+
+> [!CAUTION]
+> In case you introduce a new feature or fix a bug, make sure to include tests for it as well.
 
 ## Contributors ✨
 
