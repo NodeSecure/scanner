@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 3.0.0
+
+### Major Changes
+
+- [#691](https://github.com/NodeSecure/scanner/pull/691) [`e16c644`](https://github.com/NodeSecure/scanner/commit/e16c6446015df8743432685047c465890370a10f) Thanks [@fraxken](https://github.com/fraxken)! - Enhance error resilience and add missing pacote (npm) userAgent for all HTTP requests
+
 ## 2.8.0
 
 ### Minor Changes
