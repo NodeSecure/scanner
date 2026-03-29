@@ -21,13 +21,11 @@ import type {
 } from "../types.ts";
 import { Logger } from "../class/logger.class.ts";
 import { getLinks } from "../utils/getLinks.ts";
-import { getDirNameFromUrl } from "../utils/dirname.ts";
-
 // CONSTANTS
 const kNotFoundStatusCode = 404;
 
 await i18n.extendFromSystemPath(
-  path.join(getDirNameFromUrl(import.meta.url), "..", "i18n")
+  path.join(import.meta.dirname, "..", "i18n")
 );
 
 type PackumentNpmApiOptions = {

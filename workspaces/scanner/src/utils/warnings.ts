@@ -12,12 +12,11 @@ import {
 import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { getDirNameFromUrl } from "./dirname.ts";
 import { TopPackages } from "../class/TopPackages.class.ts";
 import type { Dependency, GlobalWarning } from "../types.ts";
 
 await i18n.extendFromSystemPath(
-  path.join(getDirNameFromUrl(import.meta.url), "..", "i18n")
+  path.join(import.meta.dirname, "..", "i18n")
 );
 
 // CONSTANTS
