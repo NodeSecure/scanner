@@ -56,6 +56,38 @@ It is important here to dig and learn some vocabulary related to npm:
 
 To simplify it, the first step is to check the package's existence on the remote registry and to get a structure similar to the `package.json`.
 
+## Steps 1.5: Cache Lookup (optional)
+
+After fetching the manifest, if a `cacheLookup` function was provided in the options, it is called with the resolved manifest. If it returns a non-null `Payload`, that value is returned immediately and the dependency walker is **never executed**. This is useful to avoid redundant network I/O when a fresh result is already available.
+
+```ts
+const payload = await scanner.from("fastify", {
+  cacheLookup: async(manifest) => {
+    const cached = await myCache.get(`${manifest.name}@${manifest.version}`);
+    return cached ?? null;
+  }
+});
+```
+
+The same `cacheLookup` mechanism is available on `workingDir`. In that case, the callback receives the parsed `package.json` object instead of the npm manifest:
+
+```ts
+const payload = await scanner.workingDir(process.cwd(), {
+  cacheLookup: async(packageJSON) => {
+    const cached = await myCache.get(`${packageJSON.name}@${packageJSON.version}`);
+    return cached ?? null;
+  }
+});
+```
+
+```mermaid
+graph LR;
+  A[From API]-->|Spec|B[Fetching Manifest];
+  B-->C{cacheLookup?};
+  C-->|Payload returned|D[Return cached result];
+  C-->|null returned|E[Dependency Walker];
+```
+
 ## Steps 2: Dependency Walker
 
 This step aims to identify and walk through the package dependencies (that's why we call this the dependency walker). To do this, we retrieve the dependencies from the root of the Manifest in step 1 and start a recursive mechanism.

@@ -12,11 +12,21 @@ import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
 import { depWalker } from "./depWalker.ts";
-import { NPM_TOKEN, urlToString, readNpmRc } from "./utils/index.ts";
-import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
+import {
+  NPM_TOKEN,
+  urlToString,
+  readNpmRc
+} from "./utils/index.ts";
+import {
+  Logger,
+  ScannerLoggerEvents
+} from "./class/logger.class.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
 import { comparePayloads } from "./comparePayloads.ts";
-import type { Options } from "./types.ts";
+import type {
+  Options,
+  Payload
+} from "./types.ts";
 
 // CONSTANTS
 const kDefaultWorkingDirOptions = {
@@ -33,13 +43,16 @@ export type WorkingDirOptions = Options & {
    * It is optionally used to fetch registry authentication tokens
    */
   npmRcConfig?: Config;
+  cacheLookup?: (
+    packageJSON: PackageJSON
+  ) => Promise<Payload | null>;
 };
 
 export async function workingDir(
   location = process.cwd(),
   options: WorkingDirOptions = {},
   logger = new Logger()
-) {
+): Promise<Payload> {
   const registry = options.registry ?
     urlToString(options.registry) :
     getLocalRegistryURL();
@@ -66,20 +79,30 @@ export async function workingDir(
   const str = await fs.readFile(packagePath, "utf-8");
   logger.end(ScannerLoggerEvents.manifest.read);
 
+  const packageJSON = JSON.parse(str) as PackageJSON;
+  const cachedPayload = await options.cacheLookup?.(packageJSON);
+  if (cachedPayload) {
+    return cachedPayload;
+  }
+
   return depWalker(
-    JSON.parse(str) as PackageJSON,
+    packageJSON,
     finalizedOptions,
     logger
   );
 }
 
-export type FromOptions = Omit<Options, "includeDevDeps">;
+export type FromOptions = Omit<Options, "includeDevDeps"> & {
+  cacheLookup?: (
+    manifest: pacote.AbbreviatedManifest & pacote.ManifestResult
+  ) => Promise<Payload | null>;
+};
 
 export async function from(
   packageName: string,
   options: FromOptions = {},
   logger = new Logger()
-) {
+): Promise<Payload> {
   const registry = options.registry ?
     urlToString(options.registry) :
     getLocalRegistryURL();
@@ -90,6 +113,11 @@ export async function from(
     userAgent: `@nodesecure/scanner node/${process.version}`
   });
   logger.end(ScannerLoggerEvents.manifest.fetch);
+
+  const cachedPayload = await options.cacheLookup?.(manifest);
+  if (cachedPayload) {
+    return cachedPayload;
+  }
 
   return depWalker(
     // FIX: find a way to merge pacote & registry interfaces

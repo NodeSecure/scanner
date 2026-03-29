@@ -88,9 +88,22 @@ type WorkingDirOptions = Options & {
    * It is optionally used to fetch registry authentication tokens
    */
   npmRcConfig?: Config;
+  /**
+   * Optional cache lookup called after reading the local package.json.
+   */
+  cacheLookup?: (
+    packageJSON: PackageJSON
+  ) => Promise<Payload | null>;
 };
 
-type FromOptions = Omit<Options, "includeDevDeps">;
+type FromOptions = Omit<Options, "includeDevDeps"> & {
+  /**
+   * Optional cache lookup called after fetching the remote manifest.
+   */
+  cacheLookup?: (
+    manifest: pacote.AbbreviatedManifest & pacote.ManifestResult
+  ) => Promise<Payload | null>;
+};
 
 interface Options {
   /**
