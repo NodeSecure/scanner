@@ -1,5 +1,23 @@
 # @nodesecure/scanner
 
+## 10.9.0
+
+### Minor Changes
+
+- [#695](https://github.com/NodeSecure/scanner/pull/695) [`623b682`](https://github.com/NodeSecure/scanner/commit/623b682b24bfe73fdcb2261792e3c6344434cf55) Thanks [@fraxken](https://github.com/fraxken)! - Remove getDirNameFromUrl utilities in favor of import.meta.dirname
+
+- [#697](https://github.com/NodeSecure/scanner/pull/697) [`325c1a0`](https://github.com/NodeSecure/scanner/commit/325c1a0bb84d58a47b4aab71565f62a2e210d0c0) Thanks [@fraxken](https://github.com/fraxken)! - Refactor workspace README and re-implement proper scanner docs
+
+- [#693](https://github.com/NodeSecure/scanner/pull/693) [`694ff61`](https://github.com/NodeSecure/scanner/commit/694ff61172e73bb6c4dbede95d4487d24f7dfe5a) Thanks [@fraxken](https://github.com/fraxken)! - Implement cache lookup for from and workingDir APIs
+
+### Patch Changes
+
+- [#691](https://github.com/NodeSecure/scanner/pull/691) [`e16c644`](https://github.com/NodeSecure/scanner/commit/e16c6446015df8743432685047c465890370a10f) Thanks [@fraxken](https://github.com/fraxken)! - Enhance error resilience and add missing pacote (npm) userAgent for all HTTP requests
+
+- Updated dependencies [[`e16c644`](https://github.com/NodeSecure/scanner/commit/e16c6446015df8743432685047c465890370a10f)]:
+  - @nodesecure/tree-walker@3.0.0
+  - @nodesecure/tarball@4.0.1
+
 ## 10.8.0
 
 ### Minor Changes
