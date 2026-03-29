@@ -1,22 +1,24 @@
 // Import Node.js Dependencies
-import { test } from "node:test";
-import assert from "node:assert";
+import { describe, it } from "node:test";
+import assert from "node:assert/strict";
 
 // Import Internal Dependencies
 import { getUsedDeps } from "../../src/utils/index.ts";
 
-test("getUsedDeps should handle scoped packages", () => {
-  const deps = getUsedDeps(new Set([
-    "@slimio/is@latest"
-  ]));
+describe("utils.getUsedDeps", () => {
+  it("should handle scoped packages", () => {
+    const deps = getUsedDeps(new Set([
+      "@slimio/is@latest"
+    ]));
 
-  assert.deepStrictEqual(deps, [["@slimio/is", "latest"]]);
-});
+    assert.deepStrictEqual(deps, [["@slimio/is", "latest"]]);
+  });
 
-test("getUsedDeps should handle non-scoped packages", () => {
-  const deps = getUsedDeps(new Set([
-    "is@latest"
-  ]));
+  it("should handle non-scoped packages", () => {
+    const deps = getUsedDeps(new Set([
+      "is@latest"
+    ]));
 
-  assert.deepStrictEqual(deps, [["is", "latest"]]);
+    assert.deepStrictEqual(deps, [["is", "latest"]]);
+  });
 });

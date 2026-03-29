@@ -31,7 +31,7 @@ class FakeTokenStore implements TokenStore {
   }
 }
 
-describe("NpmRegistryProvider", () => {
+describe("NpmRegistryProvider", { concurrency: 2 }, () => {
   async function dummyThrow(): Promise<any> {
     throw new HttpieOnHttpError({
       data: null,

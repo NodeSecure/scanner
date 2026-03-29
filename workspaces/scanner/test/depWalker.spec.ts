@@ -73,7 +73,7 @@ function cleanupPayload(payload: Payload) {
   }
 }
 
-describe("depWalker", () => {
+describe("depWalker", { concurrency: 2 }, () => {
   it("should resolve and match the full dependency tree of @slimio/is", { skip }, async(t) => {
     Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
     const { logger, errorCount } = buildLogger();

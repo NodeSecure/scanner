@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 // Import Third-party Dependencies
-import { type PackumentVersion } from "@nodesecure/npm-types";
+import type {
+  PackumentVersion
+} from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../../src/utils/index.ts";
