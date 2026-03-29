@@ -1,4 +1,3 @@
-export * from "./dirname.ts";
 export * from "./warnings.ts";
 export * from "./addMissingVersionFlags.ts";
 export * from "./getLinks.ts";
