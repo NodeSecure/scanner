@@ -75,7 +75,8 @@ type WorkingDirOptions = Options & {
    * Optional cache lookup called after reading the local package.json.
    */
   cacheLookup?: (
-    packageJSON: PackageJSON
+    packageJSON: PackageJSON,
+    integrity: string | null
   ) => Promise<Payload | null>;
 };
 

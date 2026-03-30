@@ -11,7 +11,10 @@ import type { PackageJSON } from "@nodesecure/npm-types";
 import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
-import { depWalker } from "./depWalker.ts";
+import {
+  depWalker,
+  getManifestIntegrity
+} from "./depWalker.ts";
 import {
   NPM_TOKEN,
   urlToString,
@@ -44,7 +47,8 @@ export type WorkingDirOptions = Options & {
    */
   npmRcConfig?: Config;
   cacheLookup?: (
-    packageJSON: PackageJSON
+    packageJSON: PackageJSON,
+    integrity: string | null
   ) => Promise<Payload | null>;
 };
 
@@ -80,14 +84,16 @@ export async function workingDir(
   logger.end(ScannerLoggerEvents.manifest.read);
 
   const packageJSON = JSON.parse(str) as PackageJSON;
-  const cachedPayload = await options.cacheLookup?.(packageJSON);
+
+  const integrity = getManifestIntegrity(packageJSON);
+  const cachedPayload = await options.cacheLookup?.(packageJSON, integrity);
   if (cachedPayload) {
     return cachedPayload;
   }
 
   return depWalker(
     packageJSON,
-    finalizedOptions,
+    Object.assign(finalizedOptions, { integrity }),
     logger
   );
 }
