@@ -25,15 +25,17 @@ $ yarn add @nodesecure/tree-walker
 import os from "node:os";
 
 import pacote from "pacote";
+import { ManifestManager } from "@nodesecure/mama";
 import { npm } from "@nodesecure/tree-walker";
 
 const manifest = await pacote.manifest("some-package@1.0.0", {
   cache: `${os.homedir()}/.npm`
 });
 
+const mama = new ManifestManager(manifest);
 const treeWalker = new npm.TreeWalker();
 
-for await (const dependency of treeWalker.walk(manifest)) {
+for await (const dependency of treeWalker.walk(mama)) {
   console.log(dependency);
 }
 ```
@@ -74,7 +76,7 @@ interface TreeWalkerOptions {
 }
 ```
 
-#### *walk(manifest: PackageJSON | ManifestVersion, options: WalkOptions): AsyncIterableIterator< DependencyJSON >
+#### *walk(mama: ManifestManager, options: WalkOptions): AsyncIterableIterator< DependencyJSON >
 
 The `walk` method processes package metadata from a given **package.json file** or a **Manifest** result from the [pacote](https://www.npmjs.com/package/pacote) library.
 

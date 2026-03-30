@@ -274,3 +274,25 @@ export type PackTarball = {
   }[];
   bundled: string[];
 }
+
+/**
+ * Minimal manifest shape compatible with abbreviated registry manifests
+ * (e.g. `pacote.manifest()`).
+ *
+ * - No `[field: string]: unknown` index signature (unlike `BasePackageJSON`).
+ * - Avoids the need for explicit casts when assigning `Pick`-based types
+ *   like `pacote.AbbreviatedManifest & pacote.ManifestResult`.
+ */
+export interface AbbreviatedManifestDocument {
+  name?: string;
+  version?: string;
+  dependencies?: Record<string, string>;
+  devDependencies?: Record<string, string>;
+  peerDependencies?: Record<string, string>;
+  optionalDependencies?: Record<string, string>;
+  bundledDependencies?: string[] | boolean;
+  scripts?: Record<string, string>;
+  gypfile?: boolean;
+  bin?: Record<string, string>;
+  engines?: Record<string, string>;
+}

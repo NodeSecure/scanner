@@ -7,13 +7,13 @@ import os from "node:os";
 import pacote from "pacote";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as tarball from "@nodesecure/tarball";
+import { ManifestManager } from "@nodesecure/mama";
 import type { PackageJSON } from "@nodesecure/npm-types";
 import type Config from "@npmcli/config";
 
 // Import Internal Dependencies
 import {
-  depWalker,
-  getManifestIntegrity
+  depWalker
 } from "./depWalker.ts";
 import {
   NPM_TOKEN,
@@ -84,15 +84,16 @@ export async function workingDir(
   logger.end(ScannerLoggerEvents.manifest.read);
 
   const packageJSON = JSON.parse(str) as PackageJSON;
+  const mama = new ManifestManager(packageJSON, { location });
 
-  const integrity = getManifestIntegrity(packageJSON);
+  const integrity = mama.documentDigest;
   const cachedPayload = await options.cacheLookup?.(packageJSON, integrity);
   if (cachedPayload) {
     return cachedPayload;
   }
 
   return depWalker(
-    packageJSON,
+    mama,
     Object.assign(finalizedOptions, { integrity }),
     logger
   );
@@ -125,9 +126,10 @@ export async function from(
     return cachedPayload;
   }
 
+  const mama = new ManifestManager(manifest);
+
   return depWalker(
-    // FIX: find a way to merge pacote & registry interfaces
-    manifest as pacote.AbbreviatedManifest,
+    mama,
     Object.assign(options, { registry }),
     logger
   );

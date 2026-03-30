@@ -378,10 +378,12 @@ describe("StatsCollectors", () => {
 });
 
 class FakeDateProvider implements DateProvider {
-  #now: number;
+  #now: number = 0;
+
   now(): number {
     return this.#now;
   }
+
   oneYearAgo(): Date {
     return new Date(Date.now() - (365 * 24 * 60 * 60 * 1000));
   }

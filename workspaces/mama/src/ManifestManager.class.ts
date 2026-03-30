@@ -9,8 +9,10 @@ import type {
   PackumentVersion,
   PackageJSON,
   WorkspacesPackageJSON,
-  Contact
+  Contact,
+  AbbreviatedManifestDocument
 } from "@nodesecure/npm-types";
+import { fromData } from "ssri";
 
 // Import Internal Dependencies
 import {
@@ -96,7 +98,7 @@ export class ManifestManager<
   });
 
   constructor(
-    document: ManifestManagerDocument,
+    document: ManifestManagerDocument | AbbreviatedManifestDocument,
     options: ManifestManagerOptions = {}
   ) {
     const { location } = options;
@@ -104,7 +106,7 @@ export class ManifestManager<
     this.document = Object.assign(
       { ...ManifestManager.Default },
       structuredClone(document)
-    );
+    ) as WithRequired<ManifestManagerDocument, NonOptionalPackageJSONProperties>;
     if (location) {
       this.location = location.endsWith("package.json") ?
         path.dirname(location) :
@@ -118,6 +120,15 @@ export class ManifestManager<
     this.flags.hasUnsafeScripts = Object
       .keys(this.document.scripts)
       .some((script) => kUnsafeNPMScripts.has(script.toLowerCase()));
+  }
+
+  get documentDigest() {
+    const isWorkspace = "workspaces" in this.document;
+    const data = JSON.stringify(this.document);
+
+    return isWorkspace ?
+      null :
+      fromData(data, { algorithms: ["sha512"] }).toString();
   }
 
   get name() {

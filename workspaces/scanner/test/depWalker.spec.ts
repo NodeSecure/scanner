@@ -6,7 +6,10 @@ import assert from "node:assert";
 
 // Import Third-party Dependencies
 import * as Vulnera from "@nodesecure/vulnera";
-import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
+import { ManifestManager } from "@nodesecure/mama";
+import {
+  getLocalRegistryURL
+} from "@nodesecure/npm-registry-sdk";
 
 // Import Internal Dependencies
 import { depWalker } from "../src/depWalker.ts";
@@ -80,7 +83,7 @@ describe("depWalker", { concurrency: 2 }, () => {
     t.after(() => logger.removeAllListeners());
 
     const result = await depWalker(
-      is,
+      new ManifestManager(is),
       structuredClone(kDefaultWalkerOptions),
       logger
     );
@@ -98,7 +101,7 @@ describe("depWalker", { concurrency: 2 }, () => {
     t.after(() => logger.removeAllListeners());
 
     const result = await depWalker(
-      config,
+      new ManifestManager(config),
       structuredClone(kDefaultWalkerOptions),
       logger
     );
@@ -136,7 +139,7 @@ describe("depWalker", { concurrency: 2 }, () => {
     t.after(() => logger.removeAllListeners());
 
     const result = await depWalker(
-      pkgGitdeps,
+      new ManifestManager(pkgGitdeps),
       {
         ...structuredClone(kDefaultWalkerOptions),
         isVerbose: true
@@ -191,7 +194,7 @@ describe("depWalker", { concurrency: 2 }, () => {
       t.after(() => logger.removeAllListeners());
 
       const result = await depWalker(
-        pkgTypoSquatting,
+        new ManifestManager(pkgTypoSquatting),
         {
           ...structuredClone(kDefaultWalkerOptions),
           location: "",
@@ -231,7 +234,7 @@ describe("depWalker", { concurrency: 2 }, () => {
       t.after(() => logger.removeAllListeners());
 
       const result = await depWalker(
-        pkgTypoSquatting,
+        new ManifestManager(pkgTypoSquatting),
         {
           ...structuredClone(kDefaultWalkerOptions),
           isVerbose: true
@@ -267,7 +270,7 @@ describe("depWalker", { concurrency: 2 }, () => {
       };
 
       const result = await depWalker(
-        pkgHighlightedPackages,
+        new ManifestManager(pkgHighlightedPackages),
         structuredClone({
           ...kDefaultWalkerOptions,
           highlight: {
@@ -294,7 +297,7 @@ describe("depWalker", { concurrency: 2 }, () => {
       const hightlightPackages = ["zen-observable@0.8.14 || 0.8.15", "nanoid"];
 
       const result = await depWalker(
-        pkgHighlightedPackages,
+        new ManifestManager(pkgHighlightedPackages),
         structuredClone({
           ...kDefaultWalkerOptions,
           highlight: {

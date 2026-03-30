@@ -6,10 +6,17 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import pacote from "pacote";
-import type { PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
+import { ManifestManager } from "@nodesecure/mama";
+import type {
+  PackageJSON,
+  WorkspacesPackageJSON
+} from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { npm, type DependencyJSON } from "../../src/index.ts";
+import {
+  npm,
+  type DependencyJSON
+} from "../../src/index.ts";
 
 // CONSTANTS
 const kFixturesDir = path.join(import.meta.dirname, "..", "fixtures");
@@ -18,11 +25,12 @@ describe("npm.TreeWalker", () => {
   test("Given a fixed '@nodesecure/fs-walk' manifest then it must extract one root dependency", async() => {
     const spec = "@nodesecure/fs-walk@2.0.0";
     const manifest = await pacote.manifest(spec);
+    const mama = new ManifestManager(manifest);
     const expectedIntegrity = manifest._integrity;
 
     const walker = new npm.TreeWalker();
 
-    for await (const dependency of walker.walk(manifest as pacote.AbbreviatedManifest)) {
+    for await (const dependency of walker.walk(mama)) {
       assert.deepEqual(
         dependency,
         {
@@ -47,7 +55,8 @@ describe("npm.TreeWalker", () => {
   test(`Given a manifest with only one dependency and a mocked pacote.manifest function that throw an Error
     then it's must set existOnRemoteRegistry to false on the root dependency`, async(t) => {
     const spec = "@nodesecure/fs-walk@2.0.0";
-    const manifest = await pacote.manifest(spec) as pacote.AbbreviatedManifest;
+    const manifest = await pacote.manifest(spec);
+    const mama = new ManifestManager(manifest);
 
     const mockedPacoteProvider = {
       manifest: t.mock.fn(async function mock() {
@@ -60,7 +69,7 @@ describe("npm.TreeWalker", () => {
       }
     });
 
-    for await (const dependency of walker.walk(manifest)) {
+    for await (const dependency of walker.walk(mama)) {
       assert.deepEqual(
         dependency,
         {
@@ -85,12 +94,13 @@ describe("npm.TreeWalker", () => {
   test(`Given a fixed 'fastify' manifest and maxDepth option equal to one then
     it must return only the package direct dependencies`, async() => {
     const spec = "fastify@4.28.1";
-    const manifest = await pacote.manifest(spec) as pacote.AbbreviatedManifest;
+    const manifest = await pacote.manifest(spec);
+    const mama = new ManifestManager(manifest);
 
     const walker = new npm.TreeWalker();
 
     const dependencies: DependencyJSON[] = [];
-    for await (const dependency of walker.walk(manifest, { maxDepth: 1 })) {
+    for await (const dependency of walker.walk(mama, { maxDepth: 1 })) {
       dependencies.push(dependency);
     }
 
@@ -143,6 +153,7 @@ describe("npm.TreeWalker", () => {
     const manifest = (
       await import(pathToFileURL(manifestLocation).href, { with: { type: "json" } })
     ).default as WorkspacesPackageJSON;
+    const mama = new ManifestManager(manifest);
     const manifestWorkspaces = manifest.workspaces.map(
       (name) => "@nodesecure" + name.slice("workspaces".length)
     );
@@ -157,7 +168,7 @@ describe("npm.TreeWalker", () => {
         fetchManifest: false
       }
     };
-    for await (const dependency of walker.walk(manifest, walkOptions)) {
+    for await (const dependency of walker.walk(mama, walkOptions)) {
       dependencies.push(dependency);
     }
 
@@ -193,6 +204,7 @@ describe("npm.TreeWalker", () => {
     const manifest = (
       await import(pathToFileURL(manifestLocation).href, { with: { type: "json" } })
     ).default as PackageJSON;
+    const mama = new ManifestManager(manifest);
 
     const walker = new npm.TreeWalker();
     const walkOptions: npm.WalkOptions = {
@@ -204,7 +216,7 @@ describe("npm.TreeWalker", () => {
     };
 
     const dependencies: DependencyJSON[] = [];
-    for await (const dependency of walker.walk(manifest, walkOptions)) {
+    for await (const dependency of walker.walk(mama, walkOptions)) {
       dependencies.push(dependency);
     }
 
@@ -224,12 +236,13 @@ describe("npm.TreeWalker", () => {
     it("should always be cleared when triggering walk() and return an empty Map if the package has no dependencies", async() => {
       const manifest = await pacote.manifest(
         "@nodesecure/fs-walk@2.0.0"
-      ) as pacote.AbbreviatedManifest;
+      );
 
+      const mama = new ManifestManager(manifest);
       const walker = new npm.TreeWalker();
       walker.relationsMap.set("foo@1.5.0", new Set());
 
-      for await (const _ of walker.walk(manifest)) {
+      for await (const _ of walker.walk(mama)) {
         // do nothing
       }
 
@@ -274,8 +287,9 @@ describe("npm.TreeWalker", () => {
         }
       });
 
+      const mama = new ManifestManager(rootManifest);
       const dependencies: DependencyJSON[] = [];
-      for await (const dependency of walker.walk(rootManifest as any, { maxDepth: 10 })) {
+      for await (const dependency of walker.walk(mama, { maxDepth: 10 })) {
         dependencies.push(dependency);
       }
 
@@ -339,8 +353,10 @@ describe("npm.TreeWalker", () => {
         }
       });
 
+      const mama = new ManifestManager(rootManifest);
+
       const dependencies: DependencyJSON[] = [];
-      for await (const dependency of walker.walk(rootManifest, { maxDepth: 10 })) {
+      for await (const dependency of walker.walk(mama, { maxDepth: 10 })) {
         dependencies.push(dependency);
       }
 
@@ -382,7 +398,8 @@ describe("npm.TreeWalker", () => {
 
       // This should complete without throwing and without leaking unhandled rejections
       const dependencies: DependencyJSON[] = [];
-      for await (const dependency of walker.walk(rootManifest, { maxDepth: 10 })) {
+      const mama = new ManifestManager(rootManifest);
+      for await (const dependency of walker.walk(mama, { maxDepth: 10 })) {
         dependencies.push(dependency);
       }
 

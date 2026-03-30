@@ -79,7 +79,7 @@ if (ManifestManager.isLocated(locatedManifest)) {
 }
 ```
 
-### constructor(document: ManifestManagerDocument, options?: ManifestManagerOptions)
+### constructor(document: ManifestManagerDocument | AbbreviatedManifestDocument, options?: ManifestManagerOptions)
 
 document is described by the following type:
 ```ts
@@ -156,6 +156,23 @@ If `dependencies` and `scripts` are missing, they are defaulted to an empty obje
 
 > [!CAUTION]
 > This is not available for Workspaces
+
+### documentDigest
+
+Return an [SSRI](https://w3c.github.io/webappsec-subresource-integrity/) `sha512` hash of the **full serialized document** as a string, or `null` if the instance is a workspace.
+
+```ts
+const mama = new ManifestManager({
+  name: "foo",
+  version: "1.0.0"
+});
+console.log(mama.documentDigest); // "sha512-<base64>"
+```
+
+Unlike [`integrity`](#integrity), which hashes a small subset of fields for change-detection purposes, `documentDigest` covers every field present in the document. This makes it suitable for content-addressable lookups and cache invalidation where an exact byte-level match is required.
+
+> [!IMPORTANT]
+> Returns `null` for workspaces (whereas `integrity` throws).
 
 ### author
 Return the author parsed as a **Contact** (or `null` if the property is missing).
