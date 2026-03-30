@@ -95,6 +95,7 @@ type WalkerOptions = Omit<Options, "registry"> & {
   location?: string;
   npmRcConfig?: Config;
   npmRcEntries?: Record<string, string>;
+  integrity?: string | null;
 };
 
 type InitialPayload =
@@ -124,7 +125,8 @@ export async function depWalker(
     npmRcConfig,
     npmRcEntries = {},
     maxConcurrency = 8,
-    workers
+    workers,
+    integrity: manifestIntegrity = null
   } = options;
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
@@ -274,10 +276,7 @@ export async function depWalker(
         payload.rootDependency.integrity = integrity;
       }
       else if (isRoot) {
-        const isWorkspace = options.location && "workspaces" in manifest;
-        payload.rootDependency.integrity = isWorkspace ?
-          null :
-          fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
+        payload.rootDependency.integrity = manifestIntegrity ?? getManifestIntegrity(manifest);
       }
 
       // If the dependency is a DevDependencies we ignore it.
@@ -430,6 +429,17 @@ export async function depWalker(
   finally {
     logger.emit(ScannerLoggerEvents.done);
   }
+}
+
+export function getManifestIntegrity(
+  manifest: PackageJSON | WorkspacesPackageJSON
+): string | null {
+  const isWorkspace = "workspaces" in manifest;
+  const integrity = isWorkspace ?
+    null :
+    fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
+
+  return integrity;
 }
 
 function extractHighlightedIdentifiers(
