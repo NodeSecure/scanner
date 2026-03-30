@@ -129,9 +129,11 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
       const file = path.join(kFixturePath, "non-npm-package");
 
       const capturedPackageJSONs: PackageJSON[] = [];
+      const capturedIntegrities: (string | null)[] = [];
       const result = await workingDir(file, {
-        cacheLookup: async(packageJSON) => {
+        cacheLookup: async(packageJSON, integrity) => {
           capturedPackageJSONs.push(packageJSON);
+          capturedIntegrities.push(integrity);
 
           return fakePayload;
         }
@@ -141,6 +143,12 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
       assert.strictEqual(capturedPackageJSONs.length, 1);
       assert.strictEqual(capturedPackageJSONs[0].name, "non-npm-package");
       assert.strictEqual(capturedPackageJSONs[0].version, "1.0.0");
+      assert.strictEqual(capturedIntegrities.length, 1);
+      assert.strictEqual(
+        typeof capturedIntegrities[0],
+        "string",
+        "integrity should be a non-null string for non-workspace packages"
+      );
     });
 
     it("should proceed with a full scan when null is returned", async() => {

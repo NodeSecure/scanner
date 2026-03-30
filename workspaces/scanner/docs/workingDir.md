@@ -40,7 +40,8 @@ export type WorkingDirOptions = Options & {
    * If it returns a non-null Payload, the dependency walker is skipped entirely.
    */
   cacheLookup?: (
-    packageJSON: PackageJSON
+    packageJSON: PackageJSON,
+    integrity: string | null
   ) => Promise<Payload | null>;
 };
 
