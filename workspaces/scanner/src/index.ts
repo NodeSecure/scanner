@@ -106,7 +106,7 @@ export type FromOptions = Omit<Options, "includeDevDeps"> & {
 };
 
 export async function from(
-  packageName: string,
+  spec: string,
   options: FromOptions = {},
   logger = new Logger()
 ): Promise<Payload> {
@@ -115,7 +115,7 @@ export async function from(
     getLocalRegistryURL();
 
   logger.start(ScannerLoggerEvents.manifest.fetch);
-  const manifest = await pacote.manifest(packageName, {
+  const manifest = await pacote.manifest(spec, {
     ...NPM_TOKEN, registry, cache: `${os.homedir()}/.npm`,
     userAgent: `@nodesecure/scanner node/${process.version}`
   });
@@ -136,16 +136,16 @@ export async function from(
 }
 
 export async function verify(
-  packageName?: string
+  spec?: string
 ): Promise<tarball.ScannedPackageResult> {
-  if (typeof packageName === "undefined") {
+  if (typeof spec === "undefined") {
     return tarball.scanPackage(process.cwd());
   }
 
   await using tempDir = await TempDirectory.create();
 
   const mama = await tarball.extractAndResolve(tempDir.location, {
-    spec: packageName,
+    spec,
     registry: getLocalRegistryURL()
   });
 

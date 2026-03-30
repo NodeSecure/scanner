@@ -13,13 +13,13 @@ console.log(payload);
 
 ```ts
 function from(
-  packageName: string,
+  spec: string,
   options?: FromOptions,
   logger?: Logger
 ): Promise<Scanner.Payload>
 ```
 
-- `packageName` — npm package name, with optional version or semver range (e.g. `"mocha"`, `"mocha@10"`, `"mocha@^10.0.0"`).
+- `spec` — npm package name, with optional version or semver range (e.g. `"mocha"`, `"mocha@10"`, `"mocha@^10.0.0"`).
 - `options` — optional configuration, see `FromOptions` below.
 - `logger` — optional logger instance for tracking scan phases. See [logger](./logger.md).
 

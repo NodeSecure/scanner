@@ -53,12 +53,12 @@ function workingDir(
   logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function from(
-  packageName: string,
+  spec: string,
   options?: Scanner.FromOptions,
   logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function verify(
-  packageName?: string
+  spec?: string
 ): Promise<tarball.ScannedPackageResult>;
 ```
 
