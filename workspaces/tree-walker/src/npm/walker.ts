@@ -10,7 +10,6 @@ import Arborist from "@npmcli/arborist";
 // @ts-ignore
 import pickManifest from "npm-pick-manifest";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
-import type { PackageJSON, WorkspacesPackageJSON, ManifestVersion } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import * as utils from "../utils/index.ts";
@@ -317,11 +316,9 @@ export class TreeWalker {
   }
 
   async* walk(
-    manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
+    mama: ManifestManager,
     options: WalkOptions = {}
   ): AsyncIterableIterator<DependencyJSON> {
-    const mama = new ManifestManager(manifest);
-
     this.relationsMap.clear();
     const {
       maxDepth = Infinity,

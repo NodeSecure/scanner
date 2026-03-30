@@ -118,7 +118,7 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
 
     assert.deepStrictEqual(result.rootDependency, {
       name: "workspace",
-      version: "0.0.0",
+      version: "1.0.0",
       integrity: null
     });
   });

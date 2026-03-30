@@ -11,12 +11,12 @@ import {
 import { DefaultCollectableSet } from "@nodesecure/js-x-ray";
 import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
-import { parseAuthor } from "@nodesecure/utils";
-import { parseNpmSpec } from "@nodesecure/mama";
-import type { ManifestVersion, PackageJSON, WorkspacesPackageJSON } from "@nodesecure/npm-types";
+import {
+  ManifestManager,
+  parseNpmSpec
+} from "@nodesecure/mama";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
-import { fromData } from "ssri";
 import semver from "semver";
 
 // Import Internal Dependencies
@@ -28,11 +28,17 @@ import {
   NPM_TOKEN
 } from "./utils/index.ts";
 import { getRegistryForPackage } from "./utils/npmrc.ts";
-import { NpmRegistryProvider, type NpmApiClient } from "./registry/NpmRegistryProvider.ts";
+import {
+  NpmRegistryProvider,
+  type NpmApiClient
+} from "./registry/NpmRegistryProvider.ts";
 import { StatsCollector } from "./class/StatsCollector.class.ts";
 import { RegistryTokenStore } from "./registry/RegistryTokenStore.ts";
 import { TempDirectory } from "./class/TempDirectory.class.ts";
-import { Logger, ScannerLoggerEvents } from "./class/logger.class.ts";
+import {
+  Logger,
+  ScannerLoggerEvents
+} from "./class/logger.class.ts";
 import { TarballScanner } from "./class/TarballScanner.class.ts";
 import type {
   Dependency,
@@ -109,7 +115,7 @@ type Metadata = {
 };
 
 export async function depWalker(
-  manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
+  mama: ManifestManager,
   options: WalkerOptions,
   logger = new Logger()
 ): Promise<Payload> {
@@ -130,10 +136,15 @@ export async function depWalker(
   } = options;
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
+  const collectables = kCollectableTypes.map(
+    (type) => new DefaultCollectableSet<Metadata>(type)
+  );
 
-  const collectables = kCollectableTypes.map((type) => new DefaultCollectableSet<Metadata>(type));
-
-  const tokenStore = new RegistryTokenStore(npmRcConfig, NPM_TOKEN.token, npmRcEntries);
+  const tokenStore = new RegistryTokenStore(
+    npmRcConfig,
+    NPM_TOKEN.token,
+    npmRcEntries
+  );
 
   const npmProjectConfig = tokenStore.getConfig(registry);
   const pacoteScopedConfig = {
@@ -164,8 +175,8 @@ export async function depWalker(
   const payload: InitialPayload = {
     id: tempDir.id,
     rootDependency: {
-      name: manifest.name ?? "workspace",
-      version: manifest.version ?? "0.0.0",
+      name: mama.name,
+      version: mama.version,
       integrity: null
     },
     scannerVersion: packageVersion,
@@ -231,7 +242,7 @@ export async function depWalker(
     packageLock
   };
   try {
-    for await (const current of npmTreeWalker.walk(manifest, rootDepsOptions)) {
+    for await (const current of npmTreeWalker.walk(mama, rootDepsOptions)) {
       const { name, version, integrity, ...currentVersion } = current;
       const dependency: Dependency = {
         versions: {
@@ -276,7 +287,7 @@ export async function depWalker(
         payload.rootDependency.integrity = integrity;
       }
       else if (isRoot) {
-        payload.rootDependency.integrity = manifestIntegrity ?? getManifestIntegrity(manifest);
+        payload.rootDependency.integrity = manifestIntegrity ?? mama.documentDigest;
       }
 
       // If the dependency is a DevDependencies we ignore it.
@@ -315,7 +326,7 @@ export async function depWalker(
           version,
           ref: dependency.versions[version] as any,
           location,
-          isRootNode: scanRootNode && name === manifest.name,
+          isRootNode: scanRootNode && name === mama.name,
           registry
         })
       );
@@ -383,16 +394,17 @@ export async function depWalker(
         ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
       );
 
-      if (isLocalManifest(verDescriptor, manifest, packageName)) {
+      if (isLocalManifest(verDescriptor, mama, packageName)) {
+        const author = mama.author;
         Object.assign(dependency.metadata, {
-          author: parseAuthor(manifest.author),
-          homepage: manifest.homepage
+          author,
+          homepage: mama.document.homepage
         });
 
         Object.assign(verDescriptor, {
-          author: parseAuthor(manifest.author),
-          links: getManifestLinks(manifest),
-          repository: manifest.repository
+          author,
+          links: getManifestLinks(mama.document),
+          repository: mama.document.repository
         });
       }
 
@@ -431,17 +443,6 @@ export async function depWalker(
   }
 }
 
-export function getManifestIntegrity(
-  manifest: PackageJSON | WorkspacesPackageJSON
-): string | null {
-  const isWorkspace = "workspaces" in manifest;
-  const integrity = isWorkspace ?
-    null :
-    fromData(JSON.stringify(manifest), { algorithms: ["sha512"] }).toString();
-
-  return integrity;
-}
-
 function extractHighlightedIdentifiers(
   collectables: DefaultCollectableSet<Metadata>[],
   identifiersToHighlight: Set<string>
@@ -466,10 +467,10 @@ function extractHighlightedIdentifiers(
 
 function isLocalManifest(
   verDescriptor: DependencyVersion,
-  manifest: PackageJSON | WorkspacesPackageJSON | ManifestVersion,
+  mama: ManifestManager,
   packageName: string
-): manifest is PackageJSON | WorkspacesPackageJSON {
+): boolean {
   return verDescriptor.existOnRemoteRegistry === false && (
-    packageName === manifest.name || manifest.name === undefined
+    packageName === mama.document.name || mama.document.name === undefined
   );
 }

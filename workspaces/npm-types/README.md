@@ -95,6 +95,22 @@ Abbreviated package metadata format (corgi format). Lighter alternative to `Pack
 import type { Manifest } from "@nodesecure/npm-types";
 ```
 
+#### `AbbreviatedManifestDocument`
+Minimal manifest shape compatible with abbreviated registry manifests (e.g. `pacote.manifest()`).
+
+- No `[field: string]: unknown` index signature (unlike `BasePackageJSON`).
+- Avoids the need for explicit casts when assigning `Pick`-based types like `pacote.AbbreviatedManifest & pacote.ManifestResult`.
+
+```ts
+import type { AbbreviatedManifestDocument } from "@nodesecure/npm-types";
+
+const doc: AbbreviatedManifestDocument = {
+  name: "my-package",
+  version: "1.0.0",
+  dependencies: { lodash: "^4.17.21" }
+};
+```
+
 ### Utility Types
 
 #### `Contact`

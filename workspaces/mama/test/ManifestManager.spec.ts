@@ -603,6 +603,45 @@ describe("ManifestManager", () => {
     });
   });
 
+  describe("get documentDigest", () => {
+    test("Given a minimal PackageJSON, it must return a string starting with 'sha512-'", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+
+      const digest = mama.documentDigest;
+      assert.ok(typeof digest === "string");
+      assert.ok(digest!.startsWith("sha512-"), `Expected '${digest}' to start with 'sha512-'`);
+    });
+
+    test("Given a WorkspacesPackageJSON, it must return null", () => {
+      const mama = new ManifestManager({
+        ...kMinimalPackageJSON,
+        workspaces: ["src/a"]
+      });
+
+      assert.strictEqual(mama.documentDigest, null);
+    });
+
+    test("Given two identical PackageJSON objects, the values must be strictly equal", () => {
+      const mamaA = new ManifestManager({ ...kMinimalPackageJSON });
+      const mamaB = new ManifestManager({ ...kMinimalPackageJSON });
+
+      assert.strictEqual(mamaA.documentDigest, mamaB.documentDigest);
+    });
+
+    test("Given two different PackageJSON objects, the values must differ", () => {
+      const mamaA = new ManifestManager({ ...kMinimalPackageJSON });
+      const mamaB = new ManifestManager({ ...kMinimalPackageJSON, description: "different" });
+
+      assert.notStrictEqual(mamaA.documentDigest, mamaB.documentDigest);
+    });
+
+    test("The value must be deterministic (two accesses on the same instance return the same string)", () => {
+      const mama = new ManifestManager(kMinimalPackageJSON);
+
+      assert.strictEqual(mama.documentDigest, mama.documentDigest);
+    });
+  });
+
   describe("get hasZeroSemver", () => {
     test("Given a PackageJSON with a semver higher than 1.x.x then it must return false", () => {
       const packageJSON: PackageJSON = {
