@@ -1,5 +1,22 @@
 # @nodesecure/scanner
 
+## 10.10.0
+
+### Minor Changes
+
+- [#704](https://github.com/NodeSecure/scanner/pull/704) [`7178972`](https://github.com/NodeSecure/scanner/commit/71789723b69915903f41440066daf56c8998e5a4) Thanks [@fraxken](https://github.com/fraxken)! - Implement ManifestManager class deep into scanner and tree-walker. Implement documentDigest into ManifestManager class and fix issue with pacote.manifest type.
+
+- [#700](https://github.com/NodeSecure/scanner/pull/700) [`1e3c971`](https://github.com/NodeSecure/scanner/commit/1e3c9719da3a0b113aa31a20f606f44d80050ed1) Thanks [@fraxken](https://github.com/fraxken)! - Add integrity as second argument of cacheLookup for workingDir API.
+
+### Patch Changes
+
+- [#705](https://github.com/NodeSecure/scanner/pull/705) [`05c5331`](https://github.com/NodeSecure/scanner/commit/05c5331223575de9a575fa874af9ac207a86b3aa) Thanks [@fraxken](https://github.com/fraxken)! - Rename packageName argument in from and verify APIs to spec
+
+- Updated dependencies [[`7178972`](https://github.com/NodeSecure/scanner/commit/71789723b69915903f41440066daf56c8998e5a4)]:
+  - @nodesecure/tree-walker@4.0.0
+  - @nodesecure/npm-types@1.4.0
+  - @nodesecure/mama@2.3.0
+
 ## 10.9.0
 
 ### Minor Changes
