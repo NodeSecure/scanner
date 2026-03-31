@@ -1,5 +1,11 @@
 # @nodesecure/npm-types
 
+## 1.4.0
+
+### Minor Changes
+
+- [#704](https://github.com/NodeSecure/scanner/pull/704) [`7178972`](https://github.com/NodeSecure/scanner/commit/71789723b69915903f41440066daf56c8998e5a4) Thanks [@fraxken](https://github.com/fraxken)! - Implement ManifestManager class deep into scanner and tree-walker. Implement documentDigest into ManifestManager class and fix issue with pacote.manifest type.
+
 ## 1.3.0
 
 ### Minor Changes
