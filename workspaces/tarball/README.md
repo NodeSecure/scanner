@@ -38,6 +38,7 @@ console.log(scanResult);
 - [SourceCode](./docs/SourceCode.md)
 - [NpmTarball](./docs/NpmTarball.md)
 - [NpmTarballWorkerPool](./docs/NpmTarballWorkerPool.md)
+- [DependencyCollectableSet](./docs/DependencyCollectableSet.md)
 
 ---
 

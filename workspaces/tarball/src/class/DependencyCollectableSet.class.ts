@@ -104,9 +104,73 @@ const kExternalThirdPartyDeps = new Set([
 ]);
 const kRelativeImportPath = new Set([".", "..", "./", "../"]);
 
+/**
+ * Metadata attached to each dependency entry recorded by `DependencyCollectableSet`.
+ *
+ * Extends the base {@link Dependency} shape from `@nodesecure/js-x-ray` with file-level
+ * context so that every import can be traced back to the source file in which it appears.
+ */
 export type DependencyCollectableSetMetadata = Dependency & {
+  /**
+   * Path of the source file (relative to the package root) in which this import
+   * was encountered, e.g. `lib/utils.js` or `src/index.ts`.
+   * Used as the first-level key in the public `dependencies` map.
+   */
   relativeFile: string;
 };
+
+export interface DependencyCollectableSetExtract {
+  /**
+   * Set of relative file paths (local imports) discovered during analysis,
+   * e.g. `./utils.js` or `../helpers/index.js`.
+   */
+  files: Set<string>;
+  /**
+   * List of dependency specifiers that were imported inside a `try` block,
+   * indicating optional or fault-tolerant usage.
+   */
+  dependenciesInTryBlock: string[];
+  dependencies: {
+    /**
+     * Node.js built-in module names referenced by the package,
+     * e.g. `fs`, `path`, `node:crypto`.
+     */
+    nodeJs: string[];
+    /**
+     * Third-party npm packages imported by the package
+     * (excluding dev dependencies and aliased subpath imports).
+     */
+    thirdparty: string[];
+    /**
+     * Map of Node.js subpath import aliases (keys starting with `#`) to
+     * their resolved specifiers, as declared in `package.json#imports`.
+     */
+    subpathImports: Record<string, string>;
+    /**
+     * Production dependencies declared in `package.json` that are never
+     * imported by the package's source files.
+     */
+    unused: string[];
+    /**
+     * Third-party packages that are imported but not listed as production
+     * dependencies in `package.json`.
+     */
+    missing: string[];
+  };
+  flags: {
+    /**
+     * `true` when the package imports a built-in or third-party module
+     * known to enable outbound network or process-spawning capabilities
+     * (e.g. `http`, `net`, `child_process`, `undici`, `axios`).
+     */
+    hasExternalCapacity: boolean;
+    /**
+     * `true` when at least one dependency is unused or missing,
+     * signalling a potential discrepancy between declared and actual dependencies.
+     */
+    hasMissingOrUnusedDependency: boolean;
+  };
+}
 
 export class DependencyCollectableSet implements CollectableSet<DependencyCollectableSetMetadata> {
   type = "dependency";
@@ -131,7 +195,7 @@ export class DependencyCollectableSet implements CollectableSet<DependencyCollec
     this.#mama = mama;
   }
 
-  extract() {
+  extract(): DependencyCollectableSetExtract {
     const unusedDependencies = this.#difference(
       this.#mama.dependencies.filter((name) => !name.startsWith("@types")),
       [...this.#thirdPartyDependencies, ...this.#thirdPartyAliasedDependencies]
