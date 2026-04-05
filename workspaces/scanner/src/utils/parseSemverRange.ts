@@ -21,6 +21,13 @@ export function parseSemverRange(packages: HighlightPackages) {
 
 function parseSpecs(specs: string[]) {
   return specs.reduce((acc, spec) => {
+    // Handle scope-only entries like "@fastify", matching all packages under that scope
+    if (/^@[^/@]+$/.test(spec)) {
+      acc[spec] = ["*"];
+
+      return acc;
+    }
+
     const parsedSpec = parseNpmSpec(spec);
     if (!parsedSpec) {
       return acc;

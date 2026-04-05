@@ -52,5 +52,18 @@ describe("utils.parseSemverRange", () => {
     it("should not parse invalid specs", () => {
       assert.deepEqual(parseSemverRange([""]), {});
     });
+
+    it("should parse scope-only entries as wildcards", () => {
+      assert.deepEqual(parseSemverRange(["@nodesecure"]), {
+        "@nodesecure": "*"
+      });
+    });
+
+    it("should parse scope-only entries alongside regular specs", () => {
+      assert.deepEqual(parseSemverRange(["@nodesecure", "foo@1.0.0"]), {
+        "@nodesecure": "*",
+        foo: "1.0.0"
+      });
+    });
   });
 });
