@@ -75,6 +75,7 @@ test("scanPackage (caseone)", async() => {
     "kleur"
   ]);
   assert.ok(result.ast.dependencies["index.js"].fs.inTry);
+  assert.strictEqual(result.path, "All");
 });
 
 test("scanPackage should detect empty packages (only package.json)", async() => {

@@ -9,6 +9,7 @@ import * as npmRegistrySDK from "@nodesecure/npm-registry-sdk";
 // Import Internal Dependencies
 import type { DateProvider } from "../src/class/DateProvider.class.ts";
 import { type LoggerEventsMap } from "../src/class/logger.class.ts";
+import type { ApiStats } from "../src/types.ts";
 import { StatsCollector } from "../src/class/StatsCollector.class.ts";
 
 class FakeLogger extends EventEmitter<LoggerEventsMap> {
@@ -57,9 +58,11 @@ describe("StatsCollectors", () => {
         isVerbose: false
       });
       assert.throws(() => {
-        statsCollector.track("api/test/1", "phase-1", () => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("oh no!");
+        statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: () => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("oh no!");
+          }
         });
       });
 
@@ -76,28 +79,33 @@ describe("StatsCollectors", () => {
       assert.strictEqual(fakeLogger.stats.length, 0);
     });
 
-    it("should be able to track the start and execution time of external api call", async() => {
+    it("should be able to track the start and execution time of external api call", async(t) => {
       let hasFnOneBeenCalled = false;
       let hasFnTwoBeenCalled = false;
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
+      const onSuccessMock = t.mock.fn<(res: number, stat: ApiStats) => void>();
       dateProvider.setNow(1658512001001);
-      const promise = statsCollector.track("api/test/1", "phase-1", () => {
-        hasFnOneBeenCalled = true;
+      const promise = statsCollector.track({
+        name: "api/test/1", phase: "phase-1", fn: () => {
+          hasFnOneBeenCalled = true;
 
-        return Promise.resolve(1);
+          return Promise.resolve(1);
+        }, onSuccess: onSuccessMock as any
       });
 
       dateProvider.setNow(1658512002000);
       const promiseResult = await promise;
 
       dateProvider.setNow(1658512003000);
-      const fnResult = statsCollector.track("api/test/2", "phase-2", () => {
-        hasFnTwoBeenCalled = true;
-        dateProvider.setNow(1658512004000);
+      const fnResult = statsCollector.track({
+        name: "api/test/2", phase: "phase-2", fn: () => {
+          hasFnTwoBeenCalled = true;
+          dateProvider.setNow(1658512004000);
 
-        return null;
+          return null;
+        }, onSuccess: onSuccessMock as any
       });
       dateProvider.setNow(1658512005000);
       const { apiCalls, apiCallsCount } = statsCollector.getStats();
@@ -118,6 +126,17 @@ describe("StatsCollectors", () => {
           executionTime: 1000
         }
       ]);
+      assert.strictEqual(onSuccessMock.mock.callCount(), 2);
+      assert.deepEqual(onSuccessMock.mock.calls[0].arguments, [1, {
+        name: "api/test/1",
+        startedAt: 1658512001001,
+        executionTime: 999
+      }]);
+      assert.deepEqual(onSuccessMock.mock.calls[1].arguments, [null, {
+        name: "api/test/2",
+        startedAt: 1658512003000,
+        executionTime: 1000
+      }]);
       assert.strictEqual(fakeLogger.stats.length, 0);
     });
   });
@@ -137,9 +156,11 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: false });
       await assert.rejects(async() => {
-        await statsCollector.track("api/test/1", "phase-async", async() => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("async oh no!");
+        await statsCollector.track({
+          name: "api/test/1", phase: "phase-async", fn: async() => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("async oh no!");
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -157,9 +178,11 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       assert.throws(() => {
-        statsCollector.track("api/test/1", "phase-1", () => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("oh no!");
+        statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: () => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("oh no!");
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -186,10 +209,11 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       assert.throws(() => {
-        statsCollector.track("api/test/1", "phase-1", () => {
-          dateProvider.setNow(1658512001000);
-          // eslint-disable-next-line no-throw-literal
-          throw null;
+        statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: () => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("oh no!");
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -213,10 +237,12 @@ describe("StatsCollectors", () => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
-      await statsCollector.track("api/test/1", "phase-1", async() => {
-        dateProvider.setNow(1658512001000);
+      await statsCollector.track({
+        name: "api/test/1", phase: "phase-1", fn: async() => {
+          dateProvider.setNow(1658512001000);
 
-        return Promise.resolve(42);
+          return Promise.resolve(42);
+        }
       });
       const { errors, errorCount } = statsCollector.getStats();
       assert.strictEqual(errorCount, 0);
@@ -230,9 +256,11 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
-        await statsCollector.track("api/test/1", "phase-async", async() => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("async oh no!");
+        await statsCollector.track({
+          name: "api/test/1", phase: "phase-async", fn: async() => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("async oh no!");
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -259,10 +287,12 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
-        await statsCollector.track("api/test/1", "phase-1", async() => {
-          dateProvider.setNow(1658512001000);
-          // eslint-disable-next-line no-throw-literal
-          throw "string error";
+        await statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: async() => {
+            dateProvider.setNow(1658512001000);
+            // eslint-disable-next-line no-throw-literal
+            throw "string error";
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -287,10 +317,12 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
-        await statsCollector.track("api/test/1", "phase-1", async() => {
-          dateProvider.setNow(1658512001000);
+        await statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: async() => {
+            dateProvider.setNow(1658512001000);
 
-          return npmRegistrySDK.packument("does-not-exist");
+            return npmRegistrySDK.packument("does-not-exist");
+          }
         });
       });
       const { errors, errorCount } = statsCollector.getStats();
@@ -319,10 +351,12 @@ describe("StatsCollectors", () => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
-      statsCollector.track("api/test/1", "phase-1", () => {
-        dateProvider.setNow(1658512001000);
+      statsCollector.track({
+        name: "api/test/1", phase: "phase-1", fn: () => {
+          dateProvider.setNow(1658512001000);
 
-        return 42;
+          return 42;
+        }
       });
       assert.strictEqual(fakeLogger.stats.length, 1);
       assert.deepStrictEqual(fakeLogger.stats[0], {
@@ -336,10 +370,12 @@ describe("StatsCollectors", () => {
       const dateProvider = new FakeDateProvider();
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
-      await statsCollector.track("api/test/1", "phase-1", async() => {
-        dateProvider.setNow(1658512001000);
+      await statsCollector.track({
+        name: "api/test/1", phase: "phase-1", fn: async() => {
+          dateProvider.setNow(1658512001000);
 
-        return Promise.resolve(42);
+          return Promise.resolve(42);
+        }
       });
       assert.strictEqual(fakeLogger.stats.length, 1);
       assert.deepStrictEqual(fakeLogger.stats[0], {
@@ -354,9 +390,11 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       assert.throws(() => {
-        statsCollector.track("api/test/1", "phase-1", () => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("sync error!");
+        statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: () => {
+            dateProvider.setNow(1658512001000);
+            throw new Error("sync error!");
+          }
         });
       });
       assert.strictEqual(fakeLogger.stats.length, 0);
@@ -367,9 +405,12 @@ describe("StatsCollectors", () => {
       dateProvider.setNow(1658512000000);
       const statsCollector = new StatsCollector({ logger: fakeLogger, dateProvider }, { isVerbose: true });
       await assert.rejects(async() => {
-        await statsCollector.track("api/test/1", "phase-1", async() => {
-          dateProvider.setNow(1658512001000);
-          throw new Error("async error!");
+        await statsCollector.track({
+          name: "api/test/1", phase: "phase-1", fn: async() => {
+            dateProvider.setNow(1658512001000);
+
+            return npmRegistrySDK.packument("does-not-exist");
+          }
         });
       });
       assert.strictEqual(fakeLogger.stats.length, 0);

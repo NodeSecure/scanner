@@ -31,6 +31,7 @@ import type {
   ScanResultPayload,
   DependencyRef
 } from "./types.ts";
+import type { Path } from "./class/SourceCodeScanner.class.ts";
 
 export interface ScanOptions {
   astAnalyserOptions?: AstAnalyserOptions;
@@ -102,7 +103,8 @@ export async function scanPackageCore(
       required_nodejs: dependencies.nodeJs,
       required_thirdparty: dependencies.thirdparty,
       required_subpath: dependencies.subpathImports
-    }
+    },
+    path: code.path
   };
 }
 
@@ -130,6 +132,7 @@ export async function scanDirOrArchive(
   ref.composition.required_nodejs = result.composition.required_nodejs;
   ref.composition.required_thirdparty = result.composition.required_thirdparty;
   ref.composition.required_subpath = result.composition.required_subpath;
+  ref.path = result.path;
 
   const flags = result.flags.filter((flag) => flag !== "hasWarnings" || !ref.flags.includes("hasWarnings"));
   ref.flags.push(...flags);
@@ -154,6 +157,7 @@ export interface ScannedPackageResult {
     dependencies: Record<string, Record<string, Dependency>>;
     warnings: Warning[];
   };
+  path: Path;
 }
 
 export async function scanPackage(
@@ -195,7 +199,8 @@ export async function scanPackage(
     ast: {
       dependencies: dependencySet.dependencies,
       warnings
-    }
+    },
+    path: code.path
   };
 }
 

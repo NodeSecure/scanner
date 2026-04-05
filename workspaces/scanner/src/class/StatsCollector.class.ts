@@ -18,6 +18,11 @@ export type Options = {
   isVerbose: boolean;
 };
 
+export type OnSuccess<T extends () => any> = (
+  res: Awaited<ReturnType<T>>,
+  stat: ApiStats
+) => void;
+
 export class StatsCollector {
   #logger: EventEmitter<LoggerEventsMap>;
   #dateProvider: DateProvider;
@@ -34,14 +39,26 @@ export class StatsCollector {
     this.#isVerbose = options.isVerbose;
   }
 
-  track<T extends () => any>(name: string, phase: string, fn: T): ReturnType<T> {
+  track<T extends () => any>(options: {
+    name: string;
+    phase: string;
+    fn: T;
+    onSuccess?: OnSuccess<T>;
+  }): ReturnType<T> {
+    const { name, phase, fn, onSuccess } = options;
     const startedAt = this.#dateProvider.now();
     try {
       const result = fn();
       if (result instanceof Promise) {
         return result
           .then((res: ReturnType<T>) => {
-            this.#addApiStatVerbose(name, startedAt, this.#calcExecutionTime(startedAt));
+            this.#addApiStatVerbose<T>({
+              name,
+              startedAt,
+              executionTime: this.#calcExecutionTime(startedAt),
+              result: res,
+              onSuccess
+            });
 
             return res;
           })
@@ -59,7 +76,13 @@ export class StatsCollector {
           }) as ReturnType<T>;
       }
 
-      this.#addApiStatVerbose(name, startedAt, this.#calcExecutionTime(startedAt));
+      this.#addApiStatVerbose({
+        name,
+        startedAt,
+        executionTime: this.#calcExecutionTime(startedAt),
+        result,
+        onSuccess
+      });
 
       return result;
     }
@@ -81,12 +104,21 @@ export class StatsCollector {
     return this.#dateProvider.now() - startedAt;
   }
 
-  #addApiStatVerbose(name: string, startedAt: number, executionTime: number) {
+  #addApiStatVerbose<T extends () => any>({ name, startedAt, executionTime, result, onSuccess }: {
+    name: string;
+    startedAt: number;
+    executionTime: number;
+    onSuccess?: OnSuccess<T>;
+    result: ReturnType<T>;
+  }) {
     const stat = {
       name,
       startedAt,
       executionTime
     };
+    if (onSuccess) {
+      onSuccess(result as Awaited<ReturnType<T>>, stat);
+    }
     this.#apiCalls.push(stat);
     if (this.#isVerbose) {
       this.#logger.emit("stat", stat);

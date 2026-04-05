@@ -6,6 +6,7 @@ import type { PackageModuleType } from "@nodesecure/mama";
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
 import type { IlluminatedContact } from "@nodesecure/contact";
 import type { Contact, Dist } from "@nodesecure/npm-types";
+import type { Path } from "@nodesecure/tarball";
 
 export type Maintainer = Contact & {
   /**
@@ -198,6 +199,13 @@ export type ApiStats = {
     * Name of the api call
   */
   name: string;
+  /**
+    * Tarball specific stats
+  */
+  tarball?: {
+    path: Path;
+    filesCount: number;
+  };
 };
 
 export type Error = {
