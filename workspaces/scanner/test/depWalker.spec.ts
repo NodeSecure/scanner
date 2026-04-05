@@ -316,6 +316,48 @@ describe("depWalker", { concurrency: 2 }, () => {
         ]
       );
     });
+
+    it("should highlight all packages of a scope using a semver range map", { skip }, async(t) => {
+      const { logger } = buildLogger();
+      t.after(() => logger.removeAllListeners());
+
+      const { highlighted } = await depWalker(
+        new ManifestManager(config),
+        structuredClone({
+          ...kDefaultWalkerOptions,
+          highlight: {
+            packages: { "@slimio": "*" },
+            contacts: []
+          }
+        }),
+        logger
+      );
+
+      assert.ok(highlighted.packages.every((pkg) => pkg.startsWith("@slimio/")));
+      assert.ok(highlighted.packages.some((pkg) => pkg.startsWith("@slimio/is")));
+      assert.ok(highlighted.packages.some((pkg) => pkg.startsWith("@slimio/config")));
+    });
+
+    it("should highlight all packages of a scope from an array of specs", { skip }, async(t) => {
+      const { logger } = buildLogger();
+      t.after(() => logger.removeAllListeners());
+
+      const { highlighted } = await depWalker(
+        new ManifestManager(config),
+        structuredClone({
+          ...kDefaultWalkerOptions,
+          highlight: {
+            packages: ["@slimio"],
+            contacts: []
+          }
+        }),
+        logger
+      );
+
+      assert.ok(highlighted.packages.every((pkg) => pkg.startsWith("@slimio/")));
+      assert.ok(highlighted.packages.some((pkg) => pkg.startsWith("@slimio/is")));
+      assert.ok(highlighted.packages.some((pkg) => pkg.startsWith("@slimio/config")));
+    });
   });
 });
 

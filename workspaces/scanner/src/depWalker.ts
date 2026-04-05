@@ -386,8 +386,14 @@ export async function depWalker(
     const semverRanges = parseSemverRange(options.highlight?.packages ?? {});
     for (const version of Object.entries(dependency.versions)) {
       const [verStr, verDescriptor] = version as [string, DependencyVersion];
-      const range = semverRanges?.[packageName];
-      if (range && semver.satisfies(verStr, range)) {
+      const packageRange = semverRanges?.[packageName];
+      const org = parseNpmSpec(packageName)?.org;
+      const isScopeHighlighted = org !== null && `@${org}` in semverRanges;
+
+      if (
+        (packageRange && semver.satisfies(verStr, packageRange)) ||
+        isScopeHighlighted
+      ) {
         highlightedPackages.add(`${packageName}@${verStr}`);
       }
       verDescriptor.flags.push(
