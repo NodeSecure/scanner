@@ -1,5 +1,20 @@
 # @nodesecure/scanner
 
+## 10.11.0
+
+### Minor Changes
+
+- [#715](https://github.com/NodeSecure/scanner/pull/715) [`76543c3`](https://github.com/NodeSecure/scanner/commit/76543c398418a36d8c7d02bc257adcafec0a2320) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - Add possibility to highlight all packageas under a scope
+
+- [#714](https://github.com/NodeSecure/scanner/pull/714) [`6b6fa55`](https://github.com/NodeSecure/scanner/commit/6b6fa555d369a5c637e02323c37c9cb650b5cbad) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: add path and file number for tarball stats
+
+### Patch Changes
+
+- Updated dependencies [[`398bf42`](https://github.com/NodeSecure/scanner/commit/398bf42b15b8e217fc6725377ea6903687b124d1), [`acd9105`](https://github.com/NodeSecure/scanner/commit/acd9105dfbfa906bafe2f0d43e01529739bd68e0), [`6b6fa55`](https://github.com/NodeSecure/scanner/commit/6b6fa555d369a5c637e02323c37c9cb650b5cbad)]:
+  - @nodesecure/tarball@4.1.0
+  - @nodesecure/mama@2.3.1
+  - @nodesecure/tree-walker@4.0.1
+
 ## 10.10.0
 
 ### Minor Changes
