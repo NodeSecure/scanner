@@ -71,7 +71,7 @@ function removeNodeModulesBin(
   return Object.fromEntries(
     Object.entries(scripts).map(([key, value]) => [
       key,
-      value.replaceAll("./node_modules/.bin/", "")
+      value.replace(/(?:\.\/)?node_modules\/\.bin\//g, "")
     ])
   );
 }
