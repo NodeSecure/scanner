@@ -65,6 +65,42 @@ describe("packageJSONIntegrityHash", () => {
     }
   });
 
+  test("Given a script with an instance of 'node_modules/.bin/'", () => {
+    for (const arg of [undefined, { isFromRemoteRegistry: true }]) {
+      const { object } = packageJSONIntegrityHash({
+        ...kMinimalPackageJSON,
+        scripts: {
+          test: "node_modules/.bin/istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js"
+        }
+      }, arg);
+
+      assert.strictEqual(
+        object.scripts.test,
+        "istanbul cover ./node_modules/tape/bin/tape ./test/integration/*.js"
+      );
+    }
+  });
+
+  test("tarball script 'node_modules/.bin/x' and registry script 'x' should produce the same integrity", () => {
+    const tarball = packageJSONIntegrityHash({
+      ...kMinimalPackageJSON,
+      scripts: {
+        test: "node_modules/.bin/mocha --reporter spec",
+        pegjs: "node_modules/.bin/pegjs lib/parser/pbxproj.pegjs"
+      }
+    });
+
+    const registry = packageJSONIntegrityHash({
+      ...kMinimalPackageJSON,
+      scripts: {
+        test: "mocha --reporter spec",
+        pegjs: "pegjs lib/parser/pbxproj.pegjs"
+      }
+    });
+
+    assert.strictEqual(tarball.integrity, registry.integrity);
+  });
+
   test("should include optional dependencies in the hash when there is some", () => {
     const packageJSONWithOptionalDeps = {
       ...kMinimalPackageJSON,
