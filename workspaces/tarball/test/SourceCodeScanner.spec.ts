@@ -30,6 +30,7 @@ describe("SourceCodeScanner", () => {
 
     const report = await scanner.iterate({ manifest: [], javascript: [] });
     assert.strictEqual(report.consumed, false);
+    assert.strictEqual(report.path, "NONE");
   });
 
   test("iterate() should return empty report if we provide a manifest that doesn't exist and zero JavaScript files", async() => {
@@ -71,7 +72,45 @@ describe("SourceCodeScanner", () => {
         path.join("src", "index.js"),
         path.join("src", "foo.js")
       ].sort()
+
     );
+
+    assert.strictEqual(aggregator.path, "EntryFileAnalyser");
+  });
+
+  test("should have a path of Both when we have entries + js files", async() => {
+    const mama = loadFixtureManifest("entryfiles");
+    const aggregator = createAggregator(false);
+
+    const scanner = new SourceCodeScanner(mama, {
+      reportInitiator: () => aggregator
+    });
+    await scanner.iterate({
+      manifest: [
+        "src/index.js"
+      ],
+      javascript: [
+        "src/alone.js"
+      ]
+    });
+
+    const { reports } = aggregator;
+
+    const files = reports
+      .map((report) => path.normalize(report.file))
+      .sort();
+
+    assert.deepEqual(
+      files,
+      [
+        path.join("src", "index.js"),
+        path.join("src", "foo.js"),
+        path.join("src", "alone.js")
+      ].sort()
+
+    );
+
+    assert.strictEqual(aggregator.path, "Both");
   });
 
   test("iterate() should trace and report only provided JavaScript files", async() => {
@@ -89,7 +128,7 @@ describe("SourceCodeScanner", () => {
       ]
     });
 
-    const { reports } = aggregator;
+    const { reports, path: aggregatorPath } = aggregator;
 
     const files = reports
       .map((report) => path.normalize(report.file))
@@ -102,6 +141,8 @@ describe("SourceCodeScanner", () => {
         path.join("src", "deps.js")
       ].sort()
     );
+
+    assert.strictEqual(aggregatorPath, "All");
   });
 
   test("iterate() should report optional warning for synchronous I/O", async() => {
@@ -232,7 +273,7 @@ function createAggregator(
 ): CustomAggregator {
   return {
     reports: [],
-
+    path: "NONE",
     consumed,
     push(report) {
       this.reports.push(report);

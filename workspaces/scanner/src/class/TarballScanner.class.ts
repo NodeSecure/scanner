@@ -107,17 +107,23 @@ export class TarballScanner {
 
     const mama = await this.#extract(spec, registry);
 
-    const result = await this.#statsCollector.track(
-      `tarball.scanDirOrArchive ${spec}`,
-      "tarball-scan",
-      () => this.#workerPool!.scan({
+    const result = await this.#statsCollector.track({
+      name: `tarball.scanDirOrArchive ${spec}`,
+      phase: "tarball-scan",
+      fn: () => this.#workerPool!.scan({
         location: mama.location!,
         astAnalyserOptions: {
           optionalWarnings: hasLocation
         },
         collectableTypes: this.#collectableTypes
-      })
-    );
+      }),
+      onSuccess: (result, stat) => {
+        stat.tarball = {
+          path: result.path,
+          filesCount: result.composition.files.length
+        };
+      }
+    });
 
     this.#applyResult(ref, result);
     this.#mergeCollectables(result.collectables);
@@ -149,16 +155,23 @@ export class TarballScanner {
       })
     );
 
-    await this.#statsCollector.track(
-      `tarball.scanDirOrArchive ${spec}`,
-      "tarball-scan",
-      () => scanDirOrArchive(mama, ref, {
+    await this.#statsCollector.track({
+      name: `tarball.scanDirOrArchive ${spec}`,
+      phase: "tarball-scan",
+      fn: () => scanDirOrArchive(mama, ref, {
         astAnalyserOptions: {
           optionalWarnings: hasLocation,
           collectables: this.#collectables
         }
-      })
-    );
+      }),
+      onSuccess: (_, stat) => {
+        stat.tarball = {
+          path: ref.path,
+          filesCount: ref.composition.files.length
+        };
+        delete ref.path;
+      }
+    });
   }
 
   async #extract(

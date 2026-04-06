@@ -155,14 +155,14 @@ export async function depWalker(
 
   const pacoteProvider: PacoteProvider = {
     async extract(spec, dest, opts): Promise<void> {
-      await statsCollector.track(
-        `pacote.extract ${spec}`,
-        "tarball-scan",
-        () => pacote.extract(spec, dest, {
+      await statsCollector.track({
+        name: `pacote.extract ${spec}`,
+        phase: "tarball-scan",
+        fn: () => pacote.extract(spec, dest, {
           ...opts,
           ...pacoteScopedConfig
         })
-      );
+      });
     }
   };
 
@@ -191,32 +191,37 @@ export async function depWalker(
     registry,
     providers: {
       pacote: {
-        manifest: (spec, opts) => statsCollector.track(`pacote.manifest ${spec}`, "tree-walk", () => pacote.manifest(spec,
-          { ...opts, ...pacoteScopedConfig })),
-        packument: (spec, opts) => statsCollector.track(`pacote.packument ${spec}`,
-          "tree-walk",
-          () => pacote.packument(spec, { ...opts, ...pacoteScopedConfig }))
+        manifest: (spec, opts) => statsCollector.track({
+          name: `pacote.manifest ${spec}`,
+          phase: "tree-walk", fn: () => pacote.manifest(spec,
+            { ...opts, ...pacoteScopedConfig })
+        }),
+        packument: (spec, opts) => statsCollector.track({
+          name: `pacote.packument ${spec}`,
+          phase: "tree-walk",
+          fn: () => pacote.packument(spec, { ...opts, ...pacoteScopedConfig })
+        })
       }
     }
   });
   const npmApiClient: NpmApiClient = {
-    packument: (name, opts) => statsCollector.track(
-      `npmRegistrySDK.packument ${name}`,
-      "metadata-fetch",
-      () => npmRegistrySDK.packument(name, opts)
-    ),
+    packument: (name, opts) => statsCollector.track({
+      name: `npmRegistrySDK.packument ${name}`,
+      phase: "metadata-fetch",
+      fn: () => npmRegistrySDK.packument(name, opts)
+    }),
 
-    packumentVersion: (name, version, opts) => statsCollector.track(
-      `npmRegistrySDK.packumentVersion ${name}@${version}`,
-      "metadata-fetch",
-      () => npmRegistrySDK.packumentVersion(name, version, opts)
-    ),
+    packumentVersion: (name, version, opts) => statsCollector.track({
+      name: `npmRegistrySDK.packumentVersion ${name}@${version}`,
+      phase: "metadata-fetch",
+      fn: () => npmRegistrySDK.packumentVersion(name, version, opts)
+    }),
 
-    org: (namespace) => statsCollector.track(
-      `npmRegistrySDK.org ${namespace}`,
-      "metadata-fetch",
-      () => npmRegistrySDK.org(namespace)
-    )
+    org: (namespace) => statsCollector.track({
+      name: `npmRegistrySDK.org ${namespace}`,
+      phase: "metadata-fetch",
+      fn: () => npmRegistrySDK.org(namespace)
+    })
   };
 
   logger

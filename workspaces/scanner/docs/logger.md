@@ -88,6 +88,11 @@ logger.on("stat", (stat: ApiStats) => {
   console.log(`API call: ${stat.name}`);
   console.log(`Duration: ${stat.executionTime}ms`);
   console.log(`Start at: ${stat.startedAt}`);
+  // tarball specific stats
+  if(stat.tarball){
+  console.log(`path: ${stat.tarball.path}`);
+  console.log(`files count: ${stat.tarball.filesCount}`);
+  }
 });
 
 ### depWalkerFinished

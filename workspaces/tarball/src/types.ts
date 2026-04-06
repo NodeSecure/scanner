@@ -7,6 +7,11 @@ import type {
   PackageModuleType
 } from "@nodesecure/mama";
 
+// Import Internal Dependencies
+import type { Path } from "./class/SourceCodeScanner.class.ts";
+
+export type { Path } from "./class/SourceCodeScanner.class.ts";
+
 export interface Composition {
   extensions: string[];
   files: string[];
@@ -38,6 +43,7 @@ export interface ScanResultPayload {
    * Only present when `collectableTypes` was specified in the WorkerTask.
    */
   collectables?: CollectableSetData[];
+  path: Path;
 }
 
 export interface DependencyRef {
@@ -59,4 +65,5 @@ export interface DependencyRef {
   gitUrl: string | null;
   alias: Record<string, string>;
   composition: Composition;
+  path?: Path;
 }

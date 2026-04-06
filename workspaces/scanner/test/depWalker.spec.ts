@@ -185,7 +185,27 @@ describe("depWalker", { concurrency: 2 }, () => {
     assert.strictEqual(metadata.errorCount, 2);
     assert.strictEqual(metadata.errors.length, 2);
     assert.strictEqual(statsCount(), 40);
+    assert.deepEqual(metadata.apiCalls.flatMap(({ name, tarball }) => (name.startsWith("tarball.scanDirOrArchive") ?
+      [tarball] : [])).sort(byFilesCount),
+    [{ path: "All", filesCount: 37 },
+      { path: "EntryFileAnalyser", filesCount: 5 },
+      { path: "EntryFileAnalyser", filesCount: 11 },
+      { path: "EntryFileAnalyser", filesCount: 5 },
+      { path: "NONE", filesCount: 3 },
+      { path: "EntryFileAnalyser", filesCount: 6 },
+      { path: "EntryFileAnalyser", filesCount: 17 },
+      { path: "EntryFileAnalyser", filesCount: 47 },
+      { path: "EntryFileAnalyser", filesCount: 67 },
+      { path: "EntryFileAnalyser", filesCount: 210 }].sort(byFilesCount));
   });
+
+  function byFilesCount<T extends { filesCount: number; } | undefined>(a: T, b: T) {
+    if (a === undefined || b === undefined) {
+      return 0;
+    }
+
+    return a.filesCount - b.filesCount;
+  }
 
   describe("typo-squatting", () => {
     it("should emit a global warning when a location is provided", { skip }, async(t) => {

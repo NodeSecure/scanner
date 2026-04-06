@@ -14,7 +14,10 @@ import {
   type LocatedManifestManager
 } from "@nodesecure/mama";
 
+export type Path = "NONE" | "EntryFileAnalyser" | "All" | "Both";
+
 export interface SourceCodeAggregator {
+  path: Path;
   readonly consumed: boolean;
 
   push(report: ReportOnFile & { file: string; }): void;
@@ -33,6 +36,7 @@ export interface SourceCodeEntries {
 
 export class SourceCodeReport implements SourceCodeAggregator {
   #isConsumed = false;
+  path: Path = "NONE";
 
   warnings: Warning[] = [];
   dependencies: Record<
@@ -118,6 +122,8 @@ export class SourceCodeScanner<
     report: T,
     entries: SourceCodeEntries
   ): Promise<T> {
+    report.path = "EntryFileAnalyser";
+
     const { location } = this.manifest;
 
     const efa = new EntryFilesAnalyser({
@@ -155,6 +161,7 @@ export class SourceCodeScanner<
     if (sourceFiles.length === 0) {
       return report;
     }
+    report.path = report.path === "EntryFileAnalyser" ? "Both" : "All";
 
     const {
       location,
