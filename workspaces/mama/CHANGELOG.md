@@ -1,5 +1,11 @@
 # @nodesecure/mama
 
+## 2.3.1
+
+### Patch Changes
+
+- [#716](https://github.com/NodeSecure/scanner/pull/716) [`acd9105`](https://github.com/NodeSecure/scanner/commit/acd9105dfbfa906bafe2f0d43e01529739bd68e0) Thanks [@PierreDemailly](https://github.com/PierreDemailly)! - Normalize node_modules/.bin/ prefix without leading ./
+
 ## 2.3.0
 
 ### Minor Changes

@@ -1,5 +1,18 @@
 # @nodesecure/tarball
 
+## 4.1.0
+
+### Minor Changes
+
+- [#714](https://github.com/NodeSecure/scanner/pull/714) [`6b6fa55`](https://github.com/NodeSecure/scanner/commit/6b6fa555d369a5c637e02323c37c9cb650b5cbad) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: add path and file number for tarball stats
+
+### Patch Changes
+
+- [#708](https://github.com/NodeSecure/scanner/pull/708) [`398bf42`](https://github.com/NodeSecure/scanner/commit/398bf42b15b8e217fc6725377ea6903687b124d1) Thanks [@fraxken](https://github.com/fraxken)! - Add missing extract result interface in NpmTarball class
+
+- Updated dependencies [[`acd9105`](https://github.com/NodeSecure/scanner/commit/acd9105dfbfa906bafe2f0d43e01529739bd68e0)]:
+  - @nodesecure/mama@2.3.1
+
 ## 4.0.1
 
 ### Patch Changes
