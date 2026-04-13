@@ -39,6 +39,10 @@ Available probes include:
 | Warnings | manifest |
 | Extentions | manifest |
 | NodeDependencies | manifest |
+| HighlightedPackages | manifest |
+| HighlightedContacts | packument |
+
+## ProbeExtractor
 
 All probes follow the same `ProbeExtractor` interface, which acts as an iterator-like contract:
 

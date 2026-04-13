@@ -17,12 +17,11 @@ import {
 } from "@nodesecure/mama";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
-import semver from "semver";
 
 // Import Internal Dependencies
 import {
-  getDependenciesWarnings,
   addMissingVersionFlags,
+  getDependenciesWarnings,
   getUsedDeps,
   getManifestLinks,
   NPM_TOKEN
@@ -48,7 +47,7 @@ import type {
   Options,
   Payload
 } from "./types.ts";
-import { parseSemverRange } from "./utils/parseSemverRange.ts";
+import { HighlightedPackages } from "./extractors/probes/HighlightedPackagesExtractor.class.ts";
 
 // CONSTANTS
 const kDefaultDependencyVersionFields = {
@@ -185,7 +184,6 @@ export async function depWalker(
   };
 
   const dependencies: Map<string, Dependency> = new Map();
-  const highlightedPackages: Set<string> = new Set();
   const identifiersToHighlight = new Set<string>(options.highlight?.identifiers ?? []);
   const npmTreeWalker = new npm.TreeWalker({
     registry,
@@ -363,6 +361,7 @@ export async function depWalker(
   // We do this because it "seem" impossible to link all dependencies in the first walk.
   // Because we are dealing with package only one time it may happen sometimes.
   const globalWarnings: GlobalWarning[] = [];
+  const highlightedPackagesExtractor = new HighlightedPackages(options.highlight?.packages ?? {});
   for (const [packageName, dependency] of dependencies) {
     const metadataIntegrities = dependency.metadata?.integrity ?? {};
 
@@ -388,22 +387,12 @@ export async function depWalker(
         });
       }
     }
-    const semverRanges = parseSemverRange(options.highlight?.packages ?? {});
     for (const version of Object.entries(dependency.versions)) {
       const [verStr, verDescriptor] = version as [string, DependencyVersion];
-      const packageRange = semverRanges?.[packageName];
-      const org = parseNpmSpec(packageName)?.org;
-      const isScopeHighlighted = org !== null && `@${org}` in semverRanges;
-
-      if (
-        (packageRange && semver.satisfies(verStr, packageRange)) ||
-        isScopeHighlighted
-      ) {
-        highlightedPackages.add(`${packageName}@${verStr}`);
-      }
       verDescriptor.flags.push(
         ...addMissingVersionFlags(new Set(verDescriptor.flags), dependency)
       );
+      highlightedPackagesExtractor.next(verStr, verDescriptor, { name: packageName, dependency });
 
       if (isLocalManifest(verDescriptor, mama, packageName)) {
         const author = mama.author;
@@ -439,9 +428,10 @@ export async function depWalker(
       isRemoteScanning
     );
     payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
+    const { highlightedPackages } = highlightedPackagesExtractor.done();
     payload.highlighted = {
       contacts: illuminated,
-      packages: [...highlightedPackages],
+      packages: highlightedPackages,
       identifiers: extractHighlightedIdentifiers(collectables, identifiersToHighlight)
     };
     payload.dependencies = Object.fromEntries(dependencies);
