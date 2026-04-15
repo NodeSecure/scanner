@@ -1,8 +1,12 @@
+/* eslint-disable max-lines */
 // Import Node.js Dependencies
 import assert from "node:assert";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, it } from "node:test";
+
+// Import Third-party Dependencies
+import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
@@ -248,6 +252,368 @@ describe("Extractors.Probes", () => {
       Object.keys(mergedResult),
       ["size", "contacts", "licenses"]
     );
+  });
+});
+
+describe("HihglightedContacts", () => {
+  const fakePayload: any = {
+    id: "random-id",
+    scannerVersion: "1.0.0",
+    dependencies: {
+      express: {
+        metadata: {
+          author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca" },
+          maintainers: [
+            { name: "wesleytodd", email: "wes@wesleytodd.com" },
+            { name: "jonchurch", email: "npm@jonchurch.com" },
+            { name: "ctcpip", email: "c@labsector.com" },
+            { name: "sheplu", email: "jean.burellier@gmail.com" }
+          ],
+          publishers: []
+        },
+        versions: {
+          "5.1.0": {
+            author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca" }
+          }
+        },
+        vulnerabilities: []
+      }
+    }
+  };
+  it("Given a contact with no name, it should not throw an Error", () => {
+    const highlighted = {
+      email: "foobar@gmail.com"
+    };
+
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedContacts(
+        [highlighted]
+      )
+    ]);
+
+    extractor.extractAndMerge();
+  });
+
+  it(`Given dependencies where the Highlighted Contact doesn't appears,
+      it must return an empty Array`, () => {
+    const highlighted: Contact = {
+      name: "Ciaran Jessup"
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedContacts(
+        [highlighted]
+      )
+    ]);
+
+    const { illuminated } = extractor.extractAndMerge();
+    assert.strictEqual(illuminated.length, 0);
+  });
+
+  it(`Given dependencies where the Highlighted Contact is the author of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, () => {
+    const highlighted: Contact = {
+      name: "TJ Holowaychuk"
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedContacts(
+        [highlighted]
+      )
+    ]);
+
+    const { illuminated } = extractor.extractAndMerge();
+    assert.deepEqual(
+      illuminated,
+      [
+        { name: "TJ Holowaychuk", dependencies: ["express"] }
+      ]
+    );
+  });
+
+  it(`Given dependencies where the Highlighted Contact are maintainers of the package,
+      it should successfully scan, extract, and return the contact along with the list of dependencies where it appears.
+      `, () => {
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedContacts(
+        [{
+          name: "/.*church/", email: "npm@jonchurch.com"
+        },
+        { email: "c@labsector.com" }]
+      )
+    ]);
+
+    const { illuminated } = extractor.extractAndMerge();
+    assert.deepEqual(
+      illuminated,
+      [
+        { name: "/.*church/", email: "npm@jonchurch.com", dependencies: ["express"] },
+        { email: "c@labsector.com", dependencies: ["express"] }
+      ]
+    );
+  });
+});
+
+describe("HighlightedPackages", () => {
+  it("slould highlight packages that are already well formated", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        foo: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        {
+          foo: ["1.2.3"],
+          bar: ["1.2.3", "1.2.4"]
+        }
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 3);
+    assert.deepEqual(highlightedPackages, ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]);
+  });
+
+  it("slould highlight packages when the package to hightlight is an array of strings", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        foo: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 3);
+    assert.deepEqual(highlightedPackages, ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]);
+  });
+
+  it("slould highlight packages when the package to hightlight is a record of arrays of specs", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        foo: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 3);
+    assert.deepEqual(highlightedPackages, ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]);
+  });
+
+  it("should not highlight a package that is not in the payload", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        foo: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.2.3": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["foo@1.2.3", "bar@1.2.3", "bar@1.2.4"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 2);
+    assert.deepEqual(highlightedPackages, ["foo@1.2.3", "bar@1.2.3"]);
+  });
+
+  it("should not crash when there is an invalid spec", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        foo: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.2.3": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        [""]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 0);
+  });
+
+  it("should match every versions when there is no versions", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        mocha: {
+          versions: {
+            "1.2.3": {},
+            "1.2.4": {}
+          }
+        },
+        jest: {
+          versions: {
+            "1.2.1": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["mocha", "jest@1.2.1", "jest"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 4);
+    assert.deepEqual(highlightedPackages, ["mocha@1.2.3", "mocha@1.2.4", "jest@1.2.1", "jest@1.2.5"]);
+  });
+
+  it("should highlight packages with org in their name", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        "@nodesecure/js-x-ray": {
+          versions: {
+            "1.0.0": {},
+            "1.0.1": {}
+          }
+        },
+        jest: {
+          versions: {
+            "1.2.1": {},
+            "1.2.5": {}
+          }
+        }
+      }
+    };
+
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["@nodesecure/js-x-ray@1.0.0", "@nodesecure/js-x-ray@1.0.1"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 2);
+    assert.deepEqual(highlightedPackages, ["@nodesecure/js-x-ray@1.0.0", "@nodesecure/js-x-ray@1.0.1"]);
+  });
+
+  it("should highlight every package from an org", () => {
+    const fakePayload: any = {
+      id: "random-id",
+      scannerVersion: "1.0.0",
+      dependencies: {
+        "@nodesecure/js-x-ray": {
+          versions: {
+            "1.0.0": {},
+            "1.0.1": {}
+          }
+        },
+        "@nodesecure/scanner": {
+          versions: {
+            "1.2.1": {}
+          }
+        },
+        foo: {
+          versions: {
+            "1.0.0": {}
+          }
+        },
+        bar: {
+          versions: {
+            "1.0.0": {}
+          }
+        }
+      }
+    };
+
+    const extractor = new Extractors.Payload(fakePayload, [
+      new Extractors.Probes.HighlightedPackages(
+        ["@nodesecure", "foo@1.0.0"]
+      )
+    ]);
+    const { highlightedPackages } = extractor.extractAndMerge();
+
+    assert.strictEqual(highlightedPackages.length, 4);
+    assert.deepEqual(highlightedPackages, [
+      "@nodesecure/js-x-ray@1.0.0",
+      "@nodesecure/js-x-ray@1.0.1",
+      "@nodesecure/scanner@1.2.1",
+      "foo@1.0.0"
+    ]);
   });
 });
 

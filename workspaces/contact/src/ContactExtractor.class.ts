@@ -15,7 +15,7 @@ export type {
 };
 
 export interface ContactExtractorPackageMetadata {
-  author?: Contact;
+  author?: Contact | null;
   maintainers: Contact[];
 }
 
@@ -125,7 +125,7 @@ export class ContactExtractor {
   }
 }
 
-function extractMetadataContacts(
+export function extractMetadataContacts(
   metadata: ContactPackageMetaData
 ): Contact[] {
   return [

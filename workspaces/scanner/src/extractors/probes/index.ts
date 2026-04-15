@@ -6,3 +6,5 @@ export * from "./VulnerabilitiesExtractor.class.ts";
 export * from "./FlagsExtractor.class.ts";
 export * from "./ExtensionsExtractor.class.ts";
 export * from "./NodeDependenciesExtractor.class.ts";
+export * from "./HighlightedPackagesExtractor.class.ts";
+export * from "./HighlightedContactsExtractor.class.ts";
