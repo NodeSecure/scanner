@@ -4,7 +4,7 @@ import { describe, test } from "node:test";
 import assert from "node:assert";
 
 // Import Third-party Dependencies
-import { DefaultCollectableSet, warnings, type Warning } from "@nodesecure/js-x-ray";
+import { DefaultCollectableSet, warnings, type Warning, AstAnalyser } from "@nodesecure/js-x-ray";
 import { ManifestManager } from "@nodesecure/mama";
 
 type SourceArrayLocation = [[number, number], [number, number]];
@@ -76,6 +76,58 @@ describe("NpmTarball", () => {
         value: "192-168-1-250.sslip.io"
       }].sort(compareWarning)
     );
+  });
+
+  test("it should emit shady-link warnings with an injected AstAnalyser", async() => {
+    const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
+
+    const npmTarball = new NpmTarball(mama, {
+      astAnalyser: new AstAnalyser({
+        collectables: [new DefaultCollectableSet("hostname")]
+      })
+    });
+
+    const result = await npmTarball.scanFiles();
+
+    assert.deepEqual(
+      result.code.warnings.sort(compareWarning),
+      [{
+        ...warnings["shady-link"],
+        kind: "shady-link",
+        location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
+        source: "Scanner",
+        value: "10.0.0.1.sslip.io",
+        file: path.join(kShadyLinkPath, "private-ip-1")
+      },
+      {
+        ...warnings["shady-link"],
+        kind: "shady-link",
+        location: [[[3, 19], [3, 51]]] as SourceArrayLocation[],
+        source: "Scanner",
+        value: "10.0.0.1.sslip.io",
+        file: path.join(kShadyLinkPath, "private-ip-2")
+      },
+      {
+        ...warnings["shady-link"],
+        kind: "shady-link",
+        location: [[[1, 18], [1, 50]]] as SourceArrayLocation[],
+        source: "Scanner",
+        file: path.join(kShadyLinkPath, "private-ip-2"),
+        value: "192-168-1-250.sslip.io"
+      }].sort(compareWarning)
+    );
+  });
+
+  test("it should ignore astAnalyserOptions when an AstAnalyser is injected", async() => {
+    const mama = await ManifestManager.fromPackageJSON(path.join(kFixturePath, "shady-link", "package.json"));
+    const npmTarball = new NpmTarball(mama, {
+      astAnalyser: new AstAnalyser()
+    });
+
+    const result = await npmTarball.scanFiles({
+      collectables: [new DefaultCollectableSet("hostname")]
+    });
+    assert.equal(result.code.warnings.length, 0);
   });
 
   test("it should have a shady-link warning when a hostname resolve a private ip address without options", async() => {

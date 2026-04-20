@@ -42,6 +42,7 @@ export interface NpmTarballScanFilesOptions {
 
 export type NpmTarballOptions = {
   resolver?: Resolver;
+  astAnalyser?: AstAnalyser;
 };
 
 export class NpmTarball {
@@ -53,6 +54,7 @@ export class NpmTarball {
 
   manifest: LocatedManifestManager;
   #resolver: Resolver;
+  #astAnalyser: AstAnalyser | null;
 
   constructor(
     mama: ManifestManager,
@@ -64,6 +66,7 @@ export class NpmTarball {
 
     this.manifest = mama;
     this.#resolver = options?.resolver ?? new DnsResolver();
+    this.#astAnalyser = options?.astAnalyser ?? null;
   }
 
   async scanFiles(
@@ -90,11 +93,11 @@ export class NpmTarball {
         astAnalyserOptions ?? {}
       );
 
-      const hostNameSet = options?.collectables?.find(
-        (collectable) => collectable.type === "hostname"
-      )!;
+      const astAnalyser = this.#astAnalyser ?? new AstAnalyser(options);
 
-      const astAnalyser = new AstAnalyser(options);
+      const hostNameSet = astAnalyser.getCollectableSet("hostname") as
+        | DefaultCollectableSet
+        | undefined;
 
       code = await new SourceCodeScanner(this.manifest, { astAnalyser }).iterate({
         manifest: [...this.manifest.getEntryFiles()]
