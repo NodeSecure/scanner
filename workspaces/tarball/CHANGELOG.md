@@ -1,5 +1,11 @@
 # @nodesecure/tarball
 
+## 4.2.0
+
+### Minor Changes
+
+- [#720](https://github.com/NodeSecure/scanner/pull/720) [`0fed7c8`](https://github.com/NodeSecure/scanner/commit/0fed7c8d8c89c12ef99728aa370a7217d8543f28) Thanks [@kulturman](https://github.com/kulturman)! - Allow injecting an AstAnalyser instance into NpmTarball.
+
 ## 4.1.0
 
 ### Minor Changes

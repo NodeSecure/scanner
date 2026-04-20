@@ -1,5 +1,11 @@
 # @nodesecure/contact
 
+## 3.2.0
+
+### Minor Changes
+
+- [#718](https://github.com/NodeSecure/scanner/pull/718) [`022dd83`](https://github.com/NodeSecure/scanner/commit/022dd83fe50b930dc23d0ed809f3a2fa00e61b21) Thanks [@clemgbld](https://github.com/clemgbld)! - feat(scanner): add highlighted packages and contacts extractors
+
 ## 3.1.0
 
 ### Minor Changes
