@@ -52,7 +52,7 @@
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
     "@openally/result": "2.0.0",
-    "hyperid": "3.3.0",
+    "hyperid": "4.0.0",
     "ipaddr.js": "2.3.0",
     "pacote": "^21.0.0"
   },
