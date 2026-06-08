@@ -41,7 +41,7 @@
     "@nodesecure/npm-types": "^1.4.0",
     "@nodesecure/utils": "^2.3.0",
     "object-hash": "^3.0.0",
-    "ssri": "13.0.1"
+    "ssri": "14.0.0"
   },
   "devDependencies": {
     "@types/object-hash": "^3.0.6"
