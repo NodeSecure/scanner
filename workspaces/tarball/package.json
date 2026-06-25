@@ -54,7 +54,7 @@
     "@openally/result": "2.0.0",
     "hyperid": "4.0.0",
     "ipaddr.js": "2.4.0",
-    "pacote": "^21.0.0"
+    "pacote": "^22.0.0"
   },
   "devDependencies": {
     "get-folder-size": "^5.0.0"
