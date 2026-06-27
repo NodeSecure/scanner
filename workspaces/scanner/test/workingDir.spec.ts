@@ -51,7 +51,8 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
     const v1 = dep.versions["1.0.0"];
 
     assert.deepEqual(v1.author, {
-      name: "NodeSecure"
+      name: "NodeSecure",
+      flags: []
     });
     assert.deepStrictEqual(v1.links, {
       npm: null,
@@ -64,7 +65,8 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
     });
 
     assert.deepStrictEqual(dep.metadata.author, {
-      name: "NodeSecure"
+      name: "NodeSecure",
+      flags: []
     });
     assert.strictEqual(dep.metadata.homepage, "https://nodesecure.com");
     assert.strictEqual(typeof result.rootDependency.integrity, "string");
@@ -107,7 +109,8 @@ describe("scanner.workingDir()", { concurrency: 2 }, () => {
 
     assert.deepEqual(pkg.metadata.author, {
       email: "john.doe@gmail.com",
-      name: "John Doe"
+      name: "John Doe",
+      flags: ["free-email-service"]
     });
   });
 

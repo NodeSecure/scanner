@@ -4,11 +4,11 @@ import type { StandardVulnerability, Kind } from "@nodesecure/vulnera";
 import type { PackageModuleType } from "@nodesecure/mama";
 
 import type { SpdxFileLicenseConformance } from "@nodesecure/conformance";
-import type { IlluminatedContact } from "@nodesecure/contact";
+import type { IlluminatedContact, ContactWithMetadata } from "@nodesecure/contact";
 import type { Contact, Dist } from "@nodesecure/npm-types";
 import type { Path } from "@nodesecure/tarball";
 
-export type Maintainer = Contact & {
+export type Maintainer = ContactWithMetadata & {
   /**
    * Path to publisher's avatar on "https://www.npmjs.com"
    * @example /npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.LwimMJA3puF3ioGeS-tfczR3370GXBZMIL-bdpu4hOU

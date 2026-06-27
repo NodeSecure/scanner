@@ -721,6 +721,7 @@ describe("NpmRegistryProvider", { concurrency: 2 }, () => {
       assert.deepEqual(dependency.versions["1.5.0"]!.flags, ["isOutdated"]);
       assert.strictEqual(logger.count("registry"), 1);
       assert.strictEqual(dependency.metadata.author!.name, "SlimIO");
+      assert.ok(Array.isArray(dependency.metadata.author!.flags));
       assert.strictEqual(dependency.metadata.homepage, "https://github.com/SlimIO/is#readme");
       assert.ok(semver.gt(dependency.metadata.lastVersion, "1.5.0"));
       assert.ok(Array.isArray(dependency.metadata.publishers));

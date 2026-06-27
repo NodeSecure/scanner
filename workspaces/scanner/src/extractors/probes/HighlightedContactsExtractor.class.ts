@@ -1,6 +1,11 @@
 // Import Third-party Dependencies
-import { type EnforcedContact, type IlluminatedContact, UnlitContact, extractMetadataContacts } from "@nodesecure/contact";
-import type { Contact } from "@nodesecure/npm-types";
+import {
+  type EnforcedContact,
+  type IlluminatedContact,
+  UnlitContact,
+  extractMetadataContacts,
+  type ContactWithMetadata
+} from "@nodesecure/contact";
 
 // Import Internal Dependencies
 import type {
@@ -27,7 +32,7 @@ export class HighlightedContacts implements PackumentProbeExtractor<HighlightedC
   }
 
   private addDependencyToUnlitContacts(
-    contacts: Contact[],
+    contacts: ContactWithMetadata[],
     packageName: string
   ) {
     for (const unlit of this.#unlitContacts) {

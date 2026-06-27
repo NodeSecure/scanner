@@ -151,7 +151,8 @@ describe("comparePayloads", () => {
     assert.deepStrictEqual(comparedVersion2.author?.now, {
       name: "Franck Sorhus",
       email: "franck@gmail.com",
-      url: "https://franck.com"
+      url: "https://franck.com",
+      flags: ["free-email-service"]
     });
 
     // repository: diff on type only

@@ -99,7 +99,8 @@
           "size": 18505,
           "author": {
             "name": "Amit Gupta",
-            "url": "https://amitkumargupta.work/"
+            "url": "https://amitkumargupta.work/",
+            "flags": []
           },
           "scripts": {
             "test": "jasmine strnum.test.js"
@@ -174,7 +175,8 @@
       "metadata": {
         "author": {
           "name": "Amit Gupta",
-          "url": "https://amitkumargupta.work/"
+          "url": "https://amitkumargupta.work/",
+          "flags": []
         },
         "homepage": "https://github.com/NaturalIntelligence/strnum#readme",
         "publishedCount": 16,
@@ -187,7 +189,10 @@
           {
             "name": "amitgupta",
             "email": "amitgupta.gwl@gmail.com",
-            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM"
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM",
+            "flags": [
+              "free-email-service"
+            ]
           }
         ],
         "publishers": [
@@ -196,7 +201,10 @@
             "email": "amitgupta.gwl@gmail.com",
             "version": "2.1.1",
             "at": "2025-05-15T06:53:57.067Z",
-            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM"
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci8zNzA2MDMwMjM4NmFhZjQxMWQ2OTU1OTY4MDU2MjIzND9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.RIVjeGPMfLAcKEPB9PTigtkKQacb-UKit5unRVSmfGM",
+            "flags": [
+              "free-email-service"
+            ]
           }
         ],
         "integrity": {

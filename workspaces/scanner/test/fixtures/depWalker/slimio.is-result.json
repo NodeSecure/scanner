@@ -17,7 +17,8 @@
         "alias": {},
         "description": "SlimIO is (JavaScript Primitives &amp; Objects type checker)",
         "author": {
-          "name": "SlimIO"
+          "name": "SlimIO",
+          "flags": []
         },
         "engines": {
           "node": ">=10"
@@ -89,7 +90,8 @@
     "vulnerabilities": [],
     "metadata": {
       "author": {
-        "name": "SlimIO"
+        "name": "SlimIO",
+        "flags": []
       },
       "homepage": "https://github.com/SlimIO/is#readme",
       "publishedCount": 8,
@@ -101,11 +103,17 @@
       "maintainers": [
         {
           "name": "fraxken",
-          "email": "gentilhomme.thomas@gmail.com"
+          "email": "gentilhomme.thomas@gmail.com",
+          "flags": [
+            "free-email-service"
+          ]
         },
         {
           "name": "alexandre.malaj",
-          "email": "alexandre.malaj@gmail.com"
+          "email": "alexandre.malaj@gmail.com",
+          "flags": [
+            "free-email-service"
+          ]
         }
       ],
       "publishers": [
@@ -113,7 +121,10 @@
           "name": "fraxken",
           "email": "gentilhomme.thomas@gmail.com",
           "version": "2.0.0",
-          "at": "2023-01-23T02:15:37.203Z"
+          "at": "2023-01-23T02:15:37.203Z",
+          "flags": [
+            "free-email-service"
+          ]
         }
       ],
       "integrity": {

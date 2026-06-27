@@ -1,6 +1,7 @@
 // Import Third-party Dependencies
 import type { Packument } from "@nodesecure/npm-types";
 import { packageJSONIntegrityHash } from "@nodesecure/mama";
+import { toContactWithMetadata } from "@nodesecure/contact";
 
 // Import Internal Dependencies
 import type {
@@ -63,9 +64,9 @@ export class PackumentExtractor {
   ) {
     const publishers = new Set();
     const result: Pick<Dependency["metadata"], "author" | "publishers" | "maintainers" | "hasManyPublishers"> = {
-      author: packument.author ?? null,
+      author: packument.author ? toContactWithMetadata(packument.author) : null,
       publishers: [],
-      maintainers: packument.maintainers ?? [],
+      maintainers: packument.maintainers?.map(toContactWithMetadata) ?? [],
       hasManyPublishers: false
     };
     let searchForMaintainersInVersions = result.maintainers.length === 0;
@@ -75,7 +76,7 @@ export class PackumentExtractor {
 
       if (_npmUser !== null) {
         if (authorName === null) {
-          result.author = _npmUser;
+          result.author = toContactWithMetadata(_npmUser);
         }
         else if (authorName !== null && _npmUser.name !== authorName) {
           result.hasManyPublishers = true;
@@ -84,7 +85,7 @@ export class PackumentExtractor {
         if (!publishers.has(_npmUser.name)) {
           publishers.add(_npmUser.name);
           result.publishers.push({
-            ..._npmUser,
+            ...toContactWithMetadata(_npmUser),
             version,
             at: new Date(packument.time[version]).toISOString()
           });
@@ -92,7 +93,7 @@ export class PackumentExtractor {
       }
 
       if (searchForMaintainersInVersions) {
-        result.maintainers.push(...maintainers);
+        result.maintainers.push(...maintainers.map(toContactWithMetadata));
         searchForMaintainersInVersions = false;
       }
     }

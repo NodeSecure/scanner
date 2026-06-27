@@ -459,7 +459,8 @@ describe("ManifestManager", () => {
         mama.author,
         {
           name: "John Doe",
-          email: "john.doe@gmail.com"
+          email: "john.doe@gmail.com",
+          flags: ["free-email-service"]
         }
       );
     });
@@ -477,7 +478,10 @@ describe("ManifestManager", () => {
 
       assert.deepStrictEqual(
         mama.author,
-        packageJSON.author
+        { name: "John Doe",
+          email: "john.doe@gmail.com",
+          flags: ["free-email-service"]
+        }
       );
     });
 
