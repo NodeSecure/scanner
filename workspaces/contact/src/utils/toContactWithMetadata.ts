@@ -12,7 +12,8 @@ const kFreeEmailServiceRegex = new RegExp(
 );
 
 export function toContactWithMetadata<T extends Partial<Contact>>(
-  contact: T): T & { flags: ContactFlag[]; } {
+  contact: T
+): T & { flags: ContactFlag[]; } {
   if ("flags" in contact) {
     return contact as T & { flags: ContactFlag[]; };
   }
