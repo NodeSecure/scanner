@@ -158,7 +158,6 @@ toContactWithMetadata({
   }
 );
 ```
-```
 
 ## License
 MIT

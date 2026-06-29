@@ -478,7 +478,8 @@ describe("ManifestManager", () => {
 
       assert.deepStrictEqual(
         mama.author,
-        { name: "John Doe",
+        {
+          name: "John Doe",
           email: "john.doe@gmail.com",
           flags: ["free-email-service"]
         }
