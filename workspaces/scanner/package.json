@@ -86,7 +86,7 @@
   },
   "devDependencies": {
     "@npmcli/config": "^10.4.2",
-    "@types/node": "^25.3.3",
+    "@types/node": "^26.0.0",
     "@types/npmcli__config": "^6.0.3",
     "c8": "^11.0.0"
   }
