@@ -4,18 +4,21 @@ import type { RequireAtLeastOne } from "type-fest";
 
 // Import Internal Dependencies
 import * as utils from "./utils/index.ts";
+import type { ContactWithMetadata } from "./types.ts";
 
 export type EnforcedContact = RequireAtLeastOne<
   Contact,
   "name" | "email"
 >;
 
-export type IlluminatedContact = EnforcedContact & {
+export type EnforcedContactWithMetadata = RequireAtLeastOne<ContactWithMetadata, "name" | "email">;
+
+export type IlluminatedContact = EnforcedContactWithMetadata & {
   dependencies: string[];
 };
 
 export class UnlitContact {
-  private illuminated: EnforcedContact;
+  private illuminated: EnforcedContactWithMetadata;
   private extendedName: RegExp | null = null;
 
   public dependencies = new Set<string>();
@@ -23,14 +26,14 @@ export class UnlitContact {
   constructor(
     contact: EnforcedContact
   ) {
-    this.illuminated = structuredClone(contact);
+    this.illuminated = structuredClone(utils.toContactWithMetadata(contact));
     this.extendedName = typeof contact.name === "string" ?
       utils.parseRegExp(contact.name) :
       null;
   }
 
   compareTo(
-    contact: Contact
+    contact: ContactWithMetadata
   ): boolean {
     if (this.extendedName === null) {
       return utils.compareContact(this.illuminated, contact);

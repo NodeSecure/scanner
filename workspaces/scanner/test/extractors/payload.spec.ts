@@ -262,18 +262,18 @@ describe("HihglightedContacts", () => {
     dependencies: {
       express: {
         metadata: {
-          author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca" },
+          author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca", flags: [] },
           maintainers: [
-            { name: "wesleytodd", email: "wes@wesleytodd.com" },
-            { name: "jonchurch", email: "npm@jonchurch.com" },
-            { name: "ctcpip", email: "c@labsector.com" },
-            { name: "sheplu", email: "jean.burellier@gmail.com" }
+            { name: "wesleytodd", email: "wes@wesleytodd.com", flags: [] },
+            { name: "jonchurch", email: "npm@jonchurch.com", flags: [] },
+            { name: "ctcpip", email: "c@labsector.com", flags: [] },
+            { name: "sheplu", email: "jean.burellier@gmail.com", flags: [] }
           ],
           publishers: []
         },
         versions: {
           "5.1.0": {
-            author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca" }
+            author: { name: "TJ Holowaychuk", email: "tj@vision-media.ca", flags: [] }
           }
         },
         vulnerabilities: []
@@ -325,7 +325,7 @@ describe("HihglightedContacts", () => {
     assert.deepEqual(
       illuminated,
       [
-        { name: "TJ Holowaychuk", dependencies: ["express"] }
+        { name: "TJ Holowaychuk", flags: [], dependencies: ["express"] }
       ]
     );
   });
@@ -346,8 +346,17 @@ describe("HihglightedContacts", () => {
     assert.deepEqual(
       illuminated,
       [
-        { name: "/.*church/", email: "npm@jonchurch.com", dependencies: ["express"] },
-        { email: "c@labsector.com", dependencies: ["express"] }
+        {
+          name: "/.*church/",
+          email: "npm@jonchurch.com",
+          flags: []
+          , dependencies: ["express"]
+        },
+        {
+          email: "c@labsector.com",
+          flags: [],
+          dependencies: ["express"]
+        }
       ]
     );
   });

@@ -22,7 +22,10 @@
           "author": {
             "name": "Sindre Sorhus",
             "email": "sindresorhus@gmail.com",
-            "url": "https://sindresorhus.com"
+            "url": "https://sindresorhus.com",
+            "flags": [
+              "free-email-service"
+            ]
           },
           "engines": {
             "node": "^12.20.0 || ^14.13.1 || >=16.0.0",
@@ -103,7 +106,10 @@
           "name": "Sindre Sorhus",
           "email": "sindresorhus@gmail.com",
           "url": "https://sindresorhus.com",
-          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+          "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+          "flags": [
+            "free-email-service"
+          ]
         },
         "publishers": [
           {
@@ -111,11 +117,17 @@
             "email": "sindresorhus@gmail.com",
             "version": "3.0.0",
             "at": "2021-08-31T23:02:35.148Z",
-            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI"
+            "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
+            "flags": [
+              "free-email-service"
+            ]
           },
           {
             "name": "jack",
-            "email": "jack@gmail.com"
+            "email": "jack@gmail.com",
+            "flags": [
+              "free-email-service"
+            ]
           }
         ],
         "maintainers": [
@@ -124,11 +136,17 @@
             "email": "sindresorhus@gmail.com",
             "npmAvatar": "/npm-avatar/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdmF0YXJVUkwiOiJodHRwczovL3MuZ3JhdmF0YXIuY29tL2F2YXRhci9kMzZhOTIyMzdjNzVjNTMzN2MxN2I2MGQ5MDY4NmJmOT9zaXplPTUwJmRlZmF1bHQ9cmV0cm8ifQ.KC8XNdUppYGv8i3NR_MWueP3ituNkh_qulwMMj-O-vI",
             "at": "2021-08-31T23:02:35.148Z",
-            "version": "3.0.0"
+            "version": "3.0.0",
+            "flags": [
+              "free-email-service"
+            ]
           },
           {
             "name": "jack",
-            "email": "jack@gmail.com"
+            "email": "jack@gmail.com",
+            "flags": [
+              "free-email-service"
+            ]
           }
         ],
         "integrity": {

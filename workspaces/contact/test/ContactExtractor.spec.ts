@@ -58,7 +58,7 @@ describe("ContactExtractor", () => {
       assert.deepEqual(
         illuminated,
         [
-          { ...highlighted, dependencies: ["kleur", "mocha"] }
+          { ...highlighted, flags: [], dependencies: ["kleur", "mocha"] }
         ]
       );
     });
@@ -85,6 +85,7 @@ describe("ContactExtractor", () => {
         [
           {
             ...highlighted,
+            flags: [],
             dependencies: ["kleur", "mocha"]
           }
         ]
@@ -164,7 +165,7 @@ describe("ContactExtractor", () => {
       assert.deepEqual(
         illuminated,
         [
-          { name: "TJ Holowaychuk", dependencies: ["express"] }
+          { name: "TJ Holowaychuk", flags: [], dependencies: ["express"] }
         ]
       );
     });
@@ -184,8 +185,12 @@ describe("ContactExtractor", () => {
       assert.deepEqual(
         illuminated,
         [
-          { name: "/.*church/", email: "npm@jonchurch.com", dependencies: ["express"] },
-          { email: "c@labsector.com", dependencies: ["express"] }
+          {
+            name: "/.*church/", email: "npm@jonchurch.com", flags: [], dependencies: ["express"]
+          },
+          {
+            email: "c@labsector.com", flags: [], dependencies: ["express"]
+          }
         ]
       );
     });
@@ -253,7 +258,7 @@ describe("ContactExtractor", () => {
       assert.deepEqual(
         illuminated,
         [
-          { name: "TJ Holowaychuk", dependencies: ["express"] }
+          { name: "TJ Holowaychuk", flags: [], dependencies: ["express"] }
         ]
       );
     });
@@ -280,10 +285,12 @@ describe("ContactExtractor", () => {
           {
             name: "/.*ylman/",
             email: "shtylman@gmail.com",
+            flags: ["free-email-service"],
             dependencies: ["express"]
           },
           {
             email: "doug@somethingdoug.com",
+            flags: [],
             dependencies: ["express"]
           }
         ]

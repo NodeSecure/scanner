@@ -5,11 +5,11 @@ import path from "node:path";
 
 // Import Third-party Dependencies
 import { parseAuthor } from "@nodesecure/utils";
+import { toContactWithMetadata, type ContactWithMetadata } from "@nodesecure/contact";
 import type {
   PackumentVersion,
   PackageJSON,
   WorkspacesPackageJSON,
-  Contact,
   AbbreviatedManifestDocument
 } from "@nodesecure/npm-types";
 import { fromData } from "ssri";
@@ -174,8 +174,10 @@ export class ManifestManager<
     return `${this.document.name}@${this.document.version}`;
   }
 
-  get author(): Contact | null {
-    return parseAuthor(this.document.author);
+  get author(): ContactWithMetadata | null {
+    const parsedAuthor = parseAuthor(this.document.author);
+
+    return parsedAuthor ? toContactWithMetadata(parsedAuthor) : null;
   }
 
   get isWorkspace(): boolean {

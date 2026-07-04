@@ -8,6 +8,8 @@ import {
   type IlluminatedContact
 } from "./UnlitContact.class.ts";
 import { NsResolver } from "./NsResolver.class.ts";
+import { toContactWithMetadata } from "./utils/index.ts";
+import type { ContactWithMetadata } from "./types.ts";
 
 export type {
   IlluminatedContact,
@@ -100,7 +102,7 @@ export class ContactExtractor {
 
   private addDependencyToUnlitContacts(
     unlitContacts: UnlitContact[],
-    contacts: Contact[],
+    contacts: ContactWithMetadata[],
     packageName: string
   ) {
     for (const unlit of unlitContacts) {
@@ -127,9 +129,10 @@ export class ContactExtractor {
 
 export function extractMetadataContacts(
   metadata: ContactPackageMetaData
-): Contact[] {
+): ContactWithMetadata[] {
   return [
-    ...(metadata.author ? [metadata.author] : []),
-    ...(metadata.maintainers ? metadata.maintainers : [])
+    ...(metadata.author ? [toContactWithMetadata<Contact>(metadata.author)] : []),
+    ...(metadata.maintainers ? metadata.maintainers.map(toContactWithMetadata) : [])
   ];
 }
+

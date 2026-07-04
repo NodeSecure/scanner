@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { Contact } from "@nodesecure/npm-types";
+import type { ContactWithMetadata } from "@nodesecure/contact";
 
 // Import Internal Dependencies
 import type {
@@ -19,7 +19,7 @@ export class Contacts implements ManifestProbeExtractor<ContactsResult> {
   #packages: Set<string> = new Set();
 
   #addContact(
-    user: Contact | null
+    user: ContactWithMetadata | null
   ) {
     if (!user || !user.email) {
       return;

@@ -94,12 +94,18 @@ interface ContactExtractorFromDependenciesResult {
   expired: string[];
 }
 
-type IlluminatedContact = Contact & {
+type IlluminatedContact = ContactWithMetadata & {
   dependencies: string[];
 }
-```
 
-### compareContact(contactA: Partial< Contact >, contactB: Partial< Contact >, options?: CompareOptions): boolean
+export type ContactFlag = "free-email-service";
+
+export interface ContactWithMetadata extends Contact {
+  flags: ContactFlag[];
+}
+
+```
+### compareContact(contactA: Partial< Contact > | ContactWithMetadata, contactB: Partial< Contact > | ContactWithMetadata, options?: CompareOptions): boolean
 
 Compare two contacts and return `true` if they are the same person
 
@@ -128,6 +134,29 @@ interface CompareOptions {
    */
   compareName?: boolean;
 }
+```
+
+### toContactWithMetadata<T extends Partial<Contact>>(contact: T): T & {flags: ContactFlag[] }
+
+Apply some transformation on a contact such as adding a flag when the contact use a free email service
+
+```ts
+import {
+  toContactWithMetadata
+} from "@nodesecure/contact";
+import assert from "node:assert";
+
+assert.deepEqual(
+toContactWithMetadata({
+    name:"john doe",
+    email: "johndoe@gmail.com"
+  }),
+  {
+  name:"john doe",
+  email: "johndoe@gmail.com",
+  flags: ["free-email-service"]
+  }
+);
 ```
 
 ## License
