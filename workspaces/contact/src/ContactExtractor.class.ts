@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import type { Contact, PackumentVersion, Packument } from "@nodesecure/npm-types";
+import type { PackumentVersion, Packument } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
 import {
@@ -8,20 +8,16 @@ import {
   type IlluminatedContact
 } from "./UnlitContact.class.ts";
 import { NsResolver } from "./NsResolver.class.ts";
-import { toContactWithMetadata } from "./utils/index.ts";
+import {
+  extractMetadataContacts,
+  type ContactExtractorPackageMetadata
+} from "./utils/index.ts";
 import type { ContactWithMetadata } from "./types.ts";
 
 export type {
   IlluminatedContact,
   EnforcedContact
 };
-
-export interface ContactExtractorPackageMetadata {
-  author?: Contact | null;
-  maintainers: Contact[];
-}
-
-type ContactPackageMetaData = Partial<ContactExtractorPackageMetadata>;
 
 export interface ContactExtractorFromDependenciesResult {
   illuminated: IlluminatedContact[];
@@ -126,13 +122,3 @@ export class ContactExtractor {
     };
   }
 }
-
-export function extractMetadataContacts(
-  metadata: ContactPackageMetaData
-): ContactWithMetadata[] {
-  return [
-    ...(metadata.author ? [toContactWithMetadata<Contact>(metadata.author)] : []),
-    ...(metadata.maintainers ? metadata.maintainers.map(toContactWithMetadata) : [])
-  ];
-}
-

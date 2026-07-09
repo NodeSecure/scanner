@@ -11,9 +11,9 @@ import { faker } from "@faker-js/faker";
 // Import Internal Dependencies
 import {
   ContactExtractor,
+  NsResolver,
   type ContactExtractorPackageMetadata
 } from "../src/index.ts";
-import { NsResolver } from "../src/NsResolver.class.ts";
 
 // CONSTANTS
 const kManifestFixturePath = join(import.meta.dirname, "fixtures", "manifest");

@@ -23,7 +23,8 @@
     "prepublishOnly": "npm run build && pkg-ok",
     "test": "c8 -r html npm run test-only && npm run test-types",
     "test-only": "node --test \"./test/**/*.spec.ts\"",
-    "test-types": "attw --pack . --profile esm-only"
+    "test-types": "attw --pack . --profile esm-only",
+    "test-extractors-browser-compat": "node --test \"./test/extractors/browser-compat.spec.ts\""
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org",
@@ -88,6 +89,7 @@
     "@npmcli/config": "^10.4.2",
     "@types/node": "^26.0.0",
     "@types/npmcli__config": "^6.0.3",
-    "c8": "^11.0.0"
+    "c8": "^11.0.0",
+    "esbuild": "0.28.1"
   }
 }
