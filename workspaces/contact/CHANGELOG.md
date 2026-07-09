@@ -1,5 +1,11 @@
 # @nodesecure/contact
 
+## 3.3.0
+
+### Minor Changes
+
+- [#735](https://github.com/NodeSecure/scanner/pull/735) [`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: extend contact with free email service flag
+
 ## 3.2.0
 
 ### Minor Changes
