@@ -51,14 +51,14 @@ import {
 import assert from "node:assert";
 
 assert.deepEqual(
-toContactWithMetadata({
+  toContactWithMetadata({
     name:"john doe",
     email: "johndoe@gmail.com"
   }),
   {
-  name:"john doe",
-  email: "johndoe@gmail.com",
-  flags: ["free-email-service"]
+    name:"john doe",
+    email: "johndoe@gmail.com",
+    flags: ["free-email-service"]
   }
 );
 ```
