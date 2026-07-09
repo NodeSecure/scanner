@@ -1,5 +1,5 @@
 // Import Third-party Dependencies
-import { parseNpmSpec } from "@nodesecure/mama";
+import { parseNpmSpec } from "@nodesecure/mama/utils/parseNpmSpec.js";
 import semver from "semver";
 
 // Import Internal Dependencies
@@ -13,16 +13,22 @@ export type HighlightedPackagesResult = {
   highlightedPackages: string[];
 };
 
-export class HighlightedPackages implements ManifestProbeExtractor<HighlightedPackagesResult> {
+export class HighlightedPackages implements ManifestProbeExtractor<
+  HighlightedPackagesResult
+> {
   level = "manifest" as const;
   #semverRanges: Record<string, string>;
   #highlightedPackages = new Set<string>();
 
-  constructor(packages: HighlightPackages) {
+  constructor(
+    packages: HighlightPackages
+  ) {
     this.#semverRanges = this.#parseSemverRange(packages);
   }
 
-  #parseSemverRange(packages: HighlightPackages) {
+  #parseSemverRange(
+    packages: HighlightPackages
+  ) {
     const pkgs = Array.isArray(packages) ? this.#parseSpecs(packages) : packages;
 
     return Object.entries(pkgs).reduce((acc, [name, semverRange]) => {
@@ -37,7 +43,9 @@ export class HighlightedPackages implements ManifestProbeExtractor<HighlightedPa
     }, {});
   }
 
-  #parseSpecs(specs: string[]) {
+  #parseSpecs(
+    specs: string[]
+  ) {
     return specs.reduce((acc, spec) => {
       // Handle scope-only entries like "@fastify", matching all packages under that scope
       if (/^@[^/@]+$/.test(spec)) {

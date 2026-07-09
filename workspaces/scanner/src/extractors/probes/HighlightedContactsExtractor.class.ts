@@ -5,7 +5,7 @@ import {
   UnlitContact,
   extractMetadataContacts,
   type ContactWithMetadata
-} from "@nodesecure/contact";
+} from "@nodesecure/contact/web";
 
 // Import Internal Dependencies
 import type {
@@ -17,16 +17,23 @@ export type HighlightedContactsResult = {
   illuminated: IlluminatedContact[];
 };
 
-export class HighlightedContacts implements PackumentProbeExtractor<HighlightedContactsResult> {
+export class HighlightedContacts implements PackumentProbeExtractor<
+  HighlightedContactsResult
+> {
   level = "packument" as const;
 
   #unlitContacts: UnlitContact[];
 
-  constructor(contacts: EnforcedContact[]) {
+  constructor(
+    contacts: EnforcedContact[]
+  ) {
     this.#unlitContacts = contacts.map((contact) => new UnlitContact(contact));
   }
 
-  next(packageName: string, dependency: Dependency) {
+  next(
+    packageName: string,
+    dependency: Dependency
+  ) {
     const extractedContacts = extractMetadataContacts(dependency.metadata);
     this.addDependencyToUnlitContacts(extractedContacts, packageName);
   }

@@ -6,7 +6,7 @@ import { describe, test } from "node:test";
 import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { compareContact } from "../../src/utils/index.ts";
+import { compareContact } from "../../src/index.ts";
 
 describe("compareContact", () => {
   test("Given Contacts with the same name, it must return true", () => {

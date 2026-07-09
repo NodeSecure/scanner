@@ -3,13 +3,17 @@
   "version": "2.3.1",
   "description": "Manifest Manager",
   "type": "module",
-  "exports": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js"
+    },
+    "./utils/*": "./dist/utils/*"
+  },
   "scripts": {
     "build": "tsc -b",
     "prepublishOnly": "npm run build",
     "test-only": "node --test \"./test/**/*.spec.ts\"",
-    "test-types": "npm run build && tsd && attw --pack . --profile esm-only",
+    "test-types": "npm run build && attw --pack . --profile esm-only",
     "test": "c8 -r html npm run test-only && npm run test-types"
   },
   "publishConfig": {

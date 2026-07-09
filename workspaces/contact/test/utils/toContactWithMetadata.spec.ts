@@ -6,8 +6,10 @@ import { describe, test } from "node:test";
 import type { Contact } from "@nodesecure/npm-types";
 
 // Import Internal Dependencies
-import { type ContactWithMetadata } from "../../src/types.ts";
-import { toContactWithMetadata } from "../../src/utils/index.ts";
+import {
+  toContactWithMetadata,
+  type ContactWithMetadata
+} from "../../src/index.ts";
 
 describe("toContactWithMetadata", () => {
   test("should transform to a contact without the free-domain flag", () => {

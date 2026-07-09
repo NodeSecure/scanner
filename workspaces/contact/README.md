@@ -55,6 +55,7 @@ console.log({ illuminated, expired });
 ## API
 
 - [NsResolver](./docs/NsResolver.md)
+- [Utilities](./docs/utils.md) (compareContact, toContactWithMetadata, extractMetadataContacts, parseRegExp)
 
 Contact is defined by the following TypeScript interface:
 ```ts
@@ -104,59 +105,6 @@ export interface ContactWithMetadata extends Contact {
   flags: ContactFlag[];
 }
 
-```
-### compareContact(contactA: Partial< Contact > | ContactWithMetadata, contactB: Partial< Contact > | ContactWithMetadata, options?: CompareOptions): boolean
-
-Compare two contacts and return `true` if they are the same person
-
-```ts
-import {
-  compareContact
-} from "@nodesecure/contact";
-import assert from "node:assert";
-
-assert.ok(
-  compareContact(
-    { name: "john doe" },
-    { name: "John  Doe" }
-  )
-);
-```
-
-Each string is trimmed, converted to lowercase, and any multiple spaces are reduced to a single space.
-
-#### Options
-
-```ts
-interface CompareOptions {
-  /**
-   * @default true
-   */
-  compareName?: boolean;
-}
-```
-
-### toContactWithMetadata<T extends Partial<Contact>>(contact: T): T & {flags: ContactFlag[] }
-
-Apply some transformation on a contact such as adding a flag when the contact use a free email service
-
-```ts
-import {
-  toContactWithMetadata
-} from "@nodesecure/contact";
-import assert from "node:assert";
-
-assert.deepEqual(
-toContactWithMetadata({
-    name:"john doe",
-    email: "johndoe@gmail.com"
-  }),
-  {
-  name:"john doe",
-  email: "johndoe@gmail.com",
-  flags: ["free-email-service"]
-  }
-);
 ```
 
 ## License
