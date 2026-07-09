@@ -8,7 +8,9 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
+- [#741](https://github.com/NodeSecure/scanner/pull/741) [`53c60c1`](https://github.com/NodeSecure/scanner/commit/53c60c15358805ec9e91b12daf1ae64f0d652387) Thanks [@fraxken](https://github.com/fraxken)! - Refactor highlight extractors to make them work in a web env. Add unit-test to scanner to ensure compatibility and CI break.
+
+- Updated dependencies [[`53c60c1`](https://github.com/NodeSecure/scanner/commit/53c60c15358805ec9e91b12daf1ae64f0d652387), [`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
   - @nodesecure/contact@3.3.0
   - @nodesecure/mama@2.4.0
   - @nodesecure/tree-walker@4.0.2

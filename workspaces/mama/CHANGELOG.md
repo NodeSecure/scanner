@@ -4,11 +4,12 @@
 
 ### Minor Changes
 
+- [#741](https://github.com/NodeSecure/scanner/pull/741) [`53c60c1`](https://github.com/NodeSecure/scanner/commit/53c60c15358805ec9e91b12daf1ae64f0d652387) Thanks [@fraxken](https://github.com/fraxken)! - Refactor highlight extractors to make them work in a web env. Add unit-test to scanner to ensure compatibility and CI break.
 - [#735](https://github.com/NodeSecure/scanner/pull/735) [`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: extend contact with free email service flag
 
 ### Patch Changes
 
-- Updated dependencies [[`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
+- Updated dependencies [[`53c60c1`](https://github.com/NodeSecure/scanner/commit/53c60c15358805ec9e91b12daf1ae64f0d652387), [`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
   - @nodesecure/contact@3.3.0
 
 ## 2.3.1

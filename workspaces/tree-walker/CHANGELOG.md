@@ -4,7 +4,7 @@
 
 ### Patch Changes
 
-- Updated dependencies [[`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
+- Updated dependencies [[`53c60c1`](https://github.com/NodeSecure/scanner/commit/53c60c15358805ec9e91b12daf1ae64f0d652387), [`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
   - @nodesecure/mama@2.4.0
 
 ## 4.0.1
