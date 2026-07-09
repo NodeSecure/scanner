@@ -1,5 +1,12 @@
 # @nodesecure/tree-walker
 
+## 4.0.2
+
+### Patch Changes
+
+- Updated dependencies [[`f17981a`](https://github.com/NodeSecure/scanner/commit/f17981ad512cb879cf13690b327a51ec1ff910d2)]:
+  - @nodesecure/mama@2.4.0
+
 ## 4.0.1
 
 ### Patch Changes
