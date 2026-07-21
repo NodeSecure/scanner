@@ -29,23 +29,26 @@ export class LocalDependencyTreeLoader implements LocalDependencyTreeLoaderProvi
     options: LocalDependencyTreeLoaderOptions = {}
   ): Promise<TreeDependencies> {
     const { registry, ...treeDepOptions } = options;
+    const resolvedLocation = await fs.realpath(location);
 
     const arb = new Arborist({
       ...utils.NPM_TOKEN,
-      path: location,
+      path: resolvedLocation,
       registry
     });
 
     try {
       await fs.access(
-        path.join(location, "node_modules")
+        path.join(resolvedLocation, "node_modules")
       );
 
       await arb.loadActual();
 
-      const treeNode = await arb.buildIdealTree();
+      if (!arb.actualTree) {
+        throw new Error("arborist loadActual fn did not produce a tree");
+      }
 
-      return TreeDependencies.fromArboristNode(treeNode, treeDepOptions);
+      return TreeDependencies.fromArboristNode(arb.actualTree, treeDepOptions);
     }
     catch {
       const treeNode = await arb.loadVirtual();
