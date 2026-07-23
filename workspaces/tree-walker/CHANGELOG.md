@@ -1,5 +1,11 @@
 # @nodesecure/tree-walker
 
+## 4.0.3
+
+### Patch Changes
+
+- [#746](https://github.com/NodeSecure/scanner/pull/746) [`f5b8df2`](https://github.com/NodeSecure/scanner/commit/f5b8df25352dc2aca2606fb661f208135a950144) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - fix(tree-walker): LocalDependencyTreeLoader fails resolving symlink location on macos
+
 ## 4.0.2
 
 ### Patch Changes
