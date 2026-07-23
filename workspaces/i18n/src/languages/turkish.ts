@@ -24,4 +24,9 @@ const warnings = {
   keylogging: "Bu bağımlılık klavye ve fare girişlerinizi alabilir. 'Keylogging' saldırıları/kötü amaçlı yazılımları için kullanılabilir."
 };
 
-export const turkish = { lang, depWalker, warnings, sast_warnings };
+const package_warnings = {
+  zero_semver: "0.x ile başlayan sürüm (kararsız proje veya ciddi sürümleme yapılmamış).",
+  empty_package: "Paket tarball'u yalnızca bir package.json dosyası içeriyor."
+};
+
+export const turkish = { lang, depWalker, warnings, sast_warnings, package_warnings };

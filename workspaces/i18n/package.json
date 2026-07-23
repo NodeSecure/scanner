@@ -44,7 +44,7 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@nodesecure/js-x-ray": "^15.2.0",
+    "@nodesecure/js-x-ray": "^16.0.0",
     "cacache": "^21.0.0",
     "deepmerge": "^4.3.1",
     "lodash.get": "^4.4.2"

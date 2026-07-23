@@ -24,4 +24,9 @@ const warnings = {
   keylogging: "Cette dépendance peut obtenir vos entrées clavier ou de souris. Cette dépendance peut être utilisée en tant que 'keylogging' attacks/malwares."
 };
 
-export const french = { lang, depWalker, warnings, sast_warnings };
+const package_warnings = {
+  zero_semver: "Version sémantique commençant par 0.x (projet instable ou sans versionnement sérieux)",
+  empty_package: "L'archive du package ne contient qu'un fichier package.json."
+};
+
+export const french = { lang, depWalker, warnings, sast_warnings, package_warnings };

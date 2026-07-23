@@ -24,4 +24,9 @@ const warnings = {
   keylogging: "هذا الاعتماد يمكنه تسجيل مدخلاتك (Keylogging). قد يُستخدم في هجمات خبيثة."
 };
 
-export const arabic = { lang, depWalker, warnings, sast_warnings };
+const package_warnings = {
+  zero_semver: "نسخة (Semantic Version) تبدأ بـ 0.x (مشروع غير مستقر أو بدون إصدارات رسمية).",
+  empty_package: "حزمة tarball تحتوي فقط على ملف package.json."
+};
+
+export const arabic = { lang, depWalker, warnings, sast_warnings, package_warnings };

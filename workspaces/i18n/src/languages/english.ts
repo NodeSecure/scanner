@@ -24,4 +24,9 @@ const warnings = {
   keylogging: "This dependency can retrieve your keyboard and mouse inputs. It can be used for 'keylogging' attacks/malwares."
 };
 
-export const english = { lang, depWalker, warnings, sast_warnings };
+const package_warnings = {
+  zero_semver: "Semantic version starting with 0.x (unstable project or without serious versioning)",
+  empty_package: "The package tarball only contains a package.json file."
+};
+
+export const english = { lang, depWalker, warnings, sast_warnings, package_warnings };
