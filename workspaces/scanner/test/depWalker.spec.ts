@@ -196,7 +196,7 @@ describe("depWalker", { concurrency: 2 }, () => {
       { path: "EntryFileAnalyser", filesCount: 17 },
       { path: "EntryFileAnalyser", filesCount: 47 },
       { path: "EntryFileAnalyser", filesCount: 67 },
-      { path: "EntryFileAnalyser", filesCount: 210 }].sort(byFilesCount));
+      { path: "EntryFileAnalyser", filesCount: 214 }].sort(byFilesCount));
   });
 
   function byFilesCount<T extends { filesCount: number; } | undefined>(a: T, b: T) {
