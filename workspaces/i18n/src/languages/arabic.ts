@@ -1,3 +1,6 @@
+// Import Third-party Dependencies
+import { sast_warnings } from "@nodesecure/js-x-ray/i18n/arabic";
+
 // Require Internal Dependencies
 import { taggedString as tS } from "../utils.ts";
 
@@ -21,24 +24,9 @@ const warnings = {
   keylogging: "هذا الاعتماد يمكنه تسجيل مدخلاتك (Keylogging). قد يُستخدم في هجمات خبيثة."
 };
 
-const sast_warnings = {
-  parsing_error: "فشل تحليل كود JavaScript. التحويل إلى AST لم ينجح (meriyah). يرجى فتح issue.",
-  unsafe_import: "تعذر تتبع جملة استيراد (require / require.resolve).",
-  unsafe_regex: "تم اكتشاف تعبير نمطي غير آمن (ReDoS Attack).",
-  unsafe_stmt: "استخدام لجملة خطيرة: eval() أو Function(\"\").",
-  unsafe_assign: "تعيين قيمة لمتغير محمي: process أو require.",
-  encoded_literal: "تم اكتشاف نص مشفر (Hex, Unicode, Base64, etc).",
-  suspicious_file: "ملف مشبوه (يحتوي على أكثر من 10 نصوص مشفرة).",
-  short_identifiers: "المعرفات قصيرة جداً (أقل من 1.5). ملف مشبوه.",
-  suspicious_literal: "مجموع النقاط المشبوهة للنصوص (Literals) أكبر من 3.",
-  obfuscated_code: "احتمالية عالية أن الكود مموه (Obfuscated).",
-  weak_crypto: "خوارزمية تشفير ضعيفة (md5, sha1, ...).",
-  shady_link: "رابط بامتداد مشبوه داخل النص.",
-  zero_semver: "إصدار غير مستقر (0.x) - Semantic Versioning.",
-  empty_package: "الحزمة فارغة (تحتوي فقط على package.json).",
-  unsafe_command: "أمر child_process مشبوه: spawn() أو exec().",
-  serialize_environment: "محاولة تسريب متغيرات البيئة (process.env serialization).",
-  synchronous_io: "عمليات I/O متزامنة قد تبطئ التطبيق (Sync I/O)."
+const package_warnings = {
+  zero_semver: "نسخة (Semantic Version) تبدأ بـ 0.x (مشروع غير مستقر أو بدون إصدارات رسمية).",
+  empty_package: "حزمة tarball تحتوي فقط على ملف package.json."
 };
 
-export const arabic = { lang, depWalker, warnings, sast_warnings };
+export const arabic = { lang, depWalker, warnings, sast_warnings, package_warnings };

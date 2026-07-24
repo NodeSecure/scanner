@@ -13,12 +13,12 @@ export type TarballWarningName =
 export const warnings = Object.freeze({
   ...originalWarnings,
   "zero-semver": {
-    i18n: "sast_warnings.zero_semver",
+    i18n: "package_warnings.zero_semver",
     experimental: false,
     severity: "Information"
   },
   "empty-package": {
-    i18n: "sast_warnings.empty_package",
+    i18n: "package_warnings.empty_package",
     experimental: false,
     severity: "Warning"
   }
@@ -32,7 +32,7 @@ export function getSemVerWarning(
     file: "package.json",
     value,
     location: null,
-    i18n: "sast_warnings.zero_semver",
+    i18n: "package_warnings.zero_semver",
     severity: "Information",
     source: "Scanner",
     experimental: false
@@ -45,7 +45,7 @@ export function getEmptyPackageWarning(): Warning {
     file: "package.json",
     value: "package.json",
     location: null,
-    i18n: "sast_warnings.empty_package",
+    i18n: "package_warnings.empty_package",
     severity: "Critical",
     source: "Scanner",
     experimental: false

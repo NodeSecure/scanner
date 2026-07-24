@@ -1,3 +1,6 @@
+// Import Third-party Dependencies
+import { sast_warnings } from "@nodesecure/js-x-ray/i18n/english";
+
 // Require Internal Dependencies
 import { taggedString as tS } from "../utils.ts";
 
@@ -21,24 +24,9 @@ const warnings = {
   keylogging: "This dependency can retrieve your keyboard and mouse inputs. It can be used for 'keylogging' attacks/malwares."
 };
 
-const sast_warnings = {
-  parsing_error: "An error occured when parsing the JavaScript code with meriyah. It mean that the conversion from string to AST has failed. If you encounter such an error, please open an issue here.",
-  unsafe_import: "Unable to follow an import (require, require.resolve) statement/expr.",
-  unsafe_regex: "A RegEx as been detected as unsafe and may be used for a ReDoS Attack.",
-  unsafe_stmt: "Usage of dangerous statement like eval() or Function(\"\").",
-  unsafe_assign: "Assignment of a protected global like process or require.",
-  encoded_literal: "An encoded literal has been detected (it can be an hexa value, unicode sequence, base64 string etc)",
-  suspicious_file: "A suspicious file with more than ten encoded-literal in it.",
-  short_identifiers: "This mean that all identifiers has an average length below 1.5. Only possible if the file contains more than 5 identifiers.",
-  suspicious_literal: "This mean that the sum of suspicious score of all Literals is bigger than 3.",
-  obfuscated_code: "There's a very high probability that the code is obfuscated...",
-  weak_crypto: "The code probably contains a weak crypto algorithm (md5, sha1...)",
-  shady_link: "A Literal (string) contains an URL to a domain with a suspicious extension.",
+const package_warnings = {
   zero_semver: "Semantic version starting with 0.x (unstable project or without serious versioning)",
-  empty_package: "The package tarball only contains a package.json file.",
-  unsafe_command: "Usage of suspicious child_process command such as spawn() or exec()",
-  serialize_environment: "The code attempts to serialize process.env which could lead to environment variable exfiltration",
-  synchronous_io: "The code contains synchronous I/O operations, which can block the event loop and degrade performance.",
+  empty_package: "The package tarball only contains a package.json file."
 };
 
-export const english = { lang, depWalker, warnings, sast_warnings };
+export const english = { lang, depWalker, warnings, sast_warnings, package_warnings };

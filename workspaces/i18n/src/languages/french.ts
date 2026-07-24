@@ -1,3 +1,6 @@
+// Import Third-party Dependencies
+import { sast_warnings } from "@nodesecure/js-x-ray/i18n/french";
+
 // Import Internal Dependencies
 import { taggedString as tS } from "../utils.ts";
 
@@ -21,26 +24,9 @@ const warnings = {
   keylogging: "Cette dépendance peut obtenir vos entrées clavier ou de souris. Cette dépendance peut être utilisée en tant que 'keylogging' attacks/malwares."
 };
 
-const sast_warnings = {
-  parsing_error: `Une erreur s'est produite lors de l'analyse du code JavaScript avec meriyah.
-              Cela signifie que la conversion de la chaîne de caractères AST a échoué.
-              Si vous rencontrez une telle erreur, veuillez ouvrir une issue.`,
-  unsafe_import: "Impossible de suivre l'import (require, require.resolve) statement/expr.",
-  unsafe_regex: "Un RegEx a été détecté comme non sûr et peut être utilisé pour une attaque ReDoS.",
-  unsafe_stmt: "Utilisation d'instructions dangereuses comme eval() ou Function(\"\").",
-  unsafe_assign: "Attribution d'un processus ou d'un require global protégé..",
-  encoded_literal: "Un code littérale a été découvert (il peut s'agir d'une valeur hexa, d'une séquence unicode, d'une chaîne de caractères base64, etc.)",
-  short_identifiers: "Cela signifie que tous les identifiants ont une longueur moyenne inférieure à 1,5. Seulement possible si le fichier contient plus de 5 identifiants.",
-  suspicious_literal: "Cela signifie que la somme des scores suspects de tous les littéraux est supérieure à 3.",
-  suspicious_file: "Un fichier suspect contenant plus de dix chaines de caractères encodés",
-  obfuscated_code: "Il y a une très forte probabilité que le code soit obscurci...",
-  weak_crypto: "Le code contient probablement un algorithme de chiffrement faiblement sécurisé (md5, sha1...).",
-  shady_link: "Un Literal (string) contient une URL vers un domaine avec une extension suspecte.",
+const package_warnings = {
   zero_semver: "Version sémantique commençant par 0.x (projet instable ou sans versionnement sérieux)",
-  empty_package: "L'archive du package ne contient qu'un fichier package.json.",
-  unsafe_command: "Utilisation d'une commande child_process suspecte, comme spawn() ou exec()",
-  serialize_environment: "Le code tente de sérialiser process.env, ce qui pourrait entraîner une exfiltration des variables d'environnement",
-  synchronous_io: "Le code contient des opérations I/O synchrones, ce qui peut bloquer l'event-loop et dégrader les performances."
+  empty_package: "L'archive du package ne contient qu'un fichier package.json."
 };
 
-export const french = { lang, depWalker, warnings, sast_warnings };
+export const french = { lang, depWalker, warnings, sast_warnings, package_warnings };
