@@ -1,5 +1,11 @@
 # @nodesecure/i18n
 
+## 4.1.1
+
+### Patch Changes
+
+- [#748](https://github.com/NodeSecure/scanner/pull/748) [`17c3bcd`](https://github.com/NodeSecure/scanner/commit/17c3bcd00f71454a6d3dd2c07ced8eeee60dd93c) Thanks [@ErwanRaulo](https://github.com/ErwanRaulo)! - feat(i18n): merge warnings and sast warnings from js-x-ray pkg
+
 ## 4.1.0
 
 ### Minor Changes
