@@ -51,9 +51,9 @@
     "@nodesecure/mama": "^2.3.1",
     "@nodesecure/npm-types": "^1.2.0",
     "@nodesecure/utils": "^2.3.0",
-    "@openally/result": "2.0.0",
+    "@openally/result": "3.1.0",
     "hyperid": "4.0.0",
-    "ipaddr.js": "2.4.0",
+    "ipaddr.js": "2.5.0",
     "pacote": "^22.0.0"
   },
   "devDependencies": {
