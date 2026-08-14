@@ -41,7 +41,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "dependencies": {
     "@nodesecure/js-x-ray": "16.0.0",
