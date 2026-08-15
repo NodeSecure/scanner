@@ -5,6 +5,9 @@ import os from "node:os";
 
 // Import Third-party Dependencies
 import pacote from "pacote";
+import type {
+  AstAnalyserOptions
+} from "@nodesecure/js-x-ray";
 import { getLocalRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as tarball from "@nodesecure/tarball";
 import { ManifestManager } from "@nodesecure/mama";
@@ -135,11 +138,20 @@ export async function from(
   );
 }
 
+export interface VerifyOptions {
+  astAnalyserOptions?: AstAnalyserOptions;
+}
+
 export async function verify(
-  spec?: string
+  spec?: string,
+  options: VerifyOptions = {}
 ): Promise<tarball.ScannedPackageResult> {
+  const { astAnalyserOptions } = options;
+
   if (typeof spec === "undefined") {
-    return tarball.scanPackage(process.cwd());
+    return tarball.scanPackage(process.cwd(), {
+      astAnalyserOptions
+    });
   }
 
   await using tempDir = await TempDirectory.create();
@@ -149,7 +161,9 @@ export async function verify(
     registry: getLocalRegistryURL()
   });
 
-  const scanResult = await tarball.scanPackage(mama);
+  const scanResult = await tarball.scanPackage(mama, {
+    astAnalyserOptions
+  });
 
   return scanResult;
 }

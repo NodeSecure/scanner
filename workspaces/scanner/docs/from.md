@@ -112,6 +112,15 @@ export interface Options {
    * @default false
    */
   readonly workers?: boolean | number;
+
+  /**
+   * Custom options for the underhood JS-X-Ray instance
+   * when scanning tarballs or local directories
+   *
+   * @note
+   * Do not support `collectable` option
+   */
+  readonly astAnalyserOptions?: AstAnalyserOptionsNoCollectable;
 }
 ```
 

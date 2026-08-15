@@ -1,5 +1,8 @@
 // Import Third-party Dependencies
-import type { Warning } from "@nodesecure/js-x-ray";
+import type {
+  Warning,
+  AstAnalyserOptions
+} from "@nodesecure/js-x-ray";
 import type { StandardVulnerability, Kind } from "@nodesecure/vulnera";
 import type { PackageModuleType } from "@nodesecure/mama";
 
@@ -282,6 +285,8 @@ export type SemverRange = string | "*";
 
 export type HighlightPackages = string[] | Record<string, string[] | SemverRange>;
 
+export type AstAnalyserOptionsNoCollectable = Omit<AstAnalyserOptions, "collectable">;
+
 export interface Options {
   /**
    * Maximum tree depth
@@ -364,6 +369,15 @@ export interface Options {
    * @default false
    */
   readonly workers?: boolean | number;
+
+  /**
+   * Custom options for the underhood JS-X-Ray instance
+   * when scanning tarballs or local directories
+   *
+   * @note
+   * Do not support `collectable` option
+   */
+  readonly astAnalyserOptions?: AstAnalyserOptionsNoCollectable;
 }
 
 export interface TokenStore {

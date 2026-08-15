@@ -58,7 +58,8 @@ function from(
   logger?: Scanner.Logger
 ): Promise<Scanner.Payload>;
 function verify(
-  spec?: string
+  spec?: string,
+  options?: VerifyOptions
 ): Promise<tarball.ScannedPackageResult>;
 ```
 
@@ -88,6 +89,10 @@ type FromOptions = Omit<Options, "includeDevDeps"> & {
     manifest: pacote.AbbreviatedManifest & pacote.ManifestResult
   ) => Promise<Payload | null>;
 };
+
+interface VerifyOptions {
+  astAnalyserOptions?: AstAnalyserOptions;
+}
 
 interface Options {
   /**
@@ -157,6 +162,27 @@ interface Options {
    * @default true  for cwd()  API
    */
   readonly scanRootNode?: boolean;
+
+  /**
+    * Enable verbose mode
+    *
+    * @default false
+    */
+  isVerbose?: boolean;
+
+  /**
+    * Enable worker threads for parallel tarball scanning.
+    * - `true` uses the default worker count (4)
+    * - `number` sets an explicit worker count
+    *
+    * @default false
+    */
+  readonly workers?: boolean | number;
+
+  /**
+    * Custom options for JS-X-Ray
+    */
+  readonly astAnalyserOptions?: AstAnalyserOptions;
 }
 ```
 
