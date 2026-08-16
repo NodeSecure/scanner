@@ -17,6 +17,9 @@ import { ManifestManager } from "@nodesecure/mama";
 import { StatsCollector } from "./StatsCollector.class.ts";
 import { TempDirectory } from "./TempDirectory.class.ts";
 import { Logger, ScannerLoggerEvents } from "./logger.class.ts";
+import type {
+  AstAnalyserOptionsNoCollectable
+} from "../types.ts";
 
 type CollectableMetadata = { spec?: string; };
 
@@ -37,6 +40,7 @@ export interface TarballScannerOptions {
   maxConcurrency: number;
   logger: Logger;
   workers?: boolean | number;
+  astAnalyserOptions?: AstAnalyserOptionsNoCollectable;
 }
 
 export class TarballScanner {
@@ -48,6 +52,7 @@ export class TarballScanner {
   #collectableTypes: string[];
   #workerPool: NpmTarballWorkerPool | null;
   #logger: Logger;
+  #astAnalyserOptions: AstAnalyserOptionsNoCollectable;
 
   constructor(
     options: TarballScannerOptions
@@ -59,7 +64,8 @@ export class TarballScanner {
       collectables,
       maxConcurrency,
       logger,
-      workers
+      workers,
+      astAnalyserOptions
     } = options;
 
     this.#tempDir = tempDir;
@@ -68,6 +74,7 @@ export class TarballScanner {
     this.#collectables = collectables;
     this.#collectableTypes = collectables.map((collectable) => collectable.type);
     this.#logger = logger;
+    this.#astAnalyserOptions = astAnalyserOptions ?? {};
 
     this.#locker = new Mutex({ concurrency: maxConcurrency });
 
@@ -113,7 +120,8 @@ export class TarballScanner {
       fn: () => this.#workerPool!.scan({
         location: mama.location!,
         astAnalyserOptions: {
-          optionalWarnings: hasLocation
+          optionalWarnings: hasLocation,
+          ...this.#astAnalyserOptions
         },
         collectableTypes: this.#collectableTypes
       }),
@@ -161,7 +169,8 @@ export class TarballScanner {
       fn: () => scanDirOrArchive(mama, ref, {
         astAnalyserOptions: {
           optionalWarnings: hasLocation,
-          collectables: this.#collectables
+          collectables: this.#collectables,
+          ...this.#astAnalyserOptions
         }
       }),
       onSuccess: (_, stat) => {

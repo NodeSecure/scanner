@@ -12,8 +12,13 @@ console.log(result);
 ## Signature
 
 ```ts
+export interface VerifyOptions {
+  astAnalyserOptions?: AstAnalyserOptions;
+}
+
 function verify(
-  spec?: string
+  spec?: string,
+  options?: VerifyOptions
 ): Promise<tarball.ScannedPackageResult>
 ```
 

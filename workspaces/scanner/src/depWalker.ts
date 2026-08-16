@@ -131,7 +131,8 @@ export async function depWalker(
     npmRcEntries = {},
     maxConcurrency = 8,
     workers,
-    integrity: manifestIntegrity = null
+    integrity: manifestIntegrity = null,
+    astAnalyserOptions
   } = options;
 
   const statsCollector = new StatsCollector({ logger }, { isVerbose });
@@ -236,7 +237,8 @@ export async function depWalker(
     collectables,
     maxConcurrency,
     logger,
-    workers
+    workers,
+    astAnalyserOptions
   });
 
   const rootDepsOptions: npm.WalkOptions = {
