@@ -870,7 +870,7 @@ describe("NpmRegistryProvider", { concurrency: 2 }, () => {
 
       assert.deepEqual(warnings, []);
       assert.strictEqual(mockOrg.mock.callCount(), 1);
-      assert.deepEqual(mockOrg.mock.calls[0].arguments, ["@foo/utils"]);
+      assert.deepEqual(mockOrg.mock.calls[0].arguments, ["foo"]);
     });
   });
 });

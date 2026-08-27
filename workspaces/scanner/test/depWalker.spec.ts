@@ -54,6 +54,11 @@ const pkgHighlightedPackages = JSON.parse(readFileSync(
   "utf8"
 ));
 
+const pkgNpxBinConfusion = JSON.parse(readFileSync(
+  path.join(kFixturePath, "npx-bin-confusion.json"),
+  "utf8"
+));
+
 function cleanupPayload(payload: Payload) {
   for (const pkg of Object.values(payload)) {
     const versions = Object.values(
@@ -181,10 +186,10 @@ describe("depWalker", { concurrency: 2 }, () => {
     assert.strictEqual(typeof metadata.startedAt, "number");
     assert.strictEqual(typeof metadata.executionTime, "number");
     assert.strictEqual(Array.isArray(metadata.apiCalls), true);
-    assert.strictEqual(metadata.apiCallsCount, 42);
+    assert.strictEqual(metadata.apiCallsCount, 57);
     assert.strictEqual(metadata.errorCount, 2);
     assert.strictEqual(metadata.errors.length, 2);
-    assert.strictEqual(statsCount(), 40);
+    assert.strictEqual(statsCount(), 55);
     assert.deepEqual(metadata.apiCalls.flatMap(({ name, tarball }) => (name.startsWith("tarball.scanDirOrArchive") ?
       [tarball] : [])).sort(byFilesCount),
     [{ path: "All", filesCount: 37 },
@@ -276,6 +281,27 @@ describe("depWalker", { concurrency: 2 }, () => {
           phase: "tarball-scan"
         }
       ]);
+    });
+  });
+
+  describe("npx & bin confusion", () => {
+    it("should emit a global warning for both the unclaimed npx binary and the unclaimed bin name", { skip }, async(t) => {
+      Vulnera.setStrategy(Vulnera.strategies.GITHUB_ADVISORY);
+      const { logger } = buildLogger();
+      t.after(() => logger.removeAllListeners());
+
+      const result = await depWalker(
+        new ManifestManager(pkgNpxBinConfusion),
+        {
+          ...structuredClone(kDefaultWalkerOptions),
+          isVerbose: true
+        },
+        logger
+      );
+
+      assert.strictEqual(result.warnings.length, 2);
+      assert.ok(result.warnings.some(({ type }) => type === "npx-confusion"));
+      assert.ok(result.warnings.some(({ type }) => type === "bin-confusion"));
     });
   });
 

@@ -200,8 +200,8 @@ export class TarballScanner {
     ref: any,
     result: ScanResultPayload
   ): void {
-    const { description, engines, repository, scripts, author, integrity } = result;
-    Object.assign(ref, { description, engines, repository, scripts, author, integrity });
+    const { description, engines, repository, scripts, author, integrity, bin } = result;
+    Object.assign(ref, { description, engines, repository, scripts, author, integrity, bin });
 
     ref.warnings.push(...result.warnings);
     ref.licenses = result.licenses;

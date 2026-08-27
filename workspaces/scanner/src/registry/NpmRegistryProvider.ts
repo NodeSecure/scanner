@@ -8,7 +8,6 @@ import { packageJSONIntegrityHash } from "@nodesecure/mama";
 import type { Packument, PackumentVersion, Signature } from "@nodesecure/npm-types";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import * as i18n from "@nodesecure/i18n";
-import { isHTTPError } from "@openally/httpie";
 
 // Import Internal Dependencies
 import { PackumentExtractor } from "./PackumentExtractor.ts";
@@ -20,7 +19,7 @@ import type {
   TokenStore
 } from "../types.ts";
 import { Logger } from "../class/logger.class.ts";
-import { getLinks } from "../utils/getLinks.ts";
+import { hasStatusCode, getLinks } from "../utils/index.ts";
 // CONSTANTS
 const kNotFoundStatusCode = 404;
 
@@ -184,7 +183,7 @@ export class NpmRegistryProvider {
       }
       catch (err) {
         const isScoped = Boolean(org);
-        if (isHTTPError(err) && err.statusCode === kNotFoundStatusCode && !isScoped) {
+        if (hasStatusCode(err) && err.statusCode === kNotFoundStatusCode && !isScoped) {
           this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion_missing"));
         }
       }
@@ -209,10 +208,10 @@ export class NpmRegistryProvider {
 
   async enrichScopedDependencyConfusionWarnings(warnings: DependencyConfusionWarning[], org: string) {
     try {
-      await this.#npmApiClient.org(this.name);
+      await this.#npmApiClient.org(org);
     }
     catch (err) {
-      if (isHTTPError(err) && err.statusCode === kNotFoundStatusCode) {
+      if (hasStatusCode(err) && err.statusCode === kNotFoundStatusCode) {
         await this.#addDependencyConfusionWarning(warnings, await i18n.getToken("scanner.dependency_confusion_missing_org", org));
       }
     }
