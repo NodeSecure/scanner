@@ -1,5 +1,20 @@
 # @nodesecure/scanner
 
+## 10.14.0
+
+### Minor Changes
+
+- [#755](https://github.com/NodeSecure/scanner/pull/755) [`089e811`](https://github.com/NodeSecure/scanner/commit/089e8116d1de05a84d87340ab3748ec22b68bfdf) Thanks [@fraxken](https://github.com/fraxken)! - Implement AstAnalyserOptions for main scanner API (from, workingDir and verify)
+
+- [#759](https://github.com/NodeSecure/scanner/pull/759) [`0ab5ae6`](https://github.com/NodeSecure/scanner/commit/0ab5ae61769ff52fedb229ba28955e3188b441a2) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: add npx and bin confusion warning
+
+### Patch Changes
+
+- Updated dependencies [[`0ab5ae6`](https://github.com/NodeSecure/scanner/commit/0ab5ae61769ff52fedb229ba28955e3188b441a2)]:
+  - @nodesecure/tarball@4.3.0
+  - @nodesecure/mama@2.5.0
+  - @nodesecure/tree-walker@4.0.4
+
 ## 10.13.0
 
 ### Minor Changes

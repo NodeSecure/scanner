@@ -1,5 +1,16 @@
 # @nodesecure/tarball
 
+## 4.3.0
+
+### Minor Changes
+
+- [#759](https://github.com/NodeSecure/scanner/pull/759) [`0ab5ae6`](https://github.com/NodeSecure/scanner/commit/0ab5ae61769ff52fedb229ba28955e3188b441a2) Thanks [@clemgbld](https://github.com/clemgbld)! - feat: add npx and bin confusion warning
+
+### Patch Changes
+
+- Updated dependencies [[`0ab5ae6`](https://github.com/NodeSecure/scanner/commit/0ab5ae61769ff52fedb229ba28955e3188b441a2)]:
+  - @nodesecure/mama@2.5.0
+
 ## 4.2.0
 
 ### Minor Changes
