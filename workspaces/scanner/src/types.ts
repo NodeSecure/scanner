@@ -73,6 +73,8 @@ export interface DependencyVersion {
   engines: Engines;
   repository?: Repository | string;
   scripts: Record<string, string>;
+  /** Binaries exposed by the package, as declared in its package.json */
+  bin?: Record<string, string>;
   /**
    * JS-X-Ray warnings
    *
@@ -170,6 +172,27 @@ export type DependencyConfusionWarning = {
   };
 };
 
+export type NpxConfusionWarning = {
+  type: "npx-confusion";
+  message: string;
+  metadata: {
+    name: string;
+    version: string;
+    npxBinaryName: string;
+    scriptName: string;
+  };
+};
+
+export type BinConfusionWarning = {
+  type: "bin-confusion";
+  message: string;
+  metadata: {
+    name: string;
+    version: string;
+    binaryName: string;
+  };
+};
+
 export type GlobalWarning = { message: string; } & (
   {
     type:
@@ -186,7 +209,9 @@ export type GlobalWarning = { message: string; } & (
     };
   }
   |
-  DependencyConfusionWarning);
+  DependencyConfusionWarning
+  | BinConfusionWarning | NpxConfusionWarning
+  );
 
 export type ApiStats = {
   /**
@@ -386,3 +411,14 @@ export interface TokenStore {
    */
   get(registry: string): string | undefined;
 }
+
+type Confusion = {
+  name: string;
+  version: string;
+};
+
+export type NpxConfusion = Confusion & {
+  scriptName: string;
+};
+
+export type BinConfusion = Confusion;

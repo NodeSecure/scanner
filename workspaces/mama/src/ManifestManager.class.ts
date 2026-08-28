@@ -17,7 +17,9 @@ import { fromData } from "ssri";
 // Import Internal Dependencies
 import {
   packageJSONIntegrityHash,
-  inspectModuleType
+  inspectModuleType,
+  extractNpxFromScripts,
+  type NpxCommand
 } from "./utils/index.ts";
 
 type WithRequired<T, K extends keyof T> = T & { [P in K]-?: T[P] };
@@ -248,6 +250,10 @@ export class ManifestManager<
         yield* this.extractNodejsExport(node);
       }
     }
+  }
+
+  public* extractNpxFromScripts(): IterableIterator<NpxCommand> {
+    yield* extractNpxFromScripts(this.document.scripts);
   }
 
   static async fromPackageJSON(

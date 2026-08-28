@@ -29,6 +29,7 @@ Scanner builds on [JS-X-Ray](https://github.com/NodeSecure/js-x-ray) (SAST) and 
 - Detects:
   - [Manifest confusion](https://blog.vlt.sh/blog/the-massive-hole-in-the-npm-ecosystem)
   - [Dependency confusion](https://www.landh.tech/blog/20250610-netflix-vulnerability-dependency-confusion/)
+  - [Npx and Bin confusion](https://www.landh.tech/blog/20260521-npx-used-confusion-and-its-super-effective/)
   - Typosquatting of popular package names
   - Install scripts (e.g. `install`, `preinstall`, `postinstall`, `preuninstall`, `postuninstall`)
 - Highlights packages by name, version(s), or maintainer

@@ -67,13 +67,14 @@ export async function scanPackageCore(
   warnings.push(...code.warnings);
 
   const { files, dependencies, flags } = dependencySet.extract();
-  const { description, engines, repository, scripts } = mama.document;
+  const { description, engines, repository, scripts, bin } = mama.document;
 
   return {
     description,
     engines,
     repository,
     scripts,
+    bin,
     author: mama.author,
     integrity: mama.isWorkspace ? null : mama.integrity,
     type: mama.moduleType,
@@ -115,8 +116,8 @@ export async function scanDirOrArchive(
 ): Promise<void> {
   const result = await scanPackageCore(locationOrManifest, options.astAnalyserOptions);
 
-  const { description, engines, repository, scripts, author, integrity } = result;
-  Object.assign(ref, { description, engines, repository, scripts, author, integrity });
+  const { description, engines, repository, scripts, author, integrity, bin } = result;
+  Object.assign(ref, { description, engines, repository, scripts, author, integrity, bin });
 
   ref.warnings.push(...result.warnings);
   ref.licenses = result.licenses;

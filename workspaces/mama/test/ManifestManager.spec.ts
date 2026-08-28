@@ -951,4 +951,49 @@ describe("ManifestManager", () => {
       );
     });
   });
+
+  describe("npx command extraction from scripts", () => {
+    it("should extract nothing when there is no scripts in the manifest", () => {
+      const packageJSON: PackageJSON = {
+        ...kMinimalPackageJSON,
+        dependencies: {
+          kleur: "1.0.0"
+        },
+        devDependencies: {
+          mocha: "1.0.0"
+        },
+        gypfile: false
+      };
+
+      const mama = new ManifestManager(packageJSON);
+
+      assert.deepEqual(Array.from(mama.extractNpxFromScripts()), []);
+    });
+
+    it("should extract the npx command from the scritps in the manifest", () => {
+      const packageJSON: PackageJSON = {
+        scripts: {
+          test: "npx --no jest",
+          exec: "npx my-internal-tool",
+          start: "npm run start"
+        },
+        ...kMinimalPackageJSON,
+        dependencies: {
+          kleur: "1.0.0"
+        },
+        devDependencies: {
+          mocha: "1.0.0"
+        },
+        gypfile: false
+      };
+
+      const mama = new ManifestManager(packageJSON);
+
+      assert.deepEqual(Array.from(mama.extractNpxFromScripts()),
+        [
+          { binaryName: "jest", flags: ["--no"], scriptName: "test" },
+          { binaryName: "my-internal-tool", flags: [], scriptName: "exec" }
+        ]);
+    });
+  });
 });

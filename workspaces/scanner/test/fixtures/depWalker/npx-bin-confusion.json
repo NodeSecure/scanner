@@ -1,0 +1,15 @@
+{
+  "name": "npx-bin-confusion",
+  "version": "1.0.0",
+  "description": "Fixture using an unclaimed npx binary in its scripts and an unclaimed bin name",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx --yes dfkljqlfjm",
+    "test": "npx --no dfkljqlfjm"
+  },
+  "bin": {
+    "zqmlkfjdsqf": "./bin/index.js"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

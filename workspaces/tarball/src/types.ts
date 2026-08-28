@@ -29,6 +29,7 @@ export interface ScanResultPayload {
   engines?: Record<string, any>;
   repository?: any;
   scripts?: Record<string, string>;
+  bin?: Record<string, string>;
   author?: any;
   integrity?: string | null;
   type: string;
@@ -59,6 +60,7 @@ export interface DependencyRef {
   engines: Record<string, any>;
   repository: any;
   scripts: Record<string, string>;
+  bin?: Record<string, string>;
   warnings: any;
   licenses: conformance.SpdxFileLicenseConformance[];
   uniqueLicenseIds: string[];

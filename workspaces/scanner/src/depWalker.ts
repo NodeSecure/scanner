@@ -13,15 +13,18 @@ import * as Vulnera from "@nodesecure/vulnera";
 import { npm } from "@nodesecure/tree-walker";
 import {
   ManifestManager,
-  parseNpmSpec
+  parseNpmSpec,
+  extractNpxFromScripts
 } from "@nodesecure/mama";
 import { getNpmRegistryURL } from "@nodesecure/npm-registry-sdk";
 import type Config from "@npmcli/config";
+import * as i18n from "@nodesecure/i18n";
 
 // Import Internal Dependencies
 import {
   addMissingVersionFlags,
   getDependenciesWarnings,
+  getNpxAndBinConfusionWarnings,
   getUsedDeps,
   getManifestLinks,
   NPM_TOKEN
@@ -45,7 +48,9 @@ import type {
   GlobalWarning,
   DependencyConfusionWarning,
   Options,
-  Payload
+  Payload,
+  NpxConfusion,
+  BinConfusion
 } from "./types.ts";
 import { HighlightedPackages } from "./extractors/probes/HighlightedPackagesExtractor.class.ts";
 
@@ -87,6 +92,8 @@ const kDefaultDependencyMetadata: Dependency["metadata"] = {
 const kRootDependencyId = 0;
 
 const kCollectableTypes = ["url", "hostname", "ip", "email"];
+
+const kSafeNpxFlags = new Set<string>(["--no", "--no-install", "--no-yes", "--yes=false"]);
 
 const { version: packageVersion } = JSON.parse(
   readFileSync(
@@ -364,11 +371,52 @@ export async function depWalker(
   // Because we are dealing with package only one time it may happen sometimes.
   const globalWarnings: GlobalWarning[] = [];
   const highlightedPackagesExtractor = new HighlightedPackages(options.highlight?.packages ?? {});
+  const npxConfusions = new Map<string, NpxConfusion[]>();
+  const binConfusions = new Map<string, BinConfusion[]>();
+
+  if (mama.document.bin) {
+    Object.keys(mama.document.bin).forEach((binName) => {
+      addToConfusions(binConfusions, binName, {
+        name: mama.name,
+        version: mama.version
+      });
+    });
+  }
+
+  for (const npxConfusion of mama.extractNpxFromScripts()) {
+    if (!hasNpxSafeFlag(npxConfusion.flags)) {
+      addToConfusions(npxConfusions, npxConfusion.binaryName, {
+        name: mama.name,
+        version: mama.version,
+        scriptName: npxConfusion.scriptName
+      });
+    }
+  }
+
   for (const [packageName, dependency] of dependencies) {
     const metadataIntegrities = dependency.metadata?.integrity ?? {};
 
     for (const [version, integrity] of Object.entries(metadataIntegrities)) {
       const dependencyVer = dependency.versions[version] as DependencyVersion;
+
+      if (dependencyVer.bin) {
+        Object.keys(dependencyVer.bin).forEach((binName) => {
+          addToConfusions(binConfusions, binName, {
+            name: packageName,
+            version
+          });
+        });
+      }
+
+      for (const npxConfusion of extractNpxFromScripts(dependencyVer.scripts)) {
+        if (!hasNpxSafeFlag(npxConfusion.flags)) {
+          addToConfusions(npxConfusions, npxConfusion.binaryName, {
+            name: packageName,
+            version,
+            scriptName: npxConfusion.scriptName
+          });
+        }
+      }
 
       const isEmptyPackage = dependencyVer.warnings.some((warning) => warning.kind === "empty-package");
       if (isEmptyPackage) {
@@ -424,12 +472,30 @@ export async function depWalker(
   }
 
   try {
-    const { warnings, illuminated } = await getDependenciesWarnings(
-      dependencies,
-      options.highlight?.contacts,
-      isRemoteScanning
-    );
-    payload.warnings = globalWarnings.concat(dependencyConfusionWarnings as GlobalWarning[]).concat(warnings);
+    const [{ warnings, illuminated },
+      npxBinConfusionWarnings
+    ] = await Promise.all([
+      getDependenciesWarnings(dependencies,
+        options.highlight?.contacts,
+        isRemoteScanning),
+      getNpxAndBinConfusionWarnings({
+        npxConfusions,
+        binConfusions,
+        getToken: i18n.getToken,
+        token: tokenStore.get(getNpmRegistryURL()),
+        packument: (name, opts) => statsCollector.track({
+          name: "npmRegistrySDK.packument",
+          phase: "npx-bin-warnings-collection",
+          fn: () => npmRegistrySDK.packument(name, opts)
+        })
+      })
+    ]);
+
+    payload.warnings = globalWarnings
+      .concat(dependencyConfusionWarnings)
+      .concat(npxBinConfusionWarnings)
+      .concat(warnings);
+
     const { highlightedPackages } = highlightedPackagesExtractor.done();
     payload.highlighted = {
       contacts: illuminated,
@@ -444,6 +510,21 @@ export async function depWalker(
   finally {
     logger.emit(ScannerLoggerEvents.done);
   }
+}
+
+type AnyConfusion = BinConfusion | NpxConfusion;
+
+function addToConfusions(confusions: Map<string, AnyConfusion[]>, key: string, payload: AnyConfusion) {
+  if (confusions.has(key)) {
+    confusions.get(key)?.push(payload);
+  }
+  else {
+    confusions.set(key, [payload]);
+  }
+}
+
+function hasNpxSafeFlag(flags: string[]) {
+  return flags.some((flag) => kSafeNpxFlags.has(flag));
 }
 
 function extractHighlightedIdentifiers(
