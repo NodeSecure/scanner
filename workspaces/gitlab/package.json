@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/NodeSecure/scanner/tree/master/workspaces/gitlab#readme",
   "dependencies": {
-    "@openally/httpie": "1.1.4",
+    "@openally/httpie": "2.0.0",
     "tar-fs": "^3.0.6"
   },
   "devDependencies": {
